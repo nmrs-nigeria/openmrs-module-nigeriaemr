@@ -1,6 +1,5 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -113,14 +112,14 @@ public class NDRMainDictionary {
         map.put(135704, "LA");
         map.put(5622, "Other");
         //functional status concept id
-        map.put(162750,"W");
-        map.put(162752,"B");
-        map.put(160026,"A");
+        map.put(162750, "W");
+        map.put(162752, "B");
+        map.put(160026, "A");
         //hiv question type WHO clinical stage concept
-        map.put(165282,"I");
-        map.put(165283,"II");
-        map.put(165284,"III");
-        map.put(165285,"IV");
+        map.put(165282, "I");
+        map.put(165283, "II");
+        map.put(165284, "III");
+        map.put(165285, "IV");
         //tb status concept
         map.put(1663, "CT");
         map.put(142177, "DS");
@@ -129,31 +128,31 @@ public class NDRMainDictionary {
         map.put(1662, "OT");
         map.put(160737, "NA");
         //care entry point
-        map.put(160539,"VCTP");
-        map.put(160538,"PMTCT");
-        map.put(160537,"PIS");
-        map.put(160536,"AIS");
-        map.put(160542,"OD");
-        map.put(160541,"TbT");
-        map.put(160543,"CBO");
-        map.put(160544,"UFC");
-        map.put(160545,"OP");
-        map.put(160546,"STI");
-        map.put(160547,"PC");
-        map.put(160548,"IVDUOP");
-        map.put(160549,"AOP");
-        map.put(160550,"SWOP");
-        map.put(160551,"SR");
-        map.put(160552,"NP");
-        map.put(160564,"VS");
-        map.put(161359,"PHBC");
-        map.put(159937,"MCHP");
-        map.put(162223,"VMCC");
-        map.put(164949,"HIVAb");
-        map.put(164948,"HIVPCR");
+        map.put(160539, "VCTP");
+        map.put(160538, "PMTCT");
+        map.put(160537, "PIS");
+        map.put(160536, "AIS");
+        map.put(160542, "OD");
+        map.put(160541, "TbT");
+        map.put(160543, "CBO");
+        map.put(160544, "UFC");
+        map.put(160545, "OP");
+        map.put(160546, "STI");
+        map.put(160547, "PC");
+        map.put(160548, "IVDUOP");
+        map.put(160549, "AOP");
+        map.put(160550, "SWOP");
+        map.put(160551, "SR");
+        map.put(160552, "NP");
+        map.put(160564, "VS");
+        map.put(161359, "PHBC");
+        map.put(159937, "MCHP");
+        map.put(162223, "VMCC");
+        map.put(164949, "HIVAb");
+        map.put(164948, "HIVPCR");
 
-        map.put(0,"");
-        map.put(0,"");
+        map.put(0, "");
+        map.put(0, "");
 
     }
 
@@ -164,14 +163,18 @@ public class NDRMainDictionary {
         return "";
     }
 
-    public PatientDemographicsType createPatientDemographicsType(Patient pts, FacilityType facility,DBConnection openmrsConn)
+    public PatientDemographicsType createPatientDemographicsType(Patient pts, FacilityType facility, DBConnection openmrsConn)
             throws DatatypeConfigurationException {
         try {
             PatientDemographicsType demo = new PatientDemographicsType();
 
             //Identifier 4 is Pepfar ID
             PatientIdentifier pepfarid, pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId;
-            pepfarid = pts.getPatientIdentifier(4);
+
+            //use combination of rdatimcode and hospital for peffar on surge rivers.
+            pepfarid = new PatientIdentifier();
+            pepfarid.setIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(5));
+
             pidHospital = pts.getPatientIdentifier(5);
             pidOthers = pts.getPatientIdentifier(3);
             htsId = pts.getPatientIdentifier(8);
@@ -181,10 +184,10 @@ public class NDRMainDictionary {
 
             //added a try block to mitigate identifier types 4 and 3 issues
             try {
-                demo.setPatientIdentifier(pts.getPatientIdentifier(4).getIdentifier());
+                demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(5));
             } catch (Exception e) {
                 //since pepfarId is not existing we use facility datim_code_hospital number_patientId;
-                demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(3).getIdentifier() + "_" + pts.getId());
+                // demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(3).getIdentifier() + "_" + pts.getId());
             }
             //demo.setPatientIdentifier(pts.getPatientIdentifier(4).getIdentifier());
 
@@ -250,10 +253,10 @@ public class NDRMainDictionary {
             * Edited By Johnbosco
             * */
             //check Finger Print if available
-            demo.setFingerPrints(getPatientsFingerPrint(pts.getPatientId(),openmrsConn));
+            demo.setFingerPrints(getPatientsFingerPrint(pts.getPatientId(), openmrsConn));
 
             //collect data for SURGE
-            if(Utils.isSurgeSite() == "true") {
+            if (Utils.isSurgeSite() == "true") {
                 demo.setFamilyName(pts.getFamilyName());
                 demo.setFirstName(pts.getGivenName());
                 demo.setOtherName(pts.getMiddleName());
@@ -261,7 +264,7 @@ public class NDRMainDictionary {
             }
 
             String testCode = pts.getFamilyName() + " " + pts.getGivenName() + "" + pts.getMiddleName();
-                    Soundex soundex = new Soundex();
+            Soundex soundex = new Soundex();
             demo.setEnrolleeCode(soundex.encode(testCode));
             String ndrCodedValue;
             //get all hiv enrollment observations
@@ -597,11 +600,10 @@ public class NDRMainDictionary {
     /*static HIVQuestionsType createHIVQuestionType(Obs firstRegimenObs, Date ARTStartDate, Date EnrollmentDate, List<Obs> obs) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}*/
-    public FingerPrintsType getPatientsFingerPrint(int id,DBConnection connResult) {
+    public FingerPrintsType getPatientsFingerPrint(int id, DBConnection connResult) {
         Connection connection;
         try {
 
-            
             connection = DriverManager.getConnection(connResult.getUrl(), connResult.getUsername(), connResult.getPassword());
             Statement statement = connection.createStatement();
             String sqlStatement = ("SELECT template, fingerPosition, date_created FROM biometricinfo WHERE patient_Id = " + id);
