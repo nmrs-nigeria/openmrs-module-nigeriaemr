@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Data-set" type="Data-setType"/>
+  <xs:complexType name="Pediatric_Linkage_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="PatientReceivedNutritionalAssessmentInReviewPeriod"/>
+      <xs:element type="xs:string" name="PatientQualifyForNutritionSupporot"/>
+      <xs:element type="xs:string" name="DidPatientReceivedNutritionSupport"/>
+      <xs:element type="xs:string" name="ChildImmunizationStatus"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="ServicesReceivedByPatient"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="WaterguardReceived"/>
+      <xs:element type="xs:string" name="InsecticideTreatedNetsReceived"/>
+      <xs:element type="xs:string" name="NotIndicated"/>
+      <xs:element type="xs:string" name="NoneReceived"/>
+      <xs:element type="xs:string" name="ReviewPeriodID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Data-setType">
+    <xs:sequence>
+      <xs:element type="Pediatric_Linkage_RecordType" name="Pediatric_Linkage_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

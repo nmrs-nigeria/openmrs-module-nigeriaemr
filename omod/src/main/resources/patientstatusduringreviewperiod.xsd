@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="data-set" type="data-setType"/>
+  <xs:complexType name="PatientStatusDuringReviewPeriod_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element name="Status">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Start new treatment"/>
+            <xs:enumeration value=""/>
+            <xs:enumeration value="Continue current tre"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="DateOfStatusChange"/>
+      <xs:element type="xs:string" name="ReasonForStatusChange"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element name="Transferred_Out">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="No"/>
+            <xs:enumeration value="Yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="Death"/>
+      <xs:element name="Discontinued_Care">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="No"/>
+            <xs:enumeration value="Yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Transferred_Out_Date">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value=""/>
+            <xs:enumeration value="24/08/2016"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="Death_Date"/>
+      <xs:element name="Discontinued_Care_Date">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value=""/>
+            <xs:enumeration value="24/08/2016"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="Discontinued_Care_Reason"/>
+      <xs:element type="xs:string" name="Discontinued_Care_Reason_Other"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="data-setType">
+    <xs:sequence>
+      <xs:element type="PatientStatusDuringReviewPeriod_RecordType" name="PatientStatusDuringReviewPeriod_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Data-set" type="Data-setType"/>
+  <xs:complexType name="Pediatric_BaselineParameters_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="CD4_Count"/>
+      <xs:element type="xs:string" name="CD4_Count_Date"/>
+      <xs:element type="xs:string" name="Weight"/>
+      <xs:element type="xs:string" name="Weight_Date"/>
+      <xs:element name="WHO_Clinical_Stage">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="0"/>
+            <xs:enumeration value="2"/>
+            <xs:enumeration value="3"/>
+            <xs:enumeration value="4"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="WHO_Clinical_State_Date"/>
+      <xs:element type="xs:string" name="CD4_Not_Recorded"/>
+      <xs:element type="xs:string" name="Weight_Not_Recorded"/>
+      <xs:element type="xs:string" name="WHO_Clinical_Stage_Not_Recorded"/>
+      <xs:element type="xs:string" name="PatientEverStartedOnART"/>
+      <xs:element type="xs:string" name="ART_Start_Date"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="ReviewPeriodID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Data-setType">
+    <xs:sequence>
+      <xs:element type="Pediatric_BaselineParameters_RecordType" name="Pediatric_BaselineParameters_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

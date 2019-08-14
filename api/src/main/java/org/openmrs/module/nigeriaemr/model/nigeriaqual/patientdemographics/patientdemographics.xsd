@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="data-set" type="data-setType"/>
+  <xs:complexType name="PatientDemographics_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="Lastname"/>
+      <xs:element type="xs:string" name="Firstname"/>
+      <xs:element type="xs:string" name="ClinicalVisit6MonthsPriorToReview"/>
+      <xs:element name="MaritalStatus">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Married"/>
+            <xs:enumeration value="Single"/>
+            <xs:enumeration value="Widowed"/>
+            <xs:enumeration value="Separated"/>
+            <xs:enumeration value="Divorced"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="HosiptalNo"/>
+      <xs:element type="xs:string" name="RNL_SerialNO"/>
+      <xs:element name="Gender">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Female"/>
+            <xs:enumeration value="male"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="DateofBirth"/>
+      <xs:element type="xs:string" name="AGE"/>
+      <xs:element type="xs:string" name="HospitalAdmissionDuringReview"/>
+      <xs:element name="Occupation">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Employed"/>
+            <xs:enumeration value="Unemployed"/>
+            <xs:enumeration value="Student"/>
+            <xs:enumeration value="Retired"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Education">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Primary"/>
+            <xs:enumeration value="Senior Secondary"/>
+            <xs:enumeration value="None"/>
+            <xs:enumeration value="Post Secondary"/>
+            <xs:enumeration value="Junior Secondary"/>
+            <xs:enumeration value="Quranic"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="WardVillageTown_OfResidence"/>
+      <xs:element type="xs:string" name="LGA_OfResidence"/>
+      <xs:element type="xs:string" name="State_OfResidence"/>
+      <xs:element type="xs:string" name="State_OfOrigin"/>
+      <xs:element type="xs:string" name="Tribe"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="DateEnrolled"/>
+      <xs:element type="xs:string" name="RecordCompletionPosition"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploaderDT"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="ReviewPeriod"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="data-setType">
+    <xs:sequence>
+      <xs:element type="PatientDemographics_RecordType" name="PatientDemographics_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

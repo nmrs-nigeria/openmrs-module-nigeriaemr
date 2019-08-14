@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="data-set" type="data-setType"/>
+  <xs:complexType name="MissedAppointmentsAndPatientTracking_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="MissedAppointment"/>
+      <xs:element type="xs:string" name="AttemptedContact"/>
+      <xs:element type="xs:string" name="DateOfAttemptedContact"/>
+      <xs:element type="xs:string" name="OutcomeOfTracking"/>
+      <xs:element type="xs:string" name="ReasonFor_LTFU"/>
+      <xs:element type="xs:string" name="CauseOfDeath"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="Missed_appointment_1"/>
+      <xs:element type="xs:string" name="Missed_appointment_1_Date"/>
+      <xs:element type="xs:string" name="Missed_appointment_1_AttemptedContact"/>
+      <xs:element type="xs:string" name="Missed_appointment_1_AttemptedContactDate"/>
+      <xs:element type="xs:string" name="Missed_appointment_1_OutcomeOfTracking"/>
+      <xs:element type="xs:string" name="Missed_appointment_1_ReasonForLFTU"/>
+      <xs:element type="xs:string" name="Missed_appointment_1_CauseOfDeath"/>
+      <xs:element type="xs:string" name="Missed_appointment_2"/>
+      <xs:element type="xs:string" name="Missed_appointment_2_Date"/>
+      <xs:element type="xs:string" name="Missed_appointment_2_AttemptedContact"/>
+      <xs:element type="xs:string" name="Missed_appointment_2_AttemptedContactDate"/>
+      <xs:element type="xs:string" name="Missed_appointment_2_OutcomeOfTracking"/>
+      <xs:element type="xs:string" name="Missed_appointment_2_ReasonForLFTU"/>
+      <xs:element type="xs:string" name="Missed_appointment_2_CauseOfDeath"/>
+      <xs:element type="xs:string" name="Missed_appointment_3"/>
+      <xs:element type="xs:string" name="Missed_appointment_3_Date"/>
+      <xs:element type="xs:string" name="Missed_appointment_3_AttemptedContact"/>
+      <xs:element type="xs:string" name="Missed_appointment_3_AttemptedContactDate"/>
+      <xs:element type="xs:string" name="Missed_appointment_3_OutcomeOfTracking"/>
+      <xs:element type="xs:string" name="Missed_appointment_3_ReasonForLFTU"/>
+      <xs:element type="xs:string" name="Missed_appointment_3_CauseOfDeath"/>
+      <xs:element type="xs:string" name="ReviewPeriodID"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="data-setType">
+    <xs:sequence>
+      <xs:element type="MissedAppointmentsAndPatientTracking_RecordType" name="MissedAppointmentsAndPatientTracking_Record"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

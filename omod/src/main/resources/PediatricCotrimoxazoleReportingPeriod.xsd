@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Data-set" type="Data-setType"/>
+  <xs:complexType name="Pediatric_Cotrimoxazole_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="PatientCurrentlyOnCotrimoxazoleProphylaxis"/>
+      <xs:element type="xs:string" name="DateOfFirstPrescription"/>
+      <xs:element type="xs:string" name="AgeOfFirstPrescription"/>
+      <xs:element name="UnitOfAgeMeasure">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="YEARS"/>
+            <xs:enumeration value="MONTHS"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="ReviewPeriodID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Data-setType">
+    <xs:sequence>
+      <xs:element type="Pediatric_Cotrimoxazole_RecordType" name="Pediatric_Cotrimoxazole_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

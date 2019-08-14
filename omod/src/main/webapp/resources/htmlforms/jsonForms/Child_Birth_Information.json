@@ -1,0 +1,208 @@
+{
+  "name": "Child Birth Information",
+  "uuid": "ac995d47-a8db-4ea8-91b4-f080489e523f",
+  "processor": "EncounterFormProcessor",
+  "pages": [
+    {
+      "label": "Birth details",
+      "sections": [
+        {
+          "label": "Birth details",
+          "questions": [
+            {
+              "label": "Weight(kg):",
+              "id": "weight",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "	5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Length(cm):",
+              "id": "length",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1503AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Head circumference(cm):",
+              "id": "head_circum",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "5314AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Mid upper arm circumference(cm):",
+              "id": "mid_upper_arm_circum",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1343AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "APGAR Score:",
+              "id": "apgar_score",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1504AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Child given Hepatitis B Immunoglobulin (Hep B Ig):",
+              "type": "obs",
+
+              "id": "hep_b_Ig",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "f70f2160-b4e0-4934-85cd-d23c5a297d2d",
+                "answers": [
+                  {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes"
+                  },
+                  {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "High risk HIV exposed Infant:",
+              "type": "obs",
+
+              "id": "High_risk_HIV_exposed_Infant",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "0839fd67-3a20-48a1-a455-b2d4d13549e8",
+                "answers": [
+                  {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes"
+                  },
+                  {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "ARV Prophylaxis:",
+              "type": "obs",
+
+              "id": "ARV_Prophylaxis",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "9884c215-e245-4f49-88cb-d6689116026a",
+                "answers": [
+                  {
+                    "concept": "08c26b04-347e-485f-8e09-679e269b24e9",
+                    "label": "NVP"
+                  },
+                  {
+                    "concept": "f47b43e9-8bdc-44c0-bc44-213b381fde01",
+                    "label": "AZT-NVP"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Timing of Child ARV prophylaxis:",
+              "type": "obs",
+
+              "id": "Timing_of_ARV_Prophylaxis",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "f87fd02f-8b54-4e9f-934a-b64ebf9b2262",
+                "answers": [
+                  {
+                    "concept": "f48d131b-de33-41d1-9a35-c58c58df29c4",
+                    "label": "Within 72 hrs of facility delivery"
+                  },
+                  {
+                    "concept": "9f84435c-740f-4abc-9780-2de7b0f3b9e2",
+                    "label": "Within 72 hrs delivered outside facility"
+                  },
+                  {
+                    "concept": "d34bb5a6-7d57-454b-990e-ae2486d33580",
+                    "label": "After 72 hrs of facility delivery"
+                  },
+                  {
+                    "concept": "389c76d0-4004-4c56-a644-fa9fb19c743a",
+                    "label": "After 72 hrs delivered outside facility"
+                  }
+                ]
+              }
+            }
+
+
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Immunization details",
+      "sections": [
+        {
+          "label": "Immunization details",
+          "questions": [
+            {
+              "label": "Immunization received at birth:",
+              "type": "obs",
+
+              "id": "Immunization_received_at_birth",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "8d2ee131-1179-4527-84f0-44e81cc894fc",
+                "answers": [
+                  {
+                    "concept": "71902AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "BCG vaccination"
+                  },
+                  {
+                    "concept": "782AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Hepatitis B vaccination"
+                  },
+                  {
+                    "concept": "783AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Oral Polio Vaccination"
+                  }
+                ]
+              }
+            }
+
+
+          ]
+        }
+      ]
+    }
+  ]
+}

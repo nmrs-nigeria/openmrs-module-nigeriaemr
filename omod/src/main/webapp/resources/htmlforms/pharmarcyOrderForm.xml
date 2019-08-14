@@ -1,0 +1,606 @@
+<htmlform formUuid="c75f120a-04ec-11e3-8780-2b40bef9a44b" formName="Pharmacy Order Form" formEncounterType="d7151f82-c1f3-4152-a605-2f9ea7414a79" formVersion="1.0">
+	<!-- Pharmacy Order Form Initial development 06-April-2018 -->
+
+	<macros>
+		paperFormId = (Fill this in)
+		headerColor =#2f1c55
+		fontOnHeaderColor = white
+	</macros>
+	<style>
+		.section {
+		border: 1px solid $headerColor;
+		padding: 2px;
+		text-align: left;
+		margin-bottom: 1em;
+		}
+		.sectionHeader {
+		background-color: #2f1c55;
+		color: white;
+		/* display: block; */
+		padding: 2px;
+		font-weight: bold;
+		}
+		table tr:nth-child(even) {
+		background: #ffffff;
+		}
+		.alnright{
+		text-align: right;
+		color:#000000;
+		width: 25%;
+		}
+		td {
+		border: none;
+		}
+		table th, table td {
+		padding: 5px 10px;
+		border: None;
+		}
+		.legend_style {
+		max-width: 35%;
+		background: #FAFAFA;
+		<!--padding: 5px;-->
+		margin: 0px left;
+		box-shadow: 1px 1px 25px rgba(0,0,0,0.10);
+		border-radius: 2px;
+		border: 1px solid #305a72;
+		border-bottom-left-radius: 2px;
+		text-transform:initial;
+
+		}
+		form fieldset, .form fieldset {
+		min-width: 98%;
+		border: none;
+		border-top: 1px solid #305a72;
+
+		}
+		table th, table td {
+		padding: 5px 10px;
+		/* border: 1px solid #DDD; */
+		}
+		table tr {
+		border: None;
+		}
+		ul.select, .form input, .form select, .form textarea, .form ul.select {
+		padding: 2px 10px;
+		}
+		form input, form select, form textarea, form ul.select, .form input, .form select, .form textarea, .form ul.select {
+		padding: 2px 10px;
+		}
+		form select, .form select {
+		max-width: 200px;
+		}
+		body {
+		font-family: "OpenSans", Arial, sans-serif;
+		color: #363463;
+		font-size: 14px;
+		}
+
+	</style>
+	<div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+		<fieldset>
+			<legend class="legend_style">When?</legend>
+			<label>When?</label>
+			<encounterDate default="now" showTime="false" allowFutureDates="false"/>
+		</fieldset>
+
+		<fieldset>
+			<legend>Who?</legend>
+			<label>Who?</label>
+			<encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f"                                                     required="true"/>
+		</fieldset>
+
+		<fieldset>
+			<legend>Where?</legend>
+			<label>Where?</label>
+			<encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+		</fieldset>
+	</div>
+
+	<table style="margin-bottom: 20px;">
+		<thead>
+			<tr><th colspan='5' style="text-align: center">Pharmacy Order Form</th></tr>
+		</thead>
+	</table>
+
+
+	<table class="baseline-aligned">
+		<tr>
+			<td></td>
+			<td style="alnright">
+				<label>Visit Date:</label>
+				<encounterDate default="today"/>
+			</td>
+		</tr>
+	</table>
+	<fieldset>
+		<table>
+			<tr>
+				<td>
+					<label>Treatment type</label>
+					<select name="Program Area">
+						<option></option>
+						<option>ART</option>
+						<option>Non-ART</option>
+						<option>Occup PEP</option>
+						<option>Non-Occup PEP</option>
+						<option>HIV-Exposed Infant</option>
+						<option>High-Risk HIV Exposed Infant</option>
+						<option>PrEP</option>
+					</select>
+				</td>
+				<td>
+					<label>Visit Type</label>
+					<obs conceptId="164181" id="VisitType" answerConceptIds="164180,160530" answerLabels="Initial Visit,Follow-up Visit"/>
+				</td>
+				<td>
+					<label>Pregnancy Status</label>
+					<obs conceptId="165050" answerLabel=""/>
+				</td>
+				<td>
+					<label>Pick Up Reason</label>
+					<obs conceptId="165774" answerLabel=""/>
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+	<br/>
+
+	<fieldset>
+		<legend class="legend_style">Medication Adherence</legend>
+		<table class="baseline-aligned">
+			<tr>
+				<td>
+					<label>Number of missed doses per month</label>
+					<obs conceptId="165836" answerLabel=""/>
+				</td>
+				<td>
+
+					<label>Adherence councelling offering</label>
+					<obs conceptId="165832" answerLabel=""/>
+				</td>
+				<td>
+
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+
+	<br/>
+
+	<fieldset>
+		<legend class="legend_style">ARV Medication</legend>
+		<table class="baseline-aligned">
+			<tr>
+				<!-- <obsgroup groupingConceptId="999999"> -->
+				<td>
+					<label>Treatment Age category</label>
+					<obs id="TreatmentAgeCategory" conceptId="165720" answerConceptIds="1528, 165709" answerLabels="Pediatric, Adult">
+						<controls>
+							<when value="1528" thenDisplay="#ped_regimen_line"/>
+							<when value="165709" thenDisplay="#adult_regimen_line"/>
+						</controls></obs>
+				</td>
+				<td id="adult_regimen_line">
+					<!--for adults-->
+					<label>Regimen Line</label>
+					<obs id="adultRegimenLine" conceptId="165708" answerConceptIds="164506, 164513, 165702" answerLabels="First Line, Second Line, Salvage">
+						<controls>
+							<when value="164506" thenDisplay="#adult_first_line"/>
+							<when value="164513" thenDisplay="#adult_second_line"/>
+							<when value="165702" thenDisplay="#adult_salvage"/>
+						</controls>
+					</obs>
+				</td>
+				<td id="ped_regimen_line">
+					<!--for pediatric-->
+					<label>Regimen Line</label>
+					<obs id="pedRegimenLine" conceptId="165708" answerConceptIds="164507, 164514, 165703" answerLabels="First Line, Second Line, Salvage">
+						<controls>
+							<when value="164507" thenDisplay="#ped_first_line"/>
+							<when value="164514" thenDisplay="#ped_second_line"/>
+							<when value="165703" thenDisplay="#ped_salvage"/>
+						</controls>
+					</obs>
+				</td>
+				<td id="adult_first_line">
+					<label>Adult 1st Line Regimens</label>
+					<obs conceptId="164506" id="Adult1stLine"/>
+				</td>
+				<td id="adult_second_line">
+					<label>Adult 2nd Line Regimens</label>
+					<obs conceptId="164513" id="Adult2ndLine"/>
+				</td>
+				<td id="adult_salvage">
+					<label>Adult 3rd Line Regimens</label>
+					<obs conceptId="165702" id="Adult3rdLine"/>
+				</td>
+				<td id="ped_first_line">
+					<label>Pediatric 1st Line Regimens</label>
+					<obs conceptId="164507" id="Ped1stLine"/>
+				</td>
+				<td id="ped_second_line">
+					<label>Pediatric 2nd Line Regimens</label>
+					<obs conceptId="164514" id="Ped2ndLine"/>
+				</td>
+				<td id="ped_salvage">
+					<label>Pediatric 3rd Line Regimens</label>
+					<obs conceptId="165703" id="Ped3rdLine"/>
+				</td>
+				<!-- </obsgroup> -->
+			</tr>
+		</table>
+
+		<table class="baseline-aligned">
+			<tr>
+				<td>
+					<label>Drugs</label>
+				</td>
+				<td>
+					<label>Strength</label>
+				</td>
+				<td>
+					<label>Frequency</label>
+				</td>
+				<td>
+					<label>Duration (in days)</label>
+				</td>
+				<td>
+					<label>Qty Prescribed</label>
+				</td>
+				<td>
+					<label>Qty Dispensed</label>
+				</td>
+			</tr>
+			<tr>
+				<obsgroup groupingConceptId="162240">
+					<td>
+						<obs conceptId="165724" answerConceptIds="164505,1652,161364,630,103166,75523,86663,159809,794,74258,83412,162796,165631,103166,80586,70056,154378" answerLabels="Tenofovir/Lamivudine/Efavirenz,Lamivudine/Zidovudine/Nevirapine,Tenofovir/Lamivudine,Lamivudine/Zidovudine,Abacavir/Lamivudine,Efavirenz,Zidovudine,Atazanavir/Ritonavir,Lopinavir/Ritonavir,Darunavir,Ritonavir,Darunavir/Ritonavir,Dolutegravir,Abacavir/Lamivudine,Nevirapine,Abacavir,Raltegravir"/>
+					</td>
+					<td>
+						<obs conceptId="165725" id="drugStrength"/>
+					</td>
+					<td>
+						<obs conceptId="165723" answerConceptIds="160862,160858,165721,160870,165722" answerLabels="OD,BD,2 BD,QDS,3ce/week"/>
+					</td>
+					<td>
+						<obs conceptId="159368" id="duration"/>
+					</td>
+					<td>
+						<obs conceptId="160856" id="qtyPrescribed"/>
+					</td>
+					<td>
+						<obs conceptId="1443" id="qtyDispensed"/>
+					</td>
+				</obsgroup>
+			</tr>
+			<tr>
+				<obsgroup groupingConceptId="162240">
+					<td>
+						<obs conceptId="165724" answerConceptIds="164505,1652,161364,630,103166,75523,86663,159809,794,74258,83412,162796,165631,103166,80586,70056,154378" answerLabels="Tenofovir/Lamivudine/Efavirenz,Lamivudine/Zidovudine/Nevirapine,Tenofovir/Lamivudine,Lamivudine/Zidovudine,Abacavir/Lamivudine,Efavirenz,Zidovudine,Atazanavir/Ritonavir,Lopinavir/Ritonavir,Darunavir,Ritonavir,Darunavir/Ritonavir,Dolutegravir,Abacavir/Lamivudine,Nevirapine,Abacavir,Raltegravir"/>
+					</td>
+					<td>
+						<obs conceptId="165725" id="drugStrength"/>
+					</td>
+					<td>
+						<obs conceptId="165723" answerConceptIds="160862,160858,165721,160870,165722" answerLabels="OD,BD,2 BD,QDS,3ce/week"/>
+					</td>
+					<td>
+						<obs conceptId="159368" id="duration"/>
+					</td>
+					<td>
+						<obs conceptId="160856" id="qtyPrescribed"/>
+					</td>
+					<td>
+						<obs conceptId="1443" id="qtyDispensed"/>
+					</td>
+				</obsgroup>
+			</tr>
+			<tr>
+				<obsgroup groupingConceptId="162240">
+					<td>
+						<obs conceptId="165724" answerConceptIds="164505,1652,161364,630,103166,75523,86663,159809,794,74258,83412,162796,165631,103166,80586,70056,154378" answerLabels="Tenofovir/Lamivudine/Efavirenz,Lamivudine/Zidovudine/Nevirapine,Tenofovir/Lamivudine,Lamivudine/Zidovudine,Abacavir/Lamivudine,Efavirenz,Zidovudine,Atazanavir/Ritonavir,Lopinavir/Ritonavir,Darunavir,Ritonavir,Darunavir/Ritonavir,Dolutegravir,Abacavir/Lamivudine,Nevirapine,Abacavir,Raltegravir"/>
+					</td>
+					<td>
+						<obs conceptId="165725" id="drugStrength"/>
+					</td>
+					<td>
+						<obs conceptId="165723" answerConceptIds="160862,160858,165721,160870,165722" answerLabels="OD,BD,2 BD,QDS,3ce/week"/>
+					</td>
+					<td>
+						<obs conceptId="159368" id="duration"/>
+					</td>
+					<td>
+						<obs conceptId="160856" id="qtyPrescribed"/>
+					</td>
+					<td>
+						<obs conceptId="1443" id="qtyDispensed"/>
+					</td>
+				</obsgroup>
+			</tr>
+		</table>
+
+	</fieldset>
+
+	<fieldset>
+		<legend class="legend_style">Drugs for OI Prophylaxis/Treatment</legend>
+		<table class="baseline-aligned">
+			<tr>
+				<td>
+					<label>Drugs</label>
+				</td>
+				<td>
+					<label>Strength</label>
+				</td>
+				<td>
+					<label>Frequency</label>
+				</td>
+				<td>
+					<label>Duration (in days)</label>
+				</td>
+				<td>
+					<label>Qty Prescribed</label>
+				</td>
+				<td>
+					<label>Qty Dispensed</label>
+				</td>
+			</tr>
+			<tr>
+				<obsgroup groupingConceptId="165726">
+					<td>
+						<obs conceptId="165727" answerConceptIds="165257" answerLabels="Cotrimoxazole"/>
+						<!--answerConceptIds="165257,76488,1679,80945" answerLabels="Cotrimoxazole,Fluconazole,Isoniazid,Nystatin"/>-->
+					</td>
+					<td>
+						<obs conceptId="165725" answerConceptIds="165062,165075"/>
+					</td>
+					<td>
+						<obs conceptId="165723" answerConceptIds="160862,160858,160870" answerLabels="OD,BD,QDS"/>
+					</td>
+					<td>
+						<obs conceptId="159368" id="duration"/>
+					</td>
+					<td>
+						<obs conceptId="160856" id="qtyPrescribed"/>
+					</td>
+					<td>
+						<obs conceptId="1443" id="qtyDispensed"/>
+					</td>
+				</obsgroup>
+			</tr>
+			<tr>
+				<obsgroup groupingConceptId="165726">
+					<td>
+						<obs conceptId="165727" answerConceptIds="76488" answerLabels="Fluconazole"/>
+						<!--answerConceptIds="165257,76488,1679,80945" answerLabels="Cotrimoxazole,Fluconazole,Isoniazid,Nystatin"/>-->
+					</td>
+					<td>
+						<obs conceptId="165725" answerConceptIds="165062,165075"/>
+					</td>
+					<td>
+						<obs conceptId="165723" answerConceptIds="160862,160858,160870" answerLabels="OD,BD,QDS"/>
+					</td>
+					<td>
+						<obs conceptId="159368" id="duration"/>
+					</td>
+					<td>
+						<obs conceptId="160856" id="qtyPrescribed"/>
+					</td>
+					<td>
+						<obs conceptId="1443" id="qtyDispensed"/>
+					</td>
+				</obsgroup>
+			</tr>
+			<tr>
+				<obsgroup groupingConceptId="165726">
+					<td>
+						<obs conceptId="165727" answerConceptIds="1679" answerLabels="Isoniazid"/>
+						<!--answerConceptIds="165257,76488,1679,80945" answerLabels="Cotrimoxazole,Fluconazole,Isoniazid,Nystatin"/>-->
+					</td>
+					<td>
+						<obs conceptId="165725" answerConceptIds="165062,165075"/>
+					</td>
+					<td>
+						<obs conceptId="165723" answerConceptIds="160862,160858,160870" answerLabels="OD,BD,QDS"/>
+					</td>
+					<td>
+						<obs conceptId="159368" id="duration"/>
+					</td>
+					<td>
+						<obs conceptId="160856" id="qtyPrescribed"/>
+					</td>
+					<td>
+						<obs conceptId="1443" id="qtyDispensed"/>
+					</td>
+				</obsgroup>
+			</tr>
+			<tr>
+				<obsgroup groupingConceptId="165726">
+					<td>
+						<obs conceptId="165727" answerConceptIds="80945" answerLabels="Nystatin"/>
+						<!--answerConceptIds="165257,76488,1679,80945" answerLabels="Cotrimoxazole,Fluconazole,Isoniazid,Nystatin"/>-->
+					</td>
+					<td>
+						<obs conceptId="165725" answerConceptIds="165062,165075"/>
+					</td>
+					<td>
+						<obs conceptId="165723" answerConceptIds="160862,160858,160870" answerLabels="OD,BD,QDS"/>
+					</td>
+					<td>
+						<obs conceptId="159368" id="duration"/>
+					</td>
+					<td>
+						<obs conceptId="160856" id="qtyPrescribed"/>
+					</td>
+					<td>
+						<obs conceptId="1443" id="qtyDispensed"/>
+					</td>
+				</obsgroup>
+			</tr>
+
+		</table>
+	</fieldset>
+	<br/>
+
+	<fieldset>
+		<legend class="legend_style">Anti-TB Drugs</legend>
+		<table class="baseline-aligned">
+			<tr>
+				<td>
+					<label>Drugs</label>
+
+				</td>
+				<td>
+					<label>Strength</label>
+				</td>
+				<td>
+					<label>Frequency</label>
+				</td>
+				<td>
+					<label>Duration (in days)</label>
+				</td>
+				<td>
+					<label>Qty Prescribed</label>
+				</td>
+				<td>
+					<label>Qty Dispensed</label>
+				</td>
+			</tr>
+			<tr>
+				<obsgroup groupingConceptId="165728">
+					<td>
+						<obs conceptId="165304" answerConceptIds="1675" answerLabels="RHZE/RH"/>
+					</td>
+					<td>
+						<obs conceptId="165725" answerConceptIds="162401"/>
+					</td>
+					<td>
+						<obs conceptId="165723"/>
+					</td>
+					<td>
+						<obs conceptId="159368" id="duration"/>
+					</td>
+					<td>
+						<obs conceptId="160856" id="qtyPrescribed"/>
+					</td>
+					<td>
+						<obs conceptId="1443" id="qtyDispensed"/>
+					</td>
+				</obsgroup>
+			</tr>
+			<tr>
+				<obsgroup groupingConceptId="165728">
+					<td>
+						<obs conceptId="165304" answerConceptIds="83352" answerLabels="Rifabutin"/>
+					</td>
+					<td>
+						<obs conceptId="165725" answerConceptIds="165075"/>
+					</td>
+					<td>
+						<obs conceptId="165723"/>
+					</td>
+					<td>
+						<obs conceptId="159368" id="duration"/>
+					</td>
+					<td>
+						<obs conceptId="160856" id="qtyPrescribed"/>
+					</td>
+					<td>
+						<obs conceptId="1443" id="qtyDispensed"/>
+					</td>
+				</obsgroup>
+			</tr>
+		</table>
+	</fieldset>
+
+	<fieldset>
+		<legend class="legend_style">Signature</legend>
+		<table>
+			<tr>
+				<td>
+					<label>Ordered By:</label>
+					<encounterProvider role="Provider"/>
+				</td>
+				<td>
+					<label>Date orderd:</label>
+					<obs conceptId="164989" id="dateDrugOrdered"/>
+				</td>
+				<td>
+					<label>Dispensed By:</label>
+					<encounterProvider role="Provider"/>
+				</td>
+				<td>
+					<label>Date dispensed:</label>
+					<obs conceptId="164989" id="dateDrugOrdered"/>
+				</td>
+
+			</tr>
+		</table>
+	</fieldset>
+
+
+	<br/>
+
+	<fieldset>
+		<th>Feedback from the Pharmacist in case of any observed medication error </th>
+		<table class="baseline-aligned">
+			<br/>
+			<tr>
+				<td>
+					<label>Name of the drug(s):</label>
+				</td>
+				<td colspan="3">
+					<obs conceptId="164996" id="nameDrugError"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<label>Nature of ARV medication error(s):</label>
+				</td>
+				<td colspan="3">
+					<obs conceptId="165827" id="nameDrugError"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<label>Consequence(s) of the error:</label>
+				</td>
+				<td colspan="3">
+					<obs conceptId="165828" id="nameDrugError"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<label>Signature:</label>
+				</td>
+				<td colspan="3">
+					<encounterProvider role="Provider"/>
+				</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>
+					<label>Date:</label>
+				</td>
+				<td colspan="3">
+					<encounterDate default="today"/>
+				</td>
+				<td></td>
+			</tr>
+		</table>
+	</fieldset>
+
+	<ifMode mode="VIEW" include="false">
+		<div id="buttons">
+			<submit submitClass="confirm right" submitCode="general.save" />
+			<button type="button" class="cancel">
+				<uimessage code="general.cancel" />
+			</button>
+		</div>
+	</ifMode>
+
+
+
+</htmlform>

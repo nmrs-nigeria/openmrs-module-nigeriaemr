@@ -1,0 +1,1 @@
+$ mvn install:install-file -Dfile=lib/nmrs-signer-obs.jar -DgroupId=com.morris.NDRSigner -DartifactId=nmrs-encrypt-obs -Dversion=1.0 -Dpackaging=jar

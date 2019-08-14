@@ -1,0 +1,206 @@
+<htmlform formUuid="f826d129-dea8-4b6b-86bc-1f448076615b" formName="MedAdhrAssessment"
+          formEncounterType="5519fc4e-01c3-461a-b34b-c7843a2a7395 " formVersion="2016">
+    <style>
+        .section {
+        border: 1px solid $headerColor;
+        padding: 2px;
+        text-align: left;
+        margin-bottom: 1em;
+        }
+        .sectionHeader {
+        background-color: #2f1c55;
+        color: white;
+        /* display: block; */
+        padding: 2px;
+        font-weight: bold;
+        }
+        table tr:nth-child(even) {
+        background: #ffffff;
+        }
+        .alnright{
+        text-align: right;
+        color:#000000;
+        width: 25%;
+        }
+        .alnright_i{
+        text-align: right;
+        color:#000000;
+        width: 40%;
+        }
+        .alnleft{
+        text-align: left;
+        color:#000000;
+        width: 25%;
+        }
+        td {
+        border: none;
+        }
+        table th, table td {
+        padding: 5px 10px;
+        border: None;
+        }
+        .legend_style {
+        max-width: 35%;
+        background: #FAFAFA;
+        <!--padding: 5px;-->
+        margin: 0px left;
+        box-shadow: 1px 1px 25px rgba(0,0,0,0.10);
+        border-radius: 2px;
+        border: 1px solid #305a72;
+        border-bottom-left-radius: 2px;
+        text-transform:initial;
+
+        }
+        form fieldset, .form fieldset {
+        min-width: 98%;
+        border: none;
+        border-top: 1px solid #305a72;
+
+        }
+        table th, table td {
+        padding: 5px 10px;
+        /* border: 1px solid #DDD; */
+        }
+        table tr {
+        border: None;
+        }
+        ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form input, form select, form textarea, form ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        min-width: 180px;
+        }
+        form select, .form select {
+        max-width: 200px;
+        min-width: 180px;
+        }
+        body {
+        font-family: "OpenSans", Arial, sans-serif;
+        color: #363463;
+        font-size: 14px;
+        }
+        <!--table.baseline-aligned td {-->
+        <!--vertical-align: baseline;-->
+        <!--}-->
+    </style>
+
+    <div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+        <fieldset>
+            <legend class="legend_style">When?</legend>
+            <label>When?</label>
+            <encounterDate default="now" showTime="false" allowFutureDates="false"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Who?</legend>
+            <label>Who?</label>
+            <encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f"                                                     required="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Where?</legend>
+            <label>Where?</label>
+            <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+        </fieldset>
+    </div>
+    <table style="margin-bottom: 20px;">
+        <thead>
+            <tr><th colspan='5' style="text-align: center">Delivery Informtation</th></tr>
+        </thead>
+    </table>
+    <fieldset>
+        <table class="table" width="100%">
+
+            <tr>
+                <td class="alnright_s"> Date of delivery</td>
+                <td style="width:13%"><encounterDate default="now" showTime="false"/></td>
+                <td class="alnright_s">Time of HIV diagnosis</td>
+                <td style="width:13%">
+                    <obs id="dia" conceptId="164851" answerConceptIds="164850,1180,1622,165475"
+                         answerLabels="During labor and delivery,Postpartum,Antenatal care services,Previously known HIV+">
+                        <controls>
+                            <when value="164850" thenDisplay="#labour"/>
+                        </controls>
+                    </obs>
+                </td>
+                <td id="labour" class="alnright_s">
+                    <table>
+                        <tr>
+                            <td>Labour</td>
+                            <td><obs id="dia" conceptId="5630" answerConceptIds="165825,165826" answerLabels="1. Booked,2. Unbooked"/></td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="alnright_s"></td>
+
+            </tr>
+        </table>
+        <table class="table" width="100%">
+            <tr>
+                <td class="alnright_s">GA (wks) at birth</td>
+                <td class="left"><obs conceptId="1409"/></td>
+                <td class="alnright_s">Hepatitis B status</td>
+                <td class="value"><obs conceptId="159430" answerConceptIds="703,664" answerLabels="Positive,Negative"/></td>
+                <td class="alnright_s">Hepatitis C status</td>
+                <td class="value"><obs conceptId="161471" answerConceptIds="703,664" answerLabels="Positive,Negative"/></td>
+
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <table class="table" width="100%">
+            <tr>
+                <td class="alnright">Currently taking ARV</td>
+                <td>
+                    <obs conceptId="160119" answerConceptIds="1065,1066" answerLabels="Yes,No"/>
+                </td>
+
+                <td class="alnright">ART started in labour &amp; delivery ward</td>
+                <td>
+                    <obs conceptId="165563" answerConceptIds="1065,1066" answerLabels="Yes,No"/>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <table class="table" width="100%">
+            <tr>
+                <td class="alnright">ROM delivery interval</td>
+                <td><obs conceptId="165479"/></td>
+                <td class="alnright">Mode of delivery</td>
+                <td>
+                    <obs id="vd" conceptId="5630" answerConceptIds="1170,1171,159739"
+                         answerLabels="Vaginal,Elective CS, Emergency CS">
+                        <controls><when value="1170" thenDisplay="#vaginal"/>
+                        </controls></obs>
+                </td>
+            </tr>
+            <tr  id="vaginal">
+                <td class="alnright">Episiotomy done?</td>
+                <td><obs conceptId="5577" style="yes_no_dropdown"/></td>
+                <td class="alnright">Vaginal tear</td>
+                <td><obs conceptId="165929" answerConceptIds="1065,1066" answerLabels="Yes,No"/></td>
+            </tr>
+            <tr>
+                <td class="alnright">Feeding decision</td>
+                <td><obs conceptId="985" answerConceptIds="5526,164857" answerLabels="EBF,ERF"/></td>
+                <td class="alnright">Maternal outcome</td>
+                <td><obs conceptId="160085" answerConceptIds="160429,134612" answerLabels="Alive,Dead"/></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend class="legend_style">Signature</legend>
+        <table class="table" width="100%">
+            <tr>
+                <td>Clinican</td>
+                <td><encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f" required="true"/></td>
+                <td>Facility</td>
+                <td><encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/></td>
+            </tr>
+        </table>
+    </fieldset>
+    <submit/>
+</htmlform>
