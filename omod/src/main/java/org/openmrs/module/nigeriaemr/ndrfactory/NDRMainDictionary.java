@@ -1,12 +1,11 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import com.umb.ndr.signer.Signer;
+
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
-import org.openmrs.module.nigeriaemr.ndrUtils.EncryptUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
@@ -603,7 +602,6 @@ public class NDRMainDictionary {
         try {
 
             
-
             connection = DriverManager.getConnection(connResult.getUrl(), connResult.getUsername(), connResult.getPassword());
             Statement statement = connection.createStatement();
             String sqlStatement = ("SELECT template, fingerPosition, date_created FROM biometricinfo WHERE patient_Id = " + id);

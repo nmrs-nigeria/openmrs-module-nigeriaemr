@@ -137,7 +137,7 @@ public class NdrFragmentController {
 						LoggerUtils.write(NdrFragmentController.class.getName(),
 						    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
 						try {
-							cnt.setValidation(generator.getValidation());
+							
 							String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_"
 							        + Utils.getPatientPEPFARId(patient);
 							

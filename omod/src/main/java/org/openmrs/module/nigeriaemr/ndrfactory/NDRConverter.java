@@ -1,6 +1,5 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import com.umb.ndr.signer.Signer;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -23,7 +22,6 @@ import org.openmrs.Patient;
 import org.openmrs.PersonAddress;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
-import org.openmrs.module.nigeriaemr.ndrUtils.EncryptUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Validator;
 import org.openmrs.module.nigeriaemr.ndrUtils.CustomErrorHandler;
@@ -514,40 +512,4 @@ public class NDRConverter {
 		}
 	}
 	
-	public String getValidation() {
-		String textToEnc = "";
-		textToEnc += System.getProperty("os.arch");
-		textToEnc += "|";
-		textToEnc += System.getProperty("os.name");
-		textToEnc += "|";
-		textToEnc += System.getProperty("os.version");
-		textToEnc += "|";
-		textToEnc += System.getProperty("OPENMRS_APPLICATION_DATA_DIRECTORY");
-		textToEnc += "|";
-		textToEnc += System.getProperty("java.version");
-		textToEnc += "|";
-		textToEnc += System.getProperty("user.home");
-		
-		try {
-			Version version = Utils.getNmrsVersion();
-			textToEnc += "|";
-			textToEnc += version.getPbs();
-			textToEnc += "|";
-			textToEnc += version.getExport();
-			//String returnVar = EncryptUtils.encrypt(textToEnc, "NDR_P@55w0rd");
-			String returnVar = Signer.encryptText(textToEnc);
-			String hashReturnVar = Base64.getEncoder().encodeToString(returnVar.getBytes());
-			returnVar += "||";
-			//add hash of encrpt string
-			returnVar += hashReturnVar;
-			returnVar += "||";
-			returnVar += version.getValidator();
-			return returnVar;
-		}
-		catch (Exception e) {
-			LoggerUtils.write(NDRConverter.class.getName(), e.getMessage(), LogFormat.FATAL, LogLevel.live);
-			e.printStackTrace();
-			return "";
-		}
-	}
 }
