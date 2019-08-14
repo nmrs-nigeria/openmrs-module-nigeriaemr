@@ -82,7 +82,7 @@ def id = config.id
     jq = jQuery;
     jq('#wait').hide();
     jq(function() {
-        jq('#${ id }_button_tester').click(function() {
+        jq('#${ id }_button_contact').click(function() {
     jq('#gen-wait').show();
 
     jq.ajax({
@@ -91,7 +91,9 @@ def id = config.id
     data: {
     'indexClientId': '10'
     }
-    .success(function(data) {
+    
+
+    }).success(function(data) {
     jq('#gen-wait').hide();
     alert(data);
     console.log(data);
@@ -99,8 +101,6 @@ def id = config.id
     .error(function(xhr, status, err) {
     jq('#gen-wait').hide();
     alert(data);
-
-    })
 
     }); 
     });
