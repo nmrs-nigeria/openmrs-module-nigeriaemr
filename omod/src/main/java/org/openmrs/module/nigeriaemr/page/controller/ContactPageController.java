@@ -31,6 +31,7 @@ public class ContactPageController {
 	        @RequestParam("notification_method") String notification_method,
 	        @RequestParam("more_information") String more_information,
 	        @RequestParam("assign_contact_to_cec") String assign_contact_to_cec,
+	        @RequestParam("community_tester_guid") String community_tester_guid,
 	        @RequestParam("community_tester_name") String community_tester_name, @RequestParam("code") String code) {
 		
 		String responseMsg = "";
@@ -41,6 +42,7 @@ public class ContactPageController {
 			newcontact.setAssign_contact_to_cec(resolveYesNo(assign_contact_to_cec));
 			if (assign_contact_to_cec.equals("Yes")) {
 				newcontact.setCommunity_tester_name(community_tester_name);
+				newcontact.setCommunity_tester_guid(community_tester_guid);
 			}
 			
 			newcontact.setCountry("Nigeria");
@@ -60,11 +62,12 @@ public class ContactPageController {
 			newcontact.setUuid(UUID.randomUUID().toString());
 			newcontact.setVillage(village);
 			newcontact.setCode(code);
-			
+			newcontact.setTrace_status("pending");
+                        
 			pcService.createContacts(newcontact);
 			responseMsg = "Patient created successfully!";
-			
 		}
+		
 		catch (Exception ex) {
 			ex.printStackTrace();
 			responseMsg = "Error occurred, try again";

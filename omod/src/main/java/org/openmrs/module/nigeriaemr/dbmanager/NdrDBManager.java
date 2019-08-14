@@ -158,6 +158,7 @@ public class NdrDBManager {
 		
 		pStatement = conn.prepareStatement("select * from " + ConstantsUtil.PATIENT_CONTACT_TABLE
 		        + " where index_patient_id = ? ");
+		pStatement.setInt(1, indexClientId);
 		ResultSet resultSet = pStatement.executeQuery();
 		
 		return convertResultsetsToPatientContacts(resultSet);
