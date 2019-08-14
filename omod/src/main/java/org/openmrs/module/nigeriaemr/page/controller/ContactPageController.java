@@ -63,7 +63,7 @@ public class ContactPageController {
 			newcontact.setVillage(village);
 			newcontact.setCode(code);
 			newcontact.setTrace_status("pending");
-                        
+			
 			pcService.createContacts(newcontact);
 			responseMsg = "Patient created successfully!";
 		}

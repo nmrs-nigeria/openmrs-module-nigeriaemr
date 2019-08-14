@@ -393,7 +393,7 @@ public class Utils {
 	
 	public static String getPatientHospitalNo(Patient patient) {
 		
-		PatientIdentifier patientId = patient.getPatientIdentifier(Patient_Hospital_Id);
+		PatientIdentifier patientId = patient.getPatientIdentifier(ConstantsUtil.HOSPITAL_IDENTIFIER_INDEX);
 		
 		if (patientId != null) {
 			return patientId.getIdentifier();
