@@ -8,6 +8,7 @@ package org.openmrs.module.nigeriaemr.page.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Date;
 import java.util.UUID;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientContactsModel;
 import org.openmrs.module.nigeriaemr.omodmodels.TesterModel;
@@ -33,7 +34,10 @@ public class ContactPageController {
 	        @RequestParam("more_information") String more_information,
 	        @RequestParam("assign_contact_to_cec") String assign_contact_to_cec,
 	        @RequestParam("community_tester_guid") String community_tester_guid,
-	        @RequestParam("community_tester_name") String community_tester_name, @RequestParam("code") String code) {
+	        @RequestParam("community_tester_name") String community_tester_name,
+	        @RequestParam("firstname") String firstname, @RequestParam("lastname") String lastname
+	//   @RequestParam("code") String code
+	) {
 		
 		String responseMsg = "";
 		try {
@@ -62,14 +66,18 @@ public class ContactPageController {
 			newcontact.setTown(town);
 			newcontact.setUuid(UUID.randomUUID().toString());
 			newcontact.setVillage(village);
-			newcontact.setCode(code);
 			newcontact.setTrace_status("pending");
 			newcontact.setDatim_code(Utils.getFacilityDATIMId());
+			newcontact.setCreated_by(Context.getUserContext().getAuthenticatedUser().getUsername());
+			newcontact.setCode(Context.getPatientService().getPatient(Integer.parseInt(index_patient_id))
+			        .getPatientIdentifier(8).getIdentifier());
+			newcontact.setFirstname(firstname);
+			newcontact.setLastname(lastname);
 			
 			pcService.createContacts(newcontact);
+			
 			responseMsg = "Patient created successfully!";
 		}
-		
 		catch (Exception ex) {
 			ex.printStackTrace();
 			responseMsg = "Error occurred, try again";

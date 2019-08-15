@@ -36,6 +36,12 @@
     animation: fadeEffect 1s; /* Fading effect takes 1 second */
 }
 
+/*.input-w label, .input-w input {
+    float: none; !* if you had floats before? otherwise inline-block will behave differently *!
+    display: inline-block;
+    vertical-align: middle;
+}*/
+
 /* Go from zero to full opacity */
 @keyframes fadeEffect {
     from {opacity: 0;}
@@ -66,26 +72,7 @@
 
     </style>
     <div class="row wrapper  white-bg page-heading"  style="">
-        <div class="col-lg-8 offset-lg-2">
 
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <a class="navbar-brand" href="#">Attach contact to CEC</a>
-                <div class="collapse navbar-collapse" id="navbarColor02">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active"  >
-                            <a class="nav-link"href="#">Home <span class="sr-only">(current)</span></a>
-                        </li>
-
-                    </ul>
-                    <form class="form-inline my-2 my-lg-0">
-                        <button class="btn btn-secondary my-2 my-sm-0" type="submit" style="margin-right: 5px">Add new Contact</button>
-                        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Add community tester</button>
-                    </form>
-                </div>
-            </nav>
-
-
-        </div>
     </div>
 
 
@@ -114,9 +101,22 @@
 
 
             <table cellspacing="0" cellpadding="0">
+
                 <tr>
                     <td>
+                        <label for="firstname">Firstname</label><input type="text" class="form-control" name="firstname" id="firstname" placeholder="firstname"></td>
+
+                    <td>
+                        <label for="lastname">Lastname</label><input type="text" class="form-control" name="lastname" id="lastname" placeholder="lastname"></td>
+
+                    <td>
                         <label for="age">Age</label><input type="text" class="form-control" name="age" id="age" placeholder="Age"></td>
+
+                </tr>
+                <br/>
+
+                <tr>
+
 
                     <td><label for="sex">Sex</label>
                         <select id="sex" name="sex" class="form-control">
@@ -125,18 +125,6 @@
                             <option>Female</option>
                         </select> </td>
 
-                    <td><label for="preferred_testing_location">Contacts preffered testing location</label>
-                        <select id="preferred_testing_location" name="preferred_testing_location" class="form-control">
-                            <option selected>Choose...</option>
-                            <option>Facility</option>
-                            <option>Community level</option>
-                            <option>Other location</option>
-                        </select> </td>
-                </tr>
-                <br/>
-
-
-                <tr>
                     <td>
                         <label for="state">State</label>
                         <select id="state" name="state" class="form-control">
@@ -185,36 +173,78 @@
                             <option selected>Choose...</option>
 
                         </select></td>
-
-                    <td><label for="town">Town</label>
-                        <input type="text" class="form-control" id="town" name="town" > </td>
                 </tr>
+                <br/>
 
 
                 <tr>
+
+
+                    <td><label for="town">Town</label>
+                        <input type="text" class="form-control" id="town" name="town" > </td>
+
                     <td>
                         <label for="village">Village</label>
                         <input type="text" class="form-control" id="village" placeholder="village of origin"></td>
 
+                    <td><label for="preferred_testing_location">Contacts preffered testing location</label>
+                        <select id="preferred_testing_location" name="preferred_testing_location" class="form-control">
+                            <option selected>Choose...</option>
+                            <option>Facility</option>
+                            <option>Community level</option>
+                            <option>Other location</option>
+                        </select> </td>
                 </tr>
+
+
             </table>
+<div>
+    <fieldset>
+        <legend>Relationship situations</legend>
 
-            <fieldset>
-                <legend>Relationship situations</legend>
+        <div class="form-control">
+            <div class="form-group">
+            <div class="row">
+                <div class="col-md-8">
+                    <label  for="physically_abused">Physical abuse (hit, kicked, slapped or phisically hurt) within the last year</label>
+                </div>
 
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label><input type="checkbox" name="physically_abused" value=""><span class="" style="padding-left: 10px">Physical abuse (hit, kicked, slapped or phisically hurt) within the last year</span></label>
-                    </div>
-                    <div class="checkbox">
-                        <label><input type="checkbox" name="forced_sexually" value=""><span class="" style="padding-left: 10px">Forced sexual activities within the last year</span></label>
-                    </div>
-                    <div class="checkbox">
-                        <label><input type="checkbox" value="" name="fear_their_partner" ><span class="" style="padding-left: 10px">Fear their partner</span></label>
-                    </div>
+                <div class="col-md-4">
+                    <select id="physically_abused" name="physically_abused" class="form-control col-md-4">
+                        <option selected>No</option>
+                        <option >Yes</option>
+                    </select>
 
                 </div>
-            </fieldset>
+
+            </div>
+            </div>
+
+<div class="row">
+            <div class="form-group">
+                <label  class="col-md-8" for="forced_sexually">Forced sexual activities within the last year</label>
+                <select id="forced_sexually" name="forced_sexually" class="form-control col-md-4">
+                    <option selected>No</option>
+                    <option>Yes</option>
+
+                </select>
+            </div>
+</div>
+
+<div class="row">
+            <div class="form-group">
+                <label class="col-md-8" for="fear_their_partner">Fear their partner</label>
+                <select id="fear_their_partner" name="fear_their_partner" class="form-control col-md-4">
+                    <option selected>No</option>
+                    <option>Yes</option>
+
+                </select></div>
+
+        </div>
+        </div>
+    </fieldset>
+</div>
+
 
 
 
@@ -264,35 +294,39 @@
             </fieldset>
 
 
-            <button type="submit" class="btn btn-primary">Add contact</button>
+
+
+            <br>
+
+            <div id="community_tester" class="form-control" style="display: none">
+
+                <fieldset>
+                    <legend>
+                        Choose Community Tester
+                    </legend>
+                    <div >
+                        <select id="testers_list" name="community_tester_guid" class="form-control">
+                            <option selected>Choose...</option>
+                            <% testers.each { %>
+                            <option value="${ui.format(it.community_tester_guid)}">${ui.format(it.username)}</option>
+                            <% } %>
+                        </select>
+
+                        <input type="text" id="community_tester_name_input" name="community_tester_name" disabled="true" style="display: none"/>
+                    </div>
+                </fieldset>
+            </div>
+            <br>
+            <div> <button type="submit" class="btn btn-primary">Add contact</button> </div>
 
         </form>
     </div>
 
-    <br>
+
 
 </div>
 
-<div id="community_tester" class="form-control" style="display: none">
 
-    <fieldset>
-        <legend>
-            Choose Community Tester
-        </legend>
-        <div >
-            <select id="testers_list" name="community_tester_guid" class="form-control">
-                <option selected>Choose...</option>
-                <% testers.each { %>
-                <option value="${ui.format(it.community_tester_guid)}">${ui.format(it.username)}</option>
-                <% } %>
-            </select>
-
-            <input type="text" id="community_tester_name_input" name="community_tester_name" disabled="true" style="display: none"/>
-        </div>
-    </fieldset>
-</div>
-
-</br>
 
 
 <div id="Contacts_Listing" class="tabcontent">
