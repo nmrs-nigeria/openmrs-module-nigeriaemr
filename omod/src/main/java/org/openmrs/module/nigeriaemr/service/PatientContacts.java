@@ -18,18 +18,25 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.id.IntegralDataTypeHolder;
+import org.openmrs.EncounterType;
+import org.openmrs.Field;
+import org.openmrs.Form;
+import org.openmrs.FormField;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.htmlformentry.HtmlForm;
+import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.nigeriaemr.dbmanager.NdrDBManager;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.GeneralMapper;
 import org.openmrs.module.nigeriaemr.omodmodels.Client;
 import org.openmrs.module.nigeriaemr.omodmodels.CommunityTestersPayload;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientContactsModel;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author MORRISON.I
@@ -79,6 +86,7 @@ public class PatientContacts {
 		
 	}
 	
+	@Transactional
 	public void createPatientAndFillHTS(Client client, String indexClientIndentifier, Location location) {
 
         Patient p = new Patient(GeneralMapper.ClientToPerson(client));
@@ -101,6 +109,16 @@ public class PatientContacts {
         
 
         Context.getPatientService().savePatient(p);
+        
+        
+           
+        
+        HtmlFormEntryService service =  Context.getService(HtmlFormEntryService.class);
+            HtmlForm hf = new HtmlForm();
+             Form f = new Form();
+            hf.setForm(f);
+           EncounterType et = new EncounterType();
+        
 
         // Set<>
     }

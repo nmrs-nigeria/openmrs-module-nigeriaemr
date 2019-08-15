@@ -109,60 +109,58 @@ public class NdrFragmentController {
 			//			
 			for (Patient patient : patients) {
 				
-				if (patient.getId() == 14 || patient.getId() == 19 || patient.getId() == 21) {
-					Container cnt = null;
+				//if (patient.getId() == 14 || patient.getId() == 19 || patient.getId() == 21) {
+				Container cnt = null;
+				try {
+					LoggerUtils.write(NdrFragmentController.class.getName(),
+					    "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
+					LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
+					        + patient.getId(), LoggerUtils.LogFormat.INFO, LogLevel.live);
+					long startTime = System.currentTimeMillis();
+					cnt = generator.createContainer(patient, facility);
+					long endTime = System.currentTimeMillis();
+					LoggerUtils.write(NdrFragmentController.class.getName(), "Finished Export for patient with id: "
+					        + patient.getId() + " Time Taken: " + (endTime - startTime) + " milliseconds",
+					    LoggerUtils.LogFormat.INFO, LogLevel.live);
+				}
+				catch (Exception ex) {
+					LoggerUtils.write(
+					    NdrFragmentController.class.getName(),
+					    MessageFormat.format("Could not parse patient with id: {0},{1},{2} ",
+					        Integer.toString(patient.getId()), "\r\n", ex.getMessage()), LogFormat.FATAL, LogLevel.live);
+					cnt = null;
+				}
+				
+				if (cnt != null) {
+					LoggerUtils.write(NdrFragmentController.class.getName(),
+					    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
 					try {
-						LoggerUtils
-						        .write(NdrFragmentController.class.getName(),
-						            "#################### #################### ####################", LogFormat.FATAL,
-						            LogLevel.live);
-						LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
-						        + patient.getId(), LoggerUtils.LogFormat.INFO, LogLevel.live);
-						long startTime = System.currentTimeMillis();
-						cnt = generator.createContainer(patient, facility);
-						long endTime = System.currentTimeMillis();
-						LoggerUtils.write(NdrFragmentController.class.getName(), "Finished Export for patient with id: "
-						        + patient.getId() + " Time Taken: " + (endTime - startTime) + " milliseconds",
-						    LoggerUtils.LogFormat.INFO, LogLevel.live);
+						
+						String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_"
+						        + Utils.getPatientHospitalNo(patient);
+						//   + Utils.getPatientPEPFARId(patient);
+						
+						// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
+						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
+						
+						File aXMLFile = new File(xmlFile);
+						Boolean b;
+						if (aXMLFile.exists()) {
+							b = aXMLFile.delete();
+							System.out.println("deleting file : " + xmlFile + "was successful : " + b);
+						}
+						b = aXMLFile.createNewFile();
+						
+						System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
+						generator.writeFile(cnt, aXMLFile);
 					}
 					catch (Exception ex) {
-						LoggerUtils.write(
-						    NdrFragmentController.class.getName(),
-						    MessageFormat.format("Could not parse patient with id: {0},{1},{2} ",
-						        Integer.toString(patient.getId()), "\r\n", ex.getMessage()), LogFormat.FATAL, LogLevel.live);
-						cnt = null;
+						LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
+						    LogLevel.live);
 					}
-					
-					if (cnt != null) {
-						LoggerUtils.write(NdrFragmentController.class.getName(),
-						    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
-						try {
-							
-							String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_"
-							        + Utils.getPatientHospitalNo(patient);
-							//   + Utils.getPatientPEPFARId(patient);
-							
-							// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
-							String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
-							
-							File aXMLFile = new File(xmlFile);
-							Boolean b;
-							if (aXMLFile.exists()) {
-								b = aXMLFile.delete();
-								System.out.println("deleting file : " + xmlFile + "was successful : " + b);
-							}
-							b = aXMLFile.createNewFile();
-							
-							System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
-							generator.writeFile(cnt, aXMLFile);
-						}
-						catch (Exception ex) {
-							LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
-							    LogLevel.live);
-						}
-					}
-					
 				}
+				
+				//}
 				
 			}
 			

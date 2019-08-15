@@ -125,31 +125,35 @@ public class NdrDBManager {
 		pStatement = conn.prepareStatement("insert into " + ConstantsUtil.PATIENT_CONTACT_TABLE
 		        + "(uuid, index_patient_id, relationship, age, sex, " + "preferred_testing_location, state, lga, town, "
 		        + "village, physically_abused, forced_sexually, fear_their_partner, notification_method,"
-		        + " more_information, assign_contact_to_cec, community_tester_name, date_created, "
-		        + "created_by,code,datim_code,community_tester_guid,trace_status)"
-		        + "Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?,?)");
+		        + " more_information, assign_contact_to_cec, community_tester_name, "
+		        + "created_by,code,datim_code,community_tester_guid,trace_status,country,firstname,lastname)"
+		        + "Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),date_createdd)");
 		
 		pStatement.setString(1, UUID.randomUUID().toString());
 		pStatement.setInt(2, model.getIndex_patient_id());
-		pStatement.setInt(3, model.getAge());
-		pStatement.setString(4, model.getSex());
-		pStatement.setString(5, model.getPreferred_testing_location());
-		pStatement.setString(6, model.getState());
-		pStatement.setString(7, model.getLga());
-		pStatement.setString(8, model.getTown());
-		pStatement.setString(9, model.getVillage());
-		pStatement.setString(10, model.getPhysically_abused());
-		pStatement.setString(11, model.getForced_sexually());
-		pStatement.setString(12, model.getFear_their_partner());
-		pStatement.setString(13, model.getNotification_method());
-		pStatement.setString(14, model.getMore_information());
-		pStatement.setInt(15, model.getAssign_contact_to_cec());
-		pStatement.setString(16, model.getCommunity_tester_name());
-		pStatement.setString(17, model.getCreated_by());
-		pStatement.setString(18, model.getCode());
-		pStatement.setString(19, model.getDatim_code());
-		pStatement.setString(20, model.getCommunity_tester_guid());
-		pStatement.setString(21, model.getTrace_status());
+		pStatement.setString(3, model.getRelationship());
+		pStatement.setInt(4, model.getAge());
+		pStatement.setString(5, model.getSex());
+		pStatement.setString(6, model.getPreferred_testing_location());
+		pStatement.setString(7, model.getState());
+		pStatement.setString(8, model.getLga());
+		pStatement.setString(9, model.getTown());
+		pStatement.setString(10, model.getVillage());
+		pStatement.setString(11, model.getPhysically_abused());
+		pStatement.setString(12, model.getForced_sexually());
+		pStatement.setString(13, model.getFear_their_partner());
+		pStatement.setString(14, model.getNotification_method());
+		pStatement.setString(15, model.getMore_information());
+		pStatement.setInt(16, model.getAssign_contact_to_cec());
+		pStatement.setString(17, model.getCommunity_tester_name());
+		pStatement.setString(18, model.getCreated_by());
+		pStatement.setString(19, model.getCode());
+		pStatement.setString(20, model.getDatim_code());
+		pStatement.setString(21, model.getCommunity_tester_guid());
+		pStatement.setString(22, model.getTrace_status());
+		pStatement.setString(23, model.getCountry());
+		pStatement.setString(24, model.getFirstname());
+		pStatement.setString(25, model.getLastname());
 		
 		return pStatement.executeUpdate();
 	}
