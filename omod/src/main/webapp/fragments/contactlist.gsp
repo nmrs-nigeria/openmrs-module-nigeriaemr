@@ -100,7 +100,7 @@ def id = config.id
     })
     .error(function(xhr, status, err) {
     jq('#gen-wait').hide();
-    alert(data);
+    alert('An error occured');
 
     }); 
     });
