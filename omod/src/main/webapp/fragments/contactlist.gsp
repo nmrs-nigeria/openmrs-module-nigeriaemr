@@ -89,7 +89,7 @@ def id = config.id
         url: "${ ui.actionLink("nigeriaemr", "ndr", "getIndexContacts") }",
     dataType: "json",
     data: {
-    'indexClientId': '10'
+    'indexClientId': '7'
     }
     
 

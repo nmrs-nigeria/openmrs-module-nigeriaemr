@@ -8,6 +8,7 @@ package org.openmrs.module.nigeriaemr.page.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Date;
 import java.util.UUID;
+import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientContactsModel;
 import org.openmrs.module.nigeriaemr.omodmodels.TesterModel;
 import org.openmrs.module.nigeriaemr.service.CommunityTesters;
@@ -63,6 +64,7 @@ public class ContactPageController {
 			newcontact.setVillage(village);
 			newcontact.setCode(code);
 			newcontact.setTrace_status("pending");
+			newcontact.setDatim_code(Utils.getFacilityDATIMId());
 			
 			pcService.createContacts(newcontact);
 			responseMsg = "Patient created successfully!";
