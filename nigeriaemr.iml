@@ -1,35 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="Spring" name="Spring">
-      <configuration />
-    </facet>
-  </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:htmlformentry-api:3.4.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: joda-time:joda-time:2.9.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.joda:joda-convert:1.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.anotheria:ano-web:2.1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:htmlformentryui-api:1.6.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:uiframework-api:3.13.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.jknack:handlebars:1.3.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.antlr:antlr4-runtime:4.2.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.antlr:antlr4-annotations:4.2.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mozilla:rhino:1.7R4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.owasp.encoder:encoder:1.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:formentryapp-omod:1.4.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:formentryapp-api:1.4.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.module:appframework-api:2.10.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.openmrs.api:openmrs-api:1.11.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-collections:commons-collections:3.2.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.commons:commons-lang3:3.1" level="project" />
