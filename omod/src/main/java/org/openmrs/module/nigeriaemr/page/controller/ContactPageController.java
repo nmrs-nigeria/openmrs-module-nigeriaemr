@@ -35,8 +35,7 @@ public class ContactPageController {
 	        @RequestParam("assign_contact_to_cec") String assign_contact_to_cec,
 	        @RequestParam("community_tester_guid") String community_tester_guid,
 	        @RequestParam("community_tester_name") String community_tester_name,
-	        @RequestParam("firstname") String firstname, @RequestParam("lastname") String lastname
-	) {
+	        @RequestParam("firstname") String firstname, @RequestParam("lastname") String lastname) {
 		
 		String responseMsg = "";
 		try {

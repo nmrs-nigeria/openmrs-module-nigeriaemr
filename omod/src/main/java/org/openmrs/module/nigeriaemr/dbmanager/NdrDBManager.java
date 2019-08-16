@@ -203,6 +203,9 @@ public class NdrDBManager {
             pModel.setDatim_code(resultset.getString("datim_code"));
             pModel.setCommunity_tester_guid(resultset.getString("community_tester_guid"));
             pModel.setTrace_status(resultset.getString("trace_status"));
+            pModel.setCountry(resultset.getString("country"));
+            pModel.setFirstname(resultset.getString("firstname"));
+            pModel.setLastname(resultset.getString("lastname"));
             
             response.add(pModel);
             
