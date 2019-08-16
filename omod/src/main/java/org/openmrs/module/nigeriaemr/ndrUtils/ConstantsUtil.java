@@ -28,6 +28,9 @@ public class ConstantsUtil {
 	
 	public static final String PATIENT_CONTACT_TABLE = "patient_contacts";
 	
+	public static final int ADMISSION_ENCOUNTER_TYPE = 8;
+	
+	//Endpoints
 	//public static final String BASE_URL = "https://hts.shieldnigeriaproject.com/api";
 	
 	public static final String BASE_URL = "https://hts.shieldnigeriaproject.com/api/nmrs";
