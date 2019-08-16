@@ -14,7 +14,7 @@ def id = config.id
 
                 <h5>
                     <br/>
-                    <input style="width: 40%;font-size: 16px; padding: 12px 20px 12px 40px; border: 1px solid #ddd; margin-bottom: 12px;" class="heading-text pull-left" type="text" id="nameSearch" onkeyup="myFunction()" placeholder="Search..">
+                    <input style="width: 40%;font-size: 16px; padding: 12px 20px 12px 40px; border: 1px solid #ddd; margin-bottom: 12px;" class="heading-text pull-left" type="text" id="nameSearch" onkeyup="" placeholder="Search..">
 
                     <button id="${ id }_button_contact" type="Reload List" class="btn btn-primary heading-text pull-right">Refresh Contact List</button>
                     <br/><br/>
@@ -34,7 +34,7 @@ def id = config.id
 
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="TableBody">
 
 
 
@@ -97,10 +97,19 @@ def id = config.id
     jq('#gen-wait').hide();
     alert(data);
     console.log(data);
+    
+    if(data!="")
+    {
+        for(var i=0;i<data.length;i++)
+        {
+        
+        }
+    }
+    
     })
     .error(function(xhr, status, err) {
     jq('#gen-wait').hide();
-    alert(data);
+    alert('An error occured');
 
     }); 
     });
