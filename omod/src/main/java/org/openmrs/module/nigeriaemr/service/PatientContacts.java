@@ -121,8 +121,10 @@ public class PatientContacts {
         et.setEncounterTypeId(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE);
         f.setEncounterType(et);
         FormField formField = new FormField();
-      //  formField.set
-
-        // Set<>
+        
+        
+       
+        
+      
     }
 }

@@ -317,7 +317,9 @@
                 </fieldset>
             </div>
             <br>
-            <div> <button type="submit" class="btn btn-primary">Add contact</button> </div>
+            <div>
+                <input type="submit" />
+                <button type="submit" class="btn btn-primary">Add contact</button> </div>
 
         </form>
     </div>

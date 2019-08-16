@@ -36,7 +36,6 @@ public class ContactPageController {
 	        @RequestParam("community_tester_guid") String community_tester_guid,
 	        @RequestParam("community_tester_name") String community_tester_name,
 	        @RequestParam("firstname") String firstname, @RequestParam("lastname") String lastname
-	//   @RequestParam("code") String code
 	) {
 		
 		String responseMsg = "";
