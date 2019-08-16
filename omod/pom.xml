@@ -75,11 +75,16 @@
             <artifactId>groovy-all</artifactId>
             <version>2.4.5</version>
         </dependency>
-        <dependency>
+      <dependency>
+		    <groupId>org.openmrs.module</groupId>
+		    <artifactId>htmlformentry-api</artifactId>
+		    <scope>provided</scope>
+		</dependency>
+		
+		<dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry</artifactId>
-            <version>1.8.1</version>
-            <type>jar</type>
+            <artifactId>htmlformentryui-api</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
