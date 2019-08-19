@@ -1,13 +1,13 @@
 <style>
-/* Style the tab */
-.tab {
+    /* Style the tab */
+    .tab {
     overflow: hidden;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
-}
+    }
 
-/* Style the buttons that are used to open the tab content */
-.tab button {
+    /* Style the buttons that are used to open the tab content */
+    .tab button {
     background-color: inherit;
     float: left;
     border: none;
@@ -15,38 +15,38 @@
     cursor: pointer;
     padding: 14px 16px;
     transition: 0.3s;
-}
+    }
 
-/* Change background color of buttons on hover */
-.tab button:hover {
+    /* Change background color of buttons on hover */
+    .tab button:hover {
     background-color: #ddd;
-}
+    }
 
-/* Create an active/current tablink class */
-.tab button.active {
+    /* Create an active/current tablink class */
+    .tab button.active {
     background-color: #ccc;
-}
+    }
 
-/* Style the tab content */
-.tabcontent {
+    /* Style the tab content */
+    .tabcontent {
     display: none;
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
     animation: fadeEffect 1s; /* Fading effect takes 1 second */
-}
+    }
 
-/*.input-w label, .input-w input {
+    /*.input-w label, .input-w input {
     float: none; !* if you had floats before? otherwise inline-block will behave differently *!
     display: inline-block;
     vertical-align: middle;
-}*/
+    }*/
 
-/* Go from zero to full opacity */
-@keyframes fadeEffect {
+    /* Go from zero to full opacity */
+    @keyframes fadeEffect {
     from {opacity: 0;}
     to {opacity: 1;}
-}
+    }
 </style>
 
 <!-- Tab links -->
@@ -66,9 +66,9 @@
 
     <style>
 
-    table, tr, td {
+        table, tr, td {
         border: none;
-    }
+        }
 
     </style>
     <div class="row wrapper  white-bg page-heading"  style="">
@@ -79,11 +79,11 @@
 
 
     <div class="container" style="padding-top: 10px;">
-        <form>
+        <form method="post">
             <fieldset>
                 <div>
                     <legend> Index Client Patient Id</legend>
-                    <input type="text" name="index_patient_id" value="7" disabled="true" />
+                    <input type="hidden" name="index_patient_id" value="7" class="form-control" />
                 </div>
 
                 <legend> Relationship</legend>
@@ -185,7 +185,7 @@
 
                     <td>
                         <label for="village">Village</label>
-                        <input type="text" class="form-control" id="village" placeholder="village of origin"></td>
+                        <input type="text" class="form-control" id="village" name="village" placeholder="village of origin"></td>
 
                     <td><label for="preferred_testing_location">Contacts preffered testing location</label>
                         <select id="preferred_testing_location" name="preferred_testing_location" class="form-control">
@@ -198,52 +198,52 @@
 
 
             </table>
-<div>
-    <fieldset>
-        <legend>Relationship situations</legend>
+            <div>
+                <fieldset>
+                    <legend>Relationship situations</legend>
 
-        <div class="form-control">
-            <div class="form-group">
-            <div class="row">
-                <div class="col-md-8">
-                    <label  for="physically_abused">Physical abuse (hit, kicked, slapped or phisically hurt) within the last year</label>
-                </div>
+                    <div class="form-control">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label  for="physically_abused">Physical abuse (hit, kicked, slapped or phisically hurt) within the last year</label>
+                                </div>
 
-                <div class="col-md-4">
-                    <select id="physically_abused" name="physically_abused" class="form-control col-md-4">
-                        <option selected>No</option>
-                        <option >Yes</option>
-                    </select>
+                                <div class="col-md-4">
+                                    <select id="physically_abused" name="physically_abused" class="form-control col-md-4">
+                                        <option selected>No</option>
+                                        <option >Yes</option>
+                                    </select>
 
-                </div>
+                                </div>
 
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label  class="col-md-8" for="forced_sexually">Forced sexual activities within the last year</label>
+                                <select id="forced_sexually" name="forced_sexually" class="form-control col-md-4">
+                                    <option selected>No</option>
+                                    <option>Yes</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label class="col-md-8" for="fear_their_partner">Fear their partner</label>
+                                <select id="fear_their_partner" name="fear_their_partner" class="form-control col-md-4">
+                                    <option selected>No</option>
+                                    <option>Yes</option>
+
+                                </select></div>
+
+                        </div>
+                    </div>
+                </fieldset>
             </div>
-            </div>
-
-<div class="row">
-            <div class="form-group">
-                <label  class="col-md-8" for="forced_sexually">Forced sexual activities within the last year</label>
-                <select id="forced_sexually" name="forced_sexually" class="form-control col-md-4">
-                    <option selected>No</option>
-                    <option>Yes</option>
-
-                </select>
-            </div>
-</div>
-
-<div class="row">
-            <div class="form-group">
-                <label class="col-md-8" for="fear_their_partner">Fear their partner</label>
-                <select id="fear_their_partner" name="fear_their_partner" class="form-control col-md-4">
-                    <option selected>No</option>
-                    <option>Yes</option>
-
-                </select></div>
-
-        </div>
-        </div>
-    </fieldset>
-</div>
 
 
 
@@ -317,7 +317,9 @@
                 </fieldset>
             </div>
             <br>
-            <div> <button type="submit" class="btn btn-primary">Add contact</button> </div>
+            <div>
+                <input type="submit" value="Add contact" class="btn btn-primary" />
+            </div>
 
         </form>
     </div>
@@ -337,18 +339,18 @@
 </div>
 <script type="text/javascript">
     jQuery('#testers_list').on('change', function() {
-        var communityTesterName = jQuery("#testers_list option:selected").text();
-        jQuery("#community_tester_name_input").val(communityTesterName);
+    var communityTesterName = jQuery("#testers_list option:selected").text();
+    jQuery("#community_tester_name_input").val(communityTesterName);
 
     });
 
     function showTester(){
-        jQuery('#community_tester').show(500);
+    jQuery('#community_tester').show(500);
 
     }
 
     function hideTester(){
-        jQuery('#community_tester').hide(500);
+    jQuery('#community_tester').hide(500);
 
     }
 
@@ -361,24 +363,24 @@
     document.getElementById("defaultOpen").click();
 
     function openTab(evt, tabName) {
-        // Declare all variables
-        var i, tabcontent, tablinks;
+    // Declare all variables
+    var i, tabcontent, tablinks;
 
-        // Get all elements with class="tabcontent" and hide them
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+    }
 
-        // Get all elements with class="tablinks" and remove the class "active"
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
 
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
     }
 
 </script>
