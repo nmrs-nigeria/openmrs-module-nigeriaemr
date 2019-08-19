@@ -16,7 +16,6 @@ def id = config.id
                     <br/>
                     <input style="width: 40%;font-size: 16px; padding: 12px 20px 12px 40px; border: 1px solid #ddd; margin-bottom: 12px;" class="heading-text pull-left" type="text" id="nameSearch" onkeyup="" placeholder="Search..">
 
-                    <button id="${ id }_button_contact" type="Reload List" class="btn btn-primary heading-text pull-right">Refresh Contact List</button>
                     <br/><br/>
                 </h5>
 
@@ -78,11 +77,11 @@ def id = config.id
 </script>
 
 <script>
-
+ 
     jq = jQuery;
     jq('#wait').hide();
     jq(function() {
-        jq('#${ id }_button_contact').click(function() {
+       
     jq('#gen-wait').show();
 
     jq.ajax({
@@ -95,15 +94,22 @@ def id = config.id
 
     }).success(function(data) {
     jq('#gen-wait').hide();
-    alert(data);
     console.log(data);
+     
+    var obj = jq.parseJSON(data);
+
+     console.log(obj.length);
+     console.log(obj);
     
-    if(data!="")
+    if(obj !="")
     {
-        for(var i=0;i<data.length;i++)
+    
+        for(var i=0;i<obj.length;i++)
         {
-        
+            jq('#TableBody').append("<tr><td>"+obj[i].lastname+"</td><td>"+obj[i].firstname+"</td><td>"+obj[i].sex+"</td><td>"+obj[i].state+"</td></tr>");
+
         }
+    
     }
     
     })
@@ -112,7 +118,7 @@ def id = config.id
     alert('An error occured');
 
     }); 
-    });
+
     });
 
 </script>
