@@ -173,7 +173,7 @@ public class NDRMainDictionary {
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
             pepfarid = new PatientIdentifier();
-            pepfarid.setIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(5));
+           // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
 
             pidHospital = pts.getPatientIdentifier(5);
             pidOthers = pts.getPatientIdentifier(3);
@@ -184,15 +184,21 @@ public class NDRMainDictionary {
 
             //added a try block to mitigate identifier types 4 and 3 issues
             try {
-                demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(5));
+                demo.setPatientIdentifier(String.valueOf(pts.getPatientIdentifier(4)) );
             } catch (Exception e) {
                 //since pepfarId is not existing we use facility datim_code_hospital number_patientId;
-                // demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(3).getIdentifier() + "_" + pts.getId());
+                demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(8).getIdentifier() + "_" + pts.getId());
             }
             //demo.setPatientIdentifier(pts.getPatientIdentifier(4).getIdentifier());
 
             IdentifierType idt;
             IdentifiersType identifiersType = new IdentifiersType();
+              if (pepfarid != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(pepfarid.getIdentifier());
+                idt.setIDTypeCode("PN");
+                identifiersType.getIdentifier().add(idt);
+            }
             if (pepfarid != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(pepfarid.getIdentifier());

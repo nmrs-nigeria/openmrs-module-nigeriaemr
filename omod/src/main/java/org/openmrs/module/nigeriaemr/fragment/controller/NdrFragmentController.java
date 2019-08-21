@@ -137,8 +137,8 @@ public class NdrFragmentController {
 					try {
 						
 						String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_"
-						        + Utils.getPatientHospitalNo(patient);
-						//   + Utils.getPatientPEPFARId(patient);
+						//        + Utils.getPatientHospitalNo(patient);
+						        + Utils.getPatientPEPFARId(patient);
 						
 						// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
 						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
