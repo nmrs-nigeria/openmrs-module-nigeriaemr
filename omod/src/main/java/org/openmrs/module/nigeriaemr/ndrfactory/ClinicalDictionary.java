@@ -84,6 +84,7 @@ public class ClinicalDictionary {
             throws DatatypeConfigurationException {
 
         HIVEncounterType hivEncounter = new HIVEncounterType();
+        
 
         Date artStartDate = Utils.getARTStartDate(patient);
 
@@ -114,7 +115,7 @@ public class ClinicalDictionary {
             try {
                 conceptID = obs.getConcept().getConceptId();
 
-                if (patient.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX) != null) {
+             //   if (patient.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX) != null) {
 
                     switch (conceptID) {
                         case Child_Height_Concept_Id:
@@ -185,10 +186,15 @@ public class ClinicalDictionary {
 
                             break;
                         case Other_OI_Other_Problem_Concept_Id:
-                            LoggerUtils.write(ClinicalDictionary.class.getName(), "About to pull Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
-                            value_coded = obs.getValueCoded().getConceptId();
-                            hivEncounter.setOtherOIOtherProblems(getMappedValue(value_coded));
-                            LoggerUtils.write(ClinicalDictionary.class.getName(), "Finished pulling Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
+                            try{
+                                LoggerUtils.write(ClinicalDictionary.class.getName(), "About to pull Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
+                                value_coded = obs.getValueCoded().getConceptId();
+                                hivEncounter.setOtherOIOtherProblems(getMappedValue(value_coded));
+                                LoggerUtils.write(ClinicalDictionary.class.getName(), "Finished pulling Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
+
+                            }catch (Exception ex){
+
+                            }
 
                             break;
                         case Noted_Side_Effects_Concept_Id:
@@ -275,7 +281,7 @@ public class ClinicalDictionary {
                         default:
                             break;
                     }
-                }
+              //  }
 
                 switch (conceptID) {
 
