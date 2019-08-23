@@ -71,14 +71,24 @@ public class ClinicalDictionary {
         map.put(1221,"II");
         map.put(1222,"III");
         map.put(1223,"IV");
+        //new addition
+        map.put(190,"FP1");
+        map.put(780,"FP2");
+        map.put(5279,"FP3");
+        map.put(5278,"FP4");
+        map.put(5275,"FP5");
+        map.put(1489,"FP6");
+
+
     }
 
     private String getMappedValue(int conceptID) {
         if (map.containsKey(conceptID)) {
             return map.get(conceptID);
         }
-        return "";
+        return null;
     }
+
 
     public HIVEncounterType createHIVEncounterType(Patient patient, Encounter enc, List<Obs> obsList)
             throws DatatypeConfigurationException {
@@ -152,8 +162,10 @@ public class ClinicalDictionary {
                         case Patient_Family_Planning_Concept_Id:
 
                             LoggerUtils.write(ClinicalDictionary.class.getName(), "About to pull Patient_Family_Planning_Concept_Id", LogFormat.FATAL, LogLevel.debug);
-                            value_coded = obs.getValueCoded().getConceptId();
-                            hivEncounter.setPatientFamilyPlanningCode(getMappedValue(value_coded));
+                            if(obs.getValueBoolean() != null){
+                                hivEncounter.setPatientFamilyPlanningCode(resolvePatientFamilyPlanningCode(obs.getValueBoolean()));
+                            }
+
                             LoggerUtils.write(ClinicalDictionary.class.getName(), "Finished pulling Patient_Family_Planning_Concept_Id", LogFormat.FATAL, LogLevel.debug);
 
                             break;
@@ -161,6 +173,7 @@ public class ClinicalDictionary {
 
                             LoggerUtils.write(ClinicalDictionary.class.getName(), "About to pull Patient_Family_Planning_Method_Code_Concept_Id", LogFormat.FATAL, LogLevel.debug);
                             value_coded = obs.getValueCoded().getConceptId();
+
                             hivEncounter.setPatientFamilyPlanningMethodCode(getMappedValue(value_coded));
                             LoggerUtils.write(ClinicalDictionary.class.getName(), "Finished pulling Patient_Family_Planning_Method_Code_Concept_Id", LogFormat.FATAL, LogLevel.debug);
 
@@ -316,5 +329,17 @@ public class ClinicalDictionary {
         }
         return hivEncounter;
     }
+
+
+    private String resolvePatientFamilyPlanningCode(Boolean value){
+
+        if(value){
+            return "FP";
+        }else{
+            return "NOFP";
+        }
+    }
+
+
 
 }
