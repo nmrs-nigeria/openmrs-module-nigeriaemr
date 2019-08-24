@@ -63,21 +63,53 @@ public class ClinicalDictionary {
         map.put(165287, "G");
         map.put(165288, "F");
         //encounter type WHO clinical stage concept
-        map.put(1204,"I");
-        map.put(1205,"II");
-        map.put(1206,"III");
-        map.put(1207,"IV");
+
+        map.put(1204,"1");
+        map.put(1205,"2");
+        map.put(1206,"3");
+        map.put(1207,"4");
+
         map.put(1220,"I");//pediatric
         map.put(1221,"II");
         map.put(1222,"III");
         map.put(1223,"IV");
-        //new addition
+
+        //Family planning
         map.put(190,"FP1");
         map.put(780,"FP2");
         map.put(5279,"FP3");
         map.put(5278,"FP4");
         map.put(5275,"FP5");
         map.put(1489,"FP6");
+
+        //TB Status
+        map.put(1660,"1");
+        map.put(142177,"2");
+        map.put(1662,"3");
+        map.put(1661,"5");
+        map.put(1663,"4");
+
+        //OTHER OI
+        map.put(117543,"1");
+        map.put(114100,"2");
+        map.put(119566,"3");
+        map.put(5334,"4");
+        map.put(140238,"5");
+        map.put(143264,"6");
+
+        //Noted_Side_Effects_Concept_Id
+        map.put(133473,"1");
+        map.put(139084,"2");
+        map.put(119566,"3");
+        map.put(5226,"4");
+       // map.put(5229,"4");
+        map.put(512,"6");
+        map.put(165052,"7");
+        map.put(121629,"8");
+        map.put(165053,"9");
+        map.put(125886,"10");
+        map.put(138291,"11");
+
 
 
     }
