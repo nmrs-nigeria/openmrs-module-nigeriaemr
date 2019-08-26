@@ -157,15 +157,15 @@ public class PharmacyDictionary {
         regimenMap.put(76488, "FLUC");//Added By Nelson
         regimenMap.put(1679, "UnknownCode");
         regimenMap.put(80945, "CTX960");
-        
+
         /* Added by Bright Ibezim */
         regimenMap.put(164506, "10");
         regimenMap.put(164513, "20");
         regimenMap.put(165702, "30");
         regimenMap.put(164507, "10");
         regimenMap.put(164514, "20");
-        regimenMap.put(164703, "30"); 
-        
+        regimenMap.put(164703, "30");
+
         //key is concept id, value is NDR code text
         regimenCodeDescTextMap.put(160124, "AZT-3TC-EFV");
         regimenCodeDescTextMap.put(1652, "AZT-3TC-NVP");
@@ -270,10 +270,11 @@ public class PharmacyDictionary {
         }
         return "";
     }
+
     /*
        Added by Bright Ibezim CDC
-    */
-    public RegimenType createRegimenType(Patient patient,Date visitDate, List<Obs> obsListForAVisit) throws DatatypeConfigurationException{
+     */
+    public RegimenType createRegimenType(Patient patient, Date visitDate, List<Obs> obsListForAVisit) throws DatatypeConfigurationException {
         /*
            RegimenType Properties
   -VisitID
@@ -301,79 +302,84 @@ public class PharmacyDictionary {
   -ReasonRegimenEndedCode
   -SubstitutionIndicator
   -SwitchIndicator
-        */
-        String visitID="";
-        Date stopDate=null;
-        DateTime stopDateTime=null;
-        RegimenType regimenType=null;
+         */
+        String visitID = "";
+        Date stopDate = null;
+        DateTime stopDateTime = null;
+        RegimenType regimenType = null;
         PatientIdentifier pepfarIdentifier = patient.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
-        String pepfarID="";
-        String ndrCode="";
-        Obs obs=null;
-        int valueCoded=0;
-        CodedSimpleType codedSimpleType=null;
-        if(!obsListForAVisit.isEmpty() && pepfarIdentifier!=null && Utils.contains(obsListForAVisit,Utils.CURRENT_REGIMEN_LINE_CONCEPT)){
-            pepfarID=pepfarIdentifier.getIdentifier();
-            visitID=Utils.getVisitId(pepfarID, visitDate);
-            regimenType=new RegimenType();
+        String pepfarID = "";
+        String ndrCode = "";
+        Obs obs = null;
+        int valueCoded = 0;
+        CodedSimpleType codedSimpleType = null;
+        if (!obsListForAVisit.isEmpty() && pepfarIdentifier != null && Utils.contains(obsListForAVisit, Utils.CURRENT_REGIMEN_LINE_CONCEPT)) {
+            pepfarID = pepfarIdentifier.getIdentifier();
+            visitID = Utils.getVisitId(pepfarID, visitDate);
+            regimenType = new RegimenType();
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(getXmlDate(visitDate));
-            obs=Utils.extractObs(Utils.VISIT_TYPE_CONCEPT, obsListForAVisit);//PrescribedRegimenInitialIndicator
-            if(obs!=null){
-                valueCoded=obs.getValueCoded().getConceptId();
-                if(valueCoded==Utils.VISIT_TYPE_INITIAL_CONCEPT){
+            obs = Utils.extractObs(Utils.VISIT_TYPE_CONCEPT, obsListForAVisit);//PrescribedRegimenInitialIndicator
+            if (obs != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                if (valueCoded == Utils.VISIT_TYPE_INITIAL_CONCEPT) {
                     regimenType.setPrescribedRegimenInitialIndicator(Boolean.TRUE);
-                }else{
+                } else {
                     regimenType.setPrescribedRegimenInitialIndicator(Boolean.FALSE);
                 }
             }
-            obs=Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit); //PrescribedRegimenLineCode
-            if(obs!=null){
-                valueCoded=obs.getValueCoded().getConceptId();
-                ndrCode=getRegimenMapValue(valueCoded);
+            obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit); //PrescribedRegimenLineCode
+            if (obs != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                ndrCode = getRegimenMapValue(valueCoded);
                 regimenType.setPrescribedRegimenLineCode(ndrCode);
                 regimenType.setPrescribedRegimenTypeCode(Utils.ART_CODE);
-                obs=Utils.extractObs(valueCoded, obsListForAVisit); // PrescribedRegimen
-                if(obs!=null){
-                    valueCoded=obs.getValueCoded().getConceptId();
-                    ndrCode=getRegimenMapValue(valueCoded);
-                    codedSimpleType=new CodedSimpleType();
+                obs = Utils.extractObs(valueCoded, obsListForAVisit); // PrescribedRegimen
+                if (obs != null) {
+                    valueCoded = obs.getValueCoded().getConceptId();
+                    ndrCode = getRegimenMapValue(valueCoded);
+                    codedSimpleType = new CodedSimpleType();
                     codedSimpleType.setCode(ndrCode);
                     codedSimpleType.setCodeDescTxt(obs.getValueCoded().getName().getName());
                     regimenType.setPrescribedRegimen(codedSimpleType);
                 }
                 regimenType.setPrescribedRegimenDispensedDate(getXmlDate(visitDate));//PrescribedRegimenDispensedDate
-                
+
             }
-            
-            
+
         }
         return regimenType;
     }
-    public DateTime retrieveMedicationDuration(Date visitDate,List<Obs> obsList){
-        DateTime stopDateTime=null;
-        DateTime startDateTime=null;
-        int durationDays=0;
-        Obs obs=null;
-        Obs obsGroup=Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
-        if(obs!=null){
-            obs=Utils.extractObsGroupMemberWithConceptID(Utils.MEDICATION_DURATION_CONCEPT, obsList, obsGroup);
-            if(obs!=null){
-                durationDays=(int)obs.getValueNumeric().doubleValue();
-                startDateTime=new DateTime(visitDate);
-                stopDateTime=startDateTime.plusDays(durationDays);
-            }else{
-                obs=Utils.extractObs(Utils., obsList)
+
+    public DateTime retrieveMedicationDuration(Date visitDate, List<Obs> obsList) {
+        DateTime stopDateTime = null;
+        DateTime startDateTime = null;
+        int durationDays = 0;
+        Obs obs = null;
+        Obs obsGroup = Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
+        if (obs != null) {
+            obs = Utils.extractObsGroupMemberWithConceptID(Utils.MEDICATION_DURATION_CONCEPT, obsList, obsGroup);
+            if (obs != null) {
+                durationDays = (int) obs.getValueNumeric().doubleValue();
+                startDateTime = new DateTime(visitDate);
+                stopDateTime = startDateTime.plusDays(durationDays);
+            }
+        }
+        if (stopDateTime == null) {
+            obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsList);
+            if (obs != null) {
+                stopDateTime = new DateTime(obs.getValueDate());
             }
         }
         return stopDateTime;
     }
+
     public RegimenType createRegimenType(Patient pts, Encounter enc, List<Obs> pharmacyObsList)
             throws DatatypeConfigurationException {
         try {
 
             PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
-           // PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
+            // PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
 
             RegimenType regimenType = new RegimenType();
             CodedSimpleType cst;

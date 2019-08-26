@@ -98,10 +98,11 @@ public class Utils {
     public final static int MEDICATION_DURATION_CONCEPT = 159368;// Medication Duration Concept From Pharmacy Form
     public final static int OI_DRUGS_GROUPING_CONCEPT_SET = 165726;//OI Medication Grouping Concept from Pharmacy Form
     public final static int OI_DRUGS_CONCEPT = 165727; // OI Drugs Concept from Pharmacy Form
-    public final static String ART_CODE = "ART";
+    public final static String ART_CODE = "ART"; // Code for ART
     public final static int VISIT_TYPE_CONCEPT = 164181; // Visit Type concept from Pharmacy Forms
     public final static int VISIT_TYPE_INITIAL_CONCEPT = 164180; // Initial Visit from Pharmacy Forms
     public final static int VISIT_TYPE_FOLLOWUP_CONCEPT = 160530; // Follow up Visit from Pharmacy Forms
+    public final static int NEXT_APPOINTMENT_DATE_CONCEPT=5096; // Next Appointment Date Concept
     /* Identifier IDs */
     public static final int PEPFAR_IDENTIFIER_INDEX = 4;
     public static final int HOSPITAL_IDENTIFIER_INDEX = 5;
