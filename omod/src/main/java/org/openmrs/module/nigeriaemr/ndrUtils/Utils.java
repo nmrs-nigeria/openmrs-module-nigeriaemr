@@ -88,11 +88,12 @@ public class Utils {
         public final static int CHILD_THRID_LINE_REGIMEN_CONCEPT=165703; // From Pharmacy Form
         public final static int PICKUP_REASON_CONCEPT=165774; // From Pharmacy Form
         public final static int PICKUP_REASON_CONCEPT_SUBSTITUTE_VALUE=165665; // From Pharmacy Form
+        public final static int PICKUP_REASON_CONCEPT_SWITCH_VALUE=165772;// From Pharmacy Order Form
         public final static int REGIMEN_MEDICATION_PLAN=165771;// From Care Card Follow Up
         public final static int REGIMEN_MEDICATION_PLAN_SUBSTITUTE_REGIMEN_CONCEPT_VALUE=165769;// From Care Card Follow Up Answer to Regimen Medication Plan
         public final static int REGIMEN_MEDICATION_PLAN_SWITCH_REGIMEN_CONCEPT_VALUE=165768;// From Care Card
         public final static int REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT=165056; // From Care Card Follow Up
-        //public final static int 
+        public final static int ARV_DRUGS_GROUPING_CONCEPT_SET=162240;// Human immunodeficiency virus treatment regimen 
         
         
 	
