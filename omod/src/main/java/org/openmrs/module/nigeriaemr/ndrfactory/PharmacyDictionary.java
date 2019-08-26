@@ -8,6 +8,7 @@ package org.openmrs.module.nigeriaemr.ndrfactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -260,7 +261,11 @@ public class PharmacyDictionary {
         }
         return "";
     }
-
+    public RegimenType createRegimenType(Patient pts,Date visitDate, List<Encounter> encounterList){
+        RegimenType regimenType=null;
+        
+        return regimenType;
+    }
     public RegimenType createRegimenType(Patient pts, Encounter enc, List<Obs> pharmacyObsList)
             throws DatatypeConfigurationException {
         try {
