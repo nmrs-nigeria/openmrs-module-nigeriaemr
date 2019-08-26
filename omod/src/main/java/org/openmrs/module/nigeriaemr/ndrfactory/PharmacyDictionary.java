@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.xml.datatype.DatatypeConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -264,7 +265,7 @@ public class PharmacyDictionary {
     /*
        Added by Bright Ibezim CDC
     */
-    public RegimenType createRegimenType(Patient pts,Date visitDate, List<Encounter> encounterList){
+    public RegimenType createRegimenType(Patient pts,Date visitDate, List<Obs> obsListForAVisit){
         /*
            RegimenType
   -VisitID
@@ -291,8 +292,13 @@ public class PharmacyDictionary {
   -SubstitutionIndicator
   -SwitchIndicator
         */
+        String visitID="";
+        Date stopDate=null;
+        DateTime stopDateTime=null;
         RegimenType regimenType=null;
-        
+        if(!obsListForAVisit.isEmpty()){
+            
+        }
         return regimenType;
     }
     public RegimenType createRegimenType(Patient pts, Encounter enc, List<Obs> pharmacyObsList)

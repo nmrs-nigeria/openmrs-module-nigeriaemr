@@ -192,7 +192,23 @@ public class Utils {
 		return pts.getPatientIdentifier(3).getIdentifier() + "-" + dateString;*/
 	}
 	
-	public static Obs extractObs(int conceptID, List<Obs> obsList) {
+	public static Set<Date> extractUniqueVisits(Patient pts, List<Encounter> encounterList){
+            Set<Date> visitDateSet=new HashSet<Date>();
+            for(Encounter enc: encounterList){
+                visitDateSet.add(enc.getEncounterDatetime());
+            }
+            return visitDateSet;
+        }
+        public static List<Obs> extractObsForVisit(Date visitDate, Patient pts,List<Encounter> encounterList){
+            List<Obs> obsList=new ArrayList<Obs>();
+            for(Encounter enc: encounterList){
+                if(enc.getEncounterDatetime().equals(visitDate)){
+                    obsList.addAll(enc.getAllObs());
+                }
+            }
+            return obsList;
+        }
+        public static Obs extractObs(int conceptID, List<Obs> obsList) {
 
         if (obsList == null) {
             return null;
