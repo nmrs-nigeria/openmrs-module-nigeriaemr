@@ -729,7 +729,7 @@ public class Utils {
 		}
 		return isSurge;
 	}
-
+	
 	public static Date getHIVEnrollmentDate(Patient patient) {
 		Date enrollmentDate = Context.getEncounterService()
 				.getEncountersByPatient(patient).stream()
