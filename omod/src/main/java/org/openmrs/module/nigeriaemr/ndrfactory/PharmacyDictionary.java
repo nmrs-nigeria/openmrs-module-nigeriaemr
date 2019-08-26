@@ -157,7 +157,15 @@ public class PharmacyDictionary {
         regimenMap.put(76488, "FLUC");//Added By Nelson
         regimenMap.put(1679, "UnknownCode");
         regimenMap.put(80945, "CTX960");
-
+        
+        /* Added by Bright Ibezim */
+        regimenMap.put(164506, "10");
+        regimenMap.put(164513, "20");
+        regimenMap.put(165702, "30");
+        regimenMap.put(164507, "10");
+        regimenMap.put(164514, "20");
+        regimenMap.put(164703, "30"); 
+        
         //key is concept id, value is NDR code text
         regimenCodeDescTextMap.put(160124, "AZT-3TC-EFV");
         regimenCodeDescTextMap.put(1652, "AZT-3TC-NVP");
@@ -303,6 +311,7 @@ public class PharmacyDictionary {
         String ndrCode="";
         Obs obs=null;
         int valueCoded=0;
+        CodedSimpleType codedSimpleType=null;
         if(!obsListForAVisit.isEmpty() && pepfarIdentifier!=null){
             pepfarID=pepfarIdentifier.getIdentifier();
             visitID=Utils.getVisitId(pepfarID, visitDate);
@@ -313,7 +322,17 @@ public class PharmacyDictionary {
             if(obs!=null){
                 valueCoded=obs.getValueCoded().getConceptId();
                 ndrCode=getRegimenMapValue(valueCoded);
+                regimenType.setPrescribedRegimenLineCode(ndrCode);
                 regimenType.setPrescribedRegimenTypeCode(Utils.ART_CODE);
+                obs=Utils.extractObs(valueCoded, obsListForAVisit); // Retrieve the regimen
+                if(obs!=null){
+                    valueCoded=obs.getValueCoded().getConceptId();
+                    ndrCode=getRegimenMapValue(valueCoded);
+                    codedSimpleType=new CodedSimpleType();
+                    codedSimpleType.setCode(ndrCode);
+                    codedSimpleType.setCodeDescTxt(obs.getValueCoded().getName().getName());
+                    regimenType.setPrescribedRegimen(codedSimpleType);
+                }
                 
             }
             
