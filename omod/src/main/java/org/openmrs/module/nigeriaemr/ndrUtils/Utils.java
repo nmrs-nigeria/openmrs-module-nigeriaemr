@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -191,6 +192,15 @@ public class Utils {
 		/*String dateString = new SimpleDateFormat("dd-MM-yyyy").format(enc.getEncounterDatetime());
 		return pts.getPatientIdentifier(3).getIdentifier() + "-" + dateString;*/
 	}
+        /*
+           Decouple our VisitID from primary keys which we cannot control
+           VisitIDs can change during migration and no gurantee of uniqueness
+        */
+        public static String getVisitId(String identifier, Date visitDate){
+            DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+            String visitID=dateFormat.format(visitDate)+"-"+identifier;
+            return visitID;
+        }
 	
 	public static Set<Date> extractUniqueVisits(Patient pts, List<Encounter> encounterList){
             Set<Date> visitDateSet=new HashSet<Date>();

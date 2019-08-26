@@ -296,6 +296,7 @@ public class PharmacyDictionary {
         Date stopDate=null;
         DateTime stopDateTime=null;
         RegimenType regimenType=null;
+       
         if(!obsListForAVisit.isEmpty()){
             
         }
