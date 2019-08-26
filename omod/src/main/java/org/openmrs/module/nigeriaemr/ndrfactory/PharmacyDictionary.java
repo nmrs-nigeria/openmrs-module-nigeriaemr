@@ -265,12 +265,11 @@ public class PharmacyDictionary {
     /*
        Added by Bright Ibezim CDC
     */
-    public RegimenType createRegimenType(Patient patient,Date visitDate, List<Obs> obsListForAVisit){
+    public RegimenType createRegimenType(Patient patient,Date visitDate, List<Obs> obsListForAVisit) throws DatatypeConfigurationException{
         /*
            RegimenType Properties
   -VisitID
   -VisitDate
-  
   -PrescribedRegimenLineCode
   -PrescribedRegimenTypeCode
   -PrescribedRegimenInitialIndicator
@@ -301,10 +300,22 @@ public class PharmacyDictionary {
         RegimenType regimenType=null;
         PatientIdentifier pepfarIdentifier = patient.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
         String pepfarID="";
+        String ndrCode="";
+        Obs obs=null;
+        int valueCoded=0;
         if(!obsListForAVisit.isEmpty() && pepfarIdentifier!=null){
             pepfarID=pepfarIdentifier.getIdentifier();
             visitID=Utils.getVisitId(pepfarID, visitDate);
-            
+            regimenType=new RegimenType();
+            regimenType.setVisitID(visitID);
+            regimenType.setVisitDate(getXmlDate(visitDate));
+            obs=Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit);
+            if(obs!=null){
+                valueCoded=obs.getValueCoded().getConceptId();
+                ndrCode=getRegimenMapValue(valueCoded);
+                regimenType.setPrescribedRegimenTypeCode(Utils.ART_CODE);
+                
+            }
             
         }
         return regimenType;

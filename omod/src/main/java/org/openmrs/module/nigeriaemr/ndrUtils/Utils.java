@@ -98,6 +98,7 @@ public class Utils {
         public final static int MEDICATION_DURATION_CONCEPT=159368;// Medication Duration Concept From Pharmacy Form
         public final static int OI_DRUGS_GROUPING_CONCEPT_SET=165726;//OI Medication Grouping Concept from Pharmacy Form
         public final static int OI_DRUGS_CONCEPT= 165727; // OI Drugs Concept from Pharmacy Form
+        public final static String ART_CODE="ART";
         /* Identifier IDs */
         public static final int PEPFAR_IDENTIFIER_INDEX = 4;
 	public static final int HOSPITAL_IDENTIFIER_INDEX = 5;
