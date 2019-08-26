@@ -265,25 +265,28 @@ public class PharmacyDictionary {
     /*
        Added by Bright Ibezim CDC
     */
-    public RegimenType createRegimenType(Patient pts,Date visitDate, List<Obs> obsListForAVisit){
+    public RegimenType createRegimenType(Patient patient,Date visitDate, List<Obs> obsListForAVisit){
         /*
-           RegimenType
+           RegimenType Properties
   -VisitID
   -VisitDate
-  -ReasonForRegimenSwitchSubs
-  -PrescribedRegimen
-  -PrescribedRegimenTypeCode
+  
   -PrescribedRegimenLineCode
-  -PrescribedRegimenDuration
+  -PrescribedRegimenTypeCode
+  -PrescribedRegimenInitialIndicator
+  -PrescribedRegimen
   -PrescribedRegimenDispensedDate
+  -PrescribedRegimenDuration
+  -ReasonForRegimenSwitchSubs
   -DateRegimenStarted
   -DateRegimenStartedDD
   -DateRegimenStartedMM
   -DateRegimenStartedYYYY
   -DateRegimenEnded
+  -DateRegimenEndedDD
   -DateRegimenEndedMM
   -DateRegimenEndedYYYY
-  -PrescribedRegimenInitialIndicator
+  
   -PrescribedRegimenCurrentIndicator
   -TypeOfPreviousExposureCode
   -PoorAdherenceIndicator
@@ -296,8 +299,12 @@ public class PharmacyDictionary {
         Date stopDate=null;
         DateTime stopDateTime=null;
         RegimenType regimenType=null;
-       
-        if(!obsListForAVisit.isEmpty()){
+        PatientIdentifier pepfarIdentifier = patient.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
+        String pepfarID="";
+        if(!obsListForAVisit.isEmpty() && pepfarIdentifier!=null){
+            pepfarID=pepfarIdentifier.getIdentifier();
+            visitID=Utils.getVisitId(pepfarID, visitDate);
+            
             
         }
         return regimenType;

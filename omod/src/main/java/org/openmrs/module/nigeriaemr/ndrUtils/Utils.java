@@ -98,8 +98,15 @@ public class Utils {
         public final static int MEDICATION_DURATION_CONCEPT=159368;// Medication Duration Concept From Pharmacy Form
         public final static int OI_DRUGS_GROUPING_CONCEPT_SET=165726;//OI Medication Grouping Concept from Pharmacy Form
         public final static int OI_DRUGS_CONCEPT= 165727; // OI Drugs Concept from Pharmacy Form
+        /* Identifier IDs */
+        public static final int PEPFAR_IDENTIFIER_INDEX = 4;
+	public static final int HOSPITAL_IDENTIFIER_INDEX = 5;
+	public static final int OTHER_IDENTIFIER_INDEX = 3;
+	public static final int HTS_IDENTIFIER_INDEX = 8;
+	public static final int PMTCT_IDENTIFIER_INDEX = 6;
+	public static final int EXPOSE_INFANT_IDENTIFIER_INDEX = 7;
+	public static final int PEP_ED_IDENTIFIER_INDEX = 9;
         
-	
 	public static String getFacilityName() {
 		return Context.getAdministrationService().getGlobalProperty("Facility_Name");
 	}
@@ -195,6 +202,7 @@ public class Utils {
         /*
            Decouple our VisitID from primary keys which we cannot control
            VisitIDs can change during migration and no gurantee of uniqueness
+           Added by Bright Ibezim HITT
         */
         public static String getVisitId(String identifier, Date visitDate){
             DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
