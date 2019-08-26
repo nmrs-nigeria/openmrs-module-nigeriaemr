@@ -219,12 +219,21 @@ public class Utils {
                 .getEncountersByPatient(patient).stream()
                 .filter(x -> x.getEncounterType().getEncounterTypeId() == HIV_Enrollment_Encounter_Type_Id)
                 .findAny();
-        if (hivEnrollmentEncounter != null && hivEnrollmentEncounter.isPresent()) {
+        if (hivEnrollmentEncounter.isPresent()) {
             return new ArrayList<>(hivEnrollmentEncounter.get().getAllObs(false));
         }
         return null;
-
     }
+	
+	public static List<Obs> getHIVEnrollmentObs(List<Obs> obs) {
+		Optional<Obs> hivObs = obs.stream()
+				.filter(x -> x.getEncounter().getEncounterId() == HIV_Enrollment_Encounter_Type_Id)
+				.findAny();
+		if (hivObs.isPresent()) {
+			return new ArrayList<>(Collections.singletonList(hivObs.get()));
+		}
+		return null;
+	}
 	
 	public static List<Encounter> getAllRegimenObs(Patient patient) {
         return Context.getEncounterService()
