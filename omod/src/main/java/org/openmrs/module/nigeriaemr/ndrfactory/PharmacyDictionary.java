@@ -286,6 +286,8 @@ public class PharmacyDictionary {
   -PrescribedRegimenDispensedDate
   -PrescribedRegimenDuration
   -ReasonForRegimenSwitchSubs
+  -SubstitutionIndicator
+  -SwitchIndicator
   -DateRegimenStarted
   -DateRegimenStartedDD
   -DateRegimenStartedMM
@@ -300,8 +302,7 @@ public class PharmacyDictionary {
   -PoorAdherenceIndicator
   -ReasonForPoorAdherence
   -ReasonRegimenEndedCode
-  -SubstitutionIndicator
-  -SwitchIndicator
+  
          */
         String visitID = "";
         Date stopDate = null;
