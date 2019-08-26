@@ -350,11 +350,21 @@ public class PharmacyDictionary {
         }
         return regimenType;
     }
-    public DateTime retrieveMedicationDuration(List<Obs> obsList){
+    public DateTime retrieveMedicationDuration(Date visitDate,List<Obs> obsList){
         DateTime stopDateTime=null;
-        Obs obs=Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
+        DateTime startDateTime=null;
+        int durationDays=0;
+        Obs obs=null;
+        Obs obsGroup=Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
         if(obs!=null){
-            
+            obs=Utils.extractObsGroupMemberWithConceptID(Utils.MEDICATION_DURATION_CONCEPT, obsList, obsGroup);
+            if(obs!=null){
+                durationDays=(int)obs.getValueNumeric().doubleValue();
+                startDateTime=new DateTime(visitDate);
+                stopDateTime=startDateTime.plusDays(durationDays);
+            }else{
+                obs=Utils.extractObs(Utils., obsList)
+            }
         }
         return stopDateTime;
     }
