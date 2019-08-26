@@ -720,4 +720,13 @@ public class Utils {
 		}
 		return isSurge;
 	}
+
+	public static Date getHIVEnrollmentDate(Patient patient) {
+		Date enrollmentDate = Context.getEncounterService()
+				.getEncountersByPatient(patient).stream()
+				.filter(x -> x.getEncounterType().getEncounterTypeId()  == HIV_Enrollment_Encounter_Type_Id)
+				.sorted(Comparator.comparing(Encounter::getEncounterDatetime))
+				.collect(Collectors.toList()).get(0).getEncounterDatetime();
+		return enrollmentDate;
+	}
 }

@@ -37,8 +37,8 @@ public class NDRMainDictionary {
     public final static int Patient_Died_From_Illness_Value_Concept_Id = 0;
     public final static int Patient_Died_From_Illness_Concept_Id = 0;
     public final static int Diagnosis_Date_Concept_Id = 0;
-    public final static int Estimated_Delivery_Date_Concept_Id = 0;
-    public final static int Patient_Pregnancy_Status_Concept_Id = 0;
+    public final static int Estimated_Delivery_Date_Concept_Id = 5596;
+    public final static int Patient_Pregnancy_Status_Concept_Id = 1434;
     public final static int Care_Entry_Point = 160540;
     public final static int Date_Confirmed_HIV = 160554;
     public final static int Mode_of_HIV_Test = 164947;
@@ -541,49 +541,33 @@ public class NDRMainDictionary {
                 /*  Assuming Hospital No is 3*/
                 //old code commented for throwing error change by the try and catch code abowe
                 //common.setHospitalNumber(pts.getPatientIdentifier(3).getIdentifier());
-
-                List<Obs> enrollmentObs = Utils.getHIVEnrollmentObs(pts);
-                if (enrollmentObs != null) {
-                    Obs enrolmentDateObs = Utils.extractObs(HIV_Enrollment_Date_Concept_Id, enrollmentObs);
-                    if (enrolmentDateObs != null) {
-                        common.setDateOfFirstReport(getXmlDate(enrolmentDateObs.getValueDatetime()));
-                    }
-                }
-
-                Encounter lastEncounterDate = Utils.getLastEncounter(pts);
-                if (lastEncounterDate != null) {
-                    common.setDateOfLastReport(getXmlDate(lastEncounterDate.getEncounterDatetime()));
-                }
-
-                //set the patient pregnancy status code
-                if (pts.getGender().equalsIgnoreCase("F") && hivEnrollmentObs != null) {
-                    obs = Utils.extractObs(Patient_Pregnancy_Status_Concept_Id, hivEnrollmentObs);
-                    if (obs != null && obs.getValueCoded() != null) {
-                        common.setPatientPregnancyStatusCode(getMappedValue(obs.getValueCoded().getConceptId()));
-                    }
-                }
-
-                //set diagnosis date
-                obs = Utils.extractObs(Diagnosis_Date_Concept_Id, hivEnrollmentObs);
-                if (obs != null) {
-                    common.setDiagnosisDate(getXmlDate(obs.getValueDatetime()));
-                }
-
-                common.setPatientAge(pts.getAge());
-
             }
 
-//            if (hivEnrollmentObs == null) {
-//                return common;
-//            }
+            Encounter lastEncounterDate = Utils.getLastEncounter(pts);
+            if (lastEncounterDate != null) {
+                common.setDateOfLastReport(getXmlDate(lastEncounterDate.getEncounterDatetime()));
+            }
+
+            Date EnrollmentDate = Utils.getHIVEnrollmentDate(pts);
+            if (EnrollmentDate != null) {
+                common.setDateOfFirstReport(getXmlDate(EnrollmentDate));
+                common.setDiagnosisDate(getXmlDate(EnrollmentDate));
+            }
+
             if (pts.getGender().equalsIgnoreCase("F")) {
 
                 //set estimated delivery date concept id
                 obs = Utils.extractObs(Estimated_Delivery_Date_Concept_Id, hivEnrollmentObs);
+
                 if (obs != null) {
-                    common.setEstimatedDeliveryDate(getXmlDate(obs.getObsDatetime()));
+                    common.setEstimatedDeliveryDate(getXmlDate(obs.getValueDatetime()));
+                    Boolean status = (Utils.extractObs(Patient_Pregnancy_Status_Concept_Id, hivEnrollmentObs).getValueCoded().getConceptId() == 1);
+                    common.setPatientPregnancyStatusCode(status.toString());
                 }
             }
+
+            common.setPatientDieFromThisIllness(pts.isDead());
+            common.setPatientAge(pts.getAge());
 
             //set Patient Die From This Illness tag
             obs = Utils.extractObs(Patient_Died_From_Illness_Concept_Id, hivEnrollmentObs);
@@ -593,16 +577,12 @@ public class NDRMainDictionary {
             }
             LoggerUtils.write(NDRMainDictionary.class.getName(), "Finished pulling Patient_Died_From_Illness_Concept_Id", LogFormat.FATAL, LogLevel.debug);
 
-            common.setPatientDieFromThisIllness(pts.isDead());
-            common.setPatientAge(pts.getAge());
-
             return common;
         } catch (Exception ex) {
             LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
             throw new DatatypeConfigurationException(ex.getMessage());
         }
     }
-
     /*static HIVQuestionsType createHIVQuestionType(Obs firstRegimenObs, Date ARTStartDate, Date EnrollmentDate, List<Obs> obs) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}*/
