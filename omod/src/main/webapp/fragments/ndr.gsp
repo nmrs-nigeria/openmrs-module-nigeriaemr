@@ -16,14 +16,14 @@ def id = config.id
             jq.getJSON('${ ui.actionLink("generateNDRFile") }')
     .success(function(filename) {
     //Old implementation
-    /*if(filename == "no new patient record found"){
+    if(filename == "no new patient record found"){
     jq('#wait').hide();
     alert("no updated patient record found")
     }
     else{
     window.location = filename;
-    }*/
-    if(filename.startsWith("Files Exported successfully")){
+    }
+   /* if(filename.startsWith("Files Exported successfully")){
     //export was successful
     alert(filename);
     }
@@ -31,7 +31,7 @@ def id = config.id
     //export was partially successful
     //this may require directing the user to an erro summary page.
     alert(filename);
-    }
+    }*/
     jq('#wait').hide();
     })
     .error(function(xhr, status, err) {
