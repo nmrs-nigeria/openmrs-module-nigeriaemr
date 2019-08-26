@@ -94,6 +94,8 @@ public class Utils {
         public final static int REGIMEN_MEDICATION_PLAN_SWITCH_REGIMEN_CONCEPT_VALUE=165768;// From Care Card
         public final static int REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT=165056; // From Care Card Follow Up
         public final static int ARV_DRUGS_GROUPING_CONCEPT_SET=162240;// Human immunodeficiency virus treatment regimen 
+        public final static int MEDICATION_DURATION_CONCEPT=159368;// Medication Duration Concept
+        public final static int OI_DRUGS_GROUPING_CONCEPT_SET=165726;//OI Medication Grouping Concept
         
         
 	
