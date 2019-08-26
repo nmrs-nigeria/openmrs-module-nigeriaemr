@@ -265,6 +265,32 @@ public class PharmacyDictionary {
        Added by Bright Ibezim CDC
     */
     public RegimenType createRegimenType(Patient pts,Date visitDate, List<Encounter> encounterList){
+        /*
+           RegimenType
+  -VisitID
+  -VisitDate
+  -ReasonForRegimenSwitchSubs
+  -PrescribedRegimen
+  -PrescribedRegimenTypeCode
+  -PrescribedRegimenLineCode
+  -PrescribedRegimenDuration
+  -PrescribedRegimenDispensedDate
+  -DateRegimenStarted
+  -DateRegimenStartedDD
+  -DateRegimenStartedMM
+  -DateRegimenStartedYYYY
+  -DateRegimenEnded
+  -DateRegimenEndedMM
+  -DateRegimenEndedYYYY
+  -PrescribedRegimenInitialIndicator
+  -PrescribedRegimenCurrentIndicator
+  -TypeOfPreviousExposureCode
+  -PoorAdherenceIndicator
+  -ReasonForPoorAdherence
+  -ReasonRegimenEndedCode
+  -SubstitutionIndicator
+  -SwitchIndicator
+        */
         RegimenType regimenType=null;
         
         return regimenType;
