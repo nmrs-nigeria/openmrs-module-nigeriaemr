@@ -63,27 +63,70 @@ public class ClinicalDictionary {
         map.put(165287, "G");
         map.put(165288, "F");
         //encounter type WHO clinical stage concept
-        map.put(1204,"I");
-        map.put(1205,"II");
-        map.put(1206,"III");
-        map.put(1207,"IV");
+
+        map.put(1204,"1");
+        map.put(1205,"2");
+        map.put(1206,"3");
+        map.put(1207,"4");
+
         map.put(1220,"I");//pediatric
         map.put(1221,"II");
         map.put(1222,"III");
         map.put(1223,"IV");
+
+        //Family planning
+        map.put(190,"FP1");
+        map.put(780,"FP2");
+        map.put(5279,"FP3");
+        map.put(5278,"FP4");
+        map.put(5275,"FP5");
+        map.put(1489,"FP6");
+
+        //TB Status
+        map.put(1660,"1");
+        map.put(142177,"2");
+        map.put(1662,"3");
+        map.put(1661,"5");
+        map.put(1663,"4");
+
+        //OTHER OI
+        map.put(117543,"1");
+        map.put(114100,"2");
+        map.put(119566,"3");
+        map.put(5334,"4");
+        map.put(140238,"5");
+        map.put(143264,"6");
+
+        //Noted_Side_Effects_Concept_Id
+        map.put(133473,"1");
+        map.put(139084,"2");
+        map.put(119566,"3");
+        map.put(5226,"4");
+       // map.put(5229,"4");
+        map.put(512,"6");
+        map.put(165052,"7");
+        map.put(121629,"8");
+        map.put(165053,"9");
+        map.put(125886,"10");
+        map.put(138291,"11");
+
+
+
     }
 
     private String getMappedValue(int conceptID) {
         if (map.containsKey(conceptID)) {
             return map.get(conceptID);
         }
-        return "";
+        return null;
     }
+
 
     public HIVEncounterType createHIVEncounterType(Patient patient, Encounter enc, List<Obs> obsList)
             throws DatatypeConfigurationException {
 
         HIVEncounterType hivEncounter = new HIVEncounterType();
+        
 
         Date artStartDate = Utils.getARTStartDate(patient);
 
@@ -114,7 +157,7 @@ public class ClinicalDictionary {
             try {
                 conceptID = obs.getConcept().getConceptId();
 
-                if (patient.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX) != null) {
+             //   if (patient.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX) != null) {
 
                     switch (conceptID) {
                         case Child_Height_Concept_Id:
@@ -151,8 +194,10 @@ public class ClinicalDictionary {
                         case Patient_Family_Planning_Concept_Id:
 
                             LoggerUtils.write(ClinicalDictionary.class.getName(), "About to pull Patient_Family_Planning_Concept_Id", LogFormat.FATAL, LogLevel.debug);
-                            value_coded = obs.getValueCoded().getConceptId();
-                            hivEncounter.setPatientFamilyPlanningCode(getMappedValue(value_coded));
+                            if(obs.getValueBoolean() != null){
+                                hivEncounter.setPatientFamilyPlanningCode(resolvePatientFamilyPlanningCode(obs.getValueBoolean()));
+                            }
+
                             LoggerUtils.write(ClinicalDictionary.class.getName(), "Finished pulling Patient_Family_Planning_Concept_Id", LogFormat.FATAL, LogLevel.debug);
 
                             break;
@@ -160,6 +205,7 @@ public class ClinicalDictionary {
 
                             LoggerUtils.write(ClinicalDictionary.class.getName(), "About to pull Patient_Family_Planning_Method_Code_Concept_Id", LogFormat.FATAL, LogLevel.debug);
                             value_coded = obs.getValueCoded().getConceptId();
+
                             hivEncounter.setPatientFamilyPlanningMethodCode(getMappedValue(value_coded));
                             LoggerUtils.write(ClinicalDictionary.class.getName(), "Finished pulling Patient_Family_Planning_Method_Code_Concept_Id", LogFormat.FATAL, LogLevel.debug);
 
@@ -185,10 +231,15 @@ public class ClinicalDictionary {
 
                             break;
                         case Other_OI_Other_Problem_Concept_Id:
-                            LoggerUtils.write(ClinicalDictionary.class.getName(), "About to pull Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
-                            value_coded = obs.getValueCoded().getConceptId();
-                            hivEncounter.setOtherOIOtherProblems(getMappedValue(value_coded));
-                            LoggerUtils.write(ClinicalDictionary.class.getName(), "Finished pulling Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
+                            try{
+                                LoggerUtils.write(ClinicalDictionary.class.getName(), "About to pull Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
+                                value_coded = obs.getValueCoded().getConceptId();
+                                hivEncounter.setOtherOIOtherProblems(getMappedValue(value_coded));
+                                LoggerUtils.write(ClinicalDictionary.class.getName(), "Finished pulling Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
+
+                            }catch (Exception ex){
+
+                            }
 
                             break;
                         case Noted_Side_Effects_Concept_Id:
@@ -275,7 +326,7 @@ public class ClinicalDictionary {
                         default:
                             break;
                     }
-                }
+              //  }
 
                 switch (conceptID) {
 
@@ -310,5 +361,17 @@ public class ClinicalDictionary {
         }
         return hivEncounter;
     }
+
+
+    private String resolvePatientFamilyPlanningCode(Boolean value){
+
+        if(value){
+            return "FP";
+        }else{
+            return "NOFP";
+        }
+    }
+
+
 
 }
