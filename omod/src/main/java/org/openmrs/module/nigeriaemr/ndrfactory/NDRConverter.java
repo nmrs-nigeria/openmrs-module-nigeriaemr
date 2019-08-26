@@ -3,7 +3,9 @@ package org.openmrs.module.nigeriaemr.ndrfactory;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.xml.XMLConstants;
@@ -43,6 +45,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 
@@ -74,8 +77,20 @@ public class NDRConverter {
             this.facility = facility;
             this.encounters = new ArrayList<>();
             Date lastDate = Utils.getLastNDRDate();
-            
+
+            long startTime = System.currentTimeMillis();
             List<Encounter> encs = Context.getEncounterService().getEncountersByPatient(pts);
+            long endTime = System.currentTimeMillis();
+            if((endTime - startTime) > 1000){
+                System.out.println("took too loooong to get encounters : " + (endTime - startTime) + " milli secs : ");
+            }
+
+            startTime = System.currentTimeMillis();
+            List<Obs> allobs = Context.getObsService().getObservationsByPerson(pts);
+            endTime = System.currentTimeMillis();
+            if((endTime - startTime) > 1000){
+                System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
+            }
 
             //get all encounters that happened after the last run date
 
@@ -116,7 +131,6 @@ public class NDRConverter {
             LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LogFormat.FATAL,LogLevel.live);
             throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
-        
     }
 	
 	private IndividualReportType createIndividualReportType() throws DatatypeConfigurationException {
@@ -265,7 +279,8 @@ public class NDRConverter {
             LabDictionary labDictionary = new LabDictionary();
             for (Encounter enc : this.encounters) {
                // LoggerUtils.write(NDRConverter.class.getName(), "Started pulling data for encounter: "+enc.getEncounterType().getEncounterTypeId(), LogFormat.INFO, LogLevel.live);
-                
+
+                long startTime = System.currentTimeMillis();
                 List<Obs> obsList = new ArrayList<>(enc.getAllObs());
 
                 // create the hiv encounter from Adult initials and care card
@@ -394,6 +409,11 @@ public class NDRConverter {
 						condition.getHIVTestRecords().add(hivTestingEncounter);
 					}
 				}*/
+
+                long endTime = System.currentTimeMillis();
+                if((endTime - startTime) > 1000){
+                    System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
+                }
             }
 
             //create the HIV Questions from the conditions specific obs
@@ -422,10 +442,38 @@ public class NDRConverter {
 		AddressType p = new AddressType();
 		p.setAddressTypeCode("H");
 		p.setCountryCode("NGA");
+
 		PersonAddress pa = patient.getPersonAddress();
 		if (pa != null) {
-			p.setLGACode(pa.getCountyDistrict());
-			p.setStateCode(pa.getStateProvince());
+            //p.setTown(pa.getAddress1());
+		   String lga =  pa.getCityVillage();
+		   String state = pa.getStateProvince();
+
+		   try{
+               String sql =String.format("SELECT `name`, user_generated_id, 'STATE' AS 'Location' " +
+                       "FROM address_hierarchy_entry WHERE NAME = '%s' " +
+                       "UNION " +
+                       "SELECT `name`, user_generated_id, 'LGA' AS 'Location' FROM address_hierarchy_entry " +
+                       " WHERE NAME ='%s' AND parent_id = (SELECT address_hierarchy_entry_id FROM address_hierarchy_entry\n" +
+                       " WHERE NAME = '%s')", state, lga,state);
+               Connection connection = DriverManager.getConnection(this.openmrsConn.getUrl(), this.openmrsConn.getUsername(), this.openmrsConn.getPassword());
+               Statement statement = connection.createStatement();
+               ResultSet result = statement.executeQuery(sql);
+               while (result.next()) {
+                   String name =  result.getString("name");
+                   String coded_value = result.getString("user_generated_id");
+
+                   if(result.getString("Location").contains("STATE")){
+                        p.setStateCode(coded_value);
+                   }
+                   else{
+                        p.setLGACode(coded_value);
+                   }
+               }
+           } catch (SQLException e) {
+                e.printStackTrace();
+                LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LogFormat.FATAL, LogLevel.live);
+            }
 		}
 		return p;
 	}
