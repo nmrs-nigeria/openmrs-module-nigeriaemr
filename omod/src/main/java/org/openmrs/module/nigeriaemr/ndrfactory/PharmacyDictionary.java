@@ -353,6 +353,8 @@ public class PharmacyDictionary {
                     regimenType.setPrescribedRegimenDuration(String.valueOf(durationInDays));//PrescribedRegimenDuration
                 }
             }
+            regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(obsListForAVisit));//SubstitutionIndicator
+            regimenType.setSwitchIndicator(retrieveSwitchIndicator(obsListForAVisit));//SwitchIndicator
 
         }
         return regimenType;
@@ -379,6 +381,28 @@ public class PharmacyDictionary {
         }
         return ans;
     }
+    public Boolean retrieveSwitchIndicator(List<Obs> obsList) {
+        Obs obs = null;
+        int valueCoded = 0;
+        Boolean ans = Boolean.FALSE;
+        obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN, obsList);
+        if (obs != null) {
+            valueCoded = obs.getValueCoded().getConceptId();
+            if (valueCoded == Utils.REGIMEN_MEDICATION_PLAN_SWITCH_REGIMEN_CONCEPT_VALUE) {
+                ans = Boolean.TRUE;
+            }
+        } else {
+            obs = Utils.extractObs(Utils.PICKUP_REASON_CONCEPT, obsList);
+            if (obs != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SWITCH_VALUE) {
+                    ans = Boolean.TRUE;
+                }
+            }
+        }
+        return ans;
+    }
+
 
     public DateTime retrieveMedicationDuration(Date visitDate, List<Obs> obsList) {
         DateTime stopDateTime = null;
