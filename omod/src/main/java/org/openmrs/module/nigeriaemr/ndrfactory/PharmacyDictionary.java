@@ -305,13 +305,13 @@ public class PharmacyDictionary {
          */
         String visitID = "";
         Date stopDate = null;
-        DateTime stopDateTime = null;
+        DateTime stopDateTime = null,startDateTime=null;
         RegimenType regimenType = null;
         PatientIdentifier pepfarIdentifier = patient.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
         String pepfarID = "";
         String ndrCode = "";
         Obs obs = null;
-        int valueCoded = 0;
+        int valueCoded = 0,durationInDays=0;
         CodedSimpleType codedSimpleType = null;
         if (!obsListForAVisit.isEmpty() && pepfarIdentifier != null && Utils.contains(obsListForAVisit, Utils.CURRENT_REGIMEN_LINE_CONCEPT)) {
             pepfarID = pepfarIdentifier.getIdentifier();
@@ -344,7 +344,12 @@ public class PharmacyDictionary {
                     regimenType.setPrescribedRegimen(codedSimpleType);
                 }
                 regimenType.setPrescribedRegimenDispensedDate(getXmlDate(visitDate));//PrescribedRegimenDispensedDate
-
+                stopDateTime=retrieveMedicationDuration(visitDate, obsListForAVisit);
+                startDateTime=new DateTime(visitDate);
+                if(stopDateTime!=null){
+                    durationInDays=Utils.getDateDiffInDays(startDateTime.toDate(), stopDateTime.toDate());
+                    regimenType.setPrescribedRegimenDuration(String.valueOf(durationInDays));//PrescribedRegimenDuration
+                }
             }
 
         }

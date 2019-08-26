@@ -35,6 +35,7 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
@@ -669,6 +670,15 @@ public class Utils {
             monthDiff = Months.monthsBetween(d1, d2).getMonths();
         }
         return monthDiff;
+    }
+     public static int getDateDiffInDays(Date startDate, Date endDate) {
+        int dayDiff = 0;
+        DateTime startDateTime=new DateTime(startDate);
+        DateTime endDateTime=new DateTime(endDate);
+        if ((endDateTime.isAfter(startDateTime) || endDateTime.isEqual(startDateTime))) {
+            dayDiff =Days.daysBetween(startDateTime, endDateTime).getDays();
+        }
+        return dayDiff;
     }
 
     public static int getAge(Date dateOfBirth) {
