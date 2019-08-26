@@ -312,12 +312,21 @@ public class PharmacyDictionary {
         Obs obs=null;
         int valueCoded=0;
         CodedSimpleType codedSimpleType=null;
-        if(!obsListForAVisit.isEmpty() && pepfarIdentifier!=null){
+        if(!obsListForAVisit.isEmpty() && pepfarIdentifier!=null && Utils.contains(obsListForAVisit,Utils.CURRENT_REGIMEN_LINE_CONCEPT)){
             pepfarID=pepfarIdentifier.getIdentifier();
             visitID=Utils.getVisitId(pepfarID, visitDate);
             regimenType=new RegimenType();
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(getXmlDate(visitDate));
+            obs=Utils.extractObs(Utils.VISIT_TYPE_CONCEPT, obsListForAVisit);//PrescribedRegimenInitialIndicator
+            if(obs!=null){
+                valueCoded=obs.getValueCoded().getConceptId();
+                if(valueCoded==Utils.VISIT_TYPE_INITIAL_CONCEPT){
+                    regimenType.setPrescribedRegimenInitialIndicator(Boolean.TRUE);
+                }else{
+                    regimenType.setPrescribedRegimenInitialIndicator(Boolean.FALSE);
+                }
+            }
             obs=Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit); //PrescribedRegimenLineCode
             if(obs!=null){
                 valueCoded=obs.getValueCoded().getConceptId();
@@ -333,11 +342,21 @@ public class PharmacyDictionary {
                     codedSimpleType.setCodeDescTxt(obs.getValueCoded().getName().getName());
                     regimenType.setPrescribedRegimen(codedSimpleType);
                 }
+                regimenType.setPrescribedRegimenDispensedDate(getXmlDate(visitDate));//PrescribedRegimenDispensedDate
                 
             }
             
+            
         }
         return regimenType;
+    }
+    public DateTime retrieveMedicationDuration(List<Obs> obsList){
+        DateTime stopDateTime=null;
+        Obs obs=Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
+        if(obs!=null){
+            
+        }
+        return stopDateTime;
     }
     public RegimenType createRegimenType(Patient pts, Encounter enc, List<Obs> pharmacyObsList)
             throws DatatypeConfigurationException {
