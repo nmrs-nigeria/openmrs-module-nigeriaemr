@@ -261,6 +261,9 @@ public class PharmacyDictionary {
         }
         return "";
     }
+    /*
+       Added by Bright Ibezim CDC
+    */
     public RegimenType createRegimenType(Patient pts,Date visitDate, List<Encounter> encounterList){
         RegimenType regimenType=null;
         
