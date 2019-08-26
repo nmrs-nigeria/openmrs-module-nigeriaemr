@@ -318,13 +318,13 @@ public class PharmacyDictionary {
             regimenType=new RegimenType();
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(getXmlDate(visitDate));
-            obs=Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit);
+            obs=Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit); //PrescribedRegimenLineCode
             if(obs!=null){
                 valueCoded=obs.getValueCoded().getConceptId();
                 ndrCode=getRegimenMapValue(valueCoded);
                 regimenType.setPrescribedRegimenLineCode(ndrCode);
                 regimenType.setPrescribedRegimenTypeCode(Utils.ART_CODE);
-                obs=Utils.extractObs(valueCoded, obsListForAVisit); // Retrieve the regimen
+                obs=Utils.extractObs(valueCoded, obsListForAVisit); // PrescribedRegimen
                 if(obs!=null){
                     valueCoded=obs.getValueCoded().getConceptId();
                     ndrCode=getRegimenMapValue(valueCoded);
