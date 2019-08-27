@@ -259,7 +259,7 @@ public class Utils {
 		}
 		return ans;
 	}
-
+        
 	public static Set<Date> extractUniqueVisitsForForms(Patient pts, List<Encounter> encounterList, Integer[] formIDs) {
 		Set<Date> visitDateSet = new HashSet<Date>();
 		List<Integer> formIDList = new ArrayList<Integer>();
