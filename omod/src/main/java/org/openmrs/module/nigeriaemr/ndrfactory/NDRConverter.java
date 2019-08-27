@@ -280,7 +280,10 @@ public class NDRConverter {
 			HTSDictionary htsDictionary = new HTSDictionary();*/
             ClinicalDictionary clinicalDictionary = new ClinicalDictionary();
             LabDictionary labDictionary = new LabDictionary();
-            List<RegimenType> regimenTypeList=null;
+            PharmacyDictionary pharmDictionary=new PharmacyDictionary();
+            List<RegimenType> arvRegimenTypeList=null;
+            //Added by Bright 
+            arvRegimenTypeList=pharmDictionary.createRegimenTypeList(patient, encounters);
             for (Encounter enc : this.encounters) {
                // LoggerUtils.write(NDRConverter.class.getName(), "Started pulling data for encounter: "+enc.getEncounterType().getEncounterTypeId(), LogFormat.INFO, LogLevel.live);
 
@@ -419,7 +422,7 @@ public class NDRConverter {
                     System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
                 }
             }
-
+            condition.getRegimen().addAll(arvRegimenTypeList);
             //create the HIV Questions from the conditions specific obs
             ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
             HIVQuestionsType hivQuestionsType = new NDRMainDictionary().createHIVQuestionType(patient, conditionSpecificQObs);
@@ -489,7 +492,7 @@ public class NDRConverter {
         
         List<RegimenType> regimenList = new ArrayList<>();
         PharmacyDictionary dict = new PharmacyDictionary();
-        regimenList.add(dict.createRegimenType(patient, enc, obs));
+        //regimenList.add(dict.createRegimenType(patient, enc, obs));
         regimenList.addAll(dict.createOITypes(patient, enc, obs));
         return regimenList;
     }
