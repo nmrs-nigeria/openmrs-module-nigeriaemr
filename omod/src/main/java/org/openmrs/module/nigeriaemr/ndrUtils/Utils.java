@@ -222,10 +222,16 @@ public class Utils {
         return visitID;
     }
 
-    public static Set<Date> extractUniqueVisits(Patient pts, List<Encounter> encounterList) {
+    public static Set<Date> extractUniqueVisitsForForms(Patient pts, List<Encounter> encounterList,Integer[] formIDs) {
         Set<Date> visitDateSet = new HashSet<Date>();
+        List<Integer> formIDList=new ArrayList<Integer>();
+        formIDList.addAll(Arrays.asList(formIDs));
+        
         for (Encounter enc : encounterList) {
-            visitDateSet.add(enc.getEncounterDatetime());
+            if(formIDList.contains(enc.getForm().getFormId())){
+                visitDateSet.add(enc.getEncounterDatetime());    
+            }
+            
         }
         return visitDateSet;
     }

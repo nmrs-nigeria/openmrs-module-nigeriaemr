@@ -280,6 +280,11 @@ public class PharmacyDictionary {
         }
         return "";
     }
+    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient){
+        List<RegimenType> regimenTypeList=new ArrayList<RegimenType>();
+        
+        return regimenTypeList;
+    }
 
     /*
        Added by Bright Ibezim CDC
@@ -298,7 +303,6 @@ public class PharmacyDictionary {
   -SubstitutionIndicator
   -SwitchIndicator
   -ReasonForRegimenSwitchSubs
-  
   -DateRegimenStarted
   -DateRegimenStartedDD
   -DateRegimenStartedMM
@@ -307,7 +311,6 @@ public class PharmacyDictionary {
   -DateRegimenEndedDD
   -DateRegimenEndedMM
   -DateRegimenEndedYYYY
-  
   -PrescribedRegimenCurrentIndicator
   -TypeOfPreviousExposureCode
   -PoorAdherenceIndicator
@@ -367,7 +370,7 @@ public class PharmacyDictionary {
                          -DateRegimenEndedDD
                          -DateRegimenEndedMM
                          -DateRegimenEndedYYYY
-                    */
+                     */
                     regimenType.setDateRegimenEnded(getXmlDate(stopDate));
                     regimenType.setDateRegimenEndedDD(Utils.getDayDD(stopDate));
                     regimenType.setDateRegimenEndedMM(Utils.getMonthMM(stopDate));
@@ -393,17 +396,17 @@ public class PharmacyDictionary {
             regimenType.setDateRegimenStartedDD(Utils.getDayDD(visitDate));
             regimenType.setDateRegimenStartedMM(Utils.getMonthMM(visitDate));
             regimenType.setDateRegimenStartedYYYY(Utils.getYearYYYY(visitDate));
-            obs=Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForAVisit);
-            if(obs!=null){
-                valueCoded=obs.getValueCoded().getConceptId();
-                if(valueCoded==Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded==Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT){
+            obs = Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForAVisit);
+            if (obs != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                if (valueCoded == Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT) {
                     regimenType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
                 }
-            }else{
-                obs=Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForAVisit);
-                if(obs!=null){
-                    valueCoded=obs.getValueCoded().getConceptId();
-                    if(valueCoded==Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT|| valueCoded==Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT){
+            } else {
+                obs = Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForAVisit);
+                if (obs != null) {
+                    valueCoded = obs.getValueCoded().getConceptId();
+                    if (valueCoded == Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT) {
                         regimenType.setPoorAdherenceIndicator(Boolean.TRUE);
                     }
                 }
