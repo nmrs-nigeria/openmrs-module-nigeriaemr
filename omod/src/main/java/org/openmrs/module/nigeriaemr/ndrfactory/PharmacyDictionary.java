@@ -165,6 +165,16 @@ public class PharmacyDictionary {
         regimenMap.put(164507, "10");
         regimenMap.put(164514, "20");
         regimenMap.put(164703, "30");
+        /* Added by Bright Ibezim Reason for substitusion and switch */
+        regimenMap.put(102, "1");
+        regimenMap.put(165048, "2");
+        regimenMap.put(160559, "3");
+        regimenMap.put(160567, "4");
+        regimenMap.put(160561, "5");
+        regimenMap.put(159834, "6");
+        regimenMap.put(163523, "7");
+        regimenMap.put(160566, "8");
+        regimenMap.put(160569, "9");
 
         //key is concept id, value is NDR code text
         regimenCodeDescTextMap.put(160124, "AZT-3TC-EFV");
@@ -355,10 +365,10 @@ public class PharmacyDictionary {
             }
             regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(obsListForAVisit));//SubstitutionIndicator
             regimenType.setSwitchIndicator(retrieveSwitchIndicator(obsListForAVisit));//SwitchIndicator
-            obs=Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, obsListForAVisit);
-            if(obs!=null){
-                valueCoded=obs.getValueCoded().getConceptId();
-                ndrCode=getRegimenMapValue(valueCoded);
+            obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, obsListForAVisit);
+            if (obs != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                ndrCode = getRegimenMapValue(valueCoded);
                 regimenType.setReasonForRegimenSwitchSubs(ndrCode);
             }
 
@@ -387,6 +397,7 @@ public class PharmacyDictionary {
         }
         return ans;
     }
+
     public Boolean retrieveSwitchIndicator(List<Obs> obsList) {
         Obs obs = null;
         int valueCoded = 0;
@@ -408,7 +419,6 @@ public class PharmacyDictionary {
         }
         return ans;
     }
-
 
     public DateTime retrieveMedicationDuration(Date visitDate, List<Obs> obsList) {
         DateTime stopDateTime = null;
