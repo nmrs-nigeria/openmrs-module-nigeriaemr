@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -249,6 +250,27 @@ public class Utils {
             obs = obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID).findFirst().orElse(null);
         }
         return obs;
+    }
+    public static String getDayDD(Date date){
+        String dayString="";
+        DateTime dateTime=new DateTime(date);
+        int day=dateTime.getDayOfMonth();
+        dayString=StringUtils.leftPad(String.valueOf(day),2, "0");
+        return dayString;
+    }
+    public static String getMonthMM(Date date){
+        String monthString="";
+        DateTime dateTime=new DateTime(date);
+        int month=dateTime.getMonthOfYear();
+        monthString=StringUtils.leftPad(monthString,2, "0");
+        return monthString;
+    }
+    public static String getYearYYYY(Date date){
+        String yearString="";
+        DateTime dateTime=new DateTime(date);
+        int year=dateTime.getYear();
+        yearString=String.valueOf(year);
+        return yearString;
     }
     public static Obs extractObsGroupMemberWithConceptID(int conceptID, List<Obs> obsList, Obs obsGrouping){
         Obs obs=null;

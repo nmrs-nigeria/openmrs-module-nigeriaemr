@@ -365,12 +365,14 @@ public class PharmacyDictionary {
             }
             regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(obsListForAVisit));//SubstitutionIndicator
             regimenType.setSwitchIndicator(retrieveSwitchIndicator(obsListForAVisit));//SwitchIndicator
-            obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, obsListForAVisit);
+            obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, obsListForAVisit);//ReasonForRegimenSwitchSubs
             if (obs != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getRegimenMapValue(valueCoded);
                 regimenType.setReasonForRegimenSwitchSubs(ndrCode);
             }
+            regimenType.setDateRegimenStarted(getXmlDate(visitDate));
+            
 
         }
         return regimenType;
