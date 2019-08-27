@@ -496,7 +496,6 @@ public class NDRConverter {
         regimenList.addAll(dict.createOITypes(patient, enc, obs));
         return regimenList;
     }
-       
 	
 	/*
 
