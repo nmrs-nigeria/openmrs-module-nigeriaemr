@@ -225,17 +225,15 @@ public class Utils {
         return null;
     }
 	
-	public static List<Obs> getHIVEnrollmentObs(List<Obs> obs) {
-		Optional<Obs> hivObs = obs.stream()
-				.filter(x -> x.getEncounter().getEncounterId() == HIV_Enrollment_Encounter_Type_Id)
-				.findAny();
-		if (hivObs.isPresent()) {
-			return new ArrayList<>(Collections.singletonList(hivObs.get()));
-		}
-		return null;
+	public static List<Obs> FilterObsByEncounterId(List<Obs> obs, int encounterId) {
+
+		return obs.stream()
+						.filter(ob -> ob.getEncounter().getEncounterId() == encounterId)
+						.collect(Collectors.toList());
 	}
 	
 	public static List<Encounter> getAllRegimenObs(Patient patient) {
+
         return Context.getEncounterService()
                 .getEncountersByPatient(patient).stream()
                 .filter(x -> x.getEncounterType().getEncounterTypeId() == Pharmacy_Encounter_Type_Id)
@@ -729,7 +727,7 @@ public class Utils {
 		}
 		return isSurge;
 	}
-
+	
 	public static Date getHIVEnrollmentDate(Patient patient) {
 		Date enrollmentDate = Context.getEncounterService()
 				.getEncountersByPatient(patient).stream()

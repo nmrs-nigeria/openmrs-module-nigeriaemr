@@ -261,7 +261,8 @@ public class NDRConverter {
             //TODO: add obs transfer form
             //List<AntenatalRegistrationType> _po = Get the data
             List<Obs> conditionSpecificQObs = Utils.getHIVEnrollmentObs(patient);
-            List<Obs> conditionSpecificQObs_1 = Utils.getHIVEnrollmentObs(this.allobs);
+
+            //List<Obs> conditionSpecificQObs_1 = Utils.getHIVEnrollmentObs(this.allobs);
 
             EncountersType encType = new EncountersType();
             condition.setEncounters(encType); //the encType will be populated later
@@ -285,6 +286,7 @@ public class NDRConverter {
 
                 long startTime = System.currentTimeMillis();
                 List<Obs> obsList = new ArrayList<>(enc.getAllObs());
+                List<Obs> obsList1 = Utils.FilterObsByEncounterId(this.allobs, enc.getEncounterId());
 
                 // create the hiv encounter from Adult initials and care card
                 if (enc.getEncounterType().getEncounterTypeId() == Utils.Adult_Ped_Initial_Encounter_Type_Id
