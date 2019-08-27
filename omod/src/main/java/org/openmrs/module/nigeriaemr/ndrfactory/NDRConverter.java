@@ -280,6 +280,7 @@ public class NDRConverter {
 			HTSDictionary htsDictionary = new HTSDictionary();*/
             ClinicalDictionary clinicalDictionary = new ClinicalDictionary();
             LabDictionary labDictionary = new LabDictionary();
+            List<RegimenType> regimenTypeList=null;
             for (Encounter enc : this.encounters) {
                // LoggerUtils.write(NDRConverter.class.getName(), "Started pulling data for encounter: "+enc.getEncounterType().getEncounterTypeId(), LogFormat.INFO, LogLevel.live);
 
@@ -492,6 +493,7 @@ public class NDRConverter {
         regimenList.addAll(dict.createOITypes(patient, enc, obs));
         return regimenList;
     }
+       
 	
 	/*
 
