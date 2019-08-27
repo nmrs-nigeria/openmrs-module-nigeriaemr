@@ -157,13 +157,19 @@ public class NDRConverter {
             ConditionType condition = new ConditionType();
             condition.setConditionCode("86406008");
 
+            //create address
+            condition.setPatientAddress(createPatientAddress());
+
+            //create program area
+            condition.setProgramArea(createProgramArea());
+
             //create common question tags by calling the factory method and passing the encounter, patient and obs list
-            condition.setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient));
+            condition.setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
 
             //create condition specific question tag
-            ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
-            HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.allobs);
+            HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
             if(hivQuestionsType != null) {
+                ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
                 hivSpecificQuestions.setHIVQuestions(hivQuestionsType);
                 condition.setConditionSpecificQuestions(hivSpecificQuestions);
             }
@@ -175,12 +181,6 @@ public class NDRConverter {
                 encType.getHIVEncounter().add(hivEncounter);
                 condition.setEncounters(encType);
             }
-
-            //create address
-            condition.setPatientAddress(createPatientAddress());
-
-            //create program area
-            condition.setProgramArea(createProgramArea());
 
             //create Child birth details
             ChildBirthDetailsType childBirthDetailsType = mainDictionary.createChildBirthDetailsType(patient, this.encounters, this.allobs);
@@ -195,14 +195,14 @@ public class NDRConverter {
             }
 
             //create TB screening
-            ClinicalTBScreeningType clinicalTBScreeningType = mainDictionary.createClinicalTbScreening(patient, this.encounters,  this.allobs);
-            if (clinicalTBScreeningType != null) {
-                condition.getClinicalTBScreening().add(clinicalTBScreeningType);
+            List<ClinicalTBScreeningType> clinicalTBScreeningType = mainDictionary.createClinicalTbScreening(patient, this.encounters,  this.allobs);
+            if (clinicalTBScreeningType != null && !clinicalTBScreeningType.isEmpty()) {
+                condition.getClinicalTBScreening().addAll(clinicalTBScreeningType);
             }
 
-            HIVRiskAssessmentType hivRiskAssessmentType = mainDictionary.createHivRiskAssessment(patient, this.encounters,  this.allobs);
+            List<HIVRiskAssessmentType> hivRiskAssessmentType = mainDictionary.createHivRiskAssessment(patient, this.encounters,  this.allobs);
             if (hivRiskAssessmentType != null) {
-                condition.getHIVRiskAssessment().add(hivRiskAssessmentType);
+                condition.getHIVRiskAssessment().addAll(hivRiskAssessmentType);
             }
 
             //immunization Type
@@ -218,9 +218,9 @@ public class NDRConverter {
             }
 
             //Knowledge Assessment Type
-            KnowledgeAssessmentType knowledgeAssessmentType = mainDictionary.createKnowledgeAssessmentType(patient, this.encounters, this.allobs);
+            List<KnowledgeAssessmentType> knowledgeAssessmentType = mainDictionary.createKnowledgeAssessmentType(patient, this.encounters, this.allobs);
             if (knowledgeAssessmentType != null) {
-                condition.getKnowledgeAssessment().add(knowledgeAssessmentType);
+                condition.getKnowledgeAssessment().addAll(knowledgeAssessmentType);
             }
 
             //Laboratory Report
@@ -229,9 +229,9 @@ public class NDRConverter {
             condition.getPartnerDetailsType().add(null);
 
             //Post Test Counselling
-            PostTestCounsellingType postTestCounsellingType = mainDictionary.createPostTestCounsellingType(patient, this.encounters, this.allobs);
+            List<PostTestCounsellingType> postTestCounsellingType = mainDictionary.createPostTestCounsellingType(patient, this.encounters, this.allobs);
             if (postTestCounsellingType != null) {
-                condition.getPostTestCounselling().add(postTestCounsellingType);
+                condition.getPostTestCounselling().addAll(postTestCounsellingType);
             }
 
             List<RegimenType> arvRegimenTypeList =mainDictionary.createRegimenTypeList(patient, encounters);
@@ -240,15 +240,15 @@ public class NDRConverter {
             }
 
             //Syndromic STI
-            SyndromicSTIScreeningType syndromicSTIScreeningType = mainDictionary.createSyndromicsStiType(patient, this.encounters, this.allobs);
+            List<SyndromicSTIScreeningType> syndromicSTIScreeningType = mainDictionary.createSyndromicsStiType(patient, this.encounters, this.allobs);
             if (syndromicSTIScreeningType != null) {
-                condition.getSyndromicSTIScreening().add(syndromicSTIScreeningType);
+                condition.getSyndromicSTIScreening().addAll(syndromicSTIScreeningType);
             }
 
             //
-            HealthFacilityVisitsType healthFacilityVisitsType = mainDictionary.createHealthFacilityVisit(patient, this.encounters, this.allobs);
+            List<HealthFacilityVisitsType> healthFacilityVisitsType = mainDictionary.createHealthFacilityVisit(patient, this.encounters, this.allobs);
             if (healthFacilityVisitsType != null) {
-                condition.getHealthFacilityVisits().add(healthFacilityVisitsType);
+                condition.getHealthFacilityVisits().addAll(healthFacilityVisitsType);
             }
 
             LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient, this.encounters, this.allobs);
@@ -257,7 +257,7 @@ public class NDRConverter {
 
             long endTime = System.currentTimeMillis();
             if((endTime - startTime) > 1000){
-                System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
+                System.out.println("took too long to get obs : " + (endTime - startTime) + " milli secs : ");
             }
 
             return condition;

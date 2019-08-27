@@ -299,7 +299,13 @@ public class Utils {
         }
         return obsList.stream().filter(ele -> ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
     }
-	
+
+	public static Encounter getLastEncounter(List<Encounter> encounters) {
+		encounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
+		int size = encounters.size();
+		return encounters.get(size - 1);
+	}
+
 	public static Encounter getLastEncounter(Patient patient) {
 
         List<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
@@ -331,6 +337,11 @@ public class Utils {
 		return obs.stream().filter(x -> x.getEncounter().getEncounterId() == encounterId)
 				.collect(Collectors.toList());
 	}
+
+	public static List<Obs> FilterObsByEncounterTypeId(List<Obs> obs, int encounterTypeId){
+		return obs.stream().filter(x -> x.getEncounter().getEncounterType().getEncounterTypeId() == encounterTypeId)
+				.collect(Collectors.toList());
+	}
 	
 	public static List<Obs> getHIVEnrollmentObs(Patient patient) {
         Optional<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
@@ -343,7 +354,7 @@ public class Utils {
         return null;
     }
 	
-	public static List<Obs> getHIVEnrollmentObs(List<Obs> obs) {
+	/*public static List<Obs> getHIVEnrollmentObs(List<Obs> obs) {
 		Optional<Obs> hivObs = obs.stream()
 				.filter(x -> x.getEncounter().getEncounterId() == HIV_Enrollment_Encounter_Type_Id)
 				.findAny();
@@ -351,7 +362,7 @@ public class Utils {
 			return new ArrayList<>(Collections.singletonList(hivObs.get()));
 		}
 		return null;
-	}
+	}*/
 	
 	public static List<Encounter> getAllRegimenObs(Patient patient) {
         return Context.getEncounterService()
@@ -360,7 +371,7 @@ public class Utils {
                 .sorted(Comparator.comparing(Encounter::getEncounterDatetime))
                 .collect(Collectors.toList());
     }
-	
+
 	public static List<Obs> getFirstRegimenObs(Patient patient) {
         List<Encounter> arvEncounter = getAllRegimenObs(patient);
 
@@ -375,9 +386,30 @@ public class Utils {
 		
 		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
 		return getRegimenFromObs(FirstRegimenObs);
-		
 	}
-	
+
+	public static Obs getFirstRegimen(List<Encounter> encounters) {
+
+		List<Obs> FirstRegimenObs = getFirstRegimenObs(encounters);
+		return getRegimenFromObs(FirstRegimenObs);
+	}
+
+	public static List<Obs> getFirstRegimenObs(List<Encounter> encounters) {
+		List<Encounter> arvEncounter = getAllRegimenObs(encounters);
+
+		if (arvEncounter != null && arvEncounter.size() > 0) {
+			return new ArrayList<>(arvEncounter.get(0).getAllObs(false));
+		} else {
+			return null;
+		}
+	}
+
+	public static List<Encounter> getAllRegimenObs(List<Encounter> encounters) {
+		return encounters.stream().filter(x -> x.getEncounterType().getEncounterTypeId() == Pharmacy_Encounter_Type_Id)
+				.sorted(Comparator.comparing(Encounter::getEncounterDatetime)).collect(Collectors.toList());
+	}
+
+
 	public static Obs getRegimenFromObs(List<Obs> RegimenObs) {
 		
 		Obs regimenLine = Utils.extractObs(PharmacyDictionary.Prescribed_Regimen_Line_Concept_Id, RegimenObs);

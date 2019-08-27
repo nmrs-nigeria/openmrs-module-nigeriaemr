@@ -5,7 +5,8 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.util.Arrays;
+import java.util.*;
+
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -14,9 +15,7 @@ import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
@@ -182,7 +181,9 @@ public class HTSDictionary {
         return knowledgeAssessmentType;
     }
 
-    public HIVRiskAssessmentType createHivRiskAssessment(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+
+
+   public HIVRiskAssessmentType createHivRiskAssessment(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         HIVRiskAssessmentType hivRiskAssessmentType = new HIVRiskAssessmentType();
 
@@ -322,6 +323,34 @@ public class HTSDictionary {
 
     public ClinicalTBScreeningType createClinicalTbScreening(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
+
+        if (htsIdentifier == null) {
+            return null;
+        }
+        ClinicalTBScreeningType clinicalTBScreeningType = new ClinicalTBScreeningType();
+
+        Obs obs = extractObs(Current_Cough, obsList);
+        if (obs != null && obs.getValueCoded() != null) {
+            clinicalTBScreeningType.setCurrentlyCough(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
+        }
+        obs = extractObs(Weight_loss, obsList);
+        if (obs != null && obs.getValueAsBoolean() != null) {
+            clinicalTBScreeningType.setWeightLoss(obs.getValueAsBoolean());
+        }
+        obs = extractObs(Fever, obsList);
+        if (obs != null && obs.getValueCoded() != null) {
+            clinicalTBScreeningType.setFever(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
+        }
+        obs = extractObs(Night_sweats, obsList);
+        if (obs != null && obs.getValueAsBoolean() != null) {
+            clinicalTBScreeningType.setNightSweats(obs.getValueAsBoolean());
+        }
+
+        return clinicalTBScreeningType;
+    }
+
+   /* public ClinicalTBScreeningType createClinicalTbScreening(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+        PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         ClinicalTBScreeningType clinicalTBScreeningType = new ClinicalTBScreeningType();
 
         if (htsIdentifier != null) {
@@ -346,7 +375,7 @@ public class HTSDictionary {
         }
 
         return clinicalTBScreeningType;
-    }
+    }*/
 
     public PartnerDetailsType createPartnerDetails(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
