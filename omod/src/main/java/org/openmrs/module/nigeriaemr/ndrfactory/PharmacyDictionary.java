@@ -361,6 +361,18 @@ public class PharmacyDictionary {
                 if (stopDateTime != null) {
                     durationInDays = Utils.getDateDiffInDays(startDateTime.toDate(), stopDateTime.toDate());
                     regimenType.setPrescribedRegimenDuration(String.valueOf(durationInDays));//PrescribedRegimenDuration
+                    stopDate = stopDateTime.toDate();
+                    /*
+                         -DateRegimenEnded
+                         -DateRegimenEndedDD
+                         -DateRegimenEndedMM
+                         -DateRegimenEndedYYYY
+                    */
+                    regimenType.setDateRegimenEnded(getXmlDate(stopDate));
+                    regimenType.setDateRegimenEndedDD(Utils.getDayDD(stopDate));
+                    regimenType.setDateRegimenEndedMM(Utils.getMonthMM(stopDate));
+                    regimenType.setDateRegimenEndedYYYY(Utils.getYearYYYY(stopDate));
+
                 }
             }
             regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(obsListForAVisit));//SubstitutionIndicator
@@ -371,8 +383,16 @@ public class PharmacyDictionary {
                 ndrCode = getRegimenMapValue(valueCoded);
                 regimenType.setReasonForRegimenSwitchSubs(ndrCode);
             }
+            /*
+                -DateRegimenStarted
+                -DateRegimenStartedDD
+                -DateRegimenStartedMM
+                -DateRegimenStartedYYYY
+             */
             regimenType.setDateRegimenStarted(getXmlDate(visitDate));
-            
+            regimenType.setDateRegimenStartedDD(Utils.getDayDD(visitDate));
+            regimenType.setDateRegimenStartedMM(Utils.getMonthMM(visitDate));
+            regimenType.setDateRegimenStartedYYYY(Utils.getYearYYYY(visitDate));
 
         }
         return regimenType;
