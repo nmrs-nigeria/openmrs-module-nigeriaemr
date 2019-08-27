@@ -1,10 +1,8 @@
 package org.openmrs.module.nigeriaemr.ndrUtils;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.Months;
-import org.joda.time.Years;
+import org.joda.time.*;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
@@ -27,6 +25,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,40 +42,114 @@ import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.util.OpenmrsUtil;
 
 public class Utils {
-	
+
 	public final static int HIV_Enrollment_Encounter_Type_Id = 14;
-	
+
 	public final static int Pharmacy_Encounter_Type_Id = 13;
-	
+
 	public final static int Laboratory_Encounter_Type_Id = 11;
-	
+
 	public final static int Care_card_Encounter_Type_Id = 12;
-	
+
 	public final static int Adult_Ped_Initial_Encounter_Type_Id = 8;
-	
+
 	public final static int Client_Tracking_And_Termination_Encounter_Type_Id = 15;
-	
+
 	public final static int Client_Intake_Form_Encounter_Type_Id = 20;
-	
+
 	public final static int Patient_PEPFAR_Id = 3;
-	
+
 	public final static int Patient_Hospital_Id = 3;
-	
+
 	public final static int Patient_RNLSerial_No = 3;
-	
+
 	public final static int Reason_For_Termination = 165470;
-	
+
 	public final static int Antenatal_Registration_Encounter_Type_Id = 10;
-	
+
 	public final static int Delivery_Encounter_Type_Id = 16;
-	
+
 	public final static int Child_Birth_Detail_Encounter_Type_Id = 9;
-	
+
 	public final static int Child_Followup_Encounter_Type_Id = 18;
-	
+
 	public final static int Partner_register_Encounter_Id = 19;//Check this data from the database when there is record
-	
+
 	public final static int Admission_Simple_Client_intake = 2;
+
+	/* RegimenType specific concepts by Bright */
+	public final static int CURRENT_REGIMEN_LINE_CONCEPT = 165708; // From Pharmacy Form
+
+	public final static int ADULT_FIRST_LINE_REGIMEN_CONCEPT = 164506; // From Pharmacy Form
+
+	public final static int ADULT_SECOND_LINE_REGIMEN_CONCEPT = 164513; // From Pharmacy Form
+
+	public final static int ADULT_THRID_LINE_REGIMEN_CONCEPT = 165702; // From Pharmacy Form
+
+	public final static int CHILD_FIRST_LINE_REGIMEN_CONCEPT = 164507; // From Pharmacy Form
+
+	public final static int CHILD_SECOND_LINE_REGIMEN_CONCEPT = 164514; // From Pharmacy Form
+
+	public final static int CHILD_THRID_LINE_REGIMEN_CONCEPT = 165703; // From Pharmacy Form
+
+	public final static int PICKUP_REASON_CONCEPT = 165774; // From Pharmacy Form
+
+	public final static int PICKUP_REASON_CONCEPT_SUBSTITUTE_VALUE = 165665; // From Pharmacy Form
+
+	public final static int PICKUP_REASON_CONCEPT_SWITCH_VALUE = 165772;// From Pharmacy Order Form
+
+	public final static int REGIMEN_MEDICATION_PLAN = 165771;// From Care Card Follow Up
+
+	public final static int REGIMEN_MEDICATION_PLAN_SUBSTITUTE_REGIMEN_CONCEPT_VALUE = 165769;// From Care Card Follow Up Answer to Regimen Medication Plan
+
+	public final static int REGIMEN_MEDICATION_PLAN_SWITCH_REGIMEN_CONCEPT_VALUE = 165768;// From Care Card
+
+	public final static int REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT = 165056; // From Care Card Follow Up
+
+	public final static int ARV_DRUGS_GROUPING_CONCEPT_SET = 162240;// Human immunodeficiency virus treatment regimen from Pharmacy Form
+
+	public final static int MEDICATION_DURATION_CONCEPT = 159368;// Medication Duration Concept From Pharmacy Form
+
+	public final static int OI_DRUGS_GROUPING_CONCEPT_SET = 165726;//OI Medication Grouping Concept from Pharmacy Form
+
+	public final static int OI_DRUGS_CONCEPT = 165727; // OI Drugs Concept from Pharmacy Form
+
+	public final static String ART_CODE = "ART"; // Code for ART
+
+	public final static int VISIT_TYPE_CONCEPT = 164181; // Visit Type concept from Pharmacy Forms
+
+	public final static int VISIT_TYPE_INITIAL_CONCEPT = 164180; // Initial Visit from Pharmacy Forms
+
+	public final static int VISIT_TYPE_FOLLOWUP_CONCEPT = 160530; // Follow up Visit from Pharmacy Forms
+
+	public final static int NEXT_APPOINTMENT_DATE_CONCEPT = 5096; // Next Appointment Date Concept Care Card
+
+	public final static int NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT = 165836;// From Pharmacy Form
+
+	public final static int MISSED_DOSES_FAIR_ADHERENCE_CONCEPT = 165834;// FAIR ADHERENCE
+
+	public final static int MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT = 165835;// POOR ADHERENCE
+
+	public final static int ARV_ADHERENCE_CONCEPT = 165290;// ARV ADHERENCE CONCEPT From Care Card
+
+	public final static int ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT = 165288; // ARV ADHERENCE From Care Card
+
+	public final static int ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT = 165289; // ARV ADHERENCE From Care Card
+
+	/* Identifier IDs */
+	public static final int PEPFAR_IDENTIFIER_INDEX = 4;
+
+	public static final int HOSPITAL_IDENTIFIER_INDEX = 5;
+
+	public static final int OTHER_IDENTIFIER_INDEX = 3;
+
+	public static final int HTS_IDENTIFIER_INDEX = 8;
+
+	public static final int PMTCT_IDENTIFIER_INDEX = 6;
+
+	public static final int EXPOSE_INFANT_IDENTIFIER_INDEX = 7;
+
+	public static final int PEP_ED_IDENTIFIER_INDEX = 9;
 	
 	public static String getFacilityName() {
 		return Context.getAdministrationService().getGlobalProperty("Facility_Name");
@@ -170,6 +243,46 @@ public class Utils {
 		/*String dateString = new SimpleDateFormat("dd-MM-yyyy").format(enc.getEncounterDatetime());
 		return pts.getPatientIdentifier(3).getIdentifier() + "-" + dateString;*/
 	}
+
+	public static String getVisitId(String identifier, Date visitDate) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String visitID = dateFormat.format(visitDate) + "-" + identifier;
+		return visitID;
+	}
+
+	public static boolean contains(List<Obs> obsList, int conceptID) {
+		boolean ans = false;
+		for (Obs ele : obsList) {
+			if (ele.getConcept().getConceptId() == conceptID) {
+				ans = true;
+			}
+		}
+		return ans;
+	}
+
+	public static Set<Date> extractUniqueVisitsForForms(Patient pts, List<Encounter> encounterList, Integer[] formIDs) {
+		Set<Date> visitDateSet = new HashSet<Date>();
+		List<Integer> formIDList = new ArrayList<Integer>();
+		formIDList.addAll(Arrays.asList(formIDs));
+
+		for (Encounter enc : encounterList) {
+			if (formIDList.contains(enc.getForm().getFormId())) {
+				visitDateSet.add(enc.getEncounterDatetime());
+			}
+
+		}
+		return visitDateSet;
+	}
+
+	public static List<Obs> extractObsPerVisit(Date visitDate, List<Encounter> allEncountersList) {
+		List<Obs> obsList = new ArrayList<Obs>();
+		for (Encounter enc : allEncountersList) {
+			if (enc.getEncounterDatetime().equals(visitDate)) {
+				obsList.addAll(enc.getAllObs());
+			}
+		}
+		return obsList;
+	}
 	
 	public static Obs extractObs(int conceptID, List<Obs> obsList) {
 
@@ -213,6 +326,11 @@ public class Utils {
             return null;
         }
     }
+
+    public static List<Obs> FilterObsByEncounterId(List<Obs> obs, int encounterId){
+		return obs.stream().filter(x -> x.getEncounter().getEncounterId() == encounterId)
+				.collect(Collectors.toList());
+	}
 	
 	public static List<Obs> getHIVEnrollmentObs(Patient patient) {
         Optional<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
@@ -225,15 +343,17 @@ public class Utils {
         return null;
     }
 	
-	public static List<Obs> FilterObsByEncounterId(List<Obs> obs, int encounterId) {
-
-		return obs.stream()
-						.filter(ob -> ob.getEncounter().getEncounterId() == encounterId)
-						.collect(Collectors.toList());
+	public static List<Obs> getHIVEnrollmentObs(List<Obs> obs) {
+		Optional<Obs> hivObs = obs.stream()
+				.filter(x -> x.getEncounter().getEncounterId() == HIV_Enrollment_Encounter_Type_Id)
+				.findAny();
+		if (hivObs.isPresent()) {
+			return new ArrayList<>(Collections.singletonList(hivObs.get()));
+		}
+		return null;
 	}
 	
 	public static List<Encounter> getAllRegimenObs(Patient patient) {
-
         return Context.getEncounterService()
                 .getEncountersByPatient(patient).stream()
                 .filter(x -> x.getEncounterType().getEncounterTypeId() == Pharmacy_Encounter_Type_Id)
@@ -304,7 +424,51 @@ public class Utils {
 		facilityType.setFacilityTypeCode(facilityTypeCode);
 		return facilityType;
 	}
-	
+
+	public static int getDateDiffInDays(Date startDate, Date endDate) {
+		int dayDiff = 0;
+		DateTime startDateTime = new DateTime(startDate);
+		DateTime endDateTime = new DateTime(endDate);
+		if ((endDateTime.isAfter(startDateTime) || endDateTime.isEqual(startDateTime))) {
+			dayDiff = Days.daysBetween(startDateTime, endDateTime).getDays();
+		}
+		return dayDiff;
+	}
+
+	public static String getDayDD(Date date) {
+		String dayString = "";
+		DateTime dateTime = new DateTime(date);
+		int day = dateTime.getDayOfMonth();
+		dayString = StringUtils.leftPad(String.valueOf(day), 2, "0");
+		return dayString;
+	}
+
+	public static String getMonthMM(Date date) {
+		String monthString = "";
+		DateTime dateTime = new DateTime(date);
+		int month = dateTime.getMonthOfYear();
+		monthString = StringUtils.leftPad(String.valueOf(month), 2, "0");
+		return monthString;
+	}
+
+	public static String getYearYYYY(Date date) {
+		String yearString = "";
+		DateTime dateTime = new DateTime(date);
+		int year = dateTime.getYear();
+		yearString = String.valueOf(year);
+		return yearString;
+	}
+
+	public static Obs extractObsGroupMemberWithConceptID(int conceptID, List<Obs> obsList, Obs obsGrouping) {
+		Obs obs = null;
+		for (Obs ele : obsList) {
+			if (ele.getConcept().getConceptId() == conceptID && ele.getObsGroup().equals(obsGrouping)) {
+				obs = ele;
+			}
+		}
+		return obs;
+	}
+
 	public void dothings() {
 		
 	}
@@ -727,7 +891,7 @@ public class Utils {
 		}
 		return isSurge;
 	}
-	
+
 	public static Date getHIVEnrollmentDate(Patient patient) {
 		Date enrollmentDate = Context.getEncounterService()
 				.getEncountersByPatient(patient).stream()

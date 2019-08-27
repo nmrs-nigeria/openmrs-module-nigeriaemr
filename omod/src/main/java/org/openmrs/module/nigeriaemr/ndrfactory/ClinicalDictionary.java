@@ -1,12 +1,6 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
@@ -24,10 +18,10 @@ public class ClinicalDictionary {
 
     public final static int Weight_Concept_Id = 5089,
             Child_Height_Concept_Id = 5090,
-            Patient_Family_Planning_Method_Code_Concept_Id = 4,
+            Patient_Family_Planning_Method_Code_Concept_Id = 374,
             Noted_Side_Effects_Concept_Id = 159935,
-            //CD4_Concept_Id=6,
-            //CD4_Test_Date_Concept_Id=7,
+            CD4_Concept_Id=6,
+            CD4_Test_Date_Concept_Id=7,
             Next_Appointment_Date_Concept_Id = 5096,
             Systolic_Blood_Pressure_Concept_Id = 5085,
             Dystolic_Blood_Pressure_Concept_Id = 5086,
@@ -36,7 +30,7 @@ public class ClinicalDictionary {
             Functional_Status_Concept_Id = 165039,
             WHO_Clinical_Stage_Concept_Id = 5356,
             TB_Status_Concept_Id = 1659,
-            Other_OI_Other_Problem_Concept_Id = 1728,
+            Other_OI_Other_Problem_Concept_Id = 160170,
             ARV_Drug_Adherence_Concept_Id = 165290,
             Why_Poor_Fair_ARV_Drug_Adherence_Concept_Id = 19,
             Cotrimoxazole_Dose_Concept_Id = 20,
@@ -47,6 +41,11 @@ public class ClinicalDictionary {
             Why_Poor_Fair_INH_Drug_Adherence_Concept_Id = 25;
 
     private Map<Integer, String> map = new HashMap<>();
+
+    private StringJoiner notedSide_Effects = new StringJoiner(",");
+    private StringJoiner otherOI_Effects = new StringJoiner(",");
+
+
 
     public ClinicalDictionary() {
         loadDictionary();
@@ -109,6 +108,17 @@ public class ClinicalDictionary {
         map.put(165053,"9");
         map.put(125886,"10");
         map.put(138291,"11");
+
+        //functional status
+        map.put(159468,"W");
+        map.put(160026,"A");
+        map.put(162752,"B");
+
+        //ARV Drug Adherence
+        map.put(165287,"G");
+        map.put(165288,"P");
+        map.put(165289,"F");
+
 
 
 
@@ -234,7 +244,8 @@ public class ClinicalDictionary {
                             try{
                                 LoggerUtils.write(ClinicalDictionary.class.getName(), "About to pull Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
                                 value_coded = obs.getValueCoded().getConceptId();
-                                hivEncounter.setOtherOIOtherProblems(getMappedValue(value_coded));
+                                otherOI_Effects.add(getMappedValue(value_coded));
+                               // hivEncounter.setOtherOIOtherProblems(getMappedValue(value_coded));
                                 LoggerUtils.write(ClinicalDictionary.class.getName(), "Finished pulling Other_OI_Other_Problem_Concept_Id", LogFormat.FATAL, LogLevel.debug);
 
                             }catch (Exception ex){
@@ -245,7 +256,8 @@ public class ClinicalDictionary {
                         case Noted_Side_Effects_Concept_Id:
 
                             value_coded = obs.getValueCoded().getConceptId();
-                            hivEncounter.setNotedSideEffects(getMappedValue(value_coded));
+                            notedSide_Effects.add(getMappedValue(value_coded));
+                          //  hivEncounter.setNotedSideEffects(getMappedValue(value_coded));
 
                             break;
 
@@ -330,21 +342,23 @@ public class ClinicalDictionary {
 
                 switch (conceptID) {
 
-                    /*case ARV_Drug_Regimen_Concept_Id:
+                  /*  case ARV_Drug_Regimen_Concept_Id:
 					value_coded = obs.getValueCoded().getConceptId();
 					cst = new CodedSimpleType();
 					cst.setCode(getMappedValue(value_coded));
 					cst.setCodeDescTxt(obs.getValueCodedName().getName());
 					hivEncounter.setARVDrugRegimen(cst);
-					break;*/
- /*case CD4_Concept_Id:
+					break;
+
+                   */
+            case CD4_Concept_Id:
 					value_numeric = (int) Math.round(obs.getValueNumeric());
 					hivEncounter.setCD4(value_numeric);
 					break;
 				case CD4_Test_Date_Concept_Id:
 					value_datetime = obs.getValueDatetime();
 					hivEncounter.setCD4TestDate(Utils.getXmlDate(value_datetime));
-					break;*/
+					break;
                     default:
                         break;
                 }
@@ -359,6 +373,15 @@ public class ClinicalDictionary {
             String bp = SystolicBloodPressure + "/" + DistolicBloodPressure;
             hivEncounter.setBloodPressure(bp);
         }
+
+        if(otherOI_Effects.length() > 0){
+            hivEncounter.setOtherOIOtherProblems(otherOI_Effects.toString());
+        }
+
+        if(notedSide_Effects.length() > 0){
+            hivEncounter.setNotedSideEffects(notedSide_Effects.toString());
+        }
+
         return hivEncounter;
     }
 

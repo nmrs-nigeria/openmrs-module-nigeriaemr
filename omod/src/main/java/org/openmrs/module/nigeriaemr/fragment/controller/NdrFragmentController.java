@@ -109,7 +109,7 @@ public class NdrFragmentController {
 			//			
 			for (Patient patient : patients) {
 				
-				//if (patient.getId() == 14 || patient.getId() == 19 || patient.getId() == 21) {
+				//if (patient.getId() == 140) {
 				Container cnt = null;
 				try {
 					LoggerUtils.write(NdrFragmentController.class.getName(),
@@ -160,9 +160,9 @@ public class NdrFragmentController {
 					}
 				}
 				
-				//}
-				
 			}
+			
+			//	}
 			
 			//Update ndr last run date
 			Utils.updateLast_NDR_Run_Date(new Date());

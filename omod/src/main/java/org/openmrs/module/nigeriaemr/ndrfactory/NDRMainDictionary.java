@@ -55,9 +55,19 @@ public class NDRMainDictionary {
     private String appDirectory = "";
 
     private static Map<Integer, String> map = new HashMap<>();
+    private ClinicalDictionary clinicalDictionary = null;
+    private  PMTCTDictionary pmtctDictionary = null;
+    private HTSDictionary htsDictionary = null;
+    private LabDictionary labDictionary = null;
+    private PharmacyDictionary pharmDictionary= null;
 
     public NDRMainDictionary() {
         loadDictionary();
+        clinicalDictionary = new ClinicalDictionary();
+        pmtctDictionary = new PMTCTDictionary();
+        htsDictionary = new HTSDictionary();
+        labDictionary = new LabDictionary();
+        pharmDictionary=new PharmacyDictionary();
     }
 
     private void loadDictionary() {
@@ -633,4 +643,59 @@ public class NDRMainDictionary {
         }
         return null;
     }
+
+
+    public HIVEncounterType createHIVEncounterType(Patient patient, List<Encounter> enc) throws DatatypeConfigurationException {
+       return clinicalDictionary.createHIVEncounterType(patient, null, null);
+    }
+
+    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient) throws DatatypeConfigurationException{
+        return  pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient);
+    }
+
+    public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, List<Encounter> enc, List<Obs> labObsList)
+            throws DatatypeConfigurationException {
+        return labDictionary.createLaboratoryOrderAndResult(pts, null, labObsList );
+    }
+
+    public ChildBirthDetailsType createChildBirthDetailsType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+        return pmtctDictionary.createChildBirthDetailsType(pts, null, antenatalObsList);
+    }
+
+    public ChildFollowupType createChildFollowupType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+       return pmtctDictionary.createChildFollowupType(pts, null,  antenatalObsList);
+    }
+
+    public ImmunizationType createImmunizationType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+        return pmtctDictionary.createImmunizationType(pts, null, antenatalObsList);
+    }
+    public InfantPCRTestingType createInfantPcr(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+        return  pmtctDictionary.createInfantPcr(pts, null,antenatalObsList);
+    }
+
+    public ClinicalTBScreeningType createClinicalTbScreening(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+        return htsDictionary.createClinicalTbScreening(pts,null, obsList);
+    }
+
+    public HIVRiskAssessmentType createHivRiskAssessment(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+        return htsDictionary.createHivRiskAssessment(pts, null, obsList);
+    }
+
+    public KnowledgeAssessmentType createKnowledgeAssessmentType(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+        return htsDictionary.createKnowledgeAssessmentType(pts, null, obsList);
+    }
+
+    public PostTestCounsellingType createPostTestCounsellingType(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+        return htsDictionary.createPostTestCouncellingType(pts, null, obsList);
+    }
+    public SyndromicSTIScreeningType createSyndromicsStiType(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+        return htsDictionary.createSyndromicsStiType(pts, null, obsList );
+    }
+
+    public HealthFacilityVisitsType createHealthFacilityVisit(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+        return htsDictionary.createHealthFacilityVisit(pts, null, obsList);
+    }
+
+
+
 }
