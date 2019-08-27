@@ -323,7 +323,7 @@ public class Utils {
 		String monthString = "";
 		DateTime dateTime = new DateTime(date);
 		int month = dateTime.getMonthOfYear();
-		monthString = StringUtils.leftPad(monthString, 2, "0");
+		monthString = StringUtils.leftPad(String.valueOf(month), 2, "0");
 		return monthString;
 	}
 	
