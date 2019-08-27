@@ -227,13 +227,22 @@ public class Utils {
         List<Integer> formIDList=new ArrayList<Integer>();
         formIDList.addAll(Arrays.asList(formIDs));
         
-        for (Encounter enc : encounterList) {
+        for(Encounter enc : encounterList) {
             if(formIDList.contains(enc.getForm().getFormId())){
                 visitDateSet.add(enc.getEncounterDatetime());    
             }
             
         }
         return visitDateSet;
+    }
+    public static List<Obs> extractObsPerVisit(Date visitDate,List<Encounter> allEncountersList){
+        List<Obs> obsList=new ArrayList<Obs>();
+        for(Encounter enc: allEncountersList){
+            if(enc.getEncounterDatetime().equals(visitDate)){
+                obsList.addAll(enc.getAllObs());
+            }
+        }
+        return obsList;
     }
 
     public static boolean contains(List<Obs> obsList, int conceptID) {
