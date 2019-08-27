@@ -56,6 +56,7 @@ public class HIVQuestionTypeDictionary {
         if(!obsCommonQuestionsList.isEmpty()){
             commonQuestionType=new CommonQuestionsType();
             commonQuestionType.setHospitalNumber(hospID); // HospitalNumber
+            
         }
         
         
