@@ -393,6 +393,11 @@ public class PharmacyDictionary {
             regimenType.setDateRegimenStartedDD(Utils.getDayDD(visitDate));
             regimenType.setDateRegimenStartedMM(Utils.getMonthMM(visitDate));
             regimenType.setDateRegimenStartedYYYY(Utils.getYearYYYY(visitDate));
+            
+            obs=Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForAVisit);
+            if(obs!=null){
+                
+            }
 
         }
         return regimenType;
