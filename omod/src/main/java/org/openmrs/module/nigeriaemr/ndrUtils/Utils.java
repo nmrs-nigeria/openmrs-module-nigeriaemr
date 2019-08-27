@@ -106,8 +106,11 @@ public class Utils {
     public final static int VISIT_TYPE_FOLLOWUP_CONCEPT = 160530; // Follow up Visit from Pharmacy Forms
     public final static int NEXT_APPOINTMENT_DATE_CONCEPT=5096; // Next Appointment Date Concept Care Card
     public final static int NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT=165836;// From Pharmacy Form
-    public final static int FAIR_ADHERENCE_CONCEPT=165834;// FAIR ADHERENCE 
-    public final static int POOR_ADHERENCE_CONCEPT=165835;// POOR ADHERENCE
+    public final static int MISSED_DOSES_FAIR_ADHERENCE_CONCEPT=165834;// FAIR ADHERENCE 
+    public final static int MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT=165835;// POOR ADHERENCE
+    public final static int ARV_ADHERENCE_CONCEPT=165290;// ARV ADHERENCE CONCEPT From Care Card
+    public final static int ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT=165288; // ARV ADHERENCE From Care Card
+    public final static int ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT=165289; // ARV ADHERENCE From Care Card
     /* Identifier IDs */
     public static final int PEPFAR_IDENTIFIER_INDEX = 4;
     public static final int HOSPITAL_IDENTIFIER_INDEX = 5;

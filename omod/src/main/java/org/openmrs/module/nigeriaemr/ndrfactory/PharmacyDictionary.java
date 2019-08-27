@@ -393,10 +393,20 @@ public class PharmacyDictionary {
             regimenType.setDateRegimenStartedDD(Utils.getDayDD(visitDate));
             regimenType.setDateRegimenStartedMM(Utils.getMonthMM(visitDate));
             regimenType.setDateRegimenStartedYYYY(Utils.getYearYYYY(visitDate));
-            
             obs=Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForAVisit);
             if(obs!=null){
-                
+                valueCoded=obs.getValueCoded().getConceptId();
+                if(valueCoded==Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded==Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT){
+                    regimenType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
+                }
+            }else{
+                obs=Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForAVisit);
+                if(obs!=null){
+                    valueCoded=obs.getValueCoded().getConceptId();
+                    if(valueCoded==Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT|| valueCoded==Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT){
+                        regimenType.setPoorAdherenceIndicator(Boolean.TRUE);
+                    }
+                }
             }
 
         }
