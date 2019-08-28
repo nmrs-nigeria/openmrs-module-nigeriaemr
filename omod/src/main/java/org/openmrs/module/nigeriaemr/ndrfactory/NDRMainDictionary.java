@@ -651,8 +651,8 @@ public class NDRMainDictionary {
        return clinicalDictionary.createHIVEncounterType(patient, null, null);
     }
 
-    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient) throws DatatypeConfigurationException{
-        return  pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient);
+    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient,List<Obs> allPatientObsList) throws DatatypeConfigurationException{
+        return  pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient,allPatientObsList);
     }
 
     public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, List<Encounter> enc, List<Obs> labObsList)
