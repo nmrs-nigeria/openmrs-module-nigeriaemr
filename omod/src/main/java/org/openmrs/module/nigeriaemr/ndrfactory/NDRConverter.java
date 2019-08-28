@@ -234,7 +234,7 @@ public class NDRConverter {
                 condition.getPostTestCounselling().add(postTestCounsellingType);
             }
 
-            List<RegimenType> arvRegimenTypeList =mainDictionary.createRegimenTypeList(patient, encounters);
+            List<RegimenType> arvRegimenTypeList =mainDictionary.createRegimenTypeList(patient, encounters, this.allobs);
             if(arvRegimenTypeList !=null && arvRegimenTypeList.size() >0 ){
                 condition.getRegimen().addAll(arvRegimenTypeList);
             }

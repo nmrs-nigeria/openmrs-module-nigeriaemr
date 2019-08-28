@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.HIVEncounterType;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
@@ -130,8 +131,92 @@ public class ClinicalDictionary {
         }
         return null;
     }
-
-
+    /*
+         
+    */
+    public List<HIVEncounterType> createHIVEncounterType(Patient patient,List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList){
+        /*
+            HIVEncounterType
+		  -VisitID
+		  -VisitDate
+		  -DurationOnART
+		  -Weight
+		  -ChildHeight
+		  -BloodPressure
+		  -EDDandPMTCTLink
+		  -PatientFamilyPlanningCode
+		  -PatientFamilyPlanningMethodCode
+		  -FunctionalStatus
+		  -WHOClinicalStage
+		  -TBStatus
+		  -OtherOIOtherProblems
+		  -NotedSideEffects
+		  -ARVDrugRegimen
+		  -ARVDrugAdherence
+		  -WhyPoorFairARVDrugAdherence
+		  -CotrimoxazoleDose
+		  -CotrimoxazoleAdherence
+		  -WhyPoorFairCotrimoxazoleDrugAdherence
+		  -INHDose
+		  -INHAdherence
+		  -WhyPoorFairINHDrugAdherence
+		  -CD4
+		  -CD4TestDate
+		  -NextAppointmentDate
+        */
+        List<HIVEncounterType> hivEncounterTypeList=new ArrayList<HIVEncounterType>();
+        HIVEncounterType hivEncounterType=null;
+        //Turn these to class level constants letter
+        Integer[] encounterTypeArr={8,12,11,13};
+        Set<Date> visitDateSet=Utils.extractUniqueVisitsForForms(patient, allPatientEncounterList, encounterTypeArr);
+        List<Obs> obsPerVisitDate=null;
+        
+        for(Date date: visitDateSet){
+            obsPerVisitDate=Utils.extractObsPerVisitDate(date, allPatientObsList);
+            hivEncounterType=createHIVEncounterType(patient, date, obsPerVisitDate);
+            hivEncounterTypeList.add(hivEncounterType);
+        }
+        return hivEncounterTypeList;
+    }
+    public HIVEncounterType createHIVEncounterType(Patient patient, Date visitDate, Date artStartDate, List<Obs> obsListForVisit){
+              
+               /*
+                   HIVEncounterType
+		  -VisitID
+		  -VisitDate
+		  -DurationOnART
+		  -Weight
+		  -ChildHeight
+		  -BloodPressure
+		  -EDDandPMTCTLink
+		  -PatientFamilyPlanningCode
+		  -PatientFamilyPlanningMethodCode
+		  -FunctionalStatus
+		  -WHOClinicalStage
+		  -TBStatus
+		  -OtherOIOtherProblems
+		  -NotedSideEffects
+		  -ARVDrugRegimen
+		  -ARVDrugAdherence
+		  -WhyPoorFairARVDrugAdherence
+		  -CotrimoxazoleDose
+		  -CotrimoxazoleAdherence
+		  -WhyPoorFairCotrimoxazoleDrugAdherence
+		  -INHDose
+		  -INHAdherence
+		  -WhyPoorFairINHDrugAdherence
+		  -CD4
+		  -CD4TestDate
+		  -NextAppointmentDate
+        */
+        HIVEncounterType hivEncounterType=null;
+        String visitID="",pepfarID="";
+        PatientIdentifier pepfarIdentifier=patient.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
+        pepfarID=pepfarIdentifier.getIdentifier();
+        visitID=Utils.getVisitId(pepfarID, visitDate);
+        
+        return hivEncounterType;
+    }
     public HIVEncounterType createHIVEncounterType(Patient patient, Encounter enc, List<Obs> obsList)
             throws DatatypeConfigurationException {
 

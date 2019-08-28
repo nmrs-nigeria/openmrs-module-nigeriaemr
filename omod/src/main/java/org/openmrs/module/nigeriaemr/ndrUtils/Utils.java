@@ -137,26 +137,39 @@ public class Utils {
 
     public final static int ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT = 165289; // ARV ADHERENCE From Care Card
     /* End of RegimenType Constant */
- /* Variables specific to HIVQuestionType */
+   /* Variables specific to HIVQuestionType */
     public final static int DATE_OF_HIV_DIAGNOSIS_CONCEPT = 160554;
     public final static int MODE_OF_HIV_TEST = 164947;
     public final static int CARE_ENTRY_POINT_CONCEPT = 160540;
     public final static int FACILITY_TRANSFERRED_FROM = 160535;
     public final static int REASON_FOR_TERMINATION_CONCEPT = 165470;
     public final static int DEAD_CONCEPT = 165889;
+    
+    /* Variables for HIVEncounterType */
+    public final static int ART_START_DATE_CONCEPT=159599;
+    public final static int WEIGHT_CONCEPT=5089;
+    public final static int CHILD_HEIGHT_CONCEPT=5090;
+    public final static int BLOOD_PRESSURE_SYSTOLIC_CONCEPT=5085;
+    public final static int BLOOD_PRESSURE_DYSTOLIC_CONCEPT=5086;
+    public final static int PREGNANCY_BREASTFEEDING_CONCEPT=165050;
+    public final static int FAMILY_PLANNING_STATUS_CONCEPT=5271;
+    public final static int FAMILY_PLANNING_METHOD_CONCEPT=374;
+    public final static int FUNCTIONAL_STATUS_CONCEPT=165039;
+    public final static int WHO_CLINICAL_STAGE_CONCEPT=5356;
+    public final static int TB_STATUS_CONCEPT=1659;
+    public final static int OTHER_OI_OTHER_PROBLEMS=160170;
+    public final static int NOTED_SIDE_EFFECT_CONCEPT=159935;
+    public final static int ARV_DRUG_ADHERENCE_CONCEPT=165290;
+    public final static int COTRIMOXAZOLE_ADHERENCE_CONCEPT=161652;
+    public final static int CD4_COUNT_CONCEPT=5497;
+    
     /* Identifier IDs */
     public static final int PEPFAR_IDENTIFIER_INDEX = 4;
-
     public static final int HOSPITAL_IDENTIFIER_INDEX = 5;
-
     public static final int OTHER_IDENTIFIER_INDEX = 3;
-
     public static final int HTS_IDENTIFIER_INDEX = 8;
-
     public static final int PMTCT_IDENTIFIER_INDEX = 6;
-
     public static final int EXPOSE_INFANT_IDENTIFIER_INDEX = 7;
-
     public static final int PEP_ED_IDENTIFIER_INDEX = 9;
 
     public static String getFacilityName() {
@@ -266,20 +279,25 @@ public class Utils {
         return ans;
     }
 
-    public static Set<Date> extractUniqueVisitsForForms(Patient pts, List<Encounter> encounterList, Integer[] formIDs) {
+    public static Set<Date> extractUniqueVisitsForForms(Patient pts, List<Encounter> encounterList, Integer[] encounterTypeIDs) {
         Set<Date> visitDateSet = new HashSet<Date>();
-        List<Integer> formIDList = new ArrayList<Integer>();
-        formIDList.addAll(Arrays.asList(formIDs));
+        List<Integer> encounterTypeIDList = new ArrayList<Integer>();
+        encounterTypeIDList.addAll(Arrays.asList(encounterTypeIDs));
 
         for (Encounter enc : encounterList) {
-            if (formIDList.contains(enc.getForm().getFormId())) {
-                visitDateSet.add(enc.getEncounterDatetime());
+            if (encounterTypeIDList.contains(enc.getEncounterType().getEncounterTypeId())) {
+                visitDateSet.add(DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE));
             }
 
         }
         return visitDateSet;
     }
-
+    public static Date extractARTStartDate(List<Obs> obsList){
+        Date artStartDate=null;
+        Obs obs=null;
+        //obs=Utils.extractObs(Utils., obsList)
+        return artStartDate;
+    }
     public static List<Obs> extractObsPerVisit(Date visitDate, List<Encounter> allEncountersList) {
         List<Obs> obsList = new ArrayList<Obs>();
         for (Encounter enc : allEncountersList) {
