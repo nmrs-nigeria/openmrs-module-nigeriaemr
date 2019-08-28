@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
-import java.util.stream.Collectors;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,7 +14,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import org.apache.log4j.Logger;
 
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -65,6 +63,17 @@ public class NDRConverter {
 
             long startTime = System.currentTimeMillis();
             List<Encounter> encs = Context.getEncounterService().getEncountersByPatient(pts);
+
+            //only run if patient has had any encounter between the last run date and now
+            if(lastDate !=null){
+                Boolean recentEncounter = encs.stream()
+                        .anyMatch(e-> e.getDateCreated().after(lastDate) ||
+                                e.getDateChanged().after(lastDate));
+                /*if(recentEncounter == false)
+                    return null;*/
+            }
+
+
             long endTime = System.currentTimeMillis();
             if((endTime - startTime) > 1000){
                 System.out.println("took too loooong to get encounters : " + (endTime - startTime) + " milli secs : ");
@@ -77,23 +86,7 @@ public class NDRConverter {
                 System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
             }
 
-            //get all encounters that happened after the last run date
-
-            /*if (lastDate != null) {
-            //old implementation
-//			for(Encounter enc : encs){
-//				if(enc.getEncounterDatetime().after(lastDate)){
-//					this.encounters.add(enc);
-//				}
-//			}
-
-            this.encounters = encs.stream().filter((enc) -> (enc.getEncounterDatetime().after(lastDate))).collect(Collectors.toList());
-
-        } else { // assume this is the first time running this report
             this.encounters.addAll(encs);
-        }*/
-            this.encounters.addAll(encs);
-
             if (this.encounters == null || this.encounters.isEmpty()) {
                 return null;
             }          
@@ -234,7 +227,7 @@ public class NDRConverter {
                 condition.getPostTestCounselling().addAll(postTestCounsellingType);
             }
 
-            List<RegimenType> arvRegimenTypeList =mainDictionary.createRegimenTypeList(patient, encounters);
+            List<RegimenType> arvRegimenTypeList =mainDictionary.createRegimenTypeList(patient, encounters, this.allobs);
             if(arvRegimenTypeList !=null && arvRegimenTypeList.size() >0 ){
                 condition.getRegimen().addAll(arvRegimenTypeList);
             }
@@ -307,7 +300,7 @@ public class NDRConverter {
 				Statement statement = connection.createStatement();
 				ResultSet result = statement.executeQuery(sql);
 				while (result.next()) {
-					String name = result.getString("name");
+					//String name = result.getString("name");
 					String coded_value = result.getString("user_generated_id");
 					
 					if (result.getString("Location").contains("STATE")) {
