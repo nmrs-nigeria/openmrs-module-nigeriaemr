@@ -292,10 +292,15 @@ public class Utils {
         }
         return visitDateSet;
     }
-    public static Date extractARTStartDate(List<Obs> obsList){
+    public static Date extractARTStartDate(List<Obs> allPatientsObsList){
         Date artStartDate=null;
         Obs obs=null;
-        //obs=Utils.extractObs(Utils., obsList)
+        obs=Utils.extractObs(Utils.ART_START_DATE_CONCEPT, allPatientsObsList);
+        if(obs!=null){
+            artStartDate=obs.getValueDate();
+        }else{
+            
+        }
         return artStartDate;
     }
     public static List<Obs> extractObsPerVisit(Date visitDate, List<Encounter> allEncountersList) {
@@ -336,26 +341,9 @@ public class Utils {
         return obsList.stream().filter(ele -> ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
     }
 
-<<<<<<< HEAD
-	public static Encounter getLastEncounter(List<Encounter> encounters) {
-		encounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
-		int size = encounters.size();
-		return encounters.get(size - 1);
-	}
 
-	public static Encounter getLastEncounter(Patient patient) {
-=======
-    public static Encounter getLastEncounter(Patient patient) {
->>>>>>> 6a1062440a327a793c87473e39e56ab309c2c936
+	
 
-        List<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
-                .getEncountersByPatient(patient);
-
-        //sort the list by date
-        hivEnrollmentEncounter.sort(Comparator.comparing(Encounter::getEncounterDatetime));
-        int size = hivEnrollmentEncounter.size();
-        return hivEnrollmentEncounter.get(size - 1);
-    }
 
     public static Encounter getFirstEncounter(Patient patient, List<Encounter> encList) {
         //sort the list by date
@@ -387,19 +375,19 @@ public class Utils {
         }
     }
 
-<<<<<<< HEAD
+/*<<<<<<< HEAD
     public static List<Obs> FilterObsByEncounterId(List<Obs> obs, int encounterId){
 		return obs.stream().filter(x -> x.getEncounter().getEncounterId() == encounterId)
 				.collect(Collectors.toList());
-	}
+	}*/
 
 	public static List<Obs> FilterObsByEncounterTypeId(List<Obs> obs, int encounterTypeId){
 		return obs.stream().filter(x -> x.getEncounter().getEncounterType().getEncounterTypeId() == encounterTypeId)
 				.collect(Collectors.toList());
 	}
 	
-	public static List<Obs> getHIVEnrollmentObs(Patient patient) {
-=======
+	//public static List<Obs> getHIVEnrollmentObs(Patient patient) {}
+/*=======
     public static List<Obs> FilterObsByEncounterId(List<Obs> obs, int encounterId) {
         return obs.stream().filter(x -> x.getEncounter().getEncounterId() == encounterId)
                 .collect(Collectors.toList());
@@ -428,7 +416,7 @@ public class Utils {
 		return null;
 	}*/
 	
-	public static List<Encounter> getAllRegimenObs(Patient patient) {
+/*	public static List<Encounter> getAllRegimenObs(Patient patient) {
 =======
 
     public static List<Obs> getHIVEnrollmentObs(List<Obs> obs) {
@@ -450,7 +438,7 @@ public class Utils {
                 .collect(Collectors.toList());
     }
 
-<<<<<<< HEAD
+/*<<<<<<< HEAD
 	public static List<Obs> getFirstRegimenObs(Patient patient) {
 =======
     public static List<Obs> getFirstRegimenObs(Patient patient) {
@@ -463,13 +451,36 @@ public class Utils {
             return null;
         }
     }
-<<<<<<< HEAD
+<<<<<<< HEAD*/
 	
 	public static Obs getFirstRegimen(Patient patient) {
 		
-		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
-		return getRegimenFromObs(FirstRegimenObs);
+		
+                return null;
 	}
+        public static Obs getFirstObsOfConceptByDate(List<Obs> obsList,int conceptID){
+            Obs obs=null;
+            List<Obs> regimenLineObsList=new ArrayList<Obs>();
+            for(Obs ele: obsList){
+                if(ele.getConcept().getConceptId()==conceptID){
+                    regimenLineObsList.add(ele);
+                }
+            }
+            regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
+            return regimenLineObsList.get(0);
+        }
+        public static Obs getLastObsOfConceptByDate(List<Obs> obsList,int conceptID){
+            Obs obs=null;
+            List<Obs> regimenLineObsList=new ArrayList<Obs>();
+            for(Obs ele: obsList){
+                if(ele.getConcept().getConceptId()==conceptID){
+                    regimenLineObsList.add(ele);
+                }
+            }
+            regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
+            int size = regimenLineObsList.size();
+            return regimenLineObsList.get(size-1);
+        }
 
 	public static Obs getFirstRegimen(List<Encounter> encounters) {
 
@@ -507,8 +518,9 @@ public class Utils {
 	
 	public static Date getARTStartDate(Patient patient) {
 		
-		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
-		Obs FirstRegimen = getRegimenFromObs(FirstRegimenObs);
+		//List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
+		//Obs FirstRegimen = getRegimenFromObs(FirstRegimenObs);
+                Obs FirstRegimen=null;
 		if (FirstRegimen != null && FirstRegimen.getValueCoded() != null) {
 			return FirstRegimen.getObsDatetime();
 		}
@@ -698,7 +710,7 @@ public class Utils {
 		}
 	}
 	
-	public static Obs getLastAdherenceObs(Patient patient, Date endDate) {
+	/*public static Obs getLastAdherenceObs(Patient patient, Date endDate) {
 =======
 
     public static Obs getFirstRegimen(Patient patient) {
@@ -1021,9 +1033,9 @@ public class Utils {
 					.collect(Collectors.toList());
 			allCD4Obs.addAll(obs);
 		}*/
-    }
+    //}
 
-    public static List<Obs> getObs(Patient patient, int ConceptId) {
+   /* public static List<Obs> getObs(Patient patient, int ConceptId) {
 
         Concept concept = Context.getConceptService().getConcept(ConceptId);
         return Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept).stream()
@@ -1068,10 +1080,10 @@ public class Utils {
             return encounters.get();
             /*encounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
 			int lastIndex = encounters.size() - 1;
-			return encounters.get(lastIndex);*/
+			return encounters.get(lastIndex);
         }
         return null;
-    }
+    }*/
 
     public static int getDateDiffInMonth(Date startDate, Date endDate) {
 
