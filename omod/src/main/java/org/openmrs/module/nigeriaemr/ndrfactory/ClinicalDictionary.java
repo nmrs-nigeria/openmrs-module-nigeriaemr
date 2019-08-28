@@ -173,7 +173,7 @@ public class ClinicalDictionary {
         
         for(Date date: visitDateSet){
             obsPerVisitDate=Utils.extractObsPerVisitDate(date, allPatientObsList);
-            hivEncounterType=createHIVEncounterType(patient, date, obsPerVisitDate);
+            //hivEncounterType=createHIVEncounterType(patient, date, obsPerVisitDate);
             hivEncounterTypeList.add(hivEncounterType);
         }
         return hivEncounterTypeList;
