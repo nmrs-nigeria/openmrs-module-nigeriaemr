@@ -336,7 +336,7 @@ public class NDRMainDictionary {
             throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
     }
-
+    
     public HIVQuestionsType createHIVQuestionType(Patient patient, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
 
         try {
@@ -649,6 +649,9 @@ public class NDRMainDictionary {
 
     public HIVEncounterType createHIVEncounterType(Patient patient, List<Encounter> enc) throws DatatypeConfigurationException {
        return null;//clinicalDictionary.createHIVEncounterType(patient, enc, null);
+    }
+    public List<HIVEncounterType> createHIVEncounterType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allObs) throws DatatypeConfigurationException {
+       return clinicalDictionary.createHIVEncounterType(patient, allPatientEncounterList, allObs);
     }
 
     public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient,List<Obs> allPatientObsList) throws DatatypeConfigurationException{

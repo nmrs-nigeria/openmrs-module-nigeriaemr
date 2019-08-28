@@ -5,12 +5,17 @@
  */
 package org.openmrs.module.nigeriaemr.ndrUtils;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
- *
- * @author The Bright
+ * @author The Brights
  */
 public class TestClass {
-    public static void main(String[] arg){
-        
-    }
+	
+	public static void main(String[] arg) {
+		int sbp = 120;
+		int dbp = 80;
+		
+		System.out.println();
+	}
 }

@@ -32,32 +32,33 @@ public class NdrFragmentController {
 	public void controller() {
 	}
 	
-        public String generateNDRFile2(){
-            //Initialize your dictionary objects
-            //Get all patients that have a change (New record created or old record modified)
-            //Put the patients in a Set collection
-            //For each patient in the Set
-                //Pull all their encounters and put in a list
-                //Pull all their Obs and put in a List
-                //Use the patient,obsList,encounterList to construct
-                   //Container
-                   //IndividualReport
-                   //PatientDemographics
-                   //HIVCommonQuestion
-                   //HIVEncounter
-                   //LabReport
-                   //RegimenType
-                   //Condition
-                   //PMTCT types
-                   //HTSTypes
-                   //FingerPrintType
-                //While constructing each type, if there is a critical error append it in a CSV file, with description
-                // Questions
-               //- How do we identify patients with change on the dictionary
-               //- How do we identify only specific encounters that changed
-               return null;
-                
-        }
+	public String generateNDRFile2() {
+		//Initialize your dictionary objects
+		//Get all patients that have a change (New record created or old record modified)
+		//Put the patients in a Set collection
+		//For each patient in the Set
+		//Pull all their encounters and put in a list
+		//Pull all their Obs and put in a List
+		//Use the patient,obsList,encounterList to construct
+		//Container
+		//IndividualReport
+		//PatientDemographics
+		//HIVCommonQuestion
+		//HIVEncounter
+		//LabReport
+		//RegimenType
+		//Condition
+		//PMTCT types
+		//HTSTypes
+		//FingerPrintType
+		//While constructing each type, if there is a critical error append it in a CSV file, with description
+		// Questions
+		//- How do we identify patients with change on the dictionary
+		//- How do we identify only specific encounters that changed
+		return null;
+		
+	}
+	
 	public String generateNDRFile(HttpServletRequest request) throws DatatypeConfigurationException, IOException,
 	        SAXException, JAXBException, Throwable {
 		

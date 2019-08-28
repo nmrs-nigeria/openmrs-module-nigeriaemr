@@ -254,7 +254,7 @@ public class LabDictionary {
         }
 
     }
-
+    
     private List<LaboratoryOrderAndResult> createLaboratoryOrderAndResult(Encounter enc, List<Obs> obsList)
             throws DatatypeConfigurationException {
 
