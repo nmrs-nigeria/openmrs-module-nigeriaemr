@@ -553,15 +553,21 @@ public class NDRMainDictionary {
                 //common.setHospitalNumber(pts.getPatientIdentifier(3).getIdentifier());
             }
 
-            Encounter lastEncounterDate = Utils.getLastEncounter(encounters); //(pts);
-            if (lastEncounterDate != null) {
-                common.setDateOfLastReport(getXmlDate(lastEncounterDate.getEncounterDatetime()));
-            }
 
-            Date EnrollmentDate = Utils.getHIVEnrollmentDate(pts);
-            if (EnrollmentDate != null) {
-                common.setDateOfFirstReport(getXmlDate(EnrollmentDate));
-                common.setDiagnosisDate(getXmlDate(EnrollmentDate));
+
+            try{
+                Encounter lastEncounterDate = Utils.getLastEncounter(encounters); //(pts);
+                if (lastEncounterDate != null) {
+                    common.setDateOfLastReport(getXmlDate(lastEncounterDate.getEncounterDatetime()));
+                }
+
+                Date EnrollmentDate = Utils.getHIVEnrollmentDate(pts);
+                if (EnrollmentDate != null) {
+                    common.setDateOfFirstReport(getXmlDate(EnrollmentDate));
+                    common.setDiagnosisDate(getXmlDate(EnrollmentDate));
+                }
+            }catch (Exception ex){
+
             }
 
             if (pts.getGender().equalsIgnoreCase("F")) {

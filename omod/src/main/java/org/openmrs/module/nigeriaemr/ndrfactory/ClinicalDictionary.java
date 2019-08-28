@@ -1,5 +1,6 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
+import java.time.Period;
 import java.util.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,8 @@ import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+
+import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getXmlDate;
 
 public class ClinicalDictionary {
 
@@ -144,6 +147,18 @@ public class ClinicalDictionary {
         hivEncounter.setVisitID(visitID);
         hivEncounter.setVisitDate(Utils.getXmlDate(enc.getEncounterDatetime()));
 
+        Date EnrollmentDate = Utils.getHIVEnrollmentDate(patient);
+        Date dateOfLastReport = enc.getEncounterDatetime();
+
+        if(dateOfLastReport != null && (dateOfLastReport.after(artStartDate) || dateOfLastReport.equals(artStartDate) )){
+
+
+            Period period = Period.between(new java.sql.Date(dateOfLastReport.getTime()).toLocalDate(), new java.sql.Date(EnrollmentDate.getTime()).toLocalDate());
+            int diff = period.getMonths();
+            hivEncounter.setDurationOnArt(diff);
+        }
+
+        /*
         if (artStartDate != null && (enc.getEncounterDatetime().after(artStartDate) || enc.getEncounterDatetime().equals(artStartDate))) {
             Calendar startCalendar = new GregorianCalendar();
             startCalendar.setTime(enc.getEncounterDatetime());
@@ -154,6 +169,8 @@ public class ClinicalDictionary {
             int monthOnART = diffYear * 12 + endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH); //enc.getEncounterDatetime().getMonth() - artStartDate.getMonth(); // Months.monthsBetween(d1, d2).getMonths();
             hivEncounter.setDurationOnArt(monthOnART);
         }
+        */
+
 
         int conceptID;
         int value_numeric;
