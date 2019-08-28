@@ -37,6 +37,7 @@ public class HIVQuestionTypeDictionary {
     public CommonQuestionsType createCommonQuestionType(Patient pts, List<Encounter> encList, List<Obs> obsList){
         //Lets do validation checks before constructing these objects
         CommonQuestionsType commonQuestionType=null;
+        Obs obs=null;
         //Adult Initial Clinical Evaluation 22, Pediatric Initial Clinical Evaluation 20 , HIV Enrollment 23
         Integer[] encounterTypeIDsArray={Utils.Adult_Ped_Initial_Encounter_Type_Id,Utils.HIV_Enrollment_Encounter_Type_Id};
         List<Integer> encounterTypeIDList=new ArrayList<Integer>();
@@ -53,9 +54,11 @@ public class HIVQuestionTypeDictionary {
         if(hospPatientIdentifier!=null){
             hospID=hospPatientIdentifier.getIdentifier();
         }
-        if(!obsCommonQuestionsList.isEmpty()){
+        if(!encList.isEmpty()){
             commonQuestionType=new CommonQuestionsType();
             commonQuestionType.setHospitalNumber(hospID); // HospitalNumber
+           // commonQuestionType.setDateOfFirstReport(Utils.getF);
+            
             
         }
         
