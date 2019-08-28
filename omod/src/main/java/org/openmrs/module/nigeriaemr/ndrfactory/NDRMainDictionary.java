@@ -648,7 +648,7 @@ public class NDRMainDictionary {
 
 
     public HIVEncounterType createHIVEncounterType(Patient patient, List<Encounter> enc) throws DatatypeConfigurationException {
-       return clinicalDictionary.createHIVEncounterType(patient, null, null);
+       return null;//clinicalDictionary.createHIVEncounterType(patient, null, null);
     }
 
     public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient,List<Obs> allPatientObsList) throws DatatypeConfigurationException{
@@ -661,18 +661,18 @@ public class NDRMainDictionary {
     }
 
     public ChildBirthDetailsType createChildBirthDetailsType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-        return pmtctDictionary.createChildBirthDetailsType(pts, null, antenatalObsList);
+        return null; //pmtctDictionary.createChildBirthDetailsType(pts, null, antenatalObsList);
     }
 
     public ChildFollowupType createChildFollowupType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-       return pmtctDictionary.createChildFollowupType(pts, null,  antenatalObsList);
+       return null; // pmtctDictionary.createChildFollowupType(pts, null,  antenatalObsList);
     }
 
     public ImmunizationType createImmunizationType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-        return pmtctDictionary.createImmunizationType(pts, null, antenatalObsList);
+        return null;// pmtctDictionary.createImmunizationType(pts, null, antenatalObsList);
     }
     public InfantPCRTestingType createInfantPcr(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-        return  pmtctDictionary.createInfantPcr(pts, null,antenatalObsList);
+        return null; // pmtctDictionary.createInfantPcr(pts, null,antenatalObsList);
     }
 
     public List<ClinicalTBScreeningType> createClinicalTbScreening(Patient pts, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {

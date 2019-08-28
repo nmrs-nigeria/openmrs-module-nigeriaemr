@@ -27,7 +27,7 @@ ${ ui.includeFragment("nigeriaemr", "nigeriaqual")}
 
 ${ ui.includeFragment("nigeriaemr", "nigeriaqualpeads") }
 
-${ ui.includeFragment("nigeriaemr", "ndrversion") }
+${ ui.includeFragment("nigeriaemr", "ndrVersion") }
 
 
 <div id="wait" class="dialog" style="display: none; ">
