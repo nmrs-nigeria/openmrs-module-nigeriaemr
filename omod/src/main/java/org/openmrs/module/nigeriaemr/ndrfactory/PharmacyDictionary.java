@@ -281,14 +281,14 @@ public class PharmacyDictionary {
         return "";
     }
 
-    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient) throws DatatypeConfigurationException{
+    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient,List<Obs> patientsObsList) throws DatatypeConfigurationException{
         List<RegimenType> regimenTypeList=new ArrayList<RegimenType>();
         Integer[] targetForms={14,27};
         RegimenType regimenType=null;
         List<Obs> obsPerVisit=null;
         Set<Date> visitDateSet=Utils.extractUniqueVisitsForForms(patient, allEncounterForPatient, targetForms);
         for(Date visitDate: visitDateSet){
-            obsPerVisit=Utils.extractObsPerVisit(visitDate, allEncounterForPatient);
+            obsPerVisit=Utils.extractObsPerVisitDate(visitDate, patientsObsList);
             regimenType=createRegimenType(patient, visitDate, obsPerVisit);
             regimenTypeList.add(regimenType);
         }

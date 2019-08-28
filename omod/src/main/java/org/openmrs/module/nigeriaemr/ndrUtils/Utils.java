@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
+import org.apache.commons.lang3.time.DateUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -287,6 +288,18 @@ public class Utils {
             }
         }
         return obsList;
+    }
+    
+    public static List<Obs> extractObsPerVisitDate(Date visitDate, List<Obs> obsList){
+        List<Obs> obsListForVisitDate=new ArrayList<Obs>();
+        DateTime obsDateTime=null;
+        DateTime visitDateTime=null;
+        for(Obs ele: obsList){
+            if(DateUtils.isSameDay(visitDate, ele.getObsDatetime())){
+                obsListForVisitDate.add(ele);
+            }
+        }
+        return obsListForVisitDate;
     }
 
     public static Obs extractObs(int conceptID, List<Obs> obsList) {
