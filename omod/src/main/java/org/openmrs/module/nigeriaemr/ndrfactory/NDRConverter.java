@@ -160,7 +160,7 @@ public class NDRConverter {
 			
 			//create address
 			//This method is throwing exception
-			//condition.setPatientAddress(createPatientAddress());
+			condition.setPatientAddress(createPatientAddress());
 			
 			//create program area
 			condition.setProgramArea(createProgramArea());
@@ -300,12 +300,12 @@ public class NDRConverter {
 	}
 	
 	private AddressType createPatientAddress() {
-		/*AddressType p = new AddressType();
+		AddressType p = new AddressType();
 		p.setAddressTypeCode("H");
 		p.setCountryCode("NGA");
 		
 		PersonAddress pa = patient.getPersonAddress();
-		if (pa != null) {
+		/*if (pa != null) {
 			//p.setTown(pa.getAddress1());
 			String lga = pa.getCityVillage();
 			String state = pa.getStateProvince();
@@ -340,7 +340,7 @@ public class NDRConverter {
 				    LogLevel.live);
 			}
 		}*/
-		return null;
+		return p;
 	}
 	
 	private MessageHeaderType createMessageHeaderType() throws DatatypeConfigurationException {
