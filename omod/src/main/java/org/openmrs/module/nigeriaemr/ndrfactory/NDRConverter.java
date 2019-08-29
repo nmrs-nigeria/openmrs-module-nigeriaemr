@@ -183,7 +183,7 @@ public class NDRConverter {
 			//create Child birth details
 			ChildBirthDetailsType childBirthDetailsType = mainDictionary.createChildBirthDetailsType(patient,
 			    this.encounters, this.allobs);
-			if (childBirthDetailsType != null) {
+			if (childBirthDetailsType != null && childBirthDetailsType.getChildHospitalNumber() != null) {
 				condition.getChildBirthDetails().add(childBirthDetailsType);
 			}
 			
