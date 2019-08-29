@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -254,7 +255,37 @@ public class LabDictionary {
         }
 
     }
-    
+
+    public List<LaboratoryReportType> createLaboratoryOrderAndResult(Patient pts, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) {
+        List<LaboratoryReportType> labReportTypeList = new ArrayList<>();
+        Integer[] encounterTypeArr = {Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE};
+
+        Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(pts, allPatientEncounterList, encounterTypeArr);
+        List<Obs> obsForVisit=null;
+        LaboratoryReportType labReportType=null;
+        for (Date date : visitDateSet) {
+            obsForVisit=Utils.extractObsPerVisitDate(date, allPatientObsList);
+            labReportType=createLabReportType(pts, date, obsForVisit);
+        }
+        return labReportTypeList;
+    }
+
+    public LaboratoryReportType createLabReportType(Patient patient, Date visitDate, List<Obs> labObsForVisit) {
+        LaboratoryReportType labReportType = new LaboratoryReportType();
+        String visitID="",pepfarID;
+        int conceptID=0,dataType=0;
+        CodedSimpleType cst;
+        AnswerType answer;
+        NumericType numeric;
+        PatientIdentifier pepfarIdentifier = patient.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
+        if(labObsForVisit!=null && !labObsForVisit.isEmpty() && pepfarIdentifier!=null){
+            pepfarID=pepfarIdentifier.getIdentifier();
+            visitID=Utils.getVisitId(pepfarID, visitDate);
+            
+        }
+        return labReportType;
+    }
+
     private List<LaboratoryOrderAndResult> createLaboratoryOrderAndResult(Encounter enc, List<Obs> obsList)
             throws DatatypeConfigurationException {
 
