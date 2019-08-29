@@ -330,7 +330,7 @@ public class Utils {
 		return ans;
 	}
 	
-	public static Set<Date> extractUniqueVisitsForForms(Patient pts, List<Encounter> encounterList,
+	public static Set<Date> extractUniqueVisitsForEncounterTypes(Patient pts, List<Encounter> encounterList,
 	        Integer[] encounterTypeIDs) {
 		Set<Date> visitDateSet = new HashSet<Date>();
 		List<Integer> encounterTypeIDList = new ArrayList<Integer>();

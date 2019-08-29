@@ -141,7 +141,7 @@ public class ClinicalDictionary {
             Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE, 
             Utils.PHARMACY_ENCOUNTER_TYPE,
             Utils.CARE_CARD_ENCOUNTER_TYPE};
-        Set<Date> visitDateSet = Utils.extractUniqueVisitsForForms(patient, allPatientEncounterList, encounterTypeArr);
+        Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(patient, allPatientEncounterList, encounterTypeArr);
         List<Obs> obsPerVisitDate = null;
         Date artStartDate=Utils.extractARTStartDate(patient, allPatientObsList);//Optimize for performance
         for (Date date : visitDateSet) {
@@ -169,6 +169,8 @@ public class ClinicalDictionary {
             pepfarID = pepfarIdentifier.getIdentifier();
             visitID = Utils.getVisitId(pepfarID, visitDate);
             hivEncounterType=new HIVEncounterType();
+            hivEncounterType.setVisitID(visitID);
+            hivEncounterType.setVisitDate(Utils.getXmlDate(visitDate));
             //artStartDate=Utils.extractARTStartDate(patient, allObsForPatient);
             if(artStartDate!=null){
                 monthsOnARV=Utils.getDateDiffInMonth(artStartDate, visitDate);
@@ -251,7 +253,7 @@ public class ClinicalDictionary {
             obs=Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForOneVisit);
             String regimenName="";
             if(obs!=null){
-                valueCoded=obs.getConcept().getConceptId();
+                valueCoded=obs.getValueCoded().getConceptId();
                 obs=Utils.extractObs(valueCoded, obsListForOneVisit);
                 if(obs!=null){
                     valueCoded=obs.getValueCoded().getConceptId();
