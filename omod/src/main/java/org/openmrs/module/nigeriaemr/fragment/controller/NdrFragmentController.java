@@ -114,6 +114,7 @@ public class NdrFragmentController {
 			long loop_start_time = System.currentTimeMillis();
 			for (Patient patient : patients) {
 				
+				long startTime = System.currentTimeMillis();
 				int indexofPatient = patients.indexOf(patient);
 				System.out.println("pateint " + indexofPatient + " of " + patients.size());
 				
@@ -124,12 +125,9 @@ public class NdrFragmentController {
 					    "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
 					LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
 					        + patient.getId(), LoggerUtils.LogFormat.INFO, LogLevel.live);
-					long startTime = System.currentTimeMillis();
+					
 					cnt = generator.createContainer(patient, facility);
-					long endTime = System.currentTimeMillis();
-					LoggerUtils.write(NdrFragmentController.class.getName(), "Finished Export for patient with id: "
-					        + patient.getId() + " Time Taken: " + (endTime - startTime) + " milliseconds",
-					    LoggerUtils.LogFormat.INFO, LogLevel.live);
+					
 				}
 				catch (Exception ex) {
 					LoggerUtils.write(
@@ -174,6 +172,11 @@ public class NdrFragmentController {
 					}
 				}
 				
+				long endTime = System.currentTimeMillis();
+				LoggerUtils.write(NdrFragmentController.class.getName(),
+				    "Finished Export for patient with id: " + patient.getId() + " Time Taken: " + (endTime - startTime)
+				            + " milliseconds", LoggerUtils.LogFormat.INFO, LogLevel.live);
+				System.out.println("generating ndr took : " + (endTime - startTime) + " milli secs : ");
 			}
 			long loop_end_time = System.currentTimeMillis();
 			System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
