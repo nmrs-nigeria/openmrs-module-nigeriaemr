@@ -137,8 +137,7 @@ public class Utils {
 	
 	public final static int ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT = 165289; // ARV ADHERENCE From Care Card
 	
-<<<<<<< HEAD
-=======
+
 	/* End of RegimenType Constant */
 	/* Variables specific to HIVQuestionType */
 	public final static int DATE_OF_HIV_DIAGNOSIS_CONCEPT = 160554;
@@ -152,8 +151,7 @@ public class Utils {
 	public final static int REASON_FOR_TERMINATION_CONCEPT = 165470;
 	
 	public final static int DEAD_CONCEPT = 165889;
-	
->>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
+
 	/* Variables for HIVEncounterType */
 	public final static int ART_START_DATE_CONCEPT = 159599;
 	
@@ -223,12 +221,7 @@ public class Utils {
 	public final static int LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE = 11;
 	
 	public final static int PHARMACY_ENCOUNTER_TYPE = 13;
-	
-<<<<<<< HEAD
-=======
-	/* Identifier IDs */
-	
->>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
+
 	public static String getFacilityName() {
 		return Context.getAdministrationService().getGlobalProperty("Facility_Name");
 	}
@@ -337,21 +330,18 @@ public class Utils {
 		}
 		return ans;
 	}
-	
-<<<<<<< HEAD
+
 	public static DateTime extractMedicationDuration(Date visitDate, List<Obs> obsList) {
 		DateTime stopDateTime = null;
 		DateTime startDateTime = null;
 		int durationDays = 0;
 		Obs obs = null;
 		Obs obsGroup = Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
+		obs = Utils.extractObsGroupMemberWithConceptID(Utils.MEDICATION_DURATION_CONCEPT, obsList, obsGroup);
 		if (obs != null) {
-			obs = Utils.extractObsGroupMemberWithConceptID(Utils.MEDICATION_DURATION_CONCEPT, obsList, obsGroup);
-			if (obs != null) {
-				durationDays = (int) obs.getValueNumeric().doubleValue();
-				startDateTime = new DateTime(visitDate);
-				stopDateTime = startDateTime.plusDays(durationDays);
-			}
+			durationDays = (int) obs.getValueNumeric().doubleValue();
+			startDateTime = new DateTime(visitDate);
+			stopDateTime = startDateTime.plusDays(durationDays);
 		}
 		if (stopDateTime == null) {
 			obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsList);
@@ -402,63 +392,23 @@ public class Utils {
 		return regimenLineObsList.get(size-1);
 	}
 	
-	public static Set<Date> extractUniqueVisitsForForms(Patient pts, List<Encounter> encounterList, Integer[] formIDs) {
-=======
+
 	public static Set<Date> extractUniqueVisitsForEncounterTypes(Patient pts, List<Encounter> encounterList,
-	        Integer[] encounterTypeIDs) {
->>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
-		Set<Date> visitDateSet = new HashSet<Date>();
-		List<Integer> encounterTypeIDList = new ArrayList<Integer>();
-		encounterTypeIDList.addAll(Arrays.asList(encounterTypeIDs));
-		
-		for (Encounter enc : encounterList) {
-			if (encounterTypeIDList.contains(enc.getEncounterType().getEncounterTypeId())) {
-				visitDateSet.add(DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE));
-				
+				Integer[] encounterTypeIDs) {
+			Set<Date> visitDateSet = new HashSet<Date>();
+			List<Integer> encounterTypeIDList = new ArrayList<Integer>();
+			encounterTypeIDList.addAll(Arrays.asList(encounterTypeIDs));
+
+			for (Encounter enc : encounterList) {
+				if (encounterTypeIDList.contains(enc.getEncounterType().getEncounterTypeId())) {
+					visitDateSet.add(DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE));
+
+				}
+
 			}
-			
+			return visitDateSet;
 		}
-		return visitDateSet;
-	}
-	
-	public static DateTime extractMedicationDuration(Date visitDate, List<Obs> obsList) {
-		DateTime stopDateTime = null;
-		DateTime startDateTime = null;
-		int durationDays = 0;
-		Obs obs = null;
-		Obs obsGroup = Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
-		if (obs != null) {
-			obs = Utils.extractObsGroupMemberWithConceptID(Utils.MEDICATION_DURATION_CONCEPT, obsList, obsGroup);
-			if (obs != null) {
-				durationDays = (int) obs.getValueNumeric().doubleValue();
-				startDateTime = new DateTime(visitDate);
-				stopDateTime = startDateTime.plusDays(durationDays);
-			}
-		}
-		if (stopDateTime == null) {
-			obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsList);
-			if (obs != null) {
-				stopDateTime = new DateTime(obs.getValueDate());
-			}
-		}
-		return stopDateTime;
-	}
-	
-	public static Date extractARTStartDate(Patient patient, List<Obs> allPatientsObsList) {
-		Date artStartDate = null;
-		Obs obs = null;
-		obs = Utils.extractObs(Utils.ART_START_DATE_CONCEPT, allPatientsObsList);
-		if (obs != null) {
-			artStartDate = obs.getValueDate();
-		} else {
-			obs = getFirstObsOfConceptByDate(allPatientsObsList, Utils.ART_START_DATE_CONCEPT);
-			if (obs != null) {
-				artStartDate = obs.getObsDatetime();
-			}
-		}
-		return artStartDate;
-	}
-	
+
 	public static List<Obs> extractObsPerVisit(Date visitDate, List<Encounter> allEncountersList) {
 		List<Obs> obsList = new ArrayList<Obs>();
 		for (Encounter enc : allEncountersList) {
@@ -549,30 +499,7 @@ public class Utils {
 		return obsList.stream().filter(ele -> ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
 	}*/
 	
-<<<<<<< HEAD
-	public static Obs extractObsByValues(int conceptID, int valueCoded, List<Obs> obsList) {
-		Obs obs = null;
-		if (obsList != null) {
-			for (Obs ele : obsList) {
-				if (ele.getConcept().getConceptId() == conceptID && ele.getValueCoded().getConceptId() == valueCoded) {
-					obs = ele;
-				}
-			}
-		}
-		return obs;
-	}
-	
-	public static Encounter getLastEncounter(List<Encounter> encounters) {
-=======
-	/*public static Encounter getLastEncounter(List<Encounter> encounters) {
->>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
-		encounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
-		int size = encounters.size();
-		return encounters.get(size - 1);
-	>>>>>>> origin/dev
-	}*/
-	
-	//<<<<<<< HEAD
+
 	public static Encounter getFirstEncounter(Patient patient, List<Encounter> encList) {
         //sort the list by date
         encList.sort(Comparator.comparing(Encounter::getEncounterDatetime));
@@ -595,7 +522,7 @@ public class Utils {
 				.sorted(Comparator.comparing(Encounter::getEncounterDatetime))
 				.collect(Collectors.toList());
 
-		if (hivEnrollmentEncounter != null && hivEnrollmentEncounter.size() > 0) {
+		if (hivEnrollmentEncounter.size() > 0) {
 			int lastIndex = hivEnrollmentEncounter.size() - 1;
 			return new ArrayList<>(hivEnrollmentEncounter.get(lastIndex).getAllObs(false));
 		} else {
@@ -607,8 +534,6 @@ public class Utils {
 
 		List<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
 				.getEncountersByPatient(patient);
-
-
 		//sort the list by date
 		hivEnrollmentEncounter.sort(Comparator.comparing(Encounter::getEncounterDatetime));
 		int size = hivEnrollmentEncounter.size();
@@ -685,32 +610,7 @@ public class Utils {
 		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
 		return getRegimenFromObs(FirstRegimenObs);
 	}
-	
-	public static Obs getFirstObsOfConceptByDate(List<Obs> obsList,int conceptID){
-            Obs obs=null;
-            List<Obs> regimenLineObsList=new ArrayList<Obs>();
-            for(Obs ele: obsList){
-                if(ele.getConcept().getConceptId()==conceptID){
-                    regimenLineObsList.add(ele);
-                }
-            }
-            regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
-            return regimenLineObsList.get(0);
-        }
-	
-	public static Obs getLastObsOfConceptByDate(List<Obs> obsList,int conceptID){
-            Obs obs=null;
-            List<Obs> regimenLineObsList=new ArrayList<Obs>();
-            for(Obs ele: obsList){
-                if(ele.getConcept().getConceptId()==conceptID){
-                    regimenLineObsList.add(ele);
-                }
-            }
-            regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
-            int size = regimenLineObsList.size();
-            return regimenLineObsList.get(size-1);
-        }
-	
+
 	public static Obs getFirstRegimen(List<Encounter> encounters) {
 		
 		List<Obs> FirstRegimenObs = getFirstRegimenObs(encounters);

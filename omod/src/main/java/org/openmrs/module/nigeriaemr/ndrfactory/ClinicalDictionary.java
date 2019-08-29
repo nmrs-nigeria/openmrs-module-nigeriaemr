@@ -207,26 +207,15 @@ public class ClinicalDictionary {
          Completed
      */
     public List<HIVEncounterType> createHIVEncounterType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
-<<<<<<< HEAD
 
-=======
-       
->>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
         List<HIVEncounterType> hivEncounterTypeList = new ArrayList<HIVEncounterType>();
         HIVEncounterType hivEncounterType = null;
         //Turn these to class level constants letter
         Integer[] encounterTypeArr = {
-<<<<<<< HEAD
                 Utils.ADULT_PED_INITIAL_ENCOUNTER_TYPE,
                 Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE,
                 Utils.PHARMACY_ENCOUNTER_TYPE,
                 Utils.CARE_CARD_ENCOUNTER_TYPE};
-=======
-            Utils.ADULT_PED_INITIAL_ENCOUNTER_TYPE,
-            Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE, 
-            Utils.PHARMACY_ENCOUNTER_TYPE,
-            Utils.CARE_CARD_ENCOUNTER_TYPE};
->>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
         Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(patient, allPatientEncounterList, encounterTypeArr);
         List<Obs> obsPerVisitDate = null;
         Date artStartDate=Utils.extractARTStartDate(patient, allPatientObsList);//Optimize for performance
@@ -261,11 +250,7 @@ public class ClinicalDictionary {
             if(artStartDate!=null){
                 monthsOnARV=Utils.getDateDiffInMonth(artStartDate, visitDate);
                 hivEncounterType.setDurationOnArt(monthsOnARV);
-<<<<<<< HEAD
 
-=======
-                
->>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
             }
             obs=Utils.extractObs(Utils.WEIGHT_CONCEPT, obsListForOneVisit); // Weight
             if(obs!=null){
@@ -358,42 +343,6 @@ public class ClinicalDictionary {
             Obs oiDrugNameObs=null,oiStrengthObs=null;
             //Get the drugs that was entered for the day
             obs=Utils.extractObs(Utils.OI_DRUGS_GROUPING_CONCEPT_SET, obsListForOneVisit);
-<<<<<<< HEAD
-            if(obs != null ) {
-
-                Set<Obs> obsGroupMembersSet = obs.getGroupMembers();
-                List<Obs> obsGroupMembersList = new ArrayList<Obs>(obsGroupMembersSet);
-                oiDrugNameObs = Utils.extractObsByValues(Utils.OI_DRUGS_CONCEPT, Utils.COTRIMOXAZOLE_DRUG_CONCEPT, obsGroupMembersList);
-                // What to do if they select wrong strength for CTX
-                if (oiDrugNameObs != null) {
-                    oiStrengthObs = Utils.extractObs(Utils.ARV_DRUG_STRENGTH_CONCEPT, obsGroupMembersList);
-                    if (oiStrengthObs != null) {
-                        valueCoded = oiStrengthObs.getValueCoded().getConceptId();
-                        switch (valueCoded) {
-                            case Utils.STRENGTH_240MG:
-                                ndrCode = "CTX240";
-                                break;
-                            case Utils.STRENGTH_480MG:
-                                ndrCode = "CTX480";
-                                break;
-                            case Utils.STRENGTH_960MG:
-                                ndrCode = "CTX960";
-                                break;
-                            default:
-                                ndrCode = "CTX960";
-                                break;
-                        }
-
-                    }
-                    codedSimpleType = new CodedSimpleType();
-                    codedSimpleType.setCode(ndrCode);
-                    codedSimpleType.setCodeDescTxt(ndrCode);
-                    hivEncounterType.setCotrimoxazoleDose(codedSimpleType);
-                }
-
-            }
-
-=======
             Set<Obs> obsGroupMembersSet=obs.getGroupMembers();
             List<Obs> obsGroupMembersList=new ArrayList<Obs>(obsGroupMembersSet);
             oiDrugNameObs=Utils.extractObsByValues(Utils.OI_DRUGS_CONCEPT,Utils.COTRIMOXAZOLE_DRUG_CONCEPT,obsGroupMembersList);
@@ -404,8 +353,8 @@ public class ClinicalDictionary {
                     valueCoded=oiStrengthObs.getValueCoded().getConceptId();
                     switch(valueCoded){
                         case Utils.STRENGTH_240MG:
-                           ndrCode="CTX240";
-                           break;
+                            ndrCode="CTX240";
+                            break;
                         case Utils.STRENGTH_480MG:
                             ndrCode="CTX480";
                             break;
@@ -416,14 +365,13 @@ public class ClinicalDictionary {
                             ndrCode="CTX960";
                             break;
                     }
-                    
+
                 }
                 codedSimpleType=new CodedSimpleType();
                 codedSimpleType.setCode(ndrCode);
                 codedSimpleType.setCodeDescTxt(ndrCode);
                 hivEncounterType.setCotrimoxazoleDose(codedSimpleType);
             }
->>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
             obs=Utils.extractObs(Utils.COTRIMOXAZOLE_ADHERENCE_CONCEPT, obsListForOneVisit);
             if(obs!=null){
                 valueCoded=obs.getValueCoded().getConceptId();
@@ -448,17 +396,10 @@ public class ClinicalDictionary {
             if(nextAppointmentDate!=null){
                 hivEncounterType.setNextAppointmentDate(Utils.getXmlDate(nextAppointmentDate.toDate()));
             }
-<<<<<<< HEAD
 
 
 
 
-=======
-            
-            
-            
-            
->>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
         }
 
         return hivEncounterType;
