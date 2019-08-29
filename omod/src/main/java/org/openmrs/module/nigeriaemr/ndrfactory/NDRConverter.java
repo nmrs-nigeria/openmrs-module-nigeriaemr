@@ -65,11 +65,11 @@ public class NDRConverter {
             List<Encounter> encs = Context.getEncounterService().getEncountersByPatient(pts);
 
             //only run if patient has had any encounter between the last run date and now
-          /*  if(lastDate !=null){
+            /*  if(lastDate !=null){
                 Boolean recentEncounter = encs.stream()
                         .anyMatch(e-> e.getDateCreated().after(lastDate) ||
                                 e.getDateChanged().after(lastDate));
-                *//*if(recentEncounter == false)
+             *//*if(recentEncounter == false)
                     return null;*//*
             }*/
 
@@ -154,21 +154,20 @@ public class NDRConverter {
 			//create address
 			//This method is throwing exception
 			//condition.setPatientAddress(createPatientAddress());
-			
 			//create program area
-			//condition.setProgramArea(createProgramArea());
+			condition.setProgramArea(createProgramArea());
 			
 			//create common question tags by calling the factory method and passing the encounter, patient and obs list
-			//condition
-			// .setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
+			condition
+			        .setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
 			
 			//create condition specific question tag
-			//HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
-			//if (hivQuestionsType != null) {
-			//ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
-			//hivSpecificQuestions.setHIVQuestions(hivQuestionsType);
-			//condition.setConditionSpecificQuestions(hivSpecificQuestions);
-			//}
+			HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
+			if (hivQuestionsType != null) {
+				ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
+				hivSpecificQuestions.setHIVQuestions(hivQuestionsType);
+				condition.setConditionSpecificQuestions(hivSpecificQuestions);
+			}
 			
 			//create hiv encounter
 			//HIVEncounterType hivEncounter = mainDictionary.createHIVEncounterType(this.patient, this.encounters,this.allobs);
@@ -182,75 +181,71 @@ public class NDRConverter {
 			}
 			
 			//create Child birth details
-			//ChildBirthDetailsType childBirthDetailsType = mainDictionary.createChildBirthDetailsType(patient,
-			//this.encounters, this.allobs);
-			//if (childBirthDetailsType != null) {
-			//condition.getChildBirthDetails().add(childBirthDetailsType);
-			//}
+			ChildBirthDetailsType childBirthDetailsType = mainDictionary.createChildBirthDetailsType(patient,
+			    this.encounters, this.allobs);
+			if (childBirthDetailsType != null) {
+				condition.getChildBirthDetails().add(childBirthDetailsType);
+			}
 			
 			//create child follow up
-			//ChildFollowupType childFollowupType = mainDictionary.createChildFollowupType(patient, this.encounters,
-			//this.allobs);
-			//if (childFollowupType != null) {
-			//condition.getChildFollowup().add(childFollowupType);
-			//}
+			ChildFollowupType childFollowupType = mainDictionary.createChildFollowupType(patient, this.encounters,
+			    this.allobs);
+			if (childFollowupType != null) {
+				condition.getChildFollowup().add(childFollowupType);
+			}
 			
 			//create TB screening
-			//List<ClinicalTBScreeningType> clinicalTBScreeningType = mainDictionary.createClinicalTbScreening(patient,
-			//this.encounters, this.allobs);
-			//if (clinicalTBScreeningType != null && !clinicalTBScreeningType.isEmpty()) {
-			//condition.getClinicalTBScreening().addAll(clinicalTBScreeningType);
-			//}
+			List<ClinicalTBScreeningType> clinicalTBScreeningType = mainDictionary.createClinicalTbScreening(patient,
+			    this.encounters, this.allobs);
+			if (clinicalTBScreeningType != null && !clinicalTBScreeningType.isEmpty()) {
+				condition.getClinicalTBScreening().addAll(clinicalTBScreeningType);
+			}
 			
-			//List<HIVRiskAssessmentType> hivRiskAssessmentType = mainDictionary.createHivRiskAssessment(patient,
-			//this.encounters, this.allobs);
-			//if (hivRiskAssessmentType != null) {
-			//condition.getHIVRiskAssessment().addAll(hivRiskAssessmentType);
-			//}
+			List<HIVRiskAssessmentType> hivRiskAssessmentType = mainDictionary.createHivRiskAssessment(patient,
+			    this.encounters, this.allobs);
+			if (hivRiskAssessmentType != null) {
+				condition.getHIVRiskAssessment().addAll(hivRiskAssessmentType);
+			}
 			
 			//immunization Type
 			//ImmunizationType immunizationType = mainDictionary.createImmunizationType(patient, this.encounters, this.allobs);
 			//if (immunizationType != null) {
 			//condition.getImmunization().add(immunizationType);
 			//}
-			
 			//Infant PCR Testing Type
-			//InfantPCRTestingType infantPCRTestingType = mainDictionary
-			//    .createInfantPcr(patient, this.encounters, this.allobs);
-			//if (infantPCRTestingType != null) {
-			//condition.getInfantPCRTesting().add(infantPCRTestingType);
-			//}
+			InfantPCRTestingType infantPCRTestingType = mainDictionary
+			        .createInfantPcr(patient, this.encounters, this.allobs);
+			if (infantPCRTestingType != null) {
+				condition.getInfantPCRTesting().add(infantPCRTestingType);
+			}
 			
 			//Knowledge Assessment Type
-			//List<KnowledgeAssessmentType> knowledgeAssessmentType = mainDictionary.createKnowledgeAssessmentType(patient,
-			// this.encounters, this.allobs);
-			//if (knowledgeAssessmentType != null) {
-			//condition.getKnowledgeAssessment().addAll(knowledgeAssessmentType);
-			//}
+			List<KnowledgeAssessmentType> knowledgeAssessmentType = mainDictionary.createKnowledgeAssessmentType(patient,
+			    this.encounters, this.allobs);
+			if (knowledgeAssessmentType != null) {
+				condition.getKnowledgeAssessment().addAll(knowledgeAssessmentType);
+			}
 			
 			//Laboratory Report
 			//condition.getLaboratoryReport().add(null);
-			
 			//condition.getPartnerDetailsType().add(null);
-			
 			//Post Test Counselling
 			//List<PostTestCounsellingType> postTestCounsellingType = mainDictionary.createPostTestCounsellingType(patient,
 			// this.encounters, this.allobs);
 			//if (postTestCounsellingType != null) {
 			//condition.getPostTestCounselling().addAll(postTestCounsellingType);
 			//}
-			
 			List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, encounters, this.allobs);
 			if (arvRegimenTypeList != null && !arvRegimenTypeList.isEmpty()) {
 				condition.getRegimen().addAll(arvRegimenTypeList);
 			}
 			
 			//Syndromic STI
-			//List<SyndromicSTIScreeningType> syndromicSTIScreeningType = mainDictionary.createSyndromicsStiType(patient,
-			//this.encounters, this.allobs);
-			//if (syndromicSTIScreeningType != null) {
-			//condition.getSyndromicSTIScreening().addAll(syndromicSTIScreeningType);
-			//}
+			List<SyndromicSTIScreeningType> syndromicSTIScreeningType = mainDictionary.createSyndromicsStiType(patient,
+			    this.encounters, this.allobs);
+			if (syndromicSTIScreeningType != null) {
+				condition.getSyndromicSTIScreening().addAll(syndromicSTIScreeningType);
+			}
 			
 			//
 			//List<HealthFacilityVisitsType> healthFacilityVisitsType = mainDictionary.createHealthFacilityVisit(patient,
@@ -258,12 +253,10 @@ public class NDRConverter {
 			//if (healthFacilityVisitsType != null) {
 			//condition.getHealthFacilityVisits().addAll(healthFacilityVisitsType);
 			//}
-			
 			//LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient, this.encounters,
 			// this.allobs);
 			//createLaboratoryReportTypes(enc, obsList);
 			//condition.getLaboratoryReport().add(laboratoryReport);
-			
 			long endTime = System.currentTimeMillis();
 			if ((endTime - startTime) > 1000) {
 				System.out.println("took too long to get obs : " + (endTime - startTime) + " milli secs : ");
@@ -387,4 +380,5 @@ public class NDRConverter {
 			throw ex;
 		}
 	}
+	
 }

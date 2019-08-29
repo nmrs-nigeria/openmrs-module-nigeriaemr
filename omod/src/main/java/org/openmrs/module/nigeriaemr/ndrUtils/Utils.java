@@ -341,6 +341,7 @@ public class Utils {
 		for (Encounter enc : encounterList) {
 			if (encounterTypeIDList.contains(enc.getEncounterType().getEncounterTypeId())) {
 				visitDateSet.add(DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE));
+				
 			}
 			
 		}
@@ -409,6 +410,7 @@ public class Utils {
 	
 	public static Obs extractObs(int conceptID, List<Obs> obsList) {
 
+
         if (obsList == null) {
             return null;
         }
@@ -448,10 +450,21 @@ public class Utils {
 	}*/
 	
 	/*public static Obs extractObs(int conceptID, List<Obs> obsList) {
+	=======
 
 		if (obsList == null) {
 			return null;
 		}
+		return obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID).findFirst().orElse(null);
+	}
+	
+	public static Obs extractObsByValues(int conceptID, List<Obs> obsList) {
+	>>>>>>> 297da059a7012136c02fbdf529dc899de87d270f
+
+		if (obsList == null) {
+			return null;
+		}
+	<<<<<<< HEAD
 		return obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID).findFirst().orElse(null);
 	}*/
 	
@@ -487,33 +500,6 @@ public class Utils {
 	
 	public static List<Obs> getCareCardObs(Patient patient, Date endDate) {
 
-        List<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
-                .getEncountersByPatient(patient).stream()
-                .filter(x -> x.getEncounterDatetime().before(endDate) && x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id)
-                .sorted(Comparator.comparing(Encounter::getEncounterDatetime))
-                .collect(Collectors.toList());
-
-        if (hivEnrollmentEncounter != null && hivEnrollmentEncounter.size() > 0) {
-            int lastIndex = hivEnrollmentEncounter.size() - 1;
-            return new ArrayList<>(hivEnrollmentEncounter.get(lastIndex).getAllObs(false));
-        } else {
-            return null;
-        }
-    }
-	
-	public static Encounter getLastEncounter(Patient patient) {
-
-		List<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
-				.getEncountersByPatient(patient);
-
-		//sort the list by date
-		hivEnrollmentEncounter.sort(Comparator.comparing(Encounter::getEncounterDatetime));
-		int size = hivEnrollmentEncounter.size();
-		return hivEnrollmentEncounter.get(size - 1);
-	}
-	
-	/*public static List<Obs> getCareCardObs(Patient patient, Date endDate) {
-
 		List<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
 				.getEncountersByPatient(patient).stream()
 				.filter(x -> x.getEncounterDatetime().before(endDate) && x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id)
@@ -526,7 +512,19 @@ public class Utils {
 		} else {
 			return null;
 		}
-	}*/
+	}
+	
+	public static Encounter getLastEncounter(Patient patient) {
+
+		List<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
+				.getEncountersByPatient(patient);
+
+
+		//sort the list by date
+		hivEnrollmentEncounter.sort(Comparator.comparing(Encounter::getEncounterDatetime));
+		int size = hivEnrollmentEncounter.size();
+		return hivEnrollmentEncounter.get(size - 1);
+	}
 	
 	public static List<Obs> FilterObsByEncounterId(List<Obs> obs, int encounterId){
 		return obs.stream().filter(x -> x.getEncounter().getEncounterId() == encounterId)
@@ -560,19 +558,6 @@ public class Utils {
         return null;
     }
 	
-	/*
-	=======
-	Optional<Encounter> hivEnrollmentEncounter = Context.getEncounterService()
-			.getEncountersByPatient(patient).stream()
-			.filter(x -> x.getEncounterType().getEncounterTypeId() == HIV_Enrollment_Encounter_Type_Id)
-			.findAny();
-	if (hivEnrollmentEncounter.isPresent()) {
-		return new ArrayList<>(hivEnrollmentEncounter.get().getAllObs(false));
-	}
-	return null;
-	}
-	>>>>>>> origin/dev*/
-	
 	public static List<Obs> getHIVEnrollmentObs(List<Obs> obs) {
 		Optional<Obs> hivObs = obs.stream()
 				.filter(x -> x.getEncounter().getEncounterId() == HIV_Enrollment_Encounter_Type_Id)
@@ -584,6 +569,7 @@ public class Utils {
 	}
 	
 	public static List<Encounter> getAllRegimenObs(Patient patient) {
+
 
 
         return Context.getEncounterService()
@@ -607,7 +593,8 @@ public class Utils {
 	
 	public static Obs getFirstRegimen(Patient patient) {
 		
-		return null;
+		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
+		return getRegimenFromObs(FirstRegimenObs);
 	}
 	
 	public static Obs getFirstObsOfConceptByDate(List<Obs> obsList,int conceptID){
@@ -862,19 +849,6 @@ public class Utils {
 		}
 	}
 	
-	public static Obs getLastAdherenceObs(Patient patient, Date endDate) {
-		
-		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
-		return getRegimenFromObs(FirstRegimenObs);
-		/*List<Encounter> encounters = Context.getEncounterService()
-				.getEncountersByPatient(patient).stream()
-				.filter(x -> x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id
-						|| x.getEncounterType().getEncounterTypeId() == Pharmacy_Encounter_Type_Id)
-				.sorted(Comparator.comparing(Encounter::getEncounterDatetime))
-				.collect(Collectors.toList());*/
-		
-	}
-	
 	/* public static Obs getRegimenFromObs(List<Obs> RegimenObs) {
 	=======
 		List<Encounter> filteredList = encounters.stream()
@@ -1019,6 +993,7 @@ public class Utils {
 		return null;
 	}
 	
+	<<<<<<< HEAD
 	public static Obs getAllTBStatusObs(Patient patient) {
 		Optional<Encounter> encounter = Context.getEncounterService()
 				.getEncountersByPatient(patient).stream()
@@ -1130,79 +1105,17 @@ public class Utils {
 	     }
 	 }*/
 	
-	public static List<Encounter> getLastEncounters(Patient patient, Date endDate) {
-
-        return Context.getEncounterService()
-                .getEncountersByPatient(patient).stream()
-                .filter(x -> x.getEncounterDatetime().before(endDate) && (x.getEncounterType().getEncounterTypeId() == Adult_Ped_Initial_Encounter_Type_Id
-                || x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id))
-                .sorted(Comparator.comparing(Encounter::getEncounterDatetime))
-                .collect(Collectors.toList());
-    }
-	
 	public static Obs getReasonForTerminationObs(Patient patient) {
-        Optional<Encounter> encounter = Context.getEncounterService()
-                .getEncountersByPatient(patient).stream()
-                .filter(x -> x.getEncounterType().getEncounterTypeId() == Client_Tracking_And_Termination_Encounter_Type_Id)
-                .findAny();
+		Optional<Encounter> encounter = Context.getEncounterService()
+				.getEncountersByPatient(patient).stream()
+				.filter(x -> x.getEncounterType().getEncounterTypeId() == Client_Tracking_And_Termination_Encounter_Type_Id)
+				.findAny();
 
-        if (encounter != null && encounter.isPresent()) {
-            Optional<Obs> obs = encounter.get().getAllObs().stream()
-                    .filter(x -> x.getValueCoded().getConceptId() == Reason_For_Termination)
-                    .findAny();
+		if (encounter != null && encounter.isPresent()) {
+			Optional<Obs> obs = encounter.get().getAllObs().stream()
+					.filter(x -> x.getValueCoded().getConceptId() == Reason_For_Termination)
+					.findAny();
 
-            if (obs != null && obs.isPresent()) {
-                return obs.get();
-            }
-        }
-        return null;
-    }
-	
-	public static Obs getAllTBStatusObs(Patient patient) {
-        Optional<Encounter> encounter = Context.getEncounterService()
-                .getEncountersByPatient(patient).stream()
-                .filter(x -> x.getEncounterType().getEncounterTypeId() == Client_Tracking_And_Termination_Encounter_Type_Id)
-                .findAny();
-
-        if (encounter != null && encounter.isPresent()) {
-            Optional<Obs> obs = encounter.get().getAllObs().stream()
-                    .filter(x -> x.getValueCoded().getConceptId() == Reason_For_Termination)
-                    .findAny();
-
-            if (obs != null && obs.isPresent()) {
-                return obs.get();
-            }
-        }
-        return null;
-    }
-	
-	public static Obs getHighestCD4Obs(Patient patient) {
-		
-		Concept CD4Concept = Context.getConceptService().getConcept(LabDictionary.CD4_Count_Concept_Id);
-		List<Obs> allCD4Obs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), CD4Concept);
-		Double previousValue = 0.0;
-		Obs highestCD4Value = null;
-		
-		for (Obs obs : allCD4Obs) {
-			if (obs.getValueNumeric() > previousValue) {
-				previousValue = obs.getValueNumeric();
-				highestCD4Value = obs;
-			}
-		}
-		return highestCD4Value;
-	}
-	
-	/*
-	List<Obs> allCD4Obs = new ArrayList<>();
-	List<Encounter> encounters = Context.getEncounterService()
-			.getEncountersByPatient(patient).stream()
-			.filter(x -> x.getEncounterType().getEncounterTypeId() == Laboratory_Encounter_Type_Id)
-			.collect(Collectors.toList());
-
-	for(Encounter enc: encounters){
-		List<Obs> obs = enc.getAllObs(false).stream()
-				.filter(x-> x.getValueCoded().getConceptId() == LabDictionary.CD4_Count_Concept_Id)
-	=======
 			if (obs != null && obs.isPresent()) {
 				return obs.get();
 			}
@@ -1210,6 +1123,67 @@ public class Utils {
 		return null;
 	}
 	
+	public static Obs getLastAdherenceObs(Patient patient, Date endDate) {
+
+		List<Encounter> encounters = Context.getEncounterService()
+				.getEncountersByPatient(patient).stream()
+				.filter(x -> x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id
+						|| x.getEncounterType().getEncounterTypeId() == Pharmacy_Encounter_Type_Id)
+				.sorted(Comparator.comparing(Encounter::getEncounterDatetime))
+				.collect(Collectors.toList());
+
+		List<Encounter> filteredList = encounters.stream()
+				.filter(x -> x.getEncounterDatetime().before(endDate))
+				.collect(Collectors.toList());
+
+		if (filteredList != null && filteredList.size() > 0) {
+			int lastIndex = filteredList.size() - 1;
+			Encounter lastEncounter = filteredList.get(lastIndex);
+
+			Optional<Obs> adherenceObs = lastEncounter.getAllObs().stream()
+					.filter(x -> x.getConcept().getConceptId() == ClinicalDictionary.ARV_Drug_Adherence_Concept_Id
+							|| x.getConcept().getConceptId() == ClinicalDictionary.Cotrimoxazole_Adherence_Concept_Id
+							|| x.getConcept().getConceptId() == ClinicalDictionary.INH_Adherence_Concept_Id)
+					.findAny();
+
+			if (adherenceObs != null && adherenceObs.isPresent()) {
+				return adherenceObs.get();
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	public static Obs getAllTBStatusObs(Patient patient) {
+		Optional<Encounter> encounter = Context.getEncounterService()
+				.getEncountersByPatient(patient).stream()
+				.filter(x -> x.getEncounterType().getEncounterTypeId() == Client_Tracking_And_Termination_Encounter_Type_Id)
+				.findAny();
+
+		if (encounter != null && encounter.isPresent()) {
+			Optional<Obs> obs = encounter.get().getAllObs().stream()
+					.filter(x -> x.getValueCoded().getConceptId() == Reason_For_Termination)
+					.findAny();
+
+			if (obs != null && obs.isPresent()) {
+				return obs.get();
+			}
+		}
+		return null;
+	}
+	
+	public static List<Encounter> getLastEncounters(Patient patient, Date endDate) {
+
+		return Context.getEncounterService()
+				.getEncountersByPatient(patient).stream()
+				.filter(x -> x.getEncounterDatetime().before(endDate) && (x.getEncounterType().getEncounterTypeId() == Adult_Ped_Initial_Encounter_Type_Id
+						|| x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id))
+				.sorted(Comparator.comparing(Encounter::getEncounterDatetime))
+				.collect(Collectors.toList());
+	}
+	
 	public static Obs getHighestCD4Obs(Patient patient) {
 		
 		Concept CD4Concept = Context.getConceptService().getConcept(LabDictionary.CD4_Count_Concept_Id);
@@ -1224,50 +1198,10 @@ public class Utils {
 			}
 		}
 		return highestCD4Value;
-		
-		/*
-		List<Obs> allCD4Obs = new ArrayList<>();
-		List<Encounter> encounters = Context.getEncounterService()
-				.getEncountersByPatient(patient).stream()
-				.filter(x -> x.getEncounterType().getEncounterTypeId() == Laboratory_Encounter_Type_Id)
-	>>>>>>> origin/dev
-				.collect(Collectors.toList());
-	<<<<<<< HEAD
-		allCD4Obs.addAll(obs);
-	}*/
-	//}
-	
-	/*public static List<Obs> getObs(Patient patient, int ConceptId) {
-	//=======
-
-		for(Encounter enc: encounters){
-			List<Obs> obs = enc.getAllObs(false).stream()
-					.filter(x-> x.getValueCoded().getConceptId() == LabDictionary.CD4_Count_Concept_Id)
-					.collect(Collectors.toList());
-			allCD4Obs.addAll(obs);
-		}
-	}*/
-	
-	public static List<Obs> getObs(Patient patient, int ConceptId) {
-
-		Concept concept = Context.getConceptService().getConcept(ConceptId);
-		return Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept).stream()
-				.sorted(Comparator.comparing(Obs::getObsDatetime))
-				.collect(Collectors.toList());
 	}
 	
-	/*public static Obs getInitialObs(Patient patient, int Concept_Id) {
-	>>>>>>> origin/dev
-
-	<<<<<<< HEAD
-	    Concept concept = Context.getConceptService().getConcept(ConceptId);
-	    return Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept).stream()
-	            .sorted(Comparator.comparing(Obs::getObsDatetime))
-	            .collect(Collectors.toList());
-	}*/
-	
 	public static Obs getInitialObs(Patient patient, int Concept_Id) {
-//=======
+
 		Concept concept = Context.getConceptService().getConcept(Concept_Id);
 		List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept);
 		obs.sort(Comparator.comparing(Obs::getObsDatetime));
@@ -1279,7 +1213,7 @@ public class Utils {
 	}
 	
 	public static Obs getLastObs(Patient patient, int Concept_Id, Date endDate) {
-//>>>>>>> origin/dev
+
 
 		Concept concept = Context.getConceptService().getConcept(Concept_Id);
 		List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept)
@@ -1287,48 +1221,27 @@ public class Utils {
 				.sorted(Comparator.comparing(Obs::getObsDatetime))
 				.collect(Collectors.toList());
 
-//<<<<<<< HEAD
+
         if (obs.size() > 0) {
             return obs.get(0);
         }
         return null;
     }
 	
-	/*public static Obs getLastObs(Patient patient, int Concept_Id, Date endDate) {
-	=======
-		if (obs != null && obs.size() > 0) {
-			int lastIndex = obs.size() - 1;
-			return obs.get(lastIndex);
-		}
-		return null;
-	}*/
+	public static List<Obs> getObs(Patient patient, int ConceptId) {
+
+		Concept concept = Context.getConceptService().getConcept(ConceptId);
+		return Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept).stream()
+				.sorted(Comparator.comparing(Obs::getObsDatetime))
+				.collect(Collectors.toList());
+	}
 	
-	/*public static Encounter getLastEncounter(Patient patient, Date endDate) {
+	public static Encounter getLastEncounter(Patient patient, Date endDate) {
 
 		Optional<Encounter> encounters = Context.getEncounterService().getEncountersByPatient(patient)
 				.stream().filter(x -> x.getEncounterDatetime().before(endDate))
 				.max(Comparator.comparing(Encounter::getEncounterDatetime));
-	//>>>>>>> origin/dev
 
-	//<<<<<<< HEAD
-	    Concept concept = Context.getConceptService().getConcept(Concept_Id);
-	    List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept)
-	            .stream().filter(x -> x.getObsDatetime().before(endDate))
-	            .sorted(Comparator.comparing(Obs::getObsDatetime))
-	            .collect(Collectors.toList());
-
-	    if (obs != null && obs.size() > 0) {
-	        int lastIndex = obs.size() - 1;
-	        return obs.get(lastIndex);
-	    }
-	    return null;
-	}*/
-	
-	public static Encounter getLastEncounter(Patient patient, Date endDate) {
-
-        Optional<Encounter> encounters = Context.getEncounterService().getEncountersByPatient(patient)
-                .stream().filter(x -> x.getEncounterDatetime().before(endDate))
-                .max(Comparator.comparing(Encounter::getEncounterDatetime));
 
         if (encounters != null && encounters.isPresent()) {
             return encounters.get();
@@ -1496,6 +1409,7 @@ public class Utils {
 	}
 	
 	public static Date getHIVEnrollmentDate(Patient patient) {
+
 
         Date enrollmentDate = Context.getEncounterService()
                 .getEncountersByPatient(patient).stream()
