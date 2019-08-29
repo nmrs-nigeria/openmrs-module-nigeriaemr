@@ -70,7 +70,7 @@ public class NDRConverter {
 				encs = encs.stream()
 						.filter(e -> e.getDateCreated().after(lastDate) ||
 								e.getDateChanged().after(lastDate)).collect(Collectors.toList());
-				if (encs == null || encs.size() == 0)
+				if (encs.size() == 0)
 					return null;
 			}
 
@@ -160,8 +160,7 @@ public class NDRConverter {
 
 			//create common question tags by calling the factory method and passing the encounter, patient and obs list
 
-			condition
-					.setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
+			condition.setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
 
 			//create condition specific question tag
 			HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
