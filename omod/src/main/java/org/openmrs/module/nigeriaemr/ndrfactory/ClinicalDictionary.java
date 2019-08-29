@@ -121,6 +121,78 @@ public class ClinicalDictionary {
         map.put(165287, "G");
         map.put(165288, "P");
         map.put(165289, "F");
+        map.put(160124, "1a");//"AZT-3TC-EFV"
+        map.put(1652, "1b");//"AZT-3TC-NVP"
+        map.put(104565, "1c");//"TDF-FTC-EFV"
+        map.put(164854, "1d");//"TDF-FTC-NVP"
+        map.put(164505, "1e"); //"TDF-3TC-EFV"
+        map.put(162565, "1f");//"TDF-3TC-NVP"
+        map.put(817, "1g"); //"AZT-3TC-ABC" same as ABC/3TC/AZT
+        map.put(165522, "1h"); //"AZT-3TC-TDF” same as TDF-3TC-AZT
+        map.put(162563, "1l"); //"ABC-3TC-EFV"
+        map.put(165681, "1m"); //"TDF-3TC-DTG"
+        map.put(165686, "1n"); //"TDF-3TC-EFV400"
+        map.put(165682, "1o"); //"TDF-FTC-DTG"
+        map.put(165687, "1p"); //"TDF-FTC-EFV400"
+        map.put(165523, "2a"); //"TDF-FTC-LPV/r"
+        map.put(162201, "2b");//"TDF-3TC-LPV/r"
+        map.put(165524, "2c"); //"TDF-FTC-ATV/r"
+        map.put(164512, "2d");//"TDF-3TC-ATV/r"
+        map.put(162561, "2e");//"AZT-3TC-LPV/r"
+        map.put(164511, "2f");//"AZT-3TC-ATV/r"
+        map.put(165530, "2h");//"AZT-TDF-3TC-LPV/r"
+        map.put(165537, "2i");//"TDF-AZT-3TC-ATV/r"
+        map.put(165688, "3a ");//"DRV/r-DTG + 1-2 NRTIs"
+        map.put(160124, "4a");//"AZT-3TC-EFV"
+        map.put(1652, "4b");//"AZT-3TC-NVP"
+        map.put(162563, "4c");//"ABC-3TC-EFV"
+        map.put(162199, "4d");//"ABC-3TC-NVP"
+        map.put(817, "4e");//"AZT-3TC-ABC" Same as ABC-3TC-AZT
+        map.put(792, "4f");//"d4T-3TC-NVP"
+        map.put(166074, "4g"); // Nelson Added Concept in NigeriaMRS and mapped it here as code already exist on NDR.
+        map.put(165691, "4h"); //ABC-3TC-DTG
+        map.put(165693, "4i"); //ABC-3TC-EFV400
+        map.put(162200, "4j"); //ABC-3TC-LPV/r
+        map.put(165692, "4k"); //ABC-FTC-DTG
+        map.put(165694, "4l"); //ABC-FTC-EFV400
+        map.put(165690, "4m"); //ABC-FTC-NVP
+        map.put(162561, "4n"); //AZT-3TC-LPV/r
+        map.put(165695, "4o");//AZT-3TC-RAL
+        map.put(165681, "4p"); //TDF-3TC-DTG
+        map.put(164505, "4q"); //TDF-3TC-EFV// Add PrescribedRegimenCode and Code Description in NDR
+        map.put(165686, "4r"); //TDF-3TC-EFV400
+        map.put(162565, "4s"); // TDF-3TC-NVP
+        map.put(165682, "4t"); // TDF-FTC-DTG
+        map.put(104565, "4u"); //TDF-FTC-EFV
+        map.put(165687, "4v"); // TDF-FTC-EFV400
+        map.put(164854, "4w");// TDF-FTC-NVP
+        map.put(162200, "5a");;//"ABC-3TC-LPV/r"
+        map.put(162561, "5b");;//"AZT-3TC-LPV/r"
+        map.put(162560, "5c");;//"d4T-3TC-LPV/r"
+        map.put(165526, "5e");;//"ABC-3TC-ddi"
+        map.put(165696, "5g");//ABC-3TC-RAL
+        map.put(164511, "5h"); // AZT-3TC-ATV/r
+        map.put(165695, "5i");  //AZT-3TC-RAL
+        map.put(164512, "5j"); //TDF-3TC-ATV/r
+        map.put(162201, "5k");//TDF-3TC-LPV/r
+        map.put(165698, "6a"); //DRV/r + 2 NRTIs + 2 NNRTI
+        map.put(165700, "6b"); //DRV/r +2NRTIs
+        map.put(165688, "6c"); //DRV/r-DTG + 1-2 NRTIs
+        map.put(165701, "6d"); //DRV/r-RAL + 1-2NRTIs
+        map.put(165697, "6e"); //DTG+2 NRTIs
+        map.put(165699, "6f"); //RAL + 2 NRTIs
+        map.put(86663, "9a");//"AZT" Concept ID didnt match. So, Changed concept id from 26 to 86663 as defined In NMRS
+        map.put(78643, "9b");//3TC Concept ID didnt match. So, changed ID from 27 to 78643 as defined In NMRS
+        map.put(80586, "9c");//"NVP" Concept ID didnt match. So, Changed concept id from 28 to 80586 as defined in NMRS
+        map.put(630, "9d");//"AZT-3TC" Concept ID didnt match. So, Changed concept id from 29 to 630 as defined on NMRS
+        map.put(165544, "9e");//"AZT-NVP" Concept ID didnt match. So, Changed concept id from 30 to 165544 as defined in NMRS
+        map.put(104567, "9f");//"FTC-TDF" Concept ID didnt match. So, Changed concept id from 31 to 104567 as defined in NMRS
+        map.put(161363, "9g");//"3TC-d4T"  Concept ID didnt match. So, Changed concept id from 32 to 104567 as defined in NMRS
+        map.put(166075, "9h"); //"3TC-d4T" Changed the code desc from 3TC-4DT to 3TC-NVP and Created new concept for it on NMRS and replaced the initial Concpet Id of 33 to 166075
+        map.put(161364, "Unknown NDR Code APINSs Instance");//TDF/3TC Missing Drug Combination without NDR Code
+        map.put(165631, "Missing NDR Code from IHVN Instance"); //Dolutegravir
+        map.put(1674, "Missing NDR Code frm IHVN Instance");//RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS
+
 
     }
 
