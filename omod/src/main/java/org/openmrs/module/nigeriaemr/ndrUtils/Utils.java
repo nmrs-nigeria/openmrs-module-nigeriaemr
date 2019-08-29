@@ -58,7 +58,7 @@ public class Utils {
 	
 	public final static int Client_Intake_Form_Encounter_Type_Id = 20;
 	
-	public final static int Patient_PEPFAR_Id = 3;
+	public final static int Patient_PEPFAR_Id = 4;
 	
 	public final static int Patient_Hospital_Id = 3;
 	
@@ -137,6 +137,51 @@ public class Utils {
 	
 	public final static int ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT = 165289; // ARV ADHERENCE From Care Card
 	
+	/* Variables for HIVEncounterType */
+	public final static int ART_START_DATE_CONCEPT = 159599;
+	
+	public final static int WEIGHT_CONCEPT = 5089;
+	
+	public final static int CHILD_HEIGHT_CONCEPT = 5090;
+	
+	public final static int BLOOD_PRESSURE_SYSTOLIC_CONCEPT = 5085;
+	
+	public final static int BLOOD_PRESSURE_DYSTOLIC_CONCEPT = 5086;
+	
+	public final static int PREGNANCY_BREASTFEEDING_CONCEPT = 165050;
+	
+	public final static int FAMILY_PLANNING_STATUS_CONCEPT = 5271;
+	
+	public final static int FAMILY_PLANNING_METHOD_CONCEPT = 374;
+	
+	public final static int FUNCTIONAL_STATUS_CONCEPT = 165039;
+	
+	public final static int WHO_CLINICAL_STAGE_CONCEPT = 5356;
+	
+	public final static int TB_STATUS_CONCEPT = 1659;
+	
+	public final static int OTHER_OI_OTHER_PROBLEMS = 160170;
+	
+	public final static int NOTED_SIDE_EFFECT_CONCEPT = 159935;
+	
+	public final static int ARV_DRUG_ADHERENCE_CONCEPT = 165290;
+	
+	public final static int COTRIMOXAZOLE_ADHERENCE_CONCEPT = 161652;
+	
+	public final static int CD4_COUNT_CONCEPT = 5497;
+	
+	public final static int COTRIMOXAZOLE_DRUG_CONCEPT = 165257;
+	
+	public final static int ARV_DRUG_STRENGTH_CONCEPT = 165725;
+	
+	public final static int STRENGTH_960MG = 165062;
+	
+	public final static int STRENGTH_480MG = 165060;
+	
+	public final static int STRENGTH_240MG = 166095;
+	
+	public final static int INH_ADHERENCE_CONCEPT = 161653;
+	
 	/* Identifier IDs */
 	public static final int PEPFAR_IDENTIFIER_INDEX = 4;
 	
@@ -151,6 +196,16 @@ public class Utils {
 	public static final int EXPOSE_INFANT_IDENTIFIER_INDEX = 7;
 	
 	public static final int PEP_ED_IDENTIFIER_INDEX = 9;
+	
+	/* KEY FORMS */
+	//--These 4 forms was used to construct a HIVEncounterType
+	public final static int ADULT_PED_INITIAL_ENCOUNTER_TYPE = 8;
+	
+	public final static int CARE_CARD_ENCOUNTER_TYPE = 12;
+	
+	public final static int LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE = 11;
+	
+	public final static int PHARMACY_ENCOUNTER_TYPE = 13;
 	
 	public static String getFacilityName() {
 		return Context.getAdministrationService().getGlobalProperty("Facility_Name");
@@ -261,6 +316,69 @@ public class Utils {
 		return ans;
 	}
 	
+	public static DateTime extractMedicationDuration(Date visitDate, List<Obs> obsList) {
+		DateTime stopDateTime = null;
+		DateTime startDateTime = null;
+		int durationDays = 0;
+		Obs obs = null;
+		Obs obsGroup = Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
+		if (obs != null) {
+			obs = Utils.extractObsGroupMemberWithConceptID(Utils.MEDICATION_DURATION_CONCEPT, obsList, obsGroup);
+			if (obs != null) {
+				durationDays = (int) obs.getValueNumeric().doubleValue();
+				startDateTime = new DateTime(visitDate);
+				stopDateTime = startDateTime.plusDays(durationDays);
+			}
+		}
+		if (stopDateTime == null) {
+			obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsList);
+			if (obs != null) {
+				stopDateTime = new DateTime(obs.getValueDate());
+			}
+		}
+		return stopDateTime;
+	}
+	
+	public static Date extractARTStartDate(Patient patient, List<Obs> allPatientsObsList) {
+		Date artStartDate = null;
+		Obs obs = null;
+		obs = Utils.extractObs(Utils.ART_START_DATE_CONCEPT, allPatientsObsList);
+		if (obs != null) {
+			artStartDate = obs.getValueDate();
+		} else {
+			obs = getFirstObsOfConceptByDate(allPatientsObsList, Utils.ART_START_DATE_CONCEPT);
+			if (obs != null) {
+				artStartDate = obs.getObsDatetime();
+			}
+		}
+		return artStartDate;
+	}
+	
+	public static Obs getFirstObsOfConceptByDate(List<Obs> obsList,int conceptID){
+		Obs obs=null;
+		List<Obs> regimenLineObsList=new ArrayList<Obs>();
+		for(Obs ele: obsList){
+			if(ele.getConcept().getConceptId()==conceptID){
+				regimenLineObsList.add(ele);
+			}
+		}
+		regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
+		return regimenLineObsList.get(0);
+	}
+	
+	public static Obs getLastObsOfConceptByDate(List<Obs> obsList,int conceptID){
+		Obs obs=null;
+		List<Obs> regimenLineObsList=new ArrayList<Obs>();
+		for(Obs ele: obsList){
+			if(ele.getConcept().getConceptId()==conceptID){
+				regimenLineObsList.add(ele);
+			}
+		}
+		regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
+		int size = regimenLineObsList.size();
+		return regimenLineObsList.get(size-1);
+	}
+	
 	public static Set<Date> extractUniqueVisitsForForms(Patient pts, List<Encounter> encounterList, Integer[] formIDs) {
 		Set<Date> visitDateSet = new HashSet<Date>();
 		List<Integer> formIDList = new ArrayList<Integer>();
@@ -311,6 +429,18 @@ public class Utils {
 			return null;
 		}
 		return obsList.stream().filter(ele -> ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
+	}
+	
+	public static Obs extractObsByValues(int conceptID, int valueCoded, List<Obs> obsList) {
+		Obs obs = null;
+		if (obsList != null) {
+			for (Obs ele : obsList) {
+				if (ele.getConcept().getConceptId() == conceptID && ele.getValueCoded().getConceptId() == valueCoded) {
+					obs = ele;
+				}
+			}
+		}
+		return obs;
 	}
 	
 	public static Encounter getLastEncounter(List<Encounter> encounters) {
@@ -602,7 +732,11 @@ public class Utils {
 		if (patientId != null) {
 			return patientId.getIdentifier();
 		} else {
-			return patient.getPatientIdentifier(4).getIdentifier();
+			patientId = patient.getPatientIdentifier(5); //hospital number
+			if (patientId != null) {
+				return patientId.getIdentifier();
+			}
+			return "";
 		}
 	}
 	
@@ -668,6 +802,21 @@ public class Utils {
 						|| x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id))
 				.sorted(Comparator.comparing(Encounter::getEncounterDatetime))
 				.collect(Collectors.toList());
+	}
+	
+	public static Set<Date> extractUniqueVisitsForEncounterTypes(Patient pts, List<Encounter> encounterList,
+	        Integer[] encounterTypeIDs) {
+		Set<Date> visitDateSet = new HashSet<Date>();
+		List<Integer> encounterTypeIDList = new ArrayList<Integer>();
+		encounterTypeIDList.addAll(Arrays.asList(encounterTypeIDs));
+		
+		for (Encounter enc : encounterList) {
+			if (encounterTypeIDList.contains(enc.getEncounterType().getEncounterTypeId())) {
+				visitDateSet.add(DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE));
+			}
+			
+		}
+		return visitDateSet;
 	}
 	
 	public static Obs getReasonForTerminationObs(Patient patient) {

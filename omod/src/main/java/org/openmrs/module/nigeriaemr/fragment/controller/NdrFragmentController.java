@@ -9,7 +9,9 @@ import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.ndrfactory.NDRConverter;
 import org.xml.sax.SAXException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.io.File;
 import java.io.IOException;
@@ -74,6 +76,8 @@ public class NdrFragmentController {
 		
 		//Create an xml file and save in today's folder
 		NDRConverter generator = new NDRConverter(Utils.getIPFullName(), Utils.getIPShortName(), openmrsConn);
+		JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
+		Marshaller jaxbMarshaller = generator.createMarshaller(jaxbContext);
 		
 		List<Patient> patients = Context.getPatientService().getAllPatients();
 		
@@ -134,7 +138,11 @@ public class NdrFragmentController {
 			//
 			//            });
 			//
+			long loop_start_time = System.currentTimeMillis();
 			for (Patient patient : patients) {
+				
+				int indexofPatient = patients.indexOf(patient);
+				System.out.println("pateint " + indexofPatient + " of " + patients.size());
 				
 				//if (patient.getId() == 140) {
 				Container cnt = null;
@@ -163,9 +171,15 @@ public class NdrFragmentController {
 					    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
 					try {
 						
-						String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_"
-						//        + Utils.getPatientHospitalNo(patient);
-						        + Utils.getPatientPEPFARId(patient);
+						String pepFarId = Utils.getPatientPEPFARId(patient);
+						
+						if (pepFarId != null) { //remove forward slashes / from file names
+							pepFarId = pepFarId.replace("/", "_").replace(".", "_");
+						} else {
+							pepFarId = "";
+						}
+						
+						String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_" + pepFarId;
 						
 						// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
 						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
@@ -179,7 +193,7 @@ public class NdrFragmentController {
 						b = aXMLFile.createNewFile();
 						
 						System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
-						generator.writeFile(cnt, aXMLFile);
+						generator.writeFile(cnt, aXMLFile, jaxbMarshaller);
 					}
 					catch (Exception ex) {
 						LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
@@ -188,7 +202,8 @@ public class NdrFragmentController {
 				}
 				
 			}
-			
+			long loop_end_time = System.currentTimeMillis();
+			System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
 			//	}
 			
 			//Update ndr last run date

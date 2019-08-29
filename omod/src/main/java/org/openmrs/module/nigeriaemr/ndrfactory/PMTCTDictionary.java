@@ -134,62 +134,62 @@ public class PMTCTDictionary {
 
             //if (pmtctIdentifier != null) {
 
-                XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
-                registrationType.setDateOfVisit(convertedDate);
+            XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
+            registrationType.setDateOfVisit(convertedDate);
 
-                obs = extractObs(Last_Menstural_Period_Concept_Id, anthenatalObsList);
-                if (obs == null) {
-                    return null;
-                }
-                if (obs != null && obs.getObsDatetime() != null) {
-                    registrationType.setLastMenstralPeriod(Utils.getXmlDate(obs.getObsDatetime()));
-                }
-                obs = extractObs(Gestational_Age_At_ANC_Registration_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_numeric = (int) Math.round(obs.getValueNumeric());
-                    registrationType.setGestationalAgeAtANCRegistration(value_numeric);
-                }
+            obs = extractObs(Last_Menstural_Period_Concept_Id, anthenatalObsList);
+            if (obs == null) {
+                return null;
+            }
+            if (obs != null && obs.getObsDatetime() != null) {
+                registrationType.setLastMenstralPeriod(Utils.getXmlDate(obs.getObsDatetime()));
+            }
+            obs = extractObs(Gestational_Age_At_ANC_Registration_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_numeric = (int) Math.round(obs.getValueNumeric());
+                registrationType.setGestationalAgeAtANCRegistration(value_numeric);
+            }
 
-                obs = extractObs(Gravida_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_numeric = (int) Math.round(obs.getValueNumeric());
-                    registrationType.setGravida(value_numeric);
-                }
-                obs = extractObs(Parity_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_numeric = (int) Math.round(obs.getValueNumeric());
-                    registrationType.setParity(value_numeric);
-                }
-                obs = extractObs(Source_Of_Referal_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueText() != null) {
-                    registrationType.setSourceOfReferral(obs.getValueText());
-                }
-                obs = extractObs(EDD_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getObsDatetime() != null) {
-                    registrationType.setExpectedDateOfDelivery(Utils.getXmlDate(obs.getObsDatetime()));
-                }
+            obs = extractObs(Gravida_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_numeric = (int) Math.round(obs.getValueNumeric());
+                registrationType.setGravida(value_numeric);
+            }
+            obs = extractObs(Parity_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_numeric = (int) Math.round(obs.getValueNumeric());
+                registrationType.setParity(value_numeric);
+            }
+            obs = extractObs(Source_Of_Referal_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueText() != null) {
+                registrationType.setSourceOfReferral(obs.getValueText());
+            }
+            obs = extractObs(EDD_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getObsDatetime() != null) {
+                registrationType.setExpectedDateOfDelivery(Utils.getXmlDate(obs.getObsDatetime()));
+            }
 
-                //get data for Syphilis and add to antenatal reg type
-                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull all SYPHILIS", LogFormat.FATAL, LogLevel.live);
-                Syphilis syphilis = new Syphilis();
-                obs = extractObs(Test_For_Syphilis_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
-                    syphilis.setTestedForSyphilis(getMappedValue(obs.getValueCoded().getConceptId()));
-                }
-                obs = extractObs(Syphilis_Test_Result_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
-                    syphilis.setSyphilisTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
-                }
-                obs = extractObs(Treated_For_Syphilis_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
-                    syphilis.setTreatedForSyphilis(getMappedValue(obs.getValueCoded().getConceptId()));
-                }
-                obs = extractObs(Reffered_Syphilis_Positive_Client_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
-                    syphilis.setReferredSyphilisPositiveClient(getMappedValue(obs.getValueCoded().getConceptId()));
-                }
-                registrationType.setSyphilis(syphilis);
-                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling SYPHILIS", LogFormat.FATAL, LogLevel.live);
+            //get data for Syphilis and add to antenatal reg type
+            LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull all SYPHILIS", LogFormat.FATAL, LogLevel.live);
+            Syphilis syphilis = new Syphilis();
+            obs = extractObs(Test_For_Syphilis_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                syphilis.setTestedForSyphilis(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+            obs = extractObs(Syphilis_Test_Result_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                syphilis.setSyphilisTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+            obs = extractObs(Treated_For_Syphilis_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                syphilis.setTreatedForSyphilis(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+            obs = extractObs(Reffered_Syphilis_Positive_Client_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                syphilis.setReferredSyphilisPositiveClient(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+            registrationType.setSyphilis(syphilis);
+            LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling SYPHILIS", LogFormat.FATAL, LogLevel.live);
 
             //}
 
@@ -212,80 +212,80 @@ public class PMTCTDictionary {
 
             //if (pmtctIdentifier != null) {
 
-                XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
-                deliveryEncounterType.setDateOfDelivery(convertedDate);
+            XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
+            deliveryEncounterType.setDateOfDelivery(convertedDate);
 
-                Obs obs = extractObs(Time_Of_Hiv_Diagnosis_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
-                    deliveryEncounterType.setTimeOfHIVDiagnosis(Utils.getXmlDateTime(obs.getValueDatetime()));
+            Obs obs = extractObs(Time_Of_Hiv_Diagnosis_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueDatetime() != null) {
+                deliveryEncounterType.setTimeOfHIVDiagnosis(Utils.getXmlDateTime(obs.getValueDatetime()));
+            }
+            obs = extractObs(Gestation_Age_At_Delivery_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_numeric = (int) Math.round(obs.getValueNumeric());
+                deliveryEncounterType.setGestationalAgeAtDelivery(value_numeric);
+            }
+            obs = extractObs(Hbv_Status_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {//conceptId might be 703
+                try {
+                    deliveryEncounterType.sethBVStatus(getMappedValue(obs.getValueCoded().getConceptId()));//get the value coded here and know the codee
+                } catch (Exception ex) {
+                    LoggerUtils.write(PMTCTDictionary.class.getName(), "Error on Hbv_Status_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
                 }
-                obs = extractObs(Gestation_Age_At_Delivery_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_numeric = (int) Math.round(obs.getValueNumeric());
-                    deliveryEncounterType.setGestationalAgeAtDelivery(value_numeric);
-                }
-                obs = extractObs(Hbv_Status_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {//conceptId might be 703
-                    try {
-                        deliveryEncounterType.sethBVStatus(getMappedValue(obs.getValueCoded().getConceptId()));//get the value coded here and know the codee
-                    } catch (Exception ex) {
-                        LoggerUtils.write(PMTCTDictionary.class.getName(), "Error on Hbv_Status_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-                    }
-                }
-                obs = extractObs(Hcv_Status_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            obs = extractObs(Hcv_Status_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    deliveryEncounterType.sethCVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
+                deliveryEncounterType.sethCVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Woman_On_Art_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            obs = extractObs(Woman_On_Art_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    deliveryEncounterType.setWomanOnART(getMappedValue(obs.getValueCoded().getConceptId()));
+                deliveryEncounterType.setWomanOnART(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Art_Started_In_Ld_Ward_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            obs = extractObs(Art_Started_In_Ld_Ward_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    deliveryEncounterType.setaRTStartedInLDWard(getMappedValue(obs.getValueCoded().getConceptId()));
+                deliveryEncounterType.setaRTStartedInLDWard(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Rom_Delivery_Internal_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            obs = extractObs(Rom_Delivery_Internal_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    deliveryEncounterType.setrOMDeliveryInterval(getMappedValue(obs.getValueCoded().getConceptId()));
+                deliveryEncounterType.setrOMDeliveryInterval(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Mode_Of_Delivery_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            obs = extractObs(Mode_Of_Delivery_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    deliveryEncounterType.setModeOfDelivery(getMappedValue(obs.getValueCoded().getConceptId()));
+                deliveryEncounterType.setModeOfDelivery(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Episiotomy_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            obs = extractObs(Episiotomy_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    deliveryEncounterType.setEpisiotomy(getMappedValue(obs.getValueCoded().getConceptId()));
+                deliveryEncounterType.setEpisiotomy(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Vaginal_Tear_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            obs = extractObs(Vaginal_Tear_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    deliveryEncounterType.setVaginalTear(getMappedValue(obs.getValueCoded().getConceptId()));
+                deliveryEncounterType.setVaginalTear(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Feeding_Decision_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            obs = extractObs(Feeding_Decision_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    deliveryEncounterType.setFeedingDecision(getMappedValue(obs.getValueCoded().getConceptId()));
+                deliveryEncounterType.setFeedingDecision(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Maternal_Outcome_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            obs = extractObs(Maternal_Outcome_Concept_Id, anthenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    deliveryEncounterType.setMaternalOutcome(getMappedValue(obs.getValueCoded().getConceptId()));
+                deliveryEncounterType.setMaternalOutcome(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
+            }
 
             //}
 
@@ -304,65 +304,65 @@ public class PMTCTDictionary {
             int value_numeric;
             float value_float;
 
-           // if (pmtctIdentifier != null) {
+            // if (pmtctIdentifier != null) {
 
-                Obs obs = extractObs(Hiv_Exposed_Infant_Number_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueText() != null) {
-                    try {
-                        childBirthDetailsType.setChildEIDNumber(obs.getValueText());
-                    } catch (Exception ex) {
-                        LoggerUtils.write(PMTCTDictionary.class.getName(), "Error on Hiv_Exposed_Infant_Number_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-                    }
+            Obs obs = extractObs(Hiv_Exposed_Infant_Number_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueText() != null) {
+                try {
+                    childBirthDetailsType.setChildEIDNumber(obs.getValueText());
+                } catch (Exception ex) {
+                    LoggerUtils.write(PMTCTDictionary.class.getName(), "Error on Hiv_Exposed_Infant_Number_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
                 }
-                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
-                obs = extractObs(Date_of_Birth_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
-                    childBirthDetailsType.setChildDateOfBirth(Utils.getXmlDate(obs.getValueDate()));
-                }
-                obs = extractObs(Child_Sex_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueText() != null) {
-                    childBirthDetailsType.setChildSexCode(obs.getValueText());
-                }
-                obs = extractObs(Hbv_Exposed_Infant_Given_Blg_Within_24_Hours_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
+            }
+            LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
+            obs = extractObs(Date_of_Birth_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueDatetime() != null) {
+                childBirthDetailsType.setChildDateOfBirth(Utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObs(Child_Sex_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueText() != null) {
+                childBirthDetailsType.setChildSexCode(obs.getValueText());
+            }
+            obs = extractObs(Hbv_Exposed_Infant_Given_Blg_Within_24_Hours_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
 
-                    childBirthDetailsType.sethBVExposedInfantGivenHepBIg(getMappedValue(obs.getValueCoded().getConceptId()));
+                childBirthDetailsType.sethBVExposedInfantGivenHepBIg(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Non_Hbv_Exposed_Infant_Given_Blg_Within_24_Hours_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
-                    childBirthDetailsType.setNonHBVExposedInfantGivenHBV(getMappedValue(obs.getValueCoded().getConceptId()));
-                }
-                obs = extractObs(Apgar_Score_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_float = (float) Math.round(obs.getValueNumeric());
-                    childBirthDetailsType.setaPGARScore(value_float);
-                }
-                obs = extractObs(Head_Circumference_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_float = (float) Math.round(obs.getValueNumeric());
-                    childBirthDetailsType.setHeadCircumferenceAtBirth(value_float);
-                }
-                obs = extractObs(Mean_Upper_Arm_Circumference_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_float = (float) Math.round(obs.getValueNumeric());
-                    childBirthDetailsType.setBirthMUAC(value_float);
-                }
-                obs = extractObs(Birth_Length_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_float = (float) Math.round(obs.getValueNumeric());
-                    childBirthDetailsType.setBirthLenght(value_float);
-                }
-                obs = extractObs(Birth_Weight_concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_float = (float) Math.round(obs.getValueNumeric());
-                    childBirthDetailsType.setBirthWeight(value_float);
-                }
-                obs = extractObs(Immunization_Received_At_Birth_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueText() != null) {
-                    childBirthDetailsType.setImmunizationReceived(obs.getValueText());
-                }
-                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
+            }
+            obs = extractObs(Non_Hbv_Exposed_Infant_Given_Blg_Within_24_Hours_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                childBirthDetailsType.setNonHBVExposedInfantGivenHBV(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+            obs = extractObs(Apgar_Score_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_float = (float) Math.round(obs.getValueNumeric());
+                childBirthDetailsType.setaPGARScore(value_float);
+            }
+            obs = extractObs(Head_Circumference_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_float = (float) Math.round(obs.getValueNumeric());
+                childBirthDetailsType.setHeadCircumferenceAtBirth(value_float);
+            }
+            obs = extractObs(Mean_Upper_Arm_Circumference_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_float = (float) Math.round(obs.getValueNumeric());
+                childBirthDetailsType.setBirthMUAC(value_float);
+            }
+            obs = extractObs(Birth_Length_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_float = (float) Math.round(obs.getValueNumeric());
+                childBirthDetailsType.setBirthLenght(value_float);
+            }
+            obs = extractObs(Birth_Weight_concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_float = (float) Math.round(obs.getValueNumeric());
+                childBirthDetailsType.setBirthWeight(value_float);
+            }
+            obs = extractObs(Immunization_Received_At_Birth_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueText() != null) {
+                childBirthDetailsType.setImmunizationReceived(obs.getValueText());
+            }
+            LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
 
             //}
 
@@ -380,39 +380,39 @@ public class PMTCTDictionary {
             int value_numeric;
 
             //if (pmtctIdentifier != null) {
-                Obs obs = extractObs(Infant_Arv_Type_Concept_Id, antenatalObsList);
-                if (obs == null) {
-                    return null;
+            Obs obs = extractObs(Infant_Arv_Type_Concept_Id, antenatalObsList);
+            if (obs == null) {
+                return null;
+            }
+            if (obs != null && obs.getValueCoded() != null) {
+                try {
+                    childFollowupType.setInfantARVType(getMappedValue(obs.getValueCoded().getConceptId()));
+                } catch (Exception ex) {
+                    LoggerUtils.write(PMTCTDictionary.class.getName(), "Error on Infant_Arv_Type_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
                 }
-                if (obs != null && obs.getValueCoded() != null) {
-                    try {
-                        childFollowupType.setInfantARVType(getMappedValue(obs.getValueCoded().getConceptId()));
-                    } catch (Exception ex) {
-                        LoggerUtils.write(PMTCTDictionary.class.getName(), "Error on Infant_Arv_Type_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-                    }
-                }
-                obs = extractObs(Timimg_Of_Arv_Prophylaxis_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
-                    childFollowupType.setTimingOfARVProphylaxis(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+            obs = extractObs(Timimg_Of_Arv_Prophylaxis_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                childFollowupType.setTimingOfARVProphylaxis(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
-                obs = extractObs(Age_At_Ctx_Initiation_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    value_numeric = (int) Math.round(obs.getValueNumeric());
-                    childFollowupType.setAgeAtCTXInitiation(value_numeric);
-                }
-                obs = extractObs(Infant_Outcome_at_18_Months_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueText() != null) {
-                    childFollowupType.setInfantOutcomeAt18Months(obs.getValueText());
-                }
-                obs = extractObs(Date_Linked_to_Art_Clinic_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
-                    childFollowupType.setDateLinkedToARTClinic(Utils.getXmlDate(obs.getValueDatetime()));
-                }
-                obs = extractObs(Art_Enrollment_No_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueText() != null) {
-                    childFollowupType.setaRTEnrollmentNumber(obs.getValueText());
-                }
+            }
+            obs = extractObs(Age_At_Ctx_Initiation_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                value_numeric = (int) Math.round(obs.getValueNumeric());
+                childFollowupType.setAgeAtCTXInitiation(value_numeric);
+            }
+            obs = extractObs(Infant_Outcome_at_18_Months_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueText() != null) {
+                childFollowupType.setInfantOutcomeAt18Months(obs.getValueText());
+            }
+            obs = extractObs(Date_Linked_to_Art_Clinic_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueDatetime() != null) {
+                childFollowupType.setDateLinkedToARTClinic(Utils.getXmlDate(obs.getValueDatetime()));
+            }
+            obs = extractObs(Art_Enrollment_No_Concept_Id, antenatalObsList);
+            if (obs != null && obs.getValueText() != null) {
+                childFollowupType.setaRTEnrollmentNumber(obs.getValueText());
+            }
             //}
 
             return childFollowupType;
@@ -429,20 +429,20 @@ public class PMTCTDictionary {
 
             //if (pmtctIdentifier != null) {
 
-                XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
-                immunizationType.setVisitDate(convertedDate);
+            XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
+            immunizationType.setVisitDate(convertedDate);
 
-                Obs obs = extractObs(Immunization_Date, antenatalObsList);
-                if (obs == null) {
-                    return null;
-                }
-                if (obs != null && obs.getValueDatetime() != null) {
-                    immunizationType.setImmunizationDate(Utils.getXmlDate(obs.getValueDate()));
-                }
-                obs = extractObs(Lot_Number, antenatalObsList);
-                if (obs != null && obs.getValueText() != null) {
-                    immunizationType.setLotNumber(obs.getValueText());
-                }
+            Obs obs = extractObs(Immunization_Date, antenatalObsList);
+            if (obs == null) {
+                return null;
+            }
+            if (obs != null && obs.getValueDatetime() != null) {
+                immunizationType.setImmunizationDate(Utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObs(Lot_Number, antenatalObsList);
+            if (obs != null && obs.getValueText() != null) {
+                immunizationType.setLotNumber(obs.getValueText());
+            }
 
             //}
 
@@ -462,41 +462,41 @@ public class PMTCTDictionary {
 
             //if (pmtctIdentifier != null) {
 
-                Obs obs = extractObs(Date_Sample_Collected, antenatalObsList);
-                if (obs == null) {
-                    return null;
-                }
-                if (obs != null && obs.getValueDatetime() != null) {
-                    infantPCRTestingType.setDateSampleCollected(Utils.getXmlDate(obs.getValueDatetime()));
+            Obs obs = extractObs(Date_Sample_Collected, antenatalObsList);
+            if (obs == null) {
+                return null;
+            }
+            if (obs != null && obs.getValueDatetime() != null) {
+                infantPCRTestingType.setDateSampleCollected(Utils.getXmlDate(obs.getValueDatetime()));
 
-                }
-                obs = extractObs(Date_Sample_Sent, antenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
-                    infantPCRTestingType.setDateSampleSent(Utils.getXmlDate(obs.getValueDatetime()));
-                }
-                obs = extractObs(Date_Result_Received, antenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
-                    infantPCRTestingType.setDateResultReceivedAtFacility(Utils.getXmlDate(obs.getValueDatetime()));
-                }
-                obs = extractObs(Date_Caregiver_Given_Result, antenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
-                    infantPCRTestingType.setDateCaregiverGivenResult(Utils.getXmlDate(obs.getValueDatetime()));
-                }
-                obs = extractObs(Test_Result, antenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
-                    infantPCRTestingType.setpCRTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
-                }
-                obs = extractObs(Date_of_Test, antenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
+            }
+            obs = extractObs(Date_Sample_Sent, antenatalObsList);
+            if (obs != null && obs.getValueDatetime() != null) {
+                infantPCRTestingType.setDateSampleSent(Utils.getXmlDate(obs.getValueDatetime()));
+            }
+            obs = extractObs(Date_Result_Received, antenatalObsList);
+            if (obs != null && obs.getValueDatetime() != null) {
+                infantPCRTestingType.setDateResultReceivedAtFacility(Utils.getXmlDate(obs.getValueDatetime()));
+            }
+            obs = extractObs(Date_Caregiver_Given_Result, antenatalObsList);
+            if (obs != null && obs.getValueDatetime() != null) {
+                infantPCRTestingType.setDateCaregiverGivenResult(Utils.getXmlDate(obs.getValueDatetime()));
+            }
+            obs = extractObs(Test_Result, antenatalObsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                infantPCRTestingType.setpCRTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+            obs = extractObs(Date_of_Test, antenatalObsList);
+            if (obs != null && obs.getValueDatetime() != null) {
 
-                    Instant instant = Instant.ofEpochMilli(obs.getValueDatetime().getTime());
-                    LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-                    LocalDate dateOfTest_local = localDateTime.toLocalDate();
-                    LocalDate now = LocalDate.now();
-                    Period period = Period.between(now, dateOfTest_local);
+                Instant instant = Instant.ofEpochMilli(obs.getValueDatetime().getTime());
+                LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+                LocalDate dateOfTest_local = localDateTime.toLocalDate();
+                LocalDate now = LocalDate.now();
+                Period period = Period.between(now, dateOfTest_local);
 
-                    infantPCRTestingType.setAgeAtTest(String.valueOf(period.getYears()));
-                }
+                infantPCRTestingType.setAgeAtTest(String.valueOf(period.getYears()));
+            }
 
             //}
 
