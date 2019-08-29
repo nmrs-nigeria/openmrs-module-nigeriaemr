@@ -106,7 +106,7 @@ public class NdrFragmentController {
 			//                }
 			//
 			//            });
-			//			
+			//
 			for (Patient patient : patients) {
 				
 				//if (patient.getId() == 140) {
@@ -168,11 +168,11 @@ public class NdrFragmentController {
 			Utils.updateLast_NDR_Run_Date(new Date());
 			
 			String zipFileName = IPShortName + "_" + DATIMID + "_" + formattedDate + ".zip";
-			String response = "Files Exported successfully, view uploaded files here: \n"
-			        + util.ZipFolder(request, reportFolder, zipFileName, reportType);
+			/*String response = "Files Exported successfully, view uploaded files here: \n"
+			        + util.ZipFolder(request, reportFolder, zipFileName, reportType);*/
+			String response = util.ZipFolder(request, reportFolder, zipFileName, reportType);
 			return response;
 			//request.getContextPath() + "/downloads/" + zipFileName;
-			
 		}
 		catch (Exception ex) {
 			LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
