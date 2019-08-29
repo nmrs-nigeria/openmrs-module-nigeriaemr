@@ -281,7 +281,11 @@ public class LabDictionary {
         if(labObsForVisit!=null && !labObsForVisit.isEmpty() && pepfarIdentifier!=null){
             pepfarID=pepfarIdentifier.getIdentifier();
             visitID=Utils.getVisitId(pepfarID, visitDate);
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
         }
         return labReportType;
     }

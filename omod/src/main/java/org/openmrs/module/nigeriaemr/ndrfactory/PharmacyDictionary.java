@@ -283,10 +283,10 @@ public class PharmacyDictionary {
 
     public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient,List<Obs> patientsObsList) throws DatatypeConfigurationException{
         List<RegimenType> regimenTypeList=new ArrayList<RegimenType>();
-        Integer[] targetForms={14,27};
+        Integer[] targetEncounterTypes={Utils.CARE_CARD_ENCOUNTER_TYPE,Utils.PHARMACY_ENCOUNTER_TYPE};
         RegimenType regimenType=null;
         List<Obs> obsPerVisit=null;
-        Set<Date> visitDateSet=Utils.extractUniqueVisitsForForms(patient, allEncounterForPatient, targetForms);
+        Set<Date> visitDateSet=Utils.extractUniqueVisitsForEncounterTypes(patient, allEncounterForPatient, targetEncounterTypes);
         for(Date visitDate: visitDateSet){
             obsPerVisit=Utils.extractObsPerVisitDate(visitDate, patientsObsList);
             regimenType=createRegimenType(patient, visitDate, obsPerVisit);

@@ -285,7 +285,7 @@ public class NDRMainDictionary {
             demo.setEnrolleeCode(soundex.encode(testCode));
             String ndrCodedValue;
             //get all hiv enrollment observations
-            List<Obs> enrollmentObs = Utils.getHIVEnrollmentObs(pts);
+            List<Obs> enrollmentObs = null;//Utils.getHIVEnrollmentObs(pts);
 
             if (enrollmentObs == null) {
                 return demo;
@@ -336,7 +336,7 @@ public class NDRMainDictionary {
             throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
     }
-
+    
     public HIVQuestionsType createHIVQuestionType(Patient patient, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
 
         try {
@@ -653,8 +653,16 @@ public class NDRMainDictionary {
     }
 
 
+<<<<<<< HEAD
     public List<HIVEncounterType> createHIVEncounterType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allObs) throws DatatypeConfigurationException {
         return clinicalDictionary.createHIVEncounterType(patient, allPatientEncounterList, allObs);
+=======
+    public HIVEncounterType createHIVEncounterType(Patient patient, List<Encounter> enc) throws DatatypeConfigurationException {
+       return null;//clinicalDictionary.createHIVEncounterType(patient, enc, null);
+    }
+    public List<HIVEncounterType> createHIVEncounterType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allObs) throws DatatypeConfigurationException {
+       return clinicalDictionary.createHIVEncounterType(patient, allPatientEncounterList, allObs);
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
     }
 
     public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient,List<Obs> allPatientObsList) throws DatatypeConfigurationException{

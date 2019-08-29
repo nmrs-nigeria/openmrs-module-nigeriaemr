@@ -56,6 +56,7 @@ public class NDRConverter {
 
 	public Container createContainer(Patient pts, FacilityType facility) throws DatatypeConfigurationException {
 
+<<<<<<< HEAD
 		try {
 			patient = pts;
 			this.facility = facility;
@@ -111,6 +112,63 @@ public class NDRConverter {
 		}
 	}
 
+=======
+        try {
+            patient = pts;
+            this.facility = facility;
+            this.encounters = new ArrayList<>();
+            Date lastDate = Utils.getLastNDRDate();
+
+            long startTime = System.currentTimeMillis();
+            List<Encounter> encs = Context.getEncounterService().getEncountersByPatient(pts);
+
+            //only run if patient has had any encounter between the last run date and now
+            /*  if(lastDate !=null){
+                Boolean recentEncounter = encs.stream()
+                        .anyMatch(e-> e.getDateCreated().after(lastDate) ||
+                                e.getDateChanged().after(lastDate));
+             *//*if(recentEncounter == false)
+                    return null;*//*
+            }*/
+
+
+            long endTime = System.currentTimeMillis();
+            if ((endTime - startTime) > 1000) {
+                System.out.println("took too loooong to get encounters : " + (endTime - startTime) + " milli secs : ");
+            }
+
+            startTime = System.currentTimeMillis();
+            this.allobs = Context.getObsService().getObservationsByPerson(pts);
+            endTime = System.currentTimeMillis();
+            if ((endTime - startTime) > 1000) {
+                System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
+            }
+
+            this.encounters.addAll(encs);
+            if (this.encounters == null || this.encounters.isEmpty()) {
+                return null;
+            }
+
+            Container container = new Container();
+            MessageHeaderType header = createMessageHeaderType();
+            FacilityType sendingOrganization = Utils.createFacilityType(this.ipName, this.ipCode, "IP");
+            header.setMessageSendingOrganization(sendingOrganization);
+
+            container.setMessageHeader(header);
+            IndividualReportType individualReportType = createIndividualReportType();
+            if (individualReportType == null) {
+                return null;
+            }
+
+            container.setIndividualReport(individualReportType);
+            return container;
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+            throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+        }
+    }
+	
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
 	private IndividualReportType createIndividualReportType() throws DatatypeConfigurationException {
 
 		try {
@@ -153,15 +211,26 @@ public class NDRConverter {
 			condition.setConditionCode("86406008");
 
 			//create address
+<<<<<<< HEAD
 			condition.setPatientAddress(createPatientAddress());
 
+=======
+			//This method is throwing exception
+			//condition.setPatientAddress(createPatientAddress());
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
 			//create program area
 			condition.setProgramArea(createProgramArea());
 
 			//create common question tags by calling the factory method and passing the encounter, patient and obs list
+<<<<<<< HEAD
 
 			condition.setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
 
+=======
+			condition
+			        .setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
+			
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
 			//create condition specific question tag
 			HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
 			if (hivQuestionsType != null) {
@@ -171,11 +240,21 @@ public class NDRConverter {
 			}
 
 			//create hiv encounter
+<<<<<<< HEAD
 			List<HIVEncounterType> hivEncounter = mainDictionary.createHIVEncounterType(this.patient, this.encounters,
 					this.allobs);
 			if (hivEncounter != null && hivEncounter.size() > 0) {
 				EncountersType encType = new EncountersType();
 				encType.getHIVEncounter().addAll(hivEncounter);
+=======
+			//HIVEncounterType hivEncounter = mainDictionary.createHIVEncounterType(this.patient, this.encounters,this.allobs);
+			List<HIVEncounterType> hivEncounterTypeList = mainDictionary.createHIVEncounterType(this.patient,
+			    this.encounters, this.allobs);
+			//condition.getEncounters().getHIVEncounter().addAll(hivEncounterTypeList);
+			if (hivEncounterTypeList != null) {
+				EncountersType encType = new EncountersType();
+				encType.getHIVEncounter().addAll(hivEncounterTypeList);
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
 				condition.setEncounters(encType);
 			}
 
@@ -205,6 +284,7 @@ public class NDRConverter {
 			if (hivRiskAssessmentType != null) {
 				condition.getHIVRiskAssessment().addAll(hivRiskAssessmentType);
 			}
+<<<<<<< HEAD
 
 			/*	//immunization Type
 				ImmunizationType immunizationType = mainDictionary.createImmunizationType(patient, this.encounters, this.allobs);
@@ -212,6 +292,14 @@ public class NDRConverter {
 					condition.getImmunization().add(immunizationType);
 				}*/
 
+=======
+			
+			//immunization Type
+			//ImmunizationType immunizationType = mainDictionary.createImmunizationType(patient, this.encounters, this.allobs);
+			//if (immunizationType != null) {
+			//condition.getImmunization().add(immunizationType);
+			//}
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
 			//Infant PCR Testing Type
 			InfantPCRTestingType infantPCRTestingType = mainDictionary
 					.createInfantPcr(patient, this.encounters, this.allobs);
@@ -225,6 +313,7 @@ public class NDRConverter {
 			if (knowledgeAssessmentType != null) {
 				condition.getKnowledgeAssessment().addAll(knowledgeAssessmentType);
 			}
+<<<<<<< HEAD
 			//Lab report
 			List<LaboratoryReportType> laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
 					this.encounters, this.allobs);
@@ -246,8 +335,20 @@ public class NDRConverter {
 				condition.getPostTestCounselling().addAll(postTestCounsellingType);
 			}
 
+=======
+			
+			//Laboratory Report
+			//condition.getLaboratoryReport().add(null);
+			//condition.getPartnerDetailsType().add(null);
+			//Post Test Counselling
+			//List<PostTestCounsellingType> postTestCounsellingType = mainDictionary.createPostTestCounsellingType(patient,
+			// this.encounters, this.allobs);
+			//if (postTestCounsellingType != null) {
+			//condition.getPostTestCounselling().addAll(postTestCounsellingType);
+			//}
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
 			List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, encounters, this.allobs);
-			if (arvRegimenTypeList != null && arvRegimenTypeList.size() > 0) {
+			if (arvRegimenTypeList != null && !arvRegimenTypeList.isEmpty()) {
 				condition.getRegimen().addAll(arvRegimenTypeList);
 			}
 
@@ -259,12 +360,24 @@ public class NDRConverter {
 			}
 
 			//
+<<<<<<< HEAD
 			/*List<HealthFacilityVisitsType> healthFacilityVisitsType = mainDictionary.createHealthFacilityVisit(patient,
 			    this.encounters, this.allobs);
 			if (healthFacilityVisitsType != null) {
 				condition.getHealthFacilityVisits().addAll(healthFacilityVisitsType);
 			}*/
 
+=======
+			//List<HealthFacilityVisitsType> healthFacilityVisitsType = mainDictionary.createHealthFacilityVisit(patient,
+			//this.encounters, this.allobs);
+			//if (healthFacilityVisitsType != null) {
+			//condition.getHealthFacilityVisits().addAll(healthFacilityVisitsType);
+			//}
+			//LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient, this.encounters,
+			// this.allobs);
+			//createLaboratoryReportTypes(enc, obsList);
+			//condition.getLaboratoryReport().add(laboratoryReport);
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
 			long endTime = System.currentTimeMillis();
 			if ((endTime - startTime) > 1000) {
 				System.out.println("took too long to get obs : " + (endTime - startTime) + " milli secs : ");
@@ -286,7 +399,10 @@ public class NDRConverter {
 	 * HIVEncounter // Get all Lab visits for patients // For each of Lab visit create LabReportType
 	 */
 	//
+<<<<<<< HEAD
 
+=======
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
 	private ProgramAreaType createProgramArea() {
 		ProgramAreaType p = new ProgramAreaType();
 		p.setProgramAreaCode("HIV");
@@ -299,7 +415,7 @@ public class NDRConverter {
 		p.setCountryCode("NGA");
 
 		PersonAddress pa = patient.getPersonAddress();
-		if (pa != null) {
+		/*if (pa != null) {
 			//p.setTown(pa.getAddress1());
 			String lga = pa.getCityVillage();
 			String state = pa.getStateProvince();
@@ -334,7 +450,7 @@ public class NDRConverter {
 				LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
 						LogLevel.live);
 			}
-		}
+		}*/
 		return p;
 	}
 
@@ -407,6 +523,7 @@ public class NDRConverter {
 			throw ex;
 		}
 	}
+<<<<<<< HEAD
 
 	/*
 
@@ -691,4 +808,7 @@ public class NDRConverter {
 	                                                                                                                                                                 condition.setConditionSpecificQuestions(hivSpecificQuestions);
 	                                                                                                                                                                 }
 	                                                                                                                                                                 return condition;*/
+=======
+	
+>>>>>>> 11eabb3c5570574d82bc8d7e3d04545836c7738e
 }
