@@ -139,10 +139,11 @@ public class HTSDictionary {
 
     public KnowledgeAssessmentType createKnowledgeAssessmentType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
-        KnowledgeAssessmentType knowledgeAssessmentType = new KnowledgeAssessmentType();
+        KnowledgeAssessmentType knowledgeAssessmentType = null;
         
         if (htsIdentifier != null) {
             LoggerUtils.write(HTSDictionary.class.getName(), "htsIdentifier is not null", LogFormat.INFO, LogLevel.live);
+            knowledgeAssessmentType = new KnowledgeAssessmentType();
 
             Obs obs = extractObs(Previously_Tested_Hiv_Negative_Concept_Id, obsList);
             if (obs != null && obs.getValueCoded() != null){
@@ -221,9 +222,10 @@ public class HTSDictionary {
 
     public SyndromicSTIScreeningType createSyndromicsStiType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
-        SyndromicSTIScreeningType syndromicSTIScreeningType = new SyndromicSTIScreeningType();
+        SyndromicSTIScreeningType syndromicSTIScreeningType = null;
 
         if (htsIdentifier != null) {
+            syndromicSTIScreeningType = new SyndromicSTIScreeningType();
             Obs obs = extractObs(Complaints_of_vaginal_discharge_or_burning_when_urinating, obsList);
             if (obs != null && obs.getValueCoded() != null) {
                 syndromicSTIScreeningType.setVaginalDischargeOrBurningWhenUrinating(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
@@ -251,9 +253,10 @@ public class HTSDictionary {
 
     public PostTestCounsellingType createPostTestCouncellingType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
-        PostTestCounsellingType postTestCounsellingType = new PostTestCounsellingType();
+        PostTestCounsellingType postTestCounsellingType = null;
 
         if (htsIdentifier != null) {
+            postTestCounsellingType = new PostTestCounsellingType();
             Obs obs = extractObs(Have_you_been_tested_for_HIV_before_within_this_year, obsList);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Have_you_been_tested_for_HIV_before_within_this_year", LogFormat.FATAL, LogLevel.debug);

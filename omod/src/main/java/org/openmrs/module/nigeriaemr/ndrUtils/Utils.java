@@ -137,7 +137,6 @@ public class Utils {
 	
 	public final static int ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT = 165289; // ARV ADHERENCE From Care Card
 	
-
 	/* End of RegimenType Constant */
 	/* Variables specific to HIVQuestionType */
 	public final static int DATE_OF_HIV_DIAGNOSIS_CONCEPT = 160554;
@@ -151,7 +150,7 @@ public class Utils {
 	public final static int REASON_FOR_TERMINATION_CONCEPT = 165470;
 	
 	public final static int DEAD_CONCEPT = 165889;
-
+	
 	/* Variables for HIVEncounterType */
 	public final static int ART_START_DATE_CONCEPT = 159599;
 	
@@ -221,7 +220,7 @@ public class Utils {
 	public final static int LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE = 11;
 	
 	public final static int PHARMACY_ENCOUNTER_TYPE = 13;
-
+	
 	public static String getFacilityName() {
 		return Context.getAdministrationService().getGlobalProperty("Facility_Name");
 	}
@@ -330,7 +329,7 @@ public class Utils {
 		}
 		return ans;
 	}
-
+	
 	public static DateTime extractMedicationDuration(Date visitDate, List<Obs> obsList) {
 		DateTime stopDateTime = null;
 		DateTime startDateTime = null;
@@ -392,23 +391,22 @@ public class Utils {
 		return regimenLineObsList.get(size-1);
 	}
 	
-
 	public static Set<Date> extractUniqueVisitsForEncounterTypes(Patient pts, List<Encounter> encounterList,
-				Integer[] encounterTypeIDs) {
-			Set<Date> visitDateSet = new HashSet<Date>();
-			List<Integer> encounterTypeIDList = new ArrayList<Integer>();
-			encounterTypeIDList.addAll(Arrays.asList(encounterTypeIDs));
-
-			for (Encounter enc : encounterList) {
-				if (encounterTypeIDList.contains(enc.getEncounterType().getEncounterTypeId())) {
-					visitDateSet.add(DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE));
-
-				}
-
+	        Integer[] encounterTypeIDs) {
+		Set<Date> visitDateSet = new HashSet<Date>();
+		List<Integer> encounterTypeIDList = new ArrayList<Integer>();
+		encounterTypeIDList.addAll(Arrays.asList(encounterTypeIDs));
+		
+		for (Encounter enc : encounterList) {
+			if (encounterTypeIDList.contains(enc.getEncounterType().getEncounterTypeId())) {
+				visitDateSet.add(DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE));
+				
 			}
-			return visitDateSet;
+			
 		}
-
+		return visitDateSet;
+	}
+	
 	public static List<Obs> extractObsPerVisit(Date visitDate, List<Encounter> allEncountersList) {
 		List<Obs> obsList = new ArrayList<Obs>();
 		for (Encounter enc : allEncountersList) {
@@ -499,7 +497,6 @@ public class Utils {
 		return obsList.stream().filter(ele -> ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
 	}*/
 	
-
 	public static Encounter getFirstEncounter(Patient patient, List<Encounter> encList) {
         //sort the list by date
         encList.sort(Comparator.comparing(Encounter::getEncounterDatetime));
@@ -610,7 +607,7 @@ public class Utils {
 		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
 		return getRegimenFromObs(FirstRegimenObs);
 	}
-
+	
 	public static Obs getFirstRegimen(List<Encounter> encounters) {
 		
 		List<Obs> FirstRegimenObs = getFirstRegimenObs(encounters);

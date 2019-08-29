@@ -32,28 +32,28 @@ import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 
 public class NDRConverter {
-
+	
 	//Logger logger = Logger.getLogger(NDRConverter.class);
 	private Patient patient;
-
+	
 	private FacilityType facility;
-
+	
 	private String ipName;
-
+	
 	private String ipCode;
-
+	
 	private List<Encounter> encounters;
-
+	
 	private List<Obs> allobs;
-
+	
 	private DBConnection openmrsConn;
-
+	
 	public NDRConverter(String _ipName, String _ipCode, DBConnection _openmrsConn) {
 		this.ipName = _ipName;
 		this.ipCode = _ipCode;
 		this.openmrsConn = _openmrsConn;
 	}
-
+	
 	public Container createContainer(Patient pts, FacilityType facility) throws DatatypeConfigurationException {
 
 		try {
@@ -110,59 +110,59 @@ public class NDRConverter {
 			throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
 		}
 	}
-
+	
 	private IndividualReportType createIndividualReportType() throws DatatypeConfigurationException {
-
+		
 		try {
-
+			
 			//create patient data
 			PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicsType(patient,
-					facility, openmrsConn);
+			    facility, openmrsConn);
 			if (patientDemography == null) { //return null if no valid patient data exist
 				return null;
 			}
-
+			
 			//create hiv condition type with code "86406008"
 			ConditionType condition = createHIVCondition();
 			if (condition == null) {
 				return null; //return null if the condition parameters are empty
 			}
-
+			
 			IndividualReportType individualReport = new IndividualReportType();
 			individualReport.setPatientDemographics(patientDemography);
 			individualReport.getCondition().add(condition);
-
+			
 			return individualReport;
-
+			
 		}
 		catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			throw ex;
 		}
 	}
-
+	
 	private ConditionType createHIVCondition() throws DatatypeConfigurationException {
-
+		
 		try {
-
+			
 			long startTime = System.currentTimeMillis();
-
+			
 			NDRMainDictionary mainDictionary = new NDRMainDictionary();
-
+			
 			ConditionType condition = new ConditionType();
 			condition.setConditionCode("86406008");
-
+			
 			//create address
 			condition.setPatientAddress(createPatientAddress());
-
+			
 			//create program area
 			condition.setProgramArea(createProgramArea());
-
+			
 			//create common question tags by calling the factory method and passing the encounter, patient and obs list
-
+			
 			condition
-					.setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
-
+			        .setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
+			
 			//create condition specific question tag
 			HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
 			if (hivQuestionsType != null) {
@@ -170,116 +170,116 @@ public class NDRConverter {
 				hivSpecificQuestions.setHIVQuestions(hivQuestionsType);
 				condition.setConditionSpecificQuestions(hivSpecificQuestions);
 			}
-
+			
 			//create hiv encounter
 			List<HIVEncounterType> hivEncounter = mainDictionary.createHIVEncounterType(this.patient, this.encounters,
-					this.allobs);
+			    this.allobs);
 			if (hivEncounter != null && hivEncounter.size() > 0) {
 				EncountersType encType = new EncountersType();
 				encType.getHIVEncounter().addAll(hivEncounter);
 				condition.setEncounters(encType);
 			}
-
+			
 			//create Child birth details
 			ChildBirthDetailsType childBirthDetailsType = mainDictionary.createChildBirthDetailsType(patient,
-					this.encounters, this.allobs);
+			    this.encounters, this.allobs);
 			if (childBirthDetailsType != null) {
 				condition.getChildBirthDetails().add(childBirthDetailsType);
 			}
-
+			
 			//create child follow up
 			ChildFollowupType childFollowupType = mainDictionary.createChildFollowupType(patient, this.encounters,
-					this.allobs);
+			    this.allobs);
 			if (childFollowupType != null) {
 				condition.getChildFollowup().add(childFollowupType);
 			}
-
+			
 			//create TB screening
 			List<ClinicalTBScreeningType> clinicalTBScreeningType = mainDictionary.createClinicalTbScreening(patient,
-					this.encounters, this.allobs);
+			    this.encounters, this.allobs);
 			if (clinicalTBScreeningType != null && !clinicalTBScreeningType.isEmpty()) {
 				condition.getClinicalTBScreening().addAll(clinicalTBScreeningType);
 			}
-
+			
 			List<HIVRiskAssessmentType> hivRiskAssessmentType = mainDictionary.createHivRiskAssessment(patient,
-					this.encounters, this.allobs);
+			    this.encounters, this.allobs);
 			if (hivRiskAssessmentType != null) {
 				condition.getHIVRiskAssessment().addAll(hivRiskAssessmentType);
 			}
-
+			
 			/*	//immunization Type
 				ImmunizationType immunizationType = mainDictionary.createImmunizationType(patient, this.encounters, this.allobs);
 				if (immunizationType != null) {
 					condition.getImmunization().add(immunizationType);
 				}*/
-
+			
 			//Infant PCR Testing Type
 			InfantPCRTestingType infantPCRTestingType = mainDictionary
-					.createInfantPcr(patient, this.encounters, this.allobs);
+			        .createInfantPcr(patient, this.encounters, this.allobs);
 			if (infantPCRTestingType != null) {
 				condition.getInfantPCRTesting().add(infantPCRTestingType);
 			}
-
+			
 			//Knowledge Assessment Type
 			List<KnowledgeAssessmentType> knowledgeAssessmentType = mainDictionary.createKnowledgeAssessmentType(patient,
-					this.encounters, this.allobs);
+			    this.encounters, this.allobs);
 			if (knowledgeAssessmentType != null) {
 				condition.getKnowledgeAssessment().addAll(knowledgeAssessmentType);
 			}
 			//Lab report
 			List<LaboratoryReportType> laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
-					this.encounters, this.allobs);
+			    this.encounters, this.allobs);
 			if (laboratoryReport != null && laboratoryReport.size() > 0) {
 				condition.getLaboratoryReport().addAll(laboratoryReport);
 			}
-
+			
 			//Partner details
 			List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.encounters,
-					this.allobs);
+			    this.allobs);
 			if (partnerDetailsType != null && partnerDetailsType.size() > 0) {
 				condition.getPartnerDetailsType().addAll(partnerDetailsType);
 			}
-
+			
 			//Post Test Counselling
 			List<PostTestCounsellingType> postTestCounsellingType = mainDictionary.createPostTestCounsellingType(patient,
-					this.encounters, this.allobs);
+			    this.encounters, this.allobs);
 			if (postTestCounsellingType != null && postTestCounsellingType.size() > 0) {
 				condition.getPostTestCounselling().addAll(postTestCounsellingType);
 			}
-
+			
 			List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, encounters, this.allobs);
 			if (arvRegimenTypeList != null && arvRegimenTypeList.size() > 0) {
 				condition.getRegimen().addAll(arvRegimenTypeList);
 			}
-
+			
 			//Syndromic STI
 			List<SyndromicSTIScreeningType> syndromicSTIScreeningType = mainDictionary.createSyndromicsStiType(patient,
-					this.encounters, this.allobs);
+			    this.encounters, this.allobs);
 			if (syndromicSTIScreeningType != null && syndromicSTIScreeningType.size() > 0) {
 				condition.getSyndromicSTIScreening().addAll(syndromicSTIScreeningType);
 			}
-
+			
 			//
 			/*List<HealthFacilityVisitsType> healthFacilityVisitsType = mainDictionary.createHealthFacilityVisit(patient,
 			    this.encounters, this.allobs);
 			if (healthFacilityVisitsType != null) {
 				condition.getHealthFacilityVisits().addAll(healthFacilityVisitsType);
 			}*/
-
+			
 			long endTime = System.currentTimeMillis();
 			if ((endTime - startTime) > 1000) {
 				System.out.println("took too long to get obs : " + (endTime - startTime) + " milli secs : ");
 			}
-
+			
 			return condition;
-
+			
 		}
 		catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			throw ex;
 		}
 	}
-
+	
 	/**
 	 * Create PatientDemographicsType for pts Create CommonQuestionType for pts Create
 	 * HIVQuestionsType for pts Get all Pharmacy visits for patients For each Pharmacy visit create
@@ -287,42 +287,42 @@ public class NDRConverter {
 	 * HIVEncounter // Get all Lab visits for patients // For each of Lab visit create LabReportType
 	 */
 	//
-
+	
 	private ProgramAreaType createProgramArea() {
 		ProgramAreaType p = new ProgramAreaType();
 		p.setProgramAreaCode("HIV");
 		return p;
 	}
-
+	
 	private AddressType createPatientAddress() {
 		AddressType p = new AddressType();
 		p.setAddressTypeCode("H");
 		p.setCountryCode("NGA");
-
+		
 		PersonAddress pa = patient.getPersonAddress();
 		if (pa != null) {
 			//p.setTown(pa.getAddress1());
 			String lga = pa.getCityVillage();
 			String state = pa.getStateProvince();
-
+			
 			try {
 				String sql = String
-						.format(
-								"SELECT `name`, user_generated_id, 'STATE' AS 'Location' "
-										+ "FROM address_hierarchy_entry WHERE level_id =2 AND NAME = '%s' "
-										+ "UNION "
-										+ "SELECT `name`, user_generated_id, 'LGA' AS 'Location' FROM address_hierarchy_entry "
-										+ " WHERE level_id =3 AND NAME ='%s' AND parent_id = (SELECT address_hierarchy_entry_id FROM address_hierarchy_entry\n"
-										+ " WHERE level_id =2 AND NAME = '%s')", state, lga, state);
-
+				        .format(
+				            "SELECT `name`, user_generated_id, 'STATE' AS 'Location' "
+				                    + "FROM address_hierarchy_entry WHERE level_id =2 AND NAME = '%s' "
+				                    + "UNION "
+				                    + "SELECT `name`, user_generated_id, 'LGA' AS 'Location' FROM address_hierarchy_entry "
+				                    + " WHERE level_id =3 AND NAME ='%s' AND parent_id = (SELECT address_hierarchy_entry_id FROM address_hierarchy_entry\n"
+				                    + " WHERE level_id =2 AND NAME = '%s')", state, lga, state);
+				
 				Connection connection = DriverManager.getConnection(this.openmrsConn.getUrl(),
-						this.openmrsConn.getUsername(), this.openmrsConn.getPassword());
+				    this.openmrsConn.getUsername(), this.openmrsConn.getPassword());
 				Statement statement = connection.createStatement();
 				ResultSet result = statement.executeQuery(sql);
 				while (result.next()) {
 					//String name = result.getString("name");
 					String coded_value = result.getString("user_generated_id");
-
+					
 					if (result.getString("Location").contains("STATE")) {
 						p.setStateCode(coded_value);
 					} else {
@@ -333,50 +333,50 @@ public class NDRConverter {
 			catch (SQLException e) {
 				e.printStackTrace();
 				LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
-						LogLevel.live);
+				    LogLevel.live);
 			}
 		}
 		return p;
 	}
-
+	
 	private MessageHeaderType createMessageHeaderType() throws DatatypeConfigurationException {
 		MessageHeaderType header = new MessageHeaderType();
-
+		
 		Calendar cal = Calendar.getInstance();
-
+		
 		header.setMessageCreationDateTime(Utils.getXmlDateTime(cal.getTime()));
 		header.setMessageStatusCode("INITIAL");
 		header.setMessageSchemaVersion(new BigDecimal("1.3"));
 		header.setMessageUniqueID(UUID.randomUUID().toString());
 		return header;
 	}
-
+	
 	public Marshaller createMarshaller(JAXBContext jaxbContext) throws JAXBException, SAXException {
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
+		
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
+		
 		java.net.URL xsdFilePath = Thread.currentThread().getContextClassLoader().getResource("NDR 1.3.xsd");
-
+		
 		assert xsdFilePath != null;
-
+		
 		Schema schema = sf.newSchema(xsdFilePath);
-
+		
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-
+		
 		jaxbMarshaller.setSchema(schema);
-
+		
 		//Call Validator class to perform the validation
 		jaxbMarshaller.setEventHandler(new Validator());
 		return jaxbMarshaller;
 	}
-
+	
 	public void writeFile(Container container, File file, Marshaller jaxbMarshaller) throws SAXException, JAXBException,
-			IOException {
-
+	        IOException {
+		
 		CustomErrorHandler errorHandler = new CustomErrorHandler();
-
+		
 		try {
 			javax.xml.validation.Validator validator = jaxbMarshaller.getSchema().newValidator();
 			jaxbMarshaller.marshal(container, file);
@@ -388,16 +388,16 @@ public class NDRConverter {
 			throw ex;
 		}
 	}
-
+	
 	public void writeFile(Container container, File file) throws SAXException, JAXBException, IOException {
-
+		
 		CustomErrorHandler errorHandler = new CustomErrorHandler();
-
+		
 		try {
-
+			
 			JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
 			Marshaller jaxbMarshaller = createMarshaller(jaxbContext);
-
+			
 			javax.xml.validation.Validator validator = jaxbMarshaller.getSchema().newValidator();
 			jaxbMarshaller.marshal(container, file);
 			validator.setErrorHandler(errorHandler);
@@ -408,7 +408,7 @@ public class NDRConverter {
 			throw ex;
 		}
 	}
-
+	
 	/*
 
 	private Integer getHivDurationOnART(Encounter enc) {
@@ -500,7 +500,7 @@ public class NDRConverter {
 	   regimenList.addAll(dict.createOITypes(patient, enc, obs));
 	   return regimenList;
 	}*/
-
+	
 	/*
 
 	private HIVQuestionsType createHIVQuestionsType(List<Obs> obs) throws DatatypeConfigurationException {
@@ -511,7 +511,7 @@ public class NDRConverter {
 	        throws DatatypeConfigurationException {
 		return new LabDictionary().createLaboratoryOrderAndResult(patient, enc, obs);
 	}*/
-
+	
 	//previously on Hiv Condition
 	/*condition.setProgramArea(createProgramArea());
 	       condition.setPatientAddress(createPatientAddress());
@@ -529,167 +529,167 @@ public class NDRConverter {
 	       HIVEncounterType hivEncounter;
 
 	       *//*
-	 * Changes By Johnbosco
-	 * *//*
+	         * Changes By Johnbosco
+	         * *//*
 
 
-	 *//*PregnancyEncounterType pregnancyEncounter;
-	               	HIVTestingEncounterType hivTestingEncounter;
-	               	PMTCTDictionary pmtctDictionary = new PMTCTDictionary();
-	               	HTSDictionary htsDictionary = new HTSDictionary();*//*
-	 *//*ClinicalDictionary clinicalDictionary = new ClinicalDictionary();
-	                                                                           LabDictionary labDictionary = new LabDictionary();
-	                                                                           PharmacyDictionary pharmDictionary=new PharmacyDictionary();*//*
-	                                                                                                                                         List<RegimenType> arvRegimenTypeList=null;
-	                                                                                                                                         //Added by Bright
-	                                                                                                                                         arvRegimenTypeList=pharmDictionary.createRegimenTypeList(patient, encounters);
-	                                                                                                                                         for (Encounter enc : this.encounters) {
-	                                                                                                                                         // LoggerUtils.write(NDRConverter.class.getName(), "Started pulling data for encounter: "+enc.getEncounterType().getEncounterTypeId(), LogFormat.INFO, LogLevel.live);
+	             *//*PregnancyEncounterType pregnancyEncounter;
+	                           	HIVTestingEncounterType hivTestingEncounter;
+	                           	PMTCTDictionary pmtctDictionary = new PMTCTDictionary();
+	                           	HTSDictionary htsDictionary = new HTSDictionary();*//*
+	                                                                                *//*ClinicalDictionary clinicalDictionary = new ClinicalDictionary();
+	                                                                                                                                                          LabDictionary labDictionary = new LabDictionary();
+	                                                                                                                                                          PharmacyDictionary pharmDictionary=new PharmacyDictionary();*//*
+	                                                                                                                                                                                                                        List<RegimenType> arvRegimenTypeList=null;
+	                                                                                                                                                                                                                        //Added by Bright
+	                                                                                                                                                                                                                        arvRegimenTypeList=pharmDictionary.createRegimenTypeList(patient, encounters);
+	                                                                                                                                                                                                                        for (Encounter enc : this.encounters) {
+	                                                                                                                                                                                                                        // LoggerUtils.write(NDRConverter.class.getName(), "Started pulling data for encounter: "+enc.getEncounterType().getEncounterTypeId(), LogFormat.INFO, LogLevel.live);
 
-	                                                                                                                                         long startTime = System.currentTimeMillis();
-	                                                                                                                                         List<Obs> obsList = new ArrayList<>(enc.getAllObs());
-	                                                                                                                                         List<Obs> obsList1 = Utils.FilterObsByEncounterId(this.allobs, enc.getEncounterId());
+	                                                                                                                                                                                                                        long startTime = System.currentTimeMillis();
+	                                                                                                                                                                                                                        List<Obs> obsList = new ArrayList<>(enc.getAllObs());
+	                                                                                                                                                                                                                        List<Obs> obsList1 = Utils.FilterObsByEncounterId(this.allobs, enc.getEncounterId());
 
-	                                                                                                                                         // create the hiv encounter from Adult initials and care card
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Adult_Ped_Initial_Encounter_Type_Id
-	                                                                                                                                         || enc.getEncounterType().getEncounterTypeId() == Utils.Care_card_Encounter_Type_Id) {
+	                                                                                                                                                                                                                        // create the hiv encounter from Adult initials and care card
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Adult_Ped_Initial_Encounter_Type_Id
+	                                                                                                                                                                                                                        || enc.getEncounterType().getEncounterTypeId() == Utils.Care_card_Encounter_Type_Id) {
 
-	                                                                                                                                         hivEncounter = clinicalDictionary.createHIVEncounterType(patient, enc, obsList);
+	                                                                                                                                                                                                                        hivEncounter = clinicalDictionary.createHIVEncounterType(patient, enc, obsList);
 
-	                                                                                                                                         if (hivEncounter != null) {
-	                                                                                                                                         encType.getHIVEncounter().add(hivEncounter);
-	                                                                                                                                         }
+	                                                                                                                                                                                                                        if (hivEncounter != null) {
+	                                                                                                                                                                                                                        encType.getHIVEncounter().add(hivEncounter);
+	                                                                                                                                                                                                                        }
 
-	                                                                                                                                         if (conditionSpecificQObs == null) {
-	                                                                                                                                         conditionSpecificQObs = new ArrayList<>();
-	                                                                                                                                         }
-	                                                                                                                                         //collect obs from initial evaluation for HIV specific question
-	                                                                                                                                         conditionSpecificQObs.addAll(obsList);
-	                                                                                                                                         }
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Antenatal_Registration_Encounter_Type_Id) { // antenatal registration type
-	                                                                                                                                         AntenatalRegistrationType antenatalRegistration = pmtctDictionary.createAntenatalRegistrationType(patient, enc, obsList);
-	                                                                                                                                         if (antenatalRegistration != null) //add to encounter
-	                                                                                                                                         {
-	                                                                                                                                         encType.getAntenatalRegistration().add(antenatalRegistration);
-	                                                                                                                                         }
-	                                                                                                                                         }
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Delivery_Encounter_Type_Id) { // delivery register type
-	                                                                                                                                         DeliveryEncounterType deliveryEncounterType = pmtctDictionary.createDeliveryEncounterType(patient, enc, obsList);
-	                                                                                                                                         if (deliveryEncounterType != null) {
-	                                                                                                                                         encType.getDeliveryEncounter().add(deliveryEncounterType);
-	                                                                                                                                         }
-	                                                                                                                                         }
+	                                                                                                                                                                                                                        if (conditionSpecificQObs == null) {
+	                                                                                                                                                                                                                        conditionSpecificQObs = new ArrayList<>();
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        //collect obs from initial evaluation for HIV specific question
+	                                                                                                                                                                                                                        conditionSpecificQObs.addAll(obsList);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Antenatal_Registration_Encounter_Type_Id) { // antenatal registration type
+	                                                                                                                                                                                                                        AntenatalRegistrationType antenatalRegistration = pmtctDictionary.createAntenatalRegistrationType(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (antenatalRegistration != null) //add to encounter
+	                                                                                                                                                                                                                        {
+	                                                                                                                                                                                                                        encType.getAntenatalRegistration().add(antenatalRegistration);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Delivery_Encounter_Type_Id) { // delivery register type
+	                                                                                                                                                                                                                        DeliveryEncounterType deliveryEncounterType = pmtctDictionary.createDeliveryEncounterType(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (deliveryEncounterType != null) {
+	                                                                                                                                                                                                                        encType.getDeliveryEncounter().add(deliveryEncounterType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        }
 
-	                                                                                                                                         //if it is drug pick up, create regimen tags
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Pharmacy_Encounter_Type_Id) {
-	                                                                                                                                         List<RegimenType> regimenData = createRegimens(enc, obsList);
-	                                                                                                                                         condition.getRegimen().addAll(regimenData);
-	                                                                                                                                         }
+	                                                                                                                                                                                                                        //if it is drug pick up, create regimen tags
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Pharmacy_Encounter_Type_Id) {
+	                                                                                                                                                                                                                        List<RegimenType> regimenData = createRegimens(enc, obsList);
+	                                                                                                                                                                                                                        condition.getRegimen().addAll(regimenData);
+	                                                                                                                                                                                                                        }
 
-	                                                                                                                                         //if it is lab order/result encounter, create the lab order tags
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Laboratory_Encounter_Type_Id) {
-	                                                                                                                                         LaboratoryReportType laboratoryReport = labDictionary.createLaboratoryOrderAndResult(patient, enc, obsList);
-	                                                                                                                                         //createLaboratoryReportTypes(enc, obsList);
-	                                                                                                                                         condition.getLaboratoryReport().add(laboratoryReport);
-	                                                                                                                                         }
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Child_Birth_Detail_Encounter_Type_Id) {
-	                                                                                                                                         ChildBirthDetailsType childBirthDetailsType = pmtctDictionary.createChildBirthDetailsType(patient, enc, obsList);
-	                                                                                                                                         if (childBirthDetailsType != null) {
-	                                                                                                                                         condition.getChildBirthDetails().add(childBirthDetailsType);
-	                                                                                                                                         }
-	                                                                                                                                         }
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Child_Followup_Encounter_Type_Id) {
-	                                                                                                                                         ChildFollowupType childFollowupType = pmtctDictionary.createChildFollowupType(patient, enc, obsList);
-	                                                                                                                                         if (childFollowupType != null) {
-	                                                                                                                                         condition.getChildFollowup().add(childFollowupType);
-	                                                                                                                                         }
-	                                                                                                                                         }
-	                                                                                                                                         // LoggerUtils.write(NDRMainDictionary.class.getName(), "About to pull client intake data", LogFormat.INFO, LogLevel.live);
+	                                                                                                                                                                                                                        //if it is lab order/result encounter, create the lab order tags
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Laboratory_Encounter_Type_Id) {
+	                                                                                                                                                                                                                        LaboratoryReportType laboratoryReport = labDictionary.createLaboratoryOrderAndResult(patient, enc, obsList);
+	                                                                                                                                                                                                                        //createLaboratoryReportTypes(enc, obsList);
+	                                                                                                                                                                                                                        condition.getLaboratoryReport().add(laboratoryReport);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Child_Birth_Detail_Encounter_Type_Id) {
+	                                                                                                                                                                                                                        ChildBirthDetailsType childBirthDetailsType = pmtctDictionary.createChildBirthDetailsType(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (childBirthDetailsType != null) {
+	                                                                                                                                                                                                                        condition.getChildBirthDetails().add(childBirthDetailsType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Child_Followup_Encounter_Type_Id) {
+	                                                                                                                                                                                                                        ChildFollowupType childFollowupType = pmtctDictionary.createChildFollowupType(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (childFollowupType != null) {
+	                                                                                                                                                                                                                        condition.getChildFollowup().add(childFollowupType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        // LoggerUtils.write(NDRMainDictionary.class.getName(), "About to pull client intake data", LogFormat.INFO, LogLevel.live);
 
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Client_Intake_Form_Encounter_Type_Id || enc.getEncounterType().getEncounterTypeId() == Utils.Admission_Simple_Client_intake) {
-	                                                                                                                                         // LoggerUtils.write(NDRMainDictionary.class.getName(), "Client intake form was entered for patient with id: "+patient.getId(), LogFormat.INFO, LogLevel.live);
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Client_Intake_Form_Encounter_Type_Id || enc.getEncounterType().getEncounterTypeId() == Utils.Admission_Simple_Client_intake) {
+	                                                                                                                                                                                                                        // LoggerUtils.write(NDRMainDictionary.class.getName(), "Client intake form was entered for patient with id: "+patient.getId(), LogFormat.INFO, LogLevel.live);
 
-	                                                                                                                                         KnowledgeAssessmentType knowledgeAssessmentType = htsDictionary.createKnowledgeAssessmentType(patient, enc, obsList);
-	                                                                                                                                         if (knowledgeAssessmentType != null) {
-	                                                                                                                                         condition.getKnowledgeAssessment().add(knowledgeAssessmentType);
-	                                                                                                                                         }
-	                                                                                                                                         HIVRiskAssessmentType hivRiskAssessmentType = htsDictionary.createHivRiskAssessment(patient, enc, obsList);
-	                                                                                                                                         if (hivRiskAssessmentType != null) {
-	                                                                                                                                         condition.getHIVRiskAssessment().add(hivRiskAssessmentType);
-	                                                                                                                                         }
-	                                                                                                                                         SyndromicSTIScreeningType syndromicSTIScreeningType = htsDictionary.createSyndromicsStiType(patient, enc, obsList);
-	                                                                                                                                         if (syndromicSTIScreeningType != null) {
-	                                                                                                                                         condition.getSyndromicSTIScreening().add(syndromicSTIScreeningType);
-	                                                                                                                                         }
-	                                                                                                                                         ClinicalTBScreeningType clinicalTBScreeningType = htsDictionary.createClinicalTbScreening(patient, enc, obsList);
-	                                                                                                                                         if (clinicalTBScreeningType != null) {
-	                                                                                                                                         condition.getClinicalTBScreening().add(clinicalTBScreeningType);
-	                                                                                                                                         }
-	                                                                                                                                         PostTestCounsellingType postTestCounsellingType = htsDictionary.createPostTestCouncellingType(patient, enc, obsList);
-	                                                                                                                                         if (postTestCounsellingType != null) {
-	                                                                                                                                         condition.getPostTestCounselling().add(postTestCounsellingType);
-	                                                                                                                                         }
-	                                                                                                                                         }
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Partner_register_Encounter_Id) {
-	                                                                                                                                         PartnerDetailsType partnerDetailsType = htsDictionary.createPartnerDetails(patient, enc, obsList);
-	                                                                                                                                         if (partnerDetailsType != null) {
-	                                                                                                                                         condition.getPartnerDetailsType().add(partnerDetailsType);
-	                                                                                                                                         }
-	                                                                                                                                         }
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Child_Followup_Encounter_Type_Id) {
-	                                                                                                                                         ImmunizationType immunizationType = pmtctDictionary.createImmunizationType(patient, enc, obsList);
-	                                                                                                                                         if (immunizationType != null) {
-	                                                                                                                                         condition.getImmunization().add(immunizationType);
-	                                                                                                                                         }
-	                                                                                                                                         }
-	                                                                                                                                         if (enc.getEncounterType().getEncounterTypeId() == Utils.Child_Followup_Encounter_Type_Id) {
-	                                                                                                                                         InfantPCRTestingType infantPCRTestingType = pmtctDictionary.createInfantPcr(patient, enc, obsList);
-	                                                                                                                                         if (infantPCRTestingType != null) {
-	                                                                                                                                         condition.getInfantPCRTesting().add(infantPCRTestingType);
-	                                                                                                                                         }
-	                                                                                                                                         }
-	                                                                                                                                         *//*if (enc.getEncounterType().getEncounterTypeId() == Utils.Partner_register_Encounter_Id) {
-	                                                                                                                                             HealthFacilityVisitsType healthFacilityVisitsType = htsDictionary.createHealthFacilityVisit(patient, enc, obsList);
-	                                                                                                                                             if (healthFacilityVisitsType != null) {
-	                                                                                                                                                 condition.getHealthFacilityVisits().add(healthFacilityVisitsType);
-	                                                                                                                                             }
-	                                                                                                                                           }*//*
-	 *//*if(ArrayUtils.contains(Utils.Pmtcp_Encounter_Type_Ids, enc.getEncounterType().getEncounterTypeId())) {
-	                                                                                                                                                             //create child follow up, child birth details, immunization, infant_pcr, infant rapid testing, health facility visits
-	                                                                                                                                                             ChildBirthDetailsType childBirthDetailsType = pmtctDictionary.createChildBirthDetailsType(patient, enc, obsList);
-	                                                                                                                                                             condition.getChildBirthDetails().add(childBirthDetailsType);
-	                                                                                                                                                             ChildFollowupType childFollowupType = pmtctDictionary.createChildFollowupType(patient, enc, obsList);
-	                                                                                                                                                             condition.getChildFollowup().add(childFollowupType);
-	                                                                                                                                                         }*//*
+	                                                                                                                                                                                                                        KnowledgeAssessmentType knowledgeAssessmentType = htsDictionary.createKnowledgeAssessmentType(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (knowledgeAssessmentType != null) {
+	                                                                                                                                                                                                                        condition.getKnowledgeAssessment().add(knowledgeAssessmentType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        HIVRiskAssessmentType hivRiskAssessmentType = htsDictionary.createHivRiskAssessment(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (hivRiskAssessmentType != null) {
+	                                                                                                                                                                                                                        condition.getHIVRiskAssessment().add(hivRiskAssessmentType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        SyndromicSTIScreeningType syndromicSTIScreeningType = htsDictionary.createSyndromicsStiType(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (syndromicSTIScreeningType != null) {
+	                                                                                                                                                                                                                        condition.getSyndromicSTIScreening().add(syndromicSTIScreeningType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        ClinicalTBScreeningType clinicalTBScreeningType = htsDictionary.createClinicalTbScreening(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (clinicalTBScreeningType != null) {
+	                                                                                                                                                                                                                        condition.getClinicalTBScreening().add(clinicalTBScreeningType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        PostTestCounsellingType postTestCounsellingType = htsDictionary.createPostTestCouncellingType(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (postTestCounsellingType != null) {
+	                                                                                                                                                                                                                        condition.getPostTestCounselling().add(postTestCounsellingType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Partner_register_Encounter_Id) {
+	                                                                                                                                                                                                                        PartnerDetailsType partnerDetailsType = htsDictionary.createPartnerDetails(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (partnerDetailsType != null) {
+	                                                                                                                                                                                                                        condition.getPartnerDetailsType().add(partnerDetailsType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Child_Followup_Encounter_Type_Id) {
+	                                                                                                                                                                                                                        ImmunizationType immunizationType = pmtctDictionary.createImmunizationType(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (immunizationType != null) {
+	                                                                                                                                                                                                                        condition.getImmunization().add(immunizationType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        if (enc.getEncounterType().getEncounterTypeId() == Utils.Child_Followup_Encounter_Type_Id) {
+	                                                                                                                                                                                                                        InfantPCRTestingType infantPCRTestingType = pmtctDictionary.createInfantPcr(patient, enc, obsList);
+	                                                                                                                                                                                                                        if (infantPCRTestingType != null) {
+	                                                                                                                                                                                                                        condition.getInfantPCRTesting().add(infantPCRTestingType);
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        }
+	                                                                                                                                                                                                                        *//*if (enc.getEncounterType().getEncounterTypeId() == Utils.Partner_register_Encounter_Id) {
+	                                                                                                                                                                                                                            HealthFacilityVisitsType healthFacilityVisitsType = htsDictionary.createHealthFacilityVisit(patient, enc, obsList);
+	                                                                                                                                                                                                                            if (healthFacilityVisitsType != null) {
+	                                                                                                                                                                                                                                condition.getHealthFacilityVisits().add(healthFacilityVisitsType);
+	                                                                                                                                                                                                                            }
+	                                                                                                                                                                                                                          }*//*
+	                                                                                                                                                                                                                             *//*if(ArrayUtils.contains(Utils.Pmtcp_Encounter_Type_Ids, enc.getEncounterType().getEncounterTypeId())) {
+	                                                                                                                                                                                                                                                                                                                                                                                         //create child follow up, child birth details, immunization, infant_pcr, infant rapid testing, health facility visits
+	                                                                                                                                                                                                                                                                                                                                                                                         ChildBirthDetailsType childBirthDetailsType = pmtctDictionary.createChildBirthDetailsType(patient, enc, obsList);
+	                                                                                                                                                                                                                                                                                                                                                                                         condition.getChildBirthDetails().add(childBirthDetailsType);
+	                                                                                                                                                                                                                                                                                                                                                                                         ChildFollowupType childFollowupType = pmtctDictionary.createChildFollowupType(patient, enc, obsList);
+	                                                                                                                                                                                                                                                                                                                                                                                         condition.getChildFollowup().add(childFollowupType);
+	                                                                                                                                                                                                                                                                                                                                                                                     }*//*
 
-	                                                                                                                                                            //add pregnancy records
-	                                                                                                                                                            *//*if(enc.getEncounterType().getEncounterTypeId() == 0){ // pregnancy registration type
-	                                                                                                                                                               pregnancyEncounter =  pmtctDictionary.createPregnancyRecord(patient, enc);
-	                                                                                                                                                              if(pregnancyEncounter !=null){
-	                                                                                                                                                              	condition.getPregnancyRecord().add(pregnancyEncounter);
-	                                                                                                                                                              }
-	                                                                                                                                                              }
+	                                                                                                                                                                                                                                                                                                                                                                                        //add pregnancy records
+	                                                                                                                                                                                                                                                                                                                                                                                        *//*if(enc.getEncounterType().getEncounterTypeId() == 0){ // pregnancy registration type
+	                                                                                                                                                                                                                                                                                                                                                                                           pregnancyEncounter =  pmtctDictionary.createPregnancyRecord(patient, enc);
+	                                                                                                                                                                                                                                                                                                                                                                                          if(pregnancyEncounter !=null){
+	                                                                                                                                                                                                                                                                                                                                                                                          	condition.getPregnancyRecord().add(pregnancyEncounter);
+	                                                                                                                                                                                                                                                                                                                                                                                          }
+	                                                                                                                                                                                                                                                                                                                                                                                          }
 
-	                                                                                                                                                              if(enc.getEncounterType().getEncounterTypeId() == Utils.Client_Intake_Form_Encounter_Type_Id){ //change to HTC encounter type
-	                                                                                                                                                              hivTestingEncounter = htsDictionary.createHIVTestingEncounter(patient, enc);
-	                                                                                                                                                              if(hivTestingEncounter !=null){
-	                                                                                                                                                              	condition.getHIVTestRecords().add(hivTestingEncounter);
-	                                                                                                                                                              }
-	                                                                                                                                                              }*//*
+	                                                                                                                                                                                                                                                                                                                                                                                          if(enc.getEncounterType().getEncounterTypeId() == Utils.Client_Intake_Form_Encounter_Type_Id){ //change to HTC encounter type
+	                                                                                                                                                                                                                                                                                                                                                                                          hivTestingEncounter = htsDictionary.createHIVTestingEncounter(patient, enc);
+	                                                                                                                                                                                                                                                                                                                                                                                          if(hivTestingEncounter !=null){
+	                                                                                                                                                                                                                                                                                                                                                                                          	condition.getHIVTestRecords().add(hivTestingEncounter);
+	                                                                                                                                                                                                                                                                                                                                                                                          }
+	                                                                                                                                                                                                                                                                                                                                                                                          }*//*
 
-	                                                                                                                                                                 long endTime = System.currentTimeMillis();
-	                                                                                                                                                                 if((endTime - startTime) > 1000){
-	                                                                                                                                                                  System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
-	                                                                                                                                                                 }
-	                                                                                                                                                                 }
-	                                                                                                                                                                 condition.getRegimen().addAll(arvRegimenTypeList);
-	                                                                                                                                                                 //create the HIV Questions from the conditions specific obs
-	                                                                                                                                                                 ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
-	                                                                                                                                                                 HIVQuestionsType hivQuestionsType = new NDRMainDictionary().createHIVQuestionType(patient, conditionSpecificQObs);
-	                                                                                                                                                                 if(null == hivQuestionsType) {
-	                                                                                                                                                                 hivSpecificQuestions.setHIVQuestions(hivQuestionsType);
-	                                                                                                                                                                 //createHIVQuestionsType(conditionSpecificQObs));
-	                                                                                                                                                                 condition.setConditionSpecificQuestions(hivSpecificQuestions);
-	                                                                                                                                                                 }
-	                                                                                                                                                                 return condition;*/
+	                                                                                                                                                                                                                                                                                                                                                                                             long endTime = System.currentTimeMillis();
+	                                                                                                                                                                                                                                                                                                                                                                                             if((endTime - startTime) > 1000){
+	                                                                                                                                                                                                                                                                                                                                                                                              System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
+	                                                                                                                                                                                                                                                                                                                                                                                             }
+	                                                                                                                                                                                                                                                                                                                                                                                             }
+	                                                                                                                                                                                                                                                                                                                                                                                             condition.getRegimen().addAll(arvRegimenTypeList);
+	                                                                                                                                                                                                                                                                                                                                                                                             //create the HIV Questions from the conditions specific obs
+	                                                                                                                                                                                                                                                                                                                                                                                             ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
+	                                                                                                                                                                                                                                                                                                                                                                                             HIVQuestionsType hivQuestionsType = new NDRMainDictionary().createHIVQuestionType(patient, conditionSpecificQObs);
+	                                                                                                                                                                                                                                                                                                                                                                                             if(null == hivQuestionsType) {
+	                                                                                                                                                                                                                                                                                                                                                                                             hivSpecificQuestions.setHIVQuestions(hivQuestionsType);
+	                                                                                                                                                                                                                                                                                                                                                                                             //createHIVQuestionsType(conditionSpecificQObs));
+	                                                                                                                                                                                                                                                                                                                                                                                             condition.setConditionSpecificQuestions(hivSpecificQuestions);
+	                                                                                                                                                                                                                                                                                                                                                                                             }
+	                                                                                                                                                                                                                                                                                                                                                                                             return condition;*/
 }

@@ -21,7 +21,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
         "scrotalSwellingAndPain", "genitalSoreOrSwollenInguinalLymphNodes" })
 public class SyndromicSTIScreeningType {
 	
-	@XmlElement(name = "VaginalDischargeOrBurningWhenUrinating", required = true)
+	@XmlElement(name = "VaginalDischargeOrBurningWhenUrinating")
 	protected Boolean vaginalDischargeOrBurningWhenUrinating;
 	
 	@XmlElement(name = "LowerAbdominalPainsWithOrWithoutVaginalDischarge")

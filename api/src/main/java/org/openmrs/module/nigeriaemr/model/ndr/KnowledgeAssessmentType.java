@@ -20,7 +20,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
         "clientInformedAboutPreventingHIV", "clientInformedAboutPossibleTestResults", "informedConsentForHIVTestingGiven" })
 public class KnowledgeAssessmentType {
 	
-	@XmlElement(name = "PreviouslyTestedHIVNegative", required = true)
+	@XmlElement(name = "PreviouslyTestedHIVNegative")
 	protected Boolean previouslyTestedHIVNegative;
 	
 	@XmlElement(name = "ClientInformedAboutHIVTransmissionRoutes")
