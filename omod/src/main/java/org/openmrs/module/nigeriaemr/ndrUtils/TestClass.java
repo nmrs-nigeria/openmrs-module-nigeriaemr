@@ -5,7 +5,10 @@
  */
 package org.openmrs.module.nigeriaemr.ndrUtils;
 
+import java.util.Date;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.joda.time.DateTime;
 
 /**
  * @author The Brights
@@ -13,9 +16,14 @@ import org.apache.commons.lang.StringUtils;
 public class TestClass {
 	
 	public static void main(String[] arg) {
-		int sbp = 120;
-		int dbp = 80;
-		
-		System.out.println();
+		Date date = new Date();
+		DateTime dateTime = new DateTime();
+		int month = dateTime.getMonthOfYear();
+		int year = dateTime.getYear();
+		int day = dateTime.getDayOfMonth();
+		String monthStr = StringUtils.leftPad(String.valueOf(month), 2, "0");
+		String dayStr = StringUtils.leftPad(String.valueOf(day), 2, "0");
+		String yrsStr = StringUtils.leftPad(String.valueOf(year), 2, "0");
+		System.out.println(yrsStr + monthStr + dayStr);
 	}
 }
