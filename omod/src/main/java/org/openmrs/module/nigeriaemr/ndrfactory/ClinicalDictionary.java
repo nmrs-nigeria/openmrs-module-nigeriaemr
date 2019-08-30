@@ -103,8 +103,9 @@ public class ClinicalDictionary {
         map.put(133473, "1");
         map.put(139084, "2");
         map.put(119566, "3");
+        map.put(116743,"3");
         map.put(5226, "4");
-        // map.put(5229,"4");
+        map.put(165767,"5");
         map.put(512, "6");
         map.put(165052, "7");
         map.put(121629, "8");

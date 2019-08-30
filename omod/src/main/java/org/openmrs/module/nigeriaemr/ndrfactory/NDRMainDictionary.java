@@ -138,22 +138,27 @@ public class NDRMainDictionary {
         map.put(1660, "NS");
         map.put(1662, "OT");
         map.put(160737, "NA");
+
+
         //care entry point
-        map.put(160539, "VCTP");
-        map.put(160538, "PMTCT");
-        map.put(160537, "PIS");
-        map.put(160536, "AIS");
-        map.put(160542, "OD");
-        map.put(160541, "TbT");
-        map.put(160543, "CBO");
-        map.put(160544, "UFC");
-        map.put(160545, "OP");
-        map.put(160546, "STI");
-        map.put(160547, "PC");
-        map.put(160548, "IVDUOP");
+        map.put(160539, "3");
+        map.put(160538, "9");
+        map.put(160537, "12");
+        map.put(160536, "12");
+        map.put(160542, "2");
+        map.put(160541, "6");
+        map.put(160543, "4");
+        map.put(160545, "11");
+        map.put(160546, "1");
+        map.put(160547, "5");
+        map.put(160548, "10");
+        map.put(160550, "11");
+        map.put(160551, "13");
+        map.put(160563,"14");
+
+        /*
         map.put(160549, "AOP");
-        map.put(160550, "SWOP");
-        map.put(160551, "SR");
+        map.put(160544, "UFC");
         map.put(160552, "NP");
         map.put(160564, "VS");
         map.put(161359, "PHBC");
@@ -161,7 +166,7 @@ public class NDRMainDictionary {
         map.put(162223, "VMCC");
         map.put(164949, "HIVAb");
         map.put(164948, "HIVPCR");
-
+    */
         map.put(0, "");
         map.put(0, "");
 
