@@ -261,26 +261,40 @@ public class LabDictionary {
         Integer[] encounterTypeArr = {Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE};
 
         Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(pts, allPatientEncounterList, encounterTypeArr);
-        List<Obs> obsForVisit=null;
-        LaboratoryReportType labReportType=null;
+        List<Obs> obsForVisit = null;
+        LaboratoryReportType labReportType = null;
         for (Date date : visitDateSet) {
-            obsForVisit=Utils.extractObsPerVisitDate(date, allPatientObsList);
-            labReportType=createLabReportType(pts, date, obsForVisit);
+            obsForVisit = Utils.extractObsPerVisitDate(date, allPatientObsList);
+            labReportType = createLabReportType(pts, date, obsForVisit);
         }
         return labReportTypeList;
     }
 
     public LaboratoryReportType createLabReportType(Patient patient, Date visitDate, List<Obs> labObsForVisit) {
+        /*
+           VisitID
+           VisitDate
+           LaboratoryTestIdentifier
+           CollectionDate
+           BaselineRepeatCode
+           ARTStatusCode
+           LaboratoryOrderAndResult
+           Clinician
+ReportedBy
+CheckedBy
+OrderedTestDate
+OtherLaboratoryInformation
+         */
         LaboratoryReportType labReportType = new LaboratoryReportType();
-        String visitID="",pepfarID;
-        int conceptID=0,dataType=0;
+        String visitID = "", pepfarID;
+        int conceptID = 0, dataType = 0;
         CodedSimpleType cst;
         AnswerType answer;
         NumericType numeric;
         PatientIdentifier pepfarIdentifier = patient.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
-        if(labObsForVisit!=null && !labObsForVisit.isEmpty() && pepfarIdentifier!=null){
-            pepfarID=pepfarIdentifier.getIdentifier();
-            visitID=Utils.getVisitId(pepfarID, visitDate);
+        if (labObsForVisit != null && !labObsForVisit.isEmpty() && pepfarIdentifier != null) {
+            pepfarID = pepfarIdentifier.getIdentifier();
+            visitID = Utils.getVisitId(pepfarID, visitDate);
 
         }
         return labReportType;
