@@ -693,56 +693,55 @@ public class NDRMainDictionary {
 
     public List<ClinicalTBScreeningType> createClinicalTbScreening(Patient pts, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<ClinicalTBScreeningType> clinicalTBScreeningTypes = new ArrayList<>();
-        for(Encounter enc: encounters){
-            ClinicalTBScreeningType clinicalTBScreeningType = htsDictionary.createClinicalTbScreening(pts, enc, obsList);
+
+            ClinicalTBScreeningType clinicalTBScreeningType = htsDictionary.createClinicalTbScreening(pts, encounters, obsList);
             if(clinicalTBScreeningType !=null){
                 clinicalTBScreeningTypes.add(clinicalTBScreeningType);
             }
-        }
+
         return clinicalTBScreeningTypes;
     }
 
     public List<HIVRiskAssessmentType> createHivRiskAssessment(Patient pts, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<HIVRiskAssessmentType> hivRiskAssessmentTypes = new ArrayList<>();
-        for(Encounter enc: encounters){
-            HIVRiskAssessmentType hivRiskAssessmentType = htsDictionary.createHivRiskAssessment(pts, enc, obsList);
+
+            HIVRiskAssessmentType hivRiskAssessmentType = htsDictionary.createHivRiskAssessment(pts, encounters, obsList);
             if(hivRiskAssessmentType !=null){
                 hivRiskAssessmentTypes.add(hivRiskAssessmentType);
             }
-        }
+
         return hivRiskAssessmentTypes;
     }
 
     public List<KnowledgeAssessmentType> createKnowledgeAssessmentType(Patient pts, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<KnowledgeAssessmentType> knowledgeAssessmentTypes = new ArrayList<>();
-        for(Encounter enc: encounters){
-            KnowledgeAssessmentType knowledgeAssessmentType = htsDictionary.createKnowledgeAssessmentType(pts, enc, obsList);
+            KnowledgeAssessmentType knowledgeAssessmentType = htsDictionary.createKnowledgeAssessmentType(pts, encounters, obsList);
             if(knowledgeAssessmentType !=null){
                 knowledgeAssessmentTypes.add(knowledgeAssessmentType);
             }
-        }
+
         return knowledgeAssessmentTypes;
     }
 
     public List<PostTestCounsellingType> createPostTestCounsellingType(Patient pts, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<PostTestCounsellingType> postTestCounsellingTypes = new ArrayList<>();
-        for(Encounter enc: encounters){
-            PostTestCounsellingType postTestCounsellingType = htsDictionary.createPostTestCouncellingType(pts, enc, obsList);
+
+            PostTestCounsellingType postTestCounsellingType = htsDictionary.createPostTestCouncellingType(pts, encounters, obsList);
             if(postTestCounsellingType !=null){
                 postTestCounsellingTypes.add(postTestCounsellingType);
             }
-        }
+
         return postTestCounsellingTypes;
     }
 
     public List<SyndromicSTIScreeningType> createSyndromicsStiType(Patient pts, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<SyndromicSTIScreeningType> syndromicSTIScreeningTypes = new ArrayList<>();
-        for(Encounter enc: encounters){
-            SyndromicSTIScreeningType syndromicSTIScreeningType = htsDictionary.createSyndromicsStiType(pts, enc, obsList);
+
+            SyndromicSTIScreeningType syndromicSTIScreeningType = htsDictionary.createSyndromicsStiType(pts, encounters, obsList);
             if(syndromicSTIScreeningType !=null){
                 syndromicSTIScreeningTypes.add(syndromicSTIScreeningType);
             }
-        }
+
         return syndromicSTIScreeningTypes;
     }
 

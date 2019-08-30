@@ -137,7 +137,7 @@ public class HTSDictionary {
         }
     }
 
-    public KnowledgeAssessmentType createKnowledgeAssessmentType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public KnowledgeAssessmentType createKnowledgeAssessmentType(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         KnowledgeAssessmentType knowledgeAssessmentType = null;
         
@@ -184,7 +184,7 @@ public class HTSDictionary {
 
 
 
-   public HIVRiskAssessmentType createHivRiskAssessment(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+   public HIVRiskAssessmentType createHivRiskAssessment(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         HIVRiskAssessmentType hivRiskAssessmentType = new HIVRiskAssessmentType();
 
@@ -220,27 +220,45 @@ public class HTSDictionary {
         return hivRiskAssessmentType;
     }
 
-    public SyndromicSTIScreeningType createSyndromicsStiType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public SyndromicSTIScreeningType createSyndromicsStiType(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         SyndromicSTIScreeningType syndromicSTIScreeningType = null;
 
         if (htsIdentifier != null) {
             syndromicSTIScreeningType = new SyndromicSTIScreeningType();
             Obs obs = extractObs(Complaints_of_vaginal_discharge_or_burning_when_urinating, obsList);
-            if (obs != null && obs.getValueCoded() != null) {
+            if (obs != null && obs.getValueCoded() != null){
+
                 syndromicSTIScreeningType.setVaginalDischargeOrBurningWhenUrinating(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
+
+            }else {
+                //handles male
+                syndromicSTIScreeningType.setVaginalDischargeOrBurningWhenUrinating(false);
             }
             obs = extractObs(Complaints_of_lower_abdominal_pains_with_or_without_vaginal_discharge, obsList);
             if (obs != null && obs.getValueCoded() != null) {
+
                 syndromicSTIScreeningType.setLowerAbdominalPainsWithOrWithoutVaginalDischarge(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
+            } else  {
+                //handles male
+                syndromicSTIScreeningType.setLowerAbdominalPainsWithOrWithoutVaginalDischarge(false);
             }
             obs = extractObs(Complaints_of_urethral_discharge_or_burning_when_urinating, obsList);
-            if (obs != null && obs.getValueCoded() != null) {
+            if (obs != null && obs.getValueCoded() != null)
+            {
                 syndromicSTIScreeningType.setUrethralDischargeOrBurningWhenUrinating(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
+            }
+            else {
+                //handles female
+                syndromicSTIScreeningType.setUrethralDischargeOrBurningWhenUrinating(false);
+
             }
             obs = extractObs(Complaints_of_scrotal_swelling_and_pain, obsList);
             if (obs != null && obs.getValueCoded() != null) {
                 syndromicSTIScreeningType.setScrotalSwellingAndPain(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
+            } else {
+               //handles female
+                syndromicSTIScreeningType.setScrotalSwellingAndPain(false);
             }
             obs = extractObs(Complaints_of_genital_sore, obsList);
             if (obs != null && obs.getValueCoded() != null) {
@@ -251,7 +269,7 @@ public class HTSDictionary {
         return syndromicSTIScreeningType;
     }
 
-    public PostTestCounsellingType createPostTestCouncellingType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public PostTestCounsellingType createPostTestCouncellingType(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         PostTestCounsellingType postTestCounsellingType = null;
 
@@ -324,7 +342,7 @@ public class HTSDictionary {
         return postTestCounsellingType;
     }
 
-    public ClinicalTBScreeningType createClinicalTbScreening(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public ClinicalTBScreeningType createClinicalTbScreening(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
 
         if (htsIdentifier == null) {

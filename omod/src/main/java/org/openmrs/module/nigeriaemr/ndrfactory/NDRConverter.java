@@ -237,16 +237,16 @@ public class NDRConverter {
 //			}
                         
                         //Lab report
-                        this.encounters.forEach(a -> {
-                            try {
-                                LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
-                                        a, this.allobs);
-                                if (laboratoryReport != null ) {
-                                    condition.getLaboratoryReport().add(laboratoryReport);
-                                }   } catch (DatatypeConfigurationException ex) {
-                                Logger.getLogger(NDRConverter.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        });
+
+                 Optional<Encounter> tempEnc   =       encounters.stream().filter(e -> e.getEncounterType().getEncounterTypeId() ==   Utils.Laboratory_Encounter_Type_Id ).findFirst();
+if(tempEnc.isPresent()){
+	LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
+			tempEnc.get(), this.allobs);
+	if (laboratoryReport != null ) {
+		condition.getLaboratoryReport().add(laboratoryReport);
+	}
+}
+
                         
 			
 			
