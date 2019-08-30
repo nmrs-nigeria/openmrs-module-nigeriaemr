@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -226,12 +228,28 @@ public class NDRConverter {
 			if (knowledgeAssessmentType != null) {
 				condition.getKnowledgeAssessment().addAll(knowledgeAssessmentType);
 			}
-			//Lab report
-			List<LaboratoryReportType> laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
-			    this.encounters, this.allobs);
-			if (laboratoryReport != null && laboratoryReport.size() > 0) {
-				condition.getLaboratoryReport().addAll(laboratoryReport);
-			}
+                        
+                        
+//                        List<LaboratoryReportType> laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
+//			    this.encounters, this.allobs);
+//			if (laboratoryReport != null && laboratoryReport.size() > 0) {
+//				condition.getLaboratoryReport().addAll(laboratoryReport);
+//			}
+                        
+                        //Lab report
+                        this.encounters.forEach(a -> {
+                            try {
+                                LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
+                                        a, this.allobs);
+                                if (laboratoryReport != null ) {
+                                    condition.getLaboratoryReport().add(laboratoryReport);
+                                }   } catch (DatatypeConfigurationException ex) {
+                                Logger.getLogger(NDRConverter.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        });
+                        
+			
+			
 			
 			//Partner details
 			List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.encounters,

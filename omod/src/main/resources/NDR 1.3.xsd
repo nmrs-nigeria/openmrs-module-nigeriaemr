@@ -921,7 +921,7 @@
 				maxOccurs="1" />
       <xs:element name="PatientDieFromThisIllness" type="xs:boolean"
 				minOccurs="0" maxOccurs="1" />
-      <xs:element name="PatientPregnancyStatusCode" minOccurs="0"
+      <xs:element name="PatientPregnancySCommonQuestionstatusCode" minOccurs="0"
 				maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="CodeType">

@@ -661,7 +661,12 @@ public class NDRMainDictionary {
         return  pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient,allPatientObsList);
     }
 
-    public List<LaboratoryReportType> createLaboratoryOrderAndResult(Patient pts, List<Encounter> enc, List<Obs> labObsList)
+ /*   public List<LaboratoryReportType> createLaboratoryOrderAndResult(Patient pts, List<Encounter> enc, List<Obs> labObsList)
+            throws DatatypeConfigurationException {
+        return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList );
+    }*/
+
+    public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList)
             throws DatatypeConfigurationException {
         return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList );
     }
