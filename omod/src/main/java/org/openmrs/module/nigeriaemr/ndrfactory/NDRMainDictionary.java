@@ -141,13 +141,13 @@ public class NDRMainDictionary {
 
 
         //care entry point
-        map.put(160539, "3");
-        map.put(160538, "9");
-        map.put(160537, "12");
-        map.put(160536, "12");
-        map.put(160542, "2");
-        map.put(160541, "6");
-        map.put(160543, "4");
+        map.put(160539, "3"); //HTS
+        map.put(160538, "9"); //ANC/PMTCT
+        map.put(160537, "12"); //In Patient
+        map.put(160536, "12");//Current Clinic Patient
+        map.put(160542, "2");//OPD
+        map.put(160541, "6");//TB DOTS
+        map.put(160543, "4");//Outreaches
         map.put(160545, "11");
         map.put(160546, "1");
         map.put(160547, "5");
