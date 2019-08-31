@@ -54,13 +54,11 @@ public class NdrFragmentController {
 		Marshaller jaxbMarshaller = generator.createMarshaller(jaxbContext);
 		
 		//List<Patient> patients = Context.getPatientService().getAllPatients();
-                Patient pts=null;
-                List<Patient> patients=new ArrayList<Patient>();
-                pts=Context.getPatientService().getPatient(28417);
-                patients.add(pts);
-                
-                
-                
+		Patient pts = null;
+		List<Patient> patients = new ArrayList<Patient>();
+		pts = Context.getPatientService().getPatient(28417);
+		patients.add(pts);
+		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
 		String FacilityType = "FAC";
@@ -126,66 +124,64 @@ public class NdrFragmentController {
 				System.out.println("pateint " + indexofPatient + " of " + patients.size());
 				
 				//if (patient.getId() == 28417) {
-					Container cnt = null;
+				Container cnt = null;
+				try {
+					LoggerUtils.write(NdrFragmentController.class.getName(),
+					    "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
+					LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
+					        + patient.getId(), LoggerUtils.LogFormat.INFO, LogLevel.live);
+					
+					cnt = generator.createContainer(patient, facility);
+					
+				}
+				catch (Exception ex) {
+					LoggerUtils.write(
+					    NdrFragmentController.class.getName(),
+					    MessageFormat.format("Could not parse patient with id: {0},{1},{2} ",
+					        Integer.toString(patient.getId()), "\r\n", ex.getMessage()), LogFormat.FATAL, LogLevel.live);
+					cnt = null;
+				}
+				
+				if (cnt != null) {
+					LoggerUtils.write(NdrFragmentController.class.getName(),
+					    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
 					try {
-						LoggerUtils
-						        .write(NdrFragmentController.class.getName(),
-						            "#################### #################### ####################", LogFormat.FATAL,
-						            LogLevel.live);
-						LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
-						        + patient.getId(), LoggerUtils.LogFormat.INFO, LogLevel.live);
 						
-						cnt = generator.createContainer(patient, facility);
+						String pepFarId = Utils.getPatientPEPFARId(patient);
 						
+						if (pepFarId != null) { //remove forward slashes / from file names
+							pepFarId = pepFarId.replace("/", "_").replace(".", "_");
+						} else {
+							pepFarId = "";
+						}
+						
+						String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_" + pepFarId;
+						
+						// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
+						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
+						
+						File aXMLFile = new File(xmlFile);
+						Boolean b;
+						if (aXMLFile.exists()) {
+							b = aXMLFile.delete();
+							System.out.println("deleting file : " + xmlFile + "was successful : " + b);
+						}
+						b = aXMLFile.createNewFile();
+						
+						System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
+						generator.writeFile(cnt, aXMLFile, jaxbMarshaller);
 					}
 					catch (Exception ex) {
-						LoggerUtils.write(
-						    NdrFragmentController.class.getName(),
-						    MessageFormat.format("Could not parse patient with id: {0},{1},{2} ",
-						        Integer.toString(patient.getId()), "\r\n", ex.getMessage()), LogFormat.FATAL, LogLevel.live);
-						cnt = null;
+						LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
+						    LogLevel.live);
 					}
-					
-					if (cnt != null) {
-						LoggerUtils.write(NdrFragmentController.class.getName(),
-						    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
-						try {
-							
-							String pepFarId = Utils.getPatientPEPFARId(patient);
-							
-							if (pepFarId != null) { //remove forward slashes / from file names
-								pepFarId = pepFarId.replace("/", "_").replace(".", "_");
-							} else {
-								pepFarId = "";
-							}
-							
-							String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_" + pepFarId;
-							
-							// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
-							String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
-							
-							File aXMLFile = new File(xmlFile);
-							Boolean b;
-							if (aXMLFile.exists()) {
-								b = aXMLFile.delete();
-								System.out.println("deleting file : " + xmlFile + "was successful : " + b);
-							}
-							b = aXMLFile.createNewFile();
-							
-							System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
-							generator.writeFile(cnt, aXMLFile, jaxbMarshaller);
-						}
-						catch (Exception ex) {
-							LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
-							    LogLevel.live);
-						}
-					}
-					
-					long endTime = System.currentTimeMillis();
-					LoggerUtils.write(NdrFragmentController.class.getName(), "Finished Export for patient with id: "
-					        + patient.getId() + " Time Taken: " + (endTime - startTime) + " milliseconds",
-					    LoggerUtils.LogFormat.INFO, LogLevel.live);
-					System.out.println("generating ndr took : " + (endTime - startTime) + " milli secs : ");
+				}
+				
+				long endTime = System.currentTimeMillis();
+				LoggerUtils.write(NdrFragmentController.class.getName(),
+				    "Finished Export for patient with id: " + patient.getId() + " Time Taken: " + (endTime - startTime)
+				            + " milliseconds", LoggerUtils.LogFormat.INFO, LogLevel.live);
+				System.out.println("generating ndr took : " + (endTime - startTime) + " milli secs : ");
 				//}
 				long loop_end_time = System.currentTimeMillis();
 				System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
