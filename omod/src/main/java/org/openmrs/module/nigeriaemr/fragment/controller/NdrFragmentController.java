@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -52,8 +53,14 @@ public class NdrFragmentController {
 		JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
 		Marshaller jaxbMarshaller = generator.createMarshaller(jaxbContext);
 		
-		List<Patient> patients = Context.getPatientService().getAllPatients();
-		
+		//List<Patient> patients = Context.getPatientService().getAllPatients();
+                Patient pts=null;
+                List<Patient> patients=new ArrayList<Patient>();
+                pts=Context.getPatientService().getPatient(28417);
+                patients.add(pts);
+                
+                
+                
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
 		String FacilityType = "FAC";
@@ -118,7 +125,7 @@ public class NdrFragmentController {
 				int indexofPatient = patients.indexOf(patient);
 				System.out.println("pateint " + indexofPatient + " of " + patients.size());
 				
-				if (patient.getId() == 28417) {
+				//if (patient.getId() == 28417) {
 					Container cnt = null;
 					try {
 						LoggerUtils
@@ -179,7 +186,7 @@ public class NdrFragmentController {
 					        + patient.getId() + " Time Taken: " + (endTime - startTime) + " milliseconds",
 					    LoggerUtils.LogFormat.INFO, LogLevel.live);
 					System.out.println("generating ndr took : " + (endTime - startTime) + " milli secs : ");
-				}
+				//}
 				long loop_end_time = System.currentTimeMillis();
 				System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
 			}
