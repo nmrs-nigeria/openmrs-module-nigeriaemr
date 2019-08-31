@@ -118,7 +118,7 @@ public class NdrFragmentController {
 				int indexofPatient = patients.indexOf(patient);
 				System.out.println("pateint " + indexofPatient + " of " + patients.size());
 				
-				if (patient.getId() == 10809) {
+				if (patient.getId() == 28417) {
 					Container cnt = null;
 					try {
 						LoggerUtils
