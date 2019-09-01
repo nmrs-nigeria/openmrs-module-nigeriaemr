@@ -62,11 +62,16 @@ public class LabDictionary {
     final static int Checked_By_Date_Concept_Id = 164984;
 
     final static int Reported_By_Date_Concept_Id = 1644984;
+    final static int REPORTED_BY_CONCEPT_ID = 164982;
     final static int Numeric_DataType_Concept_Id = 1;
     final static int Coded_DataType_ConceptId = 2;
     final static int Text_DataType_ConceptId = 3;
     final static int Visit_Type_Concept_Id = 164181;
-    final static int Laboratory_Identifier_Concept_Id = 164409;
+
+   // final static int Laboratory_Identifier_Concept_Id = 164409;
+    final static int Laboratory_Identifier_Concept_Id = 165715;
+    final static int SAMPLE_COLLECTION_DATE = 159951;
+
 
     private Map<Integer, Integer> labTestDictionary = new HashMap<>();
     private Map<Integer, String> labTestUnits = new HashMap<>();
@@ -204,9 +209,11 @@ public class LabDictionary {
             labReportType.setVisitDate(convertedDate);
             labReportType.setCollectionDate(convertedDate);
 
-            Date artStartDate = Utils.getARTStartDate(pts);
-            if (artStartDate != null) {
+            Date artStartDate = Utils.extractARTStartDate(pts,labObsList);
+            if (artStartDate.after(enc.getEncounterDatetime()) || artStartDate.equals(enc.getEncounterDatetime())) {
                 labReportType.setARTStatusCode("A");
+            }else {
+                labReportType.setARTStatusCode("N");
             }
 
             if (pmtctIdentifier != null || htsIdentifier != null) {
@@ -232,7 +239,7 @@ public class LabDictionary {
                     labReportType.setCheckedBy(obs.getValueText());
                 }
 
-                obs = extractObs(Reported_By_Date_Concept_Id, labObsList);
+                obs = extractObs(REPORTED_BY_CONCEPT_ID, labObsList);
                 if (obs != null) {
                     labReportType.setReportedBy(obs.getValueText());
                 }
