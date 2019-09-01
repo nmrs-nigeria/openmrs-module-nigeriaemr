@@ -293,7 +293,7 @@ public class NDRMainDictionary {
             demo.setEnrolleeCode(soundex.encode(testCode));
             String ndrCodedValue;
             //get all hiv enrollment observations
-            List<Obs> enrollmentObs = null;//Utils.getHIVEnrollmentObs(pts);
+            List<Obs> enrollmentObs = Utils.getHIVEnrollmentObs(pts);
 
             if (enrollmentObs == null) {
                 return demo;

@@ -807,9 +807,9 @@ public class Utils {
 	
 	public static Date getARTStartDate(Patient patient) {
 		
-		//List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
-		//Obs FirstRegimen = getRegimenFromObs(FirstRegimenObs);
-		Obs FirstRegimen = null;
+		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
+		Obs FirstRegimen = getRegimenFromObs(FirstRegimenObs);
+		//Obs FirstRegimen = null;
 		if (FirstRegimen != null && FirstRegimen.getValueCoded() != null) {
 			return FirstRegimen.getObsDatetime();
 		}

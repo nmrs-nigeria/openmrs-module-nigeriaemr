@@ -70,11 +70,11 @@ public class NDRConverter {
 			//only run if patient has had any encounter between the last run date and now
 			if(lastDate !=null) {
 				encs = encs.stream()
-						.filter(e -> e.getDateCreated().after(lastDate) ||
-								e.getDateChanged().after(lastDate)).collect(Collectors.toList());
-				if ( encs.size() == 0)
-					return null;
-			}
+					.filter(e -> e.getDateCreated().after(lastDate) ||
+							e.getDateChanged().after(lastDate)).collect(Collectors.toList());
+			if ( encs.size() == 0)
+				return null;
+		}
 
 
 			long endTime = System.currentTimeMillis();
