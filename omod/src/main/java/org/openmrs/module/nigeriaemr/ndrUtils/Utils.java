@@ -36,6 +36,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
+import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
@@ -138,7 +139,40 @@ public class Utils {
 	public final static int ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT = 165289; // ARV ADHERENCE From Care Card
 	
 	/* End of RegimenType Constant */
-	/* Variables specific to HIVQuestionType */
+	/*
+
+	
+	
+	-WhereFirstHIVTest
+	
+	-
+	
+	-InitialAdherenceCounselingCompletedDate (165038)
+	-TransferredInDate (160534)
+	-TransferredInFrom (160535)
+	-TransferredInFromPatId
+	-FirstARTRegimen (165708)(164506,164513,165702,164507,164514,165703)
+	-ARTStartDate (159599)
+	-WHOClinicalStageARTStart (5356)
+	-WeightAtARTStart (165582)
+	-ChildHeightAtARTStart (165581)
+	-FunctionalStatusStartART (165039)
+	-CD4AtStartOfART (164429)
+	-PatientTransferredOut (165470)(159492)
+	-TransferredOutStatus(165470)(159492)
+	-TransferredOutDate (165469)
+	-FacilityReferredTo
+	-PatientHasDied (165470)(165889)
+	-StatusAtDeath
+	-DeathDate(165469)
+	-SourceOfDeathInformation (162568)
+	-CauseOfDeathHIVRelated (165889,(165886,165887)) (163534,Yes(1065),No(1066))
+	-DrugAllergies (165419)
+	-EnrolledInHIVCareDate
+	-InitialTBStatus (1659)
+	   
+	    */
+	/* Variables specific to HIVQuestionsType */
 	public final static int DATE_OF_HIV_DIAGNOSIS_CONCEPT = 160554;
 	
 	public final static int MODE_OF_HIV_TEST = 164947;
@@ -150,6 +184,36 @@ public class Utils {
 	public final static int REASON_FOR_TERMINATION_CONCEPT = 165470;
 	
 	public final static int DEAD_CONCEPT = 165889;
+	
+	public final static int PRIOR_ART_CONCEPT = 165242;
+	
+	public final static int MEDICAL_ELIGIBLE_DATE_CONCEPT = 162227;
+	
+	public final static int REASON_MEDICALLY_ELIGIBLE_CONCEPT = 162225;
+	
+	public final static int DATE_INITIAL_ADHERENCE_COUNCELING_CONCEPT = 165038;
+	
+	public final static int WHO_CLINICAL_STAGGING_AT_START_CONCEPT = 5356;
+	
+	public final static int WEIGHT_AT_START_CONCEPT = 165582;
+	
+	public final static int CHILD_HEIGHT_AT_START = 165581;
+	
+	public final static int FUNCTIONAL_STATUS_ART_START = 165039;
+	
+	public final static int CD4_AT_START = 164429;
+	
+	public final static int TRANSFER_OUT_DATE = 165469;
+	
+	public final static int DEATH_DATE_CONCEPT = 165469;
+	
+	public final static int INITIAL_TB_STATUS = 1659;
+	
+	public final static int TRANSFERRED_IN_DATE = 160534;
+	
+	public final static int TRANSFERRED_IN_FROM = 160535;
+	
+	public final static int TRANSFERRED_OUT_CONCEPT = 159492;
 	
 	/* Variables for HIVEncounterType */
 	public final static int ART_START_DATE_CONCEPT = 159599;
@@ -196,6 +260,29 @@ public class Utils {
 	
 	public final static int INH_ADHERENCE_CONCEPT = 161653;
 	
+	public final static int ESTIMATED_DATE_OF_DELIVERY = 5596;
+	
+	/* PREGNANCY STATUS CONCEPTS */
+	public final static int CURRENTLY_PREGNANT_CONCEPT = 1434;
+	
+	public final static int CURRENTLY_BREASTFEEDING_CONCEPT = 5632;
+	
+	public final static int PREGNANCY_BREASTFEEDING_STATUS = 165050;
+	
+	/* PatientDemographics Specific Concept */
+	public final static int DATE_OF_TERMINATION_CONCEPT = 165469;
+	
+	public final static int EDUCATIONAL_LEVEL_CONCEPT = 1712;
+	
+	public final static int OCCUPATIONAL_STATUS_CONCEPT = 1542;
+	
+	public final static int MARITAL_STATUS_CONCEPT = 1054;
+	
+	public final static int PRIMARY_LANGUAGE_CONCEPT = 163230;
+	
+	/* PROGRAM ENROLLMENT CONCEPTS */
+	public final static int HIV_ENROLLMENT_PROGRAM_ID = 1;
+	
 	/* Identifier IDs */
 	public static final int PEPFAR_IDENTIFIER_INDEX = 4;
 	
@@ -209,7 +296,7 @@ public class Utils {
 	
 	public static final int EXPOSE_INFANT_IDENTIFIER_INDEX = 7;
 	
-	public static final int PEP_ED_IDENTIFIER_INDEX = 9;
+	public static final int PEP_IDENTIFIER_INDEX = 9;
 	
 	/* KEY FORMS */
 	//--These 4 forms was used to construct a HIVEncounterType
@@ -221,6 +308,12 @@ public class Utils {
 	
 	public final static int PHARMACY_ENCOUNTER_TYPE = 13;
 	
+	public final static int ART_COMMENCEMENT_ENCOUNTER_TYPE = 25;
+	
+	/*
+	       HIVQuestionsType
+	        
+	 */
 	public static String getFacilityName() {
 		return Context.getAdministrationService().getGlobalProperty("Facility_Name");
 	}
@@ -315,9 +408,11 @@ public class Utils {
 	}
 	
 	public static String getVisitId(String identifier, Date visitDate) {
-		//DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		//String visitID = dateFormat.format(visitDate) + "-" + identifier;
-		String visitID = String.valueOf(visitDate.getTime());
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		String visitID = dateFormat.format(visitDate);// + "-" + identifier;
+		//DateTime dateTime=new DateTime(visitDate);
+		//StringUtils.leftPad(String.valueOf(dateTime), DEAD_CONCEPT, identifier)
+		//String visitID = String.valueOf(visitDate.getTime());
 		return visitID;
 	}
 	
@@ -359,12 +454,50 @@ public class Utils {
 		if (obs != null) {
 			artStartDate = obs.getValueDate();
 		} else {
-			obs = getFirstObsOfConceptByDate(allPatientsObsList, Utils.ART_START_DATE_CONCEPT);
+			obs = getFirstObsOfConceptByDate(allPatientsObsList, Utils.CURRENT_REGIMEN_LINE_CONCEPT);
 			if (obs != null) {
 				artStartDate = obs.getObsDatetime();
 			}
 		}
 		return artStartDate;
+	}
+	
+	public static Date extractEnrollmentDate(Patient patient, List<Obs> allPatientObs,
+	        List<Encounter> allPatientEncounterList) {
+		Date enrollmentDate = null;
+		Obs obs = null;
+		PatientProgram patientProgram = null;
+		//ProgramWorkflowService workFlowService = Context.getProgramWorkflowService();
+		//List<PatientProgram> patientProgramList = new ArrayList<PatientProgram>();
+		//patientProgramList.addAll(workFlowService.getPatientPrograms(patient));
+		//patientProgram = extractProgramByID(patientProgramList, HIV_ENROLLMENT_PROGRAM_ID);
+		//if (patientProgram != null) {
+		//enrollmentDate = patientProgram.getDateEnrolled();
+		//} else {
+		obs = extractObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, allPatientObs);
+		if (obs != null) {
+			enrollmentDate = obs.getValueDate();
+		} else {
+			Encounter firstEncounter = getFirstEncounter(patient, allPatientEncounterList);
+			if (firstEncounter != null) {
+				enrollmentDate = firstEncounter.getEncounterDatetime();
+			}
+			//}
+		}
+		
+		return enrollmentDate;
+	}
+	
+	public static PatientProgram extractProgramByID(List<PatientProgram> patientProgramList, int programID) {
+		PatientProgram patientProgram = null;
+		if (patientProgramList != null && !patientProgramList.isEmpty()) {
+			for (PatientProgram ele : patientProgramList) {
+				if (ele.getPatientProgramId() == programID) {
+					patientProgram = ele;
+				}
+			}
+		}
+		return patientProgram;
 	}
 	
 	public static Obs getFirstObsOfConceptByDate(List<Obs> obsList, int conceptID) {
@@ -406,6 +539,34 @@ public class Utils {
 			
 		}
 		return visitDateSet;
+	}
+	
+	public static List<Obs> extractObsListForEncounterType(List<Obs> allPatientObsList, Integer[] encounterTypeArr) {
+		List<Obs> enrollmentObsList = new ArrayList<Obs>();
+		List<Integer> encounterTypeList = new ArrayList<Integer>();
+		encounterTypeList.addAll(Arrays.asList(encounterTypeArr));
+		for (Obs ele : allPatientObsList) {
+			if (encounterTypeList.contains(ele.getEncounter().getEncounterType().getEncounterTypeId())) {
+				enrollmentObsList.add(ele);
+			}
+		}
+		return enrollmentObsList;
+	}
+	
+	public static Obs extractPregnancyStatusObs(Patient patient, List<Obs> allObsList) {
+		Obs pregnancyObs = null;
+		Obs obs = null;
+		obs = Utils.getLastObsOfConceptByDate(allObsList, Utils.PREGNANCY_BREASTFEEDING_STATUS);
+		if (obs != null) {
+			pregnancyObs = obs;
+		} else {
+			obs = Utils.getLastObsOfConceptByDate(allObsList, Utils.CURRENTLY_PREGNANT_CONCEPT);
+			if (obs != null) {
+				pregnancyObs = obs;
+			}
+		}
+		
+		return pregnancyObs;
 	}
 	
 	public static List<Obs> extractObsPerVisit(Date visitDate, List<Encounter> allEncountersList) {

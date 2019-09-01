@@ -118,8 +118,10 @@ public class NDRConverter {
 		try {
 			
 			//create patient data
-			PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicsType(patient,
-			    facility, openmrsConn);
+			//PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicsType(patient,
+			//   facility, openmrsConn);
+			PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicType2(patient,
+			    facility, openmrsConn, encounters, allobs);
 			if (patientDemography == null) { //return null if no valid patient data exist
 				return null;
 			}
@@ -163,15 +165,16 @@ public class NDRConverter {
 			//create common question tags by calling the factory method and passing the encounter, patient and obs list
 			
 			condition
-			        .setCommonQuestions(mainDictionary.createCommonQuestionType(this.patient, this.encounters, this.allobs));
+			        .setCommonQuestions(mainDictionary.createCommonQuestionType2(this.patient, this.encounters, this.allobs));
 			
+                        condition.setConditionSpecificQuestions(mainDictionary.createCommConditionSpecificQuestionsType(patient, encounters, allobs));
 			//create condition specific question tag
-			HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
-			if (hivQuestionsType != null) {
-				ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
-				hivSpecificQuestions.setHIVQuestions(hivQuestionsType);
-				condition.setConditionSpecificQuestions(hivSpecificQuestions);
-			}
+			//HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
+			//if (hivQuestionsType != null) {
+				//ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
+				//hivSpecificQuestions.setHIVQuestions(hivQuestionsType);
+				//condition.setConditionSpecificQuestions(hivSpecificQuestions);
+			//}
 			
 			//create hiv encounter
 			List<HIVEncounterType> hivEncounter = mainDictionary.createHIVEncounterType(this.patient, this.encounters,

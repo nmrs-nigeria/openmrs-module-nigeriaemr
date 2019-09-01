@@ -61,6 +61,7 @@ public class NDRMainDictionary {
     private HTSDictionary htsDictionary = null;
     private LabDictionary labDictionary = null;
     private PharmacyDictionary pharmDictionary= null;
+    private NDRCommonQuestionsDictionary commonQuestionDictionary=null;
 
     public NDRMainDictionary() {
         loadDictionary();
@@ -69,6 +70,8 @@ public class NDRMainDictionary {
         htsDictionary = new HTSDictionary();
         labDictionary = new LabDictionary();
         pharmDictionary=new PharmacyDictionary();
+        commonQuestionDictionary=new NDRCommonQuestionsDictionary();
+        
     }
 
     private void loadDictionary() {
@@ -656,8 +659,17 @@ public class NDRMainDictionary {
         }
         return null;
     }
-
-
+    public PatientDemographicsType createPatientDemographicType2(Patient patient, FacilityType facility, DBConnection openmrsConn,List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException{
+        return commonQuestionDictionary.createPatientDemographicsType(patient, facility, allPatientObsList, allPatientEncounterList, openmrsConn);
+    }
+    public CommonQuestionsType createCommonQuestionType2(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException{
+        CommonQuestionsType commonQuestionsType=null;
+        commonQuestionsType=commonQuestionDictionary.createCommonQuestionType(patient, allPatientEncounterList, allPatientObsList);
+        return commonQuestionsType;
+    }
+    public ConditionSpecificQuestionsType createCommConditionSpecificQuestionsType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException{
+        return commonQuestionDictionary.createConditionSpecificQuestionType(patient, allPatientEncounterList, allPatientObsList);
+    }
     public List<HIVEncounterType> createHIVEncounterType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allObs) throws DatatypeConfigurationException {
         return clinicalDictionary.createHIVEncounterType(patient, allPatientEncounterList, allObs);
     }

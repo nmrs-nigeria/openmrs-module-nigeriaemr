@@ -53,11 +53,11 @@ public class NdrFragmentController {
 		JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
 		Marshaller jaxbMarshaller = generator.createMarshaller(jaxbContext);
 		
-		//List<Patient> patients = Context.getPatientService().getAllPatients();
-		Patient pts = null;
-		List<Patient> patients = new ArrayList<Patient>();
-		pts = Context.getPatientService().getPatient(28417);
-		patients.add(pts);
+		List<Patient> patients = Context.getPatientService().getAllPatients();
+		//Patient pts = null;
+		//List<Patient> patients = new ArrayList<Patient>();
+		//pts = Context.getPatientService().getPatient(28417);
+		//patients.add(pts);
 		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
