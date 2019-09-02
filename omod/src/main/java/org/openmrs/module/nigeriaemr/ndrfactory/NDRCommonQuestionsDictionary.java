@@ -133,7 +133,7 @@ public class NDRCommonQuestionsDictionary {
         map.put(160543, "4");//Outreaches
 
         //Mode of HIV Test
-        map.put(164949, "HIVAB");
+        map.put(164949, "HIVAb");
         map.put(164948, "HIVPCR");
 
         //Prior ART Exposure
