@@ -118,6 +118,20 @@ public class HTSDictionary {
     public static int CONFIRMATORY_TEST_RESULT_date = 165845;
     public static int TIE_BREAKER_RESULT_DATE = 165846;
     
+    //Index Notification Services
+    public static int PARTNER_ELICITATION_GROUPING_CONCEPT=165858;
+    public static int PARTNER_GENDER_CONCEPT=165857;
+    public static int PARTNER_INDEX_TYPE_CONCEPT=165798;
+    public static int PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT=166012;
+    public static int PARTNER_INDEX_RELATION_PHONE_CONCEPT=166022;
+    //HIV Recency Testing
+    public static int HIV_RECENCY_TEST_NAME_CONCEPT=165849;
+    public static int HIV_RECENCY_TEST_DATE_CONCEPT=165850;
+    public static int HIV_RECENCY_ASSAY_CONCEPT=165853;
+    public static int SAMPLE_TEST_DATE_CONCEPT=165854;
+    public static int SAMPLE_TEST_RESULT_CONCEPT=165855;
+    public static int FINAL_HIV_RECENCY_INFECTION_TESTING_ALGORITHM_RESULT_CONCEPT=165856;
+    
     
 
     public HTSDictionary() {
