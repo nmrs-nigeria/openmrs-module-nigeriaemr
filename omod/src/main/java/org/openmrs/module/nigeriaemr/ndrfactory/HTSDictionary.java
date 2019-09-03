@@ -95,6 +95,30 @@ public class HTSDictionary {
     private static int Visit_Status = 166061;
     private static int Weight = 5089;
     private static int Breast_Feeding = 165876;
+    
+       //client intake fields
+    public static int  HTS_Client_Intake_SETTING_ConceptID = 165839;
+    public static int HTS_CLient_Intake_FIRST_TIME_ConceptID = 165790;
+    public static int HTS_Client_Intake_SESSION_TYPE_ConceptID = 165793;
+    public static int HTS_Client_Intake_REFFERRED_FROM = 165480;
+    public static int HTS_Client_Intake_MARITAL_STATUS_ConceptID = 1054;
+    public static int HTS_Client_Intake_LESS_THAN_FIVE_CHILDREN = 160312;
+    public static int HTS_Client_Intake_NO_OF_COWIFES_ConceptID = 5557;
+    public static int HTS_Client_Intake_Client_IDENTIFIED_INDEX = 165794;
+    public static int HTS_Client_Intake_INDEX_TYPE = 165798;
+    public static int HTS_Client_Intake_INDEX_CLIENT_ID = 165859;
+    public static int HTS_Client_Intake_CLIENT_RETESTING = 165976;
+    
+    
+    //HIV Testing Result
+    public static int SCREENING_TEST_RESULT = 165840;
+    public static int CONFIRMATORY_TEST_RESULT = 165841;
+    public static int TIE_BREAKER_RESULT = 165842;
+    public static int SCREENING_TEST_RESULT_DATE = 165844;
+    public static int CONFIRMATORY_TEST_RESULT_date = 165845;
+    public static int TIE_BREAKER_RESULT_DATE = 165846;
+    
+    
 
     public HTSDictionary() {
         loadDictionary();
