@@ -30,6 +30,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -314,6 +315,15 @@ public class Utils {
 	       HIVQuestionsType
 	        
 	 */
+	public static Encounter getLatestEncounter(List<Encounter> encs, Integer encounterTypes) {
+
+        List<Encounter> filteredEncounters = encs.stream().filter(encounter -> Objects.equals(encounterTypes, encounter.getEncounterType()
+                .getEncounterTypeId()))
+                .collect(Collectors.toList());
+        filteredEncounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
+        return filteredEncounters.get(filteredEncounters.size() - 1);
+    }
+	
 	public static String getFacilityName() {
 		return Context.getAdministrationService().getGlobalProperty("Facility_Name");
 	}

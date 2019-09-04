@@ -161,7 +161,7 @@ public class HTSDictionary {
         }
     }
 
-    public KnowledgeAssessmentType createKnowledgeAssessmentType(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public KnowledgeAssessmentType createKnowledgeAssessmentType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         KnowledgeAssessmentType knowledgeAssessmentType = null;
         
@@ -208,7 +208,7 @@ public class HTSDictionary {
 
 
 
-   public HIVRiskAssessmentType createHivRiskAssessment(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+   public HIVRiskAssessmentType createHivRiskAssessment(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         HIVRiskAssessmentType hivRiskAssessmentType = new HIVRiskAssessmentType();
 
@@ -231,7 +231,7 @@ public class HTSDictionary {
             }
             obs = extractObs(Sti_In_Last_3_Months, obsList);
             if (obs != null && obs.getValueCoded() != null) {
-                hivRiskAssessmentType.setsTIInLast3Months(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
+                hivRiskAssessmentType.setSTIInLast3Months(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
             obs = extractObs(More_Than_1_Sex_Partner, obsList);
             if (obs != null && obs.getValueCoded() != null) {
@@ -244,7 +244,7 @@ public class HTSDictionary {
         return hivRiskAssessmentType;
     }
 
-    public SyndromicSTIScreeningType createSyndromicsStiType(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public SyndromicSTIScreeningType createSyndromicsStiType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         SyndromicSTIScreeningType syndromicSTIScreeningType = null;
 
@@ -293,7 +293,7 @@ public class HTSDictionary {
         return syndromicSTIScreeningType;
     }
 
-    public PostTestCounsellingType createPostTestCouncellingType(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public PostTestCounsellingType createPostTestCouncellingType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         PostTestCounsellingType postTestCounsellingType = null;
 
@@ -307,11 +307,11 @@ public class HTSDictionary {
             }
             obs = extractObs(HIV_Request_and_Result_form_signed_by_tester, obsList);
             if (obs != null && obs.getValueCoded() != null) {
-                postTestCounsellingType.sethIVRequestAndResultFormSignedByTester(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
+                postTestCounsellingType.setHIVRequestAndResultFormSignedByTester(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
             obs = extractObs(HIV_Request_and_Result_form_filled_with_CT_Intake_Form, obsList);
             if (obs != null && obs.getValueCoded() != null) {
-                postTestCounsellingType.sethIVRequestAndResultFormFilledWithCTIForm(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
+                postTestCounsellingType.setHIVRequestAndResultFormFilledWithCTIForm(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
             obs = extractObs(Client_received_HIV_test_result, obsList);
             if (obs != null && obs.getValueCoded() != null) {
@@ -366,7 +366,7 @@ public class HTSDictionary {
         return postTestCounsellingType;
     }
 
-    public ClinicalTBScreeningType createClinicalTbScreening(Patient pts, List<Encounter> enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public ClinicalTBScreeningType createClinicalTbScreening(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
 
         if (htsIdentifier == null) {

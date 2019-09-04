@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.codec.language.Soundex;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -33,15 +34,18 @@ import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.CommonQuestionsType;
 import org.openmrs.module.nigeriaemr.model.ndr.ConditionSpecificQuestionsType;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
-import org.openmrs.module.nigeriaemr.model.ndr.FingerPrintsType;
+import org.openmrs.module.nigeriaemr.model.ndr.FingerPrintType;
 import org.openmrs.module.nigeriaemr.model.ndr.FingerType;
 import org.openmrs.module.nigeriaemr.model.ndr.HIVQuestionsType;
 import org.openmrs.module.nigeriaemr.model.ndr.HandType;
 import org.openmrs.module.nigeriaemr.model.ndr.IdentifierType;
 import org.openmrs.module.nigeriaemr.model.ndr.IdentifiersType;
+import org.openmrs.module.nigeriaemr.model.ndr.LeftHandType;
 import org.openmrs.module.nigeriaemr.model.ndr.PatientDemographicsType;
+import org.openmrs.module.nigeriaemr.model.ndr.RightHandType;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
+import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getXmlDate;
 import static org.openmrs.module.nigeriaemr.ndrfactory.NDRMainDictionary.Date_Patient_Died_Concept_Id;
@@ -328,41 +332,68 @@ public class NDRCommonQuestionsDictionary {
         return "";
     }
 
-    public FingerPrintsType getPatientsFingerPrint(int id, DBConnection connResult) {
+    public FingerPrintType getPatientsFingerPrint(int id,DBConnection connResult) {
         Connection connection;
         try {
+
+          //  DBConnection connResult = Utils.getNmrsConnectionDetails();
 
             connection = DriverManager.getConnection(connResult.getUrl(), connResult.getUsername(), connResult.getPassword());
             Statement statement = connection.createStatement();
             String sqlStatement = ("SELECT template, fingerPosition, date_created FROM biometricinfo WHERE patient_Id = " + id);
             ResultSet result = statement.executeQuery(sqlStatement);
-            FingerPrintsType fingerPrintsType = new FingerPrintsType();
+            FingerPrintType fingerPrintsType = new FingerPrintType();
             if (result.next()) {
-                HandType rightHand = new HandType();
-                HandType leftHand = new HandType();
-                ArrayList<FingerType> rightHands = new ArrayList<>();
-                ArrayList<FingerType> leftHands = new ArrayList<>();
-
-                do {
-                    FingerType fingerType = new FingerType();
-                    if (result.getString("fingerPosition").contains("Right")) {
-                        fingerType.setType(result.getString("fingerPosition"));
-                        fingerType.setFinger(result.getString("template"));
-                        rightHands.add(fingerType);
-                    } else {
-                        fingerType.setType(result.getString("fingerPosition"));
-                        fingerType.setFinger(result.getString("template"));
-                        leftHands.add(fingerType);
+                RightHandType rightFingerType = new RightHandType();
+                LeftHandType leftFingerType = new LeftHandType();
+                XMLGregorianCalendar dataCaptured = null;
+                while(result.next()){
+                    String fingerPosition = result.getString("fingerPosition");
+                    dataCaptured = Utils.getXmlDateTime(result.getDate("date_created"));
+                    switch(fingerPosition){
+                        case "RightThumb":
+                            rightFingerType.setRightThumb(result.getString("template"));
+                            break;
+                        case "RightIndex":
+                            rightFingerType.setRightIndex(result.getString("template"));
+                            break;
+                        case "RightMiddle":
+                            rightFingerType.setRightMiddle(result.getString("template"));
+                            break;
+                        case "RightWedding":
+                            rightFingerType.setRightWedding(result.getString("template"));
+                            break;
+                        case "RightSmall":
+                            rightFingerType.setRightSmall(result.getString("template"));
+                            break;
+                        case "LeftThumb":
+                            leftFingerType.setLeftThumb(result.getString("template"));
+                            break;
+                        case "LeftIndex":
+                            leftFingerType.setLeftIndex(result.getString("template"));
+                            break;
+                        case "LeftMiddle":
+                            leftFingerType.setLeftMiddle(result.getString("template"));
+                            break;
+                        case "LeftWedding":
+                            leftFingerType.setLeftWedding(result.getString("template"));
+                            break;
+                        case "LeftSmall":
+                            leftFingerType.setLeftSmall(result.getString("template"));
+                            break;
                     }
-                } while (result.next());
+                }
+                /*do{
 
-                rightHand.setFinger(rightHands);
-                leftHand.setFinger(leftHands);
+                } while(result.next());*/
 
-                fingerPrintsType.setDateCaptured(new Date(System.currentTimeMillis()));//Utils.getXmlDateTime(result.getDate("date_created")));
+                fingerPrintsType.setDateCaptured(dataCaptured);
+
                 fingerPrintsType.setPresent(true);
-                fingerPrintsType.setLeftHand(leftHand);
-                fingerPrintsType.setRightHand(rightHand);
+                //fingerPrintsType.setLeftHand(leftHand);
+                //fingerPrintsType.setRightHand(rightHand);
+                fingerPrintsType.setRightHand(rightFingerType);
+                fingerPrintsType.setLeftHand(leftFingerType);
             } else {
                 connection.close();
                 return null;
@@ -371,7 +402,9 @@ public class NDRCommonQuestionsDictionary {
             return fingerPrintsType;
         } catch (SQLException e) {
             e.printStackTrace();
-            LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LogFormat.FATAL, LoggerUtils.LogLevel.live.live);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
         }
         return null;
     }
