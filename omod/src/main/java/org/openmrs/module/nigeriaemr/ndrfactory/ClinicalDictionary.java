@@ -212,7 +212,7 @@ public class ClinicalDictionary {
         HIVEncounterType hivEncounterType = null;
         //Turn these to class level constants letter
         Integer[] encounterTypeArr = {
-            Utils.ADULT_PED_INITIAL_ENCOUNTER_TYPE,
+            Utils.ADULT_INITIAL_ENCOUNTER_TYPE,
             Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE,
             Utils.PHARMACY_ENCOUNTER_TYPE,
             Utils.CARE_CARD_ENCOUNTER_TYPE};

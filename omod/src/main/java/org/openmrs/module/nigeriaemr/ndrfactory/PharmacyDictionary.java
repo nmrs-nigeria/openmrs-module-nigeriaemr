@@ -155,7 +155,7 @@ public class PharmacyDictionary {
         //Added By Nelson
         regimenMap.put(165257, "CTX480");//
         regimenMap.put(76488, "FLUC");//Added By Nelson
-        regimenMap.put(1679, "UnknownCode");
+        regimenMap.put(1679, "H");
         regimenMap.put(80945, "CTX960");
 
         /* Added by Bright Ibezim */
@@ -293,6 +293,28 @@ public class PharmacyDictionary {
             regimenTypeList.add(regimenType);
         }
         return regimenTypeList;
+    }
+    
+    public List<RegimenType> createOIRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient,List<Obs> patientsObsList) throws DatatypeConfigurationException{
+        List<RegimenType> regimenTypeList=new ArrayList<RegimenType>();
+        Integer[] targetEncounterTypes={Utils.CARE_CARD_ENCOUNTER_TYPE,Utils.PHARMACY_ENCOUNTER_TYPE};
+        RegimenType regimenType=null;
+        List<Obs> obsPerVisit=null;
+        for(Encounter enc: allEncounterForPatient){
+            if(enc.getEncounterType().getEncounterTypeId()==Utils.PHARMACY_ENCOUNTER_TYPE){
+                obsPerVisit=new ArrayList<Obs>(enc.getAllObs());
+                //regimenType=createOIType(patient, enc, obsPerVisit);
+                regimenTypeList.addAll(createOITypes(patient, enc, patientsObsList));
+            }
+        }
+        return regimenTypeList;
+        //Set<Date> visitDateSet=Utils.extractUniqueVisitsForEncounterTypes(patient, allEncounterForPatient, targetEncounterTypes);
+        //for(Date visitDate: visitDateSet){
+            //obsPerVisit=Utils.extractObsPerVisitDate(visitDate, patientsObsList);
+            //regimenType=createRegimenType(patient, visitDate, obsPerVisit);
+            //regimenTypeList.add(regimenType);
+        //}
+        
     }
 
     /*
@@ -607,7 +629,7 @@ public class PharmacyDictionary {
             throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
     }
-
+   
     private RegimenType createOIType(Patient pts, Encounter enc, List<Obs> OIDrugObsList)
             throws DatatypeConfigurationException {
         try {
@@ -619,6 +641,7 @@ public class PharmacyDictionary {
 
             //set regimen
             Obs obs = Utils.extractObs(OI_Drug_Concept_Id, OIDrugObsList);
+            
             if (obs != null && obs.getValueCoded() != null) {
                 try {
                     cst = new CodedSimpleType();
