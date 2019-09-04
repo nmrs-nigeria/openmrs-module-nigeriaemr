@@ -244,6 +244,12 @@ public class NDRMainDictionary {
 
         return clinicalTBScreeningTypes;
     }
+    
+    
+    public HIVTestingReportType createHIVTestReport(Encounter enc, List<Obs> allObs,HIVTestingReportType hivTestingReport){
+        
+          return hivTestingReport;      
+    }
 
     public List<HIVRiskAssessmentType> createHivRiskAssessment(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<HIVRiskAssessmentType> hivRiskAssessmentTypes = new ArrayList<>();
