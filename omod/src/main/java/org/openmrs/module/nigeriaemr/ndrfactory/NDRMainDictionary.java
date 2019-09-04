@@ -57,11 +57,11 @@ public class NDRMainDictionary {
 
     private static Map<Integer, String> map = new HashMap<>();
     private ClinicalDictionary clinicalDictionary = null;
-    private  PMTCTDictionary pmtctDictionary = null;
+    private PMTCTDictionary pmtctDictionary = null;
     private HTSDictionary htsDictionary = null;
     private LabDictionary labDictionary = null;
-    private PharmacyDictionary pharmDictionary= null;
-    private NDRCommonQuestionsDictionary commonQuestionDictionary=null;
+    private PharmacyDictionary pharmDictionary = null;
+    private NDRCommonQuestionsDictionary commonQuestionDictionary = null;
 
     public NDRMainDictionary() {
         loadDictionary();
@@ -69,9 +69,9 @@ public class NDRMainDictionary {
         pmtctDictionary = new PMTCTDictionary();
         htsDictionary = new HTSDictionary();
         labDictionary = new LabDictionary();
-        pharmDictionary=new PharmacyDictionary();
-        commonQuestionDictionary=new NDRCommonQuestionsDictionary();
-        
+        pharmDictionary = new PharmacyDictionary();
+        commonQuestionDictionary = new NDRCommonQuestionsDictionary();
+
     }
 
     private void loadDictionary() {
@@ -142,7 +142,6 @@ public class NDRMainDictionary {
         map.put(1662, "OT");
         map.put(160737, "NA");
 
-
         //care entry point
         map.put(160539, "3"); //HTS
         map.put(160538, "9"); //ANC/PMTCT
@@ -157,7 +156,7 @@ public class NDRMainDictionary {
         map.put(160548, "10");
         map.put(160550, "11");
         map.put(160551, "13");
-        map.put(160563,"14");
+        map.put(160563, "14");
 
         /*
         map.put(160549, "AOP");
@@ -169,7 +168,7 @@ public class NDRMainDictionary {
         map.put(162223, "VMCC");
         map.put(164949, "HIVAb");
         map.put(164948, "HIVPCR");
-    */
+         */
         map.put(0, "");
         map.put(0, "");
 
@@ -182,45 +181,42 @@ public class NDRMainDictionary {
         return "";
     }
 
-  
-
     /*static HIVQuestionsType createHIVQuestionType(Obs firstRegimenObs, Date ARTStartDate, Date EnrollmentDate, List<Obs> obs) {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}*/
-
- 
-    
-    public PatientDemographicsType createPatientDemographicType2(Patient patient, FacilityType facility, DBConnection openmrsConn,List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException{
+    public PatientDemographicsType createPatientDemographicType2(Patient patient, FacilityType facility, DBConnection openmrsConn, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
         return commonQuestionDictionary.createPatientDemographicsType(patient, facility, allPatientObsList, allPatientEncounterList, openmrsConn);
     }
-    public CommonQuestionsType createCommonQuestionType2(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException{
-        CommonQuestionsType commonQuestionsType=null;
-        commonQuestionsType=commonQuestionDictionary.createCommonQuestionType(patient, allPatientEncounterList, allPatientObsList);
+
+    public CommonQuestionsType createCommonQuestionType2(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
+        CommonQuestionsType commonQuestionsType = null;
+        commonQuestionsType = commonQuestionDictionary.createCommonQuestionType(patient, allPatientEncounterList, allPatientObsList);
         return commonQuestionsType;
     }
-    public ConditionSpecificQuestionsType createCommConditionSpecificQuestionsType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException{
+
+    public ConditionSpecificQuestionsType createCommConditionSpecificQuestionsType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
         return commonQuestionDictionary.createConditionSpecificQuestionType(patient, allPatientEncounterList, allPatientObsList);
     }
+
     public List<HIVEncounterType> createHIVEncounterType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allObs) throws DatatypeConfigurationException {
         return clinicalDictionary.createHIVEncounterType(patient, allPatientEncounterList, allObs);
     }
 
-    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient,List<Obs> allPatientObsList) throws DatatypeConfigurationException{
-        List<RegimenType> allRegimenTypeList=new ArrayList<RegimenType>();
-        allRegimenTypeList.addAll( pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient,allPatientObsList));
-        allRegimenTypeList.addAll( pharmDictionary.createOIRegimenTypeList(patient, allEncounterForPatient,allPatientObsList));
+    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
+        List<RegimenType> allRegimenTypeList = new ArrayList<RegimenType>();
+        allRegimenTypeList.addAll(pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient, allPatientObsList));
+        allRegimenTypeList.addAll(pharmDictionary.createOIRegimenTypeList(patient, allEncounterForPatient, allPatientObsList));
         return allRegimenTypeList;
-        
+
     }
 
- /*   public List<LaboratoryReportType> createLaboratoryOrderAndResult(Patient pts, List<Encounter> enc, List<Obs> labObsList)
+    /*   public List<LaboratoryReportType> createLaboratoryOrderAndResult(Patient pts, List<Encounter> enc, List<Obs> labObsList)
             throws DatatypeConfigurationException {
         return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList );
     }*/
-
     public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList)
             throws DatatypeConfigurationException {
-        return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList );
+        return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList);
     }
 
     public ChildBirthDetailsType createChildBirthDetailsType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
@@ -228,50 +224,63 @@ public class NDRMainDictionary {
     }
 
     public ChildFollowupType createChildFollowupType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-        return pmtctDictionary.createChildFollowupType(pts, null,  antenatalObsList);
+        return pmtctDictionary.createChildFollowupType(pts, null, antenatalObsList);
     }
 
     public ImmunizationType createImmunizationType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
         return pmtctDictionary.createImmunizationType(pts, null, antenatalObsList);
     }
+
     public InfantPCRTestingType createInfantPcr(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-        return  pmtctDictionary.createInfantPcr(pts, null,antenatalObsList);
+        return pmtctDictionary.createInfantPcr(pts, null, antenatalObsList);
     }
 
     public List<ClinicalTBScreeningType> createClinicalTbScreening(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<ClinicalTBScreeningType> clinicalTBScreeningTypes = new ArrayList<>();
 
-            ClinicalTBScreeningType clinicalTBScreeningType = htsDictionary.createClinicalTbScreening(pts, encounters, obsList);
-            if(clinicalTBScreeningType !=null){
-                clinicalTBScreeningTypes.add(clinicalTBScreeningType);
-            }
+        ClinicalTBScreeningType clinicalTBScreeningType = htsDictionary.createClinicalTbScreening(pts, encounters, obsList);
+        if (clinicalTBScreeningType != null) {
+            clinicalTBScreeningTypes.add(clinicalTBScreeningType);
+        }
 
         return clinicalTBScreeningTypes;
     }
-    
-    
-    public HIVTestingReportType createHIVTestReport(Encounter enc, List<Obs> allObs,HIVTestingReportType hivTestingReport){
-        
-          return hivTestingReport;      
+
+    public HIVTestingReportType createHIVTestIntake(Patient patient, Encounter enc, List<Obs> allObs, HIVTestingReportType hivTestingReport) {
+
+        try {
+            return htsDictionary.createClientIntakeTags(patient, enc, allObs, hivTestingReport);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+        }
+        return hivTestingReport;
+    }
+
+    public HIVTestResultType createHIVTestResult(Patient patient, Encounter enc, List<Obs> allObs) {
+        return htsDictionary.createHIVTestResult(patient, enc, allObs);
+    }
+
+    public List<IndexNotificationServicesType> createIndexNotificationServicesTypes(Patient patient, Encounter enc, List<Obs> allObs) {
+        return htsDictionary.createIndexNotificationServicesTypes(patient, enc, allObs);
     }
 
     public List<HIVRiskAssessmentType> createHivRiskAssessment(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<HIVRiskAssessmentType> hivRiskAssessmentTypes = new ArrayList<>();
 
-            HIVRiskAssessmentType hivRiskAssessmentType = htsDictionary.createHivRiskAssessment(pts, encounters, obsList);
-            if(hivRiskAssessmentType !=null){
-                hivRiskAssessmentTypes.add(hivRiskAssessmentType);
-            }
+        HIVRiskAssessmentType hivRiskAssessmentType = htsDictionary.createHivRiskAssessment(pts, encounters, obsList);
+        if (hivRiskAssessmentType != null) {
+            hivRiskAssessmentTypes.add(hivRiskAssessmentType);
+        }
 
         return hivRiskAssessmentTypes;
     }
 
     public List<KnowledgeAssessmentType> createKnowledgeAssessmentType(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<KnowledgeAssessmentType> knowledgeAssessmentTypes = new ArrayList<>();
-            KnowledgeAssessmentType knowledgeAssessmentType = htsDictionary.createKnowledgeAssessmentType(pts, encounters, obsList);
-            if(knowledgeAssessmentType !=null){
-                knowledgeAssessmentTypes.add(knowledgeAssessmentType);
-            }
+        KnowledgeAssessmentType knowledgeAssessmentType = htsDictionary.createKnowledgeAssessmentType(pts, encounters, obsList);
+        if (knowledgeAssessmentType != null) {
+            knowledgeAssessmentTypes.add(knowledgeAssessmentType);
+        }
 
         return knowledgeAssessmentTypes;
     }
@@ -279,10 +288,10 @@ public class NDRMainDictionary {
     public List<PostTestCounsellingType> createPostTestCounsellingType(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<PostTestCounsellingType> postTestCounsellingTypes = new ArrayList<>();
 
-            PostTestCounsellingType postTestCounsellingType = htsDictionary.createPostTestCouncellingType(pts, encounters, obsList);
-            if(postTestCounsellingType !=null){
-                postTestCounsellingTypes.add(postTestCounsellingType);
-            }
+        PostTestCounsellingType postTestCounsellingType = htsDictionary.createPostTestCouncellingType(pts, encounters, obsList);
+        if (postTestCounsellingType != null) {
+            postTestCounsellingTypes.add(postTestCounsellingType);
+        }
 
         return postTestCounsellingTypes;
     }
@@ -290,19 +299,19 @@ public class NDRMainDictionary {
     public List<SyndromicSTIScreeningType> createSyndromicsStiType(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<SyndromicSTIScreeningType> syndromicSTIScreeningTypes = new ArrayList<>();
 
-            SyndromicSTIScreeningType syndromicSTIScreeningType = htsDictionary.createSyndromicsStiType(pts, encounters, obsList);
-            if(syndromicSTIScreeningType !=null){
-                syndromicSTIScreeningTypes.add(syndromicSTIScreeningType);
-            }
+        SyndromicSTIScreeningType syndromicSTIScreeningType = htsDictionary.createSyndromicsStiType(pts, encounters, obsList);
+        if (syndromicSTIScreeningType != null) {
+            syndromicSTIScreeningTypes.add(syndromicSTIScreeningType);
+        }
 
         return syndromicSTIScreeningTypes;
     }
 
     public List<HealthFacilityVisitsType> createHealthFacilityVisit(Patient pts, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<HealthFacilityVisitsType> healthFacilityVisitsTypes = new ArrayList<>();
-        for(Encounter enc: encounters){
+        for (Encounter enc : encounters) {
             HealthFacilityVisitsType healthFacilityVisitsType = htsDictionary.createHealthFacilityVisit(pts, enc, obsList);
-            if(healthFacilityVisitsType !=null){
+            if (healthFacilityVisitsType != null) {
                 healthFacilityVisitsTypes.add(healthFacilityVisitsType);
             }
         }
@@ -312,14 +321,14 @@ public class NDRMainDictionary {
     public List<PartnerDetailsType> createPartnerDetails(Patient pts, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
 
         List<PartnerDetailsType> partnerDetailsTypes = new ArrayList<>();
-        for(Encounter enc: encounters) {
+        for (Encounter enc : encounters) {
             if (enc.getEncounterType().getEncounterTypeId() == Utils.Partner_register_Encounter_Id) {
-                PartnerDetailsType p_details =  htsDictionary.createPartnerDetails(pts, enc, obsList);
-                if(p_details !=null){
+                PartnerDetailsType p_details = htsDictionary.createPartnerDetails(pts, enc, obsList);
+                if (p_details != null) {
                     partnerDetailsTypes.add(p_details);
                 }
             }
         }
-        return  partnerDetailsTypes;
+        return partnerDetailsTypes;
     }
 }

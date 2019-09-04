@@ -319,6 +319,11 @@ public class Utils {
 	       HIVQuestionsType
 	        
 	 */
+	
+	public static List<Obs> getAllObsGroups(List<Obs> obsList, Integer groupingConceptId){
+         return  obsList.stream().filter(obb -> obb.getValueGroupId().equals(groupingConceptId)).collect(Collectors.toList());
+        }
+	
 	public static Encounter getLatestEncounter(List<Encounter> encs, Integer encounterTypes) {
 
         List<Encounter> filteredEncounters = encs.stream().filter(encounter -> Objects.equals(encounterTypes, encounter.getEncounterType()

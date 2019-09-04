@@ -169,7 +169,22 @@ public class NDRConverter {
             PreTestInformationType preTestInfo = new PreTestInformationType();
             PostTestCounsellingType postTestType = new PostTestCounsellingType();
 
-            // hivTestingReport.setVisitID();
+            
+           hivTestingReport = mainDictionary.createHIVTestIntake(patient, encounter, allObs, hivTestingReport);
+           
+           HIVTestResultType hIVTestResultType = mainDictionary.createHIVTestResult(patient, encounter, allObs);
+           List<IndexNotificationServicesType> indexNotificationServicesTypes = mainDictionary.createIndexNotificationServicesTypes(patient, encounter, allObs);
+           
+           if(hIVTestResultType != null){
+               hivTestingReport.setHIVTestResult(hIVTestResultType);
+           }
+           
+           if(!indexNotificationServicesTypes.isEmpty()){
+           hivTestingReport.getIndexNotificationServices().addAll(indexNotificationServicesTypes);
+           }
+           
+           
+            
             //create TB screening
             List<ClinicalTBScreeningType> clinicalTBScreeningType = mainDictionary.createClinicalTbScreening(patient,
                     encounter, allObs);
