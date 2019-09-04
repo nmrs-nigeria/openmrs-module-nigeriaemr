@@ -300,7 +300,11 @@ public class Utils {
 	
 	/* KEY FORMS */
 	//--These 4 forms was used to construct a HIVEncounterType
-	public final static int ADULT_PED_INITIAL_ENCOUNTER_TYPE = 8;
+	public final static int ADULT_INITIAL_ENCOUNTER_TYPE = 26;
+	
+	public final static int INITIAL_ENCOUNTER_TYPE = 8;
+	
+	public final static int PED_INITIAL_ENCOUNTER_TYPE = 24;
 	
 	public final static int CARE_CARD_ENCOUNTER_TYPE = 12;
 	

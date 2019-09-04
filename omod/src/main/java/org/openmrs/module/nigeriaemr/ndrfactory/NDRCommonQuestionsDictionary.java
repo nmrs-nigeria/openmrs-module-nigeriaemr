@@ -269,7 +269,7 @@ public class NDRCommonQuestionsDictionary {
             Soundex soundex = new Soundex();
             demo.setEnrolleeCode(soundex.encode(testCode));
             String ndrCodedValue;
-            Integer[] formEncounterTypeTargets = {Utils.ADULT_PED_INITIAL_ENCOUNTER_TYPE, Utils.HIV_Enrollment_Encounter_Type_Id, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
+            Integer[] formEncounterTypeTargets = {Utils.ADULT_INITIAL_ENCOUNTER_TYPE,Utils.PED_INITIAL_ENCOUNTER_TYPE,Utils.INITIAL_ENCOUNTER_TYPE, Utils.HIV_Enrollment_Encounter_Type_Id, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
             List<Obs> obsListForEncounterTypes = Utils.extractObsListForEncounterType(allObsListForPatient, formEncounterTypeTargets);
             Obs obs = null;
             if (obsListForEncounterTypes != null && !obsListForEncounterTypes.isEmpty()) {
@@ -490,7 +490,7 @@ HIVQuestionsType
  -InitialTBStatus (1659)
      */
     public HIVQuestionsType createHIVQuestionType(Patient patient, List<Encounter> allEncounterList, List<Obs> allObsList) throws DatatypeConfigurationException {
-        Integer[] targetEncounterTypes = {Utils.ADULT_PED_INITIAL_ENCOUNTER_TYPE, Utils.HIV_Enrollment_Encounter_Type_Id, Utils.ART_COMMENCEMENT_ENCOUNTER_TYPE, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
+        Integer[] targetEncounterTypes = {Utils.ADULT_INITIAL_ENCOUNTER_TYPE,Utils.PED_INITIAL_ENCOUNTER_TYPE, Utils.HIV_Enrollment_Encounter_Type_Id, Utils.ART_COMMENCEMENT_ENCOUNTER_TYPE, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
         HIVQuestionsType hivQuestionsType = null;
         List<Obs> obsList = Utils.extractObsListForEncounterType(allObsList, targetEncounterTypes);
         Obs obs = null;
