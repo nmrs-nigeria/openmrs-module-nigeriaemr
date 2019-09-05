@@ -127,7 +127,7 @@ public class HTSDictionary {
     public static int PARTNER_NAME_CONCEPT = 161135;
     public static int PARTNER_GENDER_CONCEPT = 165857;
     public static int PARTNER_INDEX_TYPE_CONCEPT = 165798;
-    public static int PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT = 166012;
+    public static int PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT = 166021;
     public static int PARTNER_INDEX_RELATION_PHONE_CONCEPT = 166022;
     //HIV Recency Testing
     public static int HIV_RECENCY_TEST_NAME_CONCEPT = 165849;
@@ -262,6 +262,12 @@ public class HTSDictionary {
         //put all non required fields inside a try-catch
         try {
 
+            //session
+            obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
+            if(obs != null && obs.getValueCoded() != null){
+                hivTestingReport.setSessionType(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+
             //refferred from
             obs = extractObs(HTS_Client_Intake_REFFERRED_FROM, allObs);
             if (obs != null && obs.getValueCoded() != null) {
@@ -366,46 +372,51 @@ public class HTSDictionary {
     public List<IndexNotificationServicesType> createIndexNotificationServicesTypes(Patient patient, Encounter enc, List<Obs> allObs) {
         List<IndexNotificationServicesType> indexNotificationServicesTypes = new ArrayList<>();
 
-        List<Obs> allIndexGroupObs = Utils.getAllObsGroups(allObs, PARTNER_ELICITATION_GROUPING_CONCEPT);
+        try{
+            List<Obs> allIndexGroupObs = Utils.getAllObsGroups(allObs, PARTNER_ELICITATION_GROUPING_CONCEPT);
 
-        allIndexGroupObs.stream().forEach(gObs -> {
-            IndexNotificationServicesType indexNotificationServicesType = new IndexNotificationServicesType();
-            List<Obs> allMembers = new ArrayList(gObs.getGroupMembers());
-            //extract all the members using the concept
+            allIndexGroupObs.stream().forEach(gObs -> {
+                IndexNotificationServicesType indexNotificationServicesType = new IndexNotificationServicesType();
+                List<Obs> allMembers = new ArrayList(gObs.getGroupMembers());
+                //extract all the members using the concept
 
-            //partner name
-            Obs obs = extractObs(PARTNER_NAME_CONCEPT, allMembers);
-            if (obs != null && obs.getValueText() != null) {
-                indexNotificationServicesType.setPartnername(obs.getValueText());
-            }
+                //partner name
+                Obs obs = extractObs(PARTNER_NAME_CONCEPT, allMembers);
+                if (obs != null && obs.getValueText() != null) {
+                    indexNotificationServicesType.setPartnername(obs.getValueText());
+                }
 
-            //partner gender
-            obs = extractObs(PARTNER_GENDER_CONCEPT, allMembers);
-            if (obs != null && obs.getValueCoded() != null) {
-                indexNotificationServicesType.setPartnerGender(getMappedValue(obs.getValueCoded().getConceptId()));
-            }
+                //partner gender
+                obs = extractObs(PARTNER_GENDER_CONCEPT, allMembers);
+                if (obs != null && obs.getValueCoded() != null) {
+                    indexNotificationServicesType.setPartnerGender(getMappedValue(obs.getValueCoded().getConceptId()));
+                }
 
-            //partner index type
-            obs = extractObs(PARTNER_INDEX_TYPE_CONCEPT, allMembers);
-            if (obs != null && obs.getValueCoded() != null) {
-                indexNotificationServicesType.setIndexRelation(getMappedValue(obs.getValueCoded().getConceptId()));
-            }
+                //partner index type
+                obs = extractObs(PARTNER_INDEX_TYPE_CONCEPT, allMembers);
+                if (obs != null && obs.getValueCoded() != null) {
+                    indexNotificationServicesType.setIndexRelation(getMappedValue(obs.getValueCoded().getConceptId()));
+                }
 
-            //partner address
-            obs = extractObs(PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT, allMembers);
-            if (obs != null && obs.getValueText() != null) {
-                indexNotificationServicesType.setDescriptiveAddress(obs.getValueText());
-            }
+                //partner address
+                obs = extractObs(PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT, allMembers);
+                if (obs != null && obs.getValueText() != null) {
+                    indexNotificationServicesType.setDescriptiveAddress(obs.getValueText());
+                }
 
-            //partner phone
-            obs = extractObs(PARTNER_INDEX_RELATION_PHONE_CONCEPT, allMembers);
-            if (obs != null && obs.getValueText() != null) {
-                indexNotificationServicesType.setPhoneNumber(obs.getValueText());
-            }
+                //partner phone
+                obs = extractObs(PARTNER_INDEX_RELATION_PHONE_CONCEPT, allMembers);
+                if (obs != null && obs.getValueText() != null) {
+                    indexNotificationServicesType.setPhoneNumber(obs.getValueText());
+                }
 
-            indexNotificationServicesTypes.add(indexNotificationServicesType);
+                indexNotificationServicesTypes.add(indexNotificationServicesType);
 
-        });
+            });
+        }catch (Exception ex){
+            LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+        }
+
 
         return indexNotificationServicesTypes;
     }
@@ -439,7 +450,7 @@ public class HTSDictionary {
 
         //VL Sample test date
         obs = extractObs(SAMPLE_TEST_DATE_CONCEPT, allObs);
-        if (obs != null && obs.getValueCoded() != null) {
+        if (obs != null && obs.getValueDate() != null) {
             try {
                 recencyTestingType.setViralLoadConfirmationTestDate(Utils.getXmlDate(obs.getValueDate()));
             } catch (DatatypeConfigurationException ex) {

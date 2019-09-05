@@ -173,6 +173,7 @@ public class NDRConverter {
            hivTestingReport = mainDictionary.createHIVTestIntake(patient, encounter, allObs, hivTestingReport);
            
            HIVTestResultType hIVTestResultType = mainDictionary.createHIVTestResult(patient, encounter, allObs);
+
            List<IndexNotificationServicesType> indexNotificationServicesTypes = mainDictionary.createIndexNotificationServicesTypes(patient, encounter, allObs);
            
            if(hIVTestResultType != null){

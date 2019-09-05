@@ -321,7 +321,8 @@ public class Utils {
 	 */
 	
 	public static List<Obs> getAllObsGroups(List<Obs> obsList, Integer groupingConceptId){
-         return  obsList.stream().filter(obb -> obb.getValueGroupId().equals(groupingConceptId)).collect(Collectors.toList());
+        List<Obs> response = obsList.stream().filter(obb -> obb.getConcept().getConceptId().equals(groupingConceptId)).collect(Collectors.toList());
+         return  response;
         }
 	
 	public static Encounter getLatestEncounter(List<Encounter> encs, Integer encounterTypes) {

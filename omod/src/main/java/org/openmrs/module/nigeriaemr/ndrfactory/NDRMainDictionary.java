@@ -261,7 +261,9 @@ public class NDRMainDictionary {
     }
 
     public List<IndexNotificationServicesType> createIndexNotificationServicesTypes(Patient patient, Encounter enc, List<Obs> allObs) {
-        return htsDictionary.createIndexNotificationServicesTypes(patient, enc, allObs);
+        List<IndexNotificationServicesType> indexNotificationServicesTypes = new ArrayList<>();
+        indexNotificationServicesTypes = htsDictionary.createIndexNotificationServicesTypes(patient, enc, allObs);
+        return indexNotificationServicesTypes;
     }
 
     public List<HIVRiskAssessmentType> createHivRiskAssessment(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
