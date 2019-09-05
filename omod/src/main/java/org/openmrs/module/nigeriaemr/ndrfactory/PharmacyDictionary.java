@@ -495,8 +495,8 @@ public class PharmacyDictionary {
     }
 
     public DateTime retrieveMedicationDuration(Date visitDate, List<Obs> obsList) {
-        DateTime stopDateTime = null;
-        DateTime startDateTime = null;
+        DateTime stopDateTime = new DateTime(visitDate);
+        DateTime startDateTime = new DateTime(visitDate);
         int durationDays = 0;
         Obs obs = null;
         List<Obs> targetObsList=new ArrayList<Obs>();
