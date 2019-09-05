@@ -17,8 +17,10 @@ import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.openmrs.EncounterProvider;
 
 import org.openmrs.PatientIdentifier;
+import org.openmrs.Provider;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
@@ -88,7 +90,7 @@ public class HTSDictionary {
     private static int Partner_postTest_counseled = 165571;
     private static int Partner_HBV_status = 165561;
     private static int Partner_HCV_status = 165562;
-    private static int Partner_syphilis_status = 299;
+
     private static int Partner_referred_to = 164960;
     //Health facility Visit
     private static int Visit_Date = 1769;
@@ -110,7 +112,6 @@ public class HTSDictionary {
     public static int HTS_Client_Intake_CLIENT_RETESTING = 165976;
     public static int HTS_CLIENT_INTAKE_SETTINGS_OTHERS = 5622;
     public static int HTS_CLIENT_INTAKE_SETTINGS_OTHERS_VALUE = 165966;
-    
 
     //HIV Testing Result
     public static int SCREENING_TEST_RESULT = 165840;
@@ -136,6 +137,11 @@ public class HTSDictionary {
     public static int SAMPLE_TEST_RESULT_CONCEPT = 165855;
     public static int FINAL_HIV_RECENCY_INFECTION_TESTING_ALGORITHM_RESULT_CONCEPT = 165856;
 
+    //syphillis and hepatitis
+    private static int SYPHILLIS_STATUS_RESULT = 299;
+    private static int HEPATITIS_B_RESULT = 159430;
+    private static int HEPATITIS_C_RESULT = 161471;
+
     public HTSDictionary() {
         loadDictionary();
         loadBooleanDictionary();
@@ -148,19 +154,58 @@ public class HTSDictionary {
         //Map OpenMRS concepts to corresponding NDR values
         htsDictionary.put(1065, "Y");
         htsDictionary.put(1066, "N");
+        htsDictionary.put(1067, "U");
         htsDictionary.put(703, "Pos");
         htsDictionary.put(664, "Neg");
         htsDictionary.put(1228, "R");
         htsDictionary.put(1229, "NR");
         htsDictionary.put(1382, "FP");
         htsDictionary.put(1610, "ART");
-        htsDictionary.put(5622, "Other");
         htsDictionary.put(165815, "1");
         htsDictionary.put(165816, "2");
         htsDictionary.put(165817, "3");
         htsDictionary.put(165882, "4");
-        
-        
+
+        //setting
+        htsDictionary.put(160539, "1");
+        htsDictionary.put(160529, "2");
+        htsDictionary.put(160548, "3");
+        htsDictionary.put(5271, "4");
+        htsDictionary.put(160542, "5");
+        htsDictionary.put(161629, "6");
+        htsDictionary.put(165788, "7");
+        htsDictionary.put(165838, "9");
+        htsDictionary.put(5622, "8");
+
+        //session
+        htsDictionary.put(165792, "1");
+        htsDictionary.put(165789, "2");
+        htsDictionary.put(165885, "3");
+
+        //refferred from
+        htsDictionary.put(5622, "8");
+
+        //marital status
+        htsDictionary.put(1057, "S");
+        htsDictionary.put(5555, "M");
+        htsDictionary.put(1058, "D");
+        htsDictionary.put(1056, "A");
+        htsDictionary.put(1060, "G");
+        htsDictionary.put(1059, "W");
+
+        //index type
+        htsDictionary.put(165796, "1");
+        htsDictionary.put(165797, "2");
+        htsDictionary.put(165795, "3");
+
+        //recency assay
+        htsDictionary.put(165852, "R");
+        htsDictionary.put(165851, "L");
+
+        //gender
+        htsDictionary.put(165184, "M");
+        htsDictionary.put(165185, "F");
+
     }
 
     private void loadBooleanDictionary() {
@@ -194,16 +239,18 @@ public class HTSDictionary {
         hivTestingReport.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
         hivTestingReport.setVisitDate(Utils.getXmlDate(enc.getEncounterDatetime()));
 
-        //setting
+        //setting with others been retrieved
         obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
         if (obs != null && obs.getValueCoded() != null) {
-            if(obs.getValueCoded().getConceptId().equals(HTS_CLIENT_INTAKE_SETTINGS_OTHERS)){
+            if (obs.getValueCoded().getConceptId().equals(HTS_CLIENT_INTAKE_SETTINGS_OTHERS)) {
                 obs = extractObs(HTS_CLIENT_INTAKE_SETTINGS_OTHERS_VALUE, allObs);
-                if(obs != null && obs.getValueText() != null){hivTestingReport.setSetting(obs.getValueText());}
-            }else{
-            hivTestingReport.setSetting(getMappedValue(obs.getValueCoded().getConceptId()));
+                if (obs != null && obs.getValueText() != null) {
+                    hivTestingReport.setSetting(obs.getValueText());
+                }
+            } else {
+                hivTestingReport.setSetting(getMappedValue(obs.getValueCoded().getConceptId()));
             }
-            
+
         }
 
         //first time visit
@@ -265,6 +312,32 @@ public class HTSDictionary {
                 hivTestingReport.setReTestingForResultVerification(getMappedValue(obs.getValueCoded().getConceptId()));
             }
 
+            //syphillis and hepatitis result
+            //syphilis test result
+            obs = extractObs(SYPHILLIS_STATUS_RESULT, allObs);
+            if (obs != null && obs.getValueCoded() != null) {
+                hivTestingReport.setSyphilisTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+
+            //hepatitis B test result
+            obs = extractObs(HEPATITIS_B_RESULT, allObs);
+            if (obs != null && obs.getValueCoded() != null) {
+                hivTestingReport.setHBVTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+
+            //hepatiis C test result
+            obs = extractObs(HEPATITIS_C_RESULT, allObs);
+            if (obs != null && obs.getValueCoded() != null) {
+                hivTestingReport.setHCVTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
+            }
+
+            //signature
+            try {
+                hivTestingReport.setCompletedBy(enc.getEncounterProviders().stream().findFirst().get().getProvider().getName());
+            } catch (Exception ex) {
+                LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+            }
+
         } catch (Exception ex) {
             LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
         }
@@ -276,15 +349,15 @@ public class HTSDictionary {
     public HIVTestResultType createHIVTestResult(Patient patient, Encounter enc, List<Obs> allObs) {
         HIVTestResultType hIVTestResultType = new HIVTestResultType();
 
-        List<RecencyTestingType> recencyTestingTypes = createRecencyType(patient, enc, allObs);
-        List<TestResultType> testResultTypes = createTestResultType(patient, enc, allObs);
+        RecencyTestingType recencyTestingType = createRecencyType(patient, enc, allObs);
+        TestResultType testResultTypes = createTestResultType(patient, enc, allObs);
 
-        if (!recencyTestingTypes.isEmpty()) {
-            hIVTestResultType.getRecencyTesting().addAll(recencyTestingTypes);
+        if (recencyTestingType != null) {
+            hIVTestResultType.setRecencyTesting(recencyTestingType);
         }
 
-        if (!testResultTypes.isEmpty()) {
-            hIVTestResultType.getTestResult().addAll(testResultTypes);
+        if (testResultTypes != null) {
+            hIVTestResultType.setTestResult(testResultTypes);
         }
 
         return hIVTestResultType;
@@ -338,8 +411,7 @@ public class HTSDictionary {
     }
 
     //Note returns only one recencyType object
-    public List<RecencyTestingType> createRecencyType(Patient patient, Encounter enc, List<Obs> allObs) {
-        List<RecencyTestingType> recenTestingTypes = new ArrayList<>();
+    public RecencyTestingType createRecencyType(Patient patient, Encounter enc, List<Obs> allObs) {
 
         RecencyTestingType recencyTestingType = new RecencyTestingType();
 
@@ -387,13 +459,11 @@ public class HTSDictionary {
             recencyTestingType.setFinalRecencyTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
-        recenTestingTypes.add(recencyTestingType);
-        return recenTestingTypes;
+        return recencyTestingType;
 
     }
 
-    public List<TestResultType> createTestResultType(Patient patient, Encounter enc, List<Obs> allObs) {
-        List<TestResultType> testResultTypes = new ArrayList<>();
+    public TestResultType createTestResultType(Patient patient, Encounter enc, List<Obs> allObs) {
 
         TestResultType testResultType = new TestResultType();
 
@@ -458,8 +528,7 @@ public class HTSDictionary {
             testResultType.setFinalTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
-        testResultTypes.add(testResultType);
-        return testResultTypes;
+        return testResultType;
     }
 
     public KnowledgeAssessmentType createKnowledgeAssessmentType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
@@ -741,7 +810,7 @@ public class HTSDictionary {
                 partnerDetailsType.setPartnerHCVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HCV_status", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = extractObs(Partner_syphilis_status, obsList);
+            obs = extractObs(SYPHILLIS_STATUS_RESULT, obsList);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerSyphilisStatus(getMappedValue(obs.getValueCoded().getConceptId()));

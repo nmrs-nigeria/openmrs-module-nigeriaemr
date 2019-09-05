@@ -1812,7 +1812,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ClientPregnant"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ClientPregnant"  type="xs:boolean" minOccurs="0"
        maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1947,31 +1947,31 @@
 
   <xs:complexType name="SyndromicSTIScreeningType">
     <xs:sequence>
-      <xs:element name="VaginalDischargeOrBurningWhenUrinating"  type="xs:boolean" minOccurs="1"
+      <xs:element name="VaginalDischargeOrBurningWhenUrinating"  type="xs:boolean" minOccurs="0"
        maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="LowerAbdominalPainsWithOrWithoutVaginalDischarge"  type="xs:boolean" minOccurs="1"
+      <xs:element name="LowerAbdominalPainsWithOrWithoutVaginalDischarge"  type="xs:boolean" minOccurs="0"
        maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="UrethralDischargeOrBurningWhenUrinating"  type="xs:boolean" minOccurs="1"
+      <xs:element name="UrethralDischargeOrBurningWhenUrinating"  type="xs:boolean" minOccurs="0"
        maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ScrotalSwellingAndPain"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ScrotalSwellingAndPain"  type="xs:boolean" minOccurs="0"
        maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="GenitalSoreOrSwollenInguinalLymphNodes"  type="xs:boolean" minOccurs="1"
+      <xs:element name="GenitalSoreOrSwollenInguinalLymphNodes"  type="xs:boolean" minOccurs="0"
        maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
@@ -3162,9 +3162,29 @@
 
   <xs:complexType name="FingerPrintType">
   	<xs:sequence>
-  		<xs:element name="dateCaptured" type="xs:date" minOccurs="1" maxOccurs="1"></xs:element>
-  		<xs:element name="rightHand" type="rightHandType" minOccurs="1" maxOccurs="1"></xs:element>
-  		<xs:element name="leftHand" type="leftHandType" minOccurs="1" maxOccurs="1"></xs:element>
+  		<xs:element name="dateCaptured" type="xs:date" minOccurs="0"
+  			maxOccurs="1">
+  		</xs:element>
+  		<xs:element name="rightHand" type="rightHandType"
+  			minOccurs="1" maxOccurs="1">
+  		</xs:element>
+  		<xs:element name="leftHand" type="leftHandType" minOccurs="1"
+  			maxOccurs="1">
+  		</xs:element>
+  		<xs:element name="source" minOccurs="0" maxOccurs="1">
+  		<xs:annotation>
+    				<xs:documentation xml:lang="en">
+    					Finger Print Source
+    				</xs:documentation>
+    			</xs:annotation>
+    			<xs:simpleType>
+    				<xs:restriction base="CodeType">
+    					<xs:enumeration value="M" />
+    					<xs:enumeration value="N" />
+    					<xs:enumeration value="UNK" />
+    				</xs:restriction>
+    			</xs:simpleType>
+  		</xs:element>
   	</xs:sequence>
   </xs:complexType>
   <xs:complexType name="rightHandType">
@@ -3215,15 +3235,15 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="CT" />
-    					<xs:enumeration value="TB" />
-    					<xs:enumeration value="STI" />
-    					<xs:enumeration value="FP" />
-    					<xs:enumeration value="OPD" />
-    					<xs:enumeration value="Ward" />
-    					<xs:enumeration value="Outreach Program" />
-    					<xs:enumeration value="Standalone HTS" />
-    					<xs:enumeration value="Others" />
+    					<xs:enumeration value="1" />
+    					<xs:enumeration value="2" />
+    					<xs:enumeration value="3" />
+    					<xs:enumeration value="4" />
+    					<xs:enumeration value="5" />
+    					<xs:enumeration value="6" />
+    					<xs:enumeration value="7" />
+    					<xs:enumeration value="8" />
+    					<xs:enumeration value="9" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3237,8 +3257,8 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="No" />
-    					<xs:enumeration value="Yes" />
+    					<xs:enumeration value="N" />
+    					<xs:enumeration value="Y" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3251,9 +3271,9 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Individual" />
-    					<xs:enumeration value="Couple" />
-    					<xs:enumeration value="Previously self tested" />
+    					<xs:enumeration value="1" />
+    					<xs:enumeration value="2" />
+    					<xs:enumeration value="3" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3266,14 +3286,14 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Self" />
-    					<xs:enumeration value="TB" />
-    					<xs:enumeration value="STI" />
-    					<xs:enumeration value="FP" />
-    					<xs:enumeration value="OPD" />
-    					<xs:enumeration value="Ward" />
-    					<xs:enumeration value="Blood Bank" />
-    					<xs:enumeration value="Others" />
+    					<xs:enumeration value="1" />
+    					<xs:enumeration value="2" />
+    					<xs:enumeration value="3" />
+    					<xs:enumeration value="4" />
+    					<xs:enumeration value="5" />
+    					<xs:enumeration value="6" />
+    					<xs:enumeration value="7" />
+    					<xs:enumeration value="8" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3286,12 +3306,12 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Single" />
-    					<xs:enumeration value="Married" />
-    					<xs:enumeration value="Divorced" />
-    					<xs:enumeration value="Separated" />
-    					<xs:enumeration value="Cohabiting" />
-    					<xs:enumeration value="Widow/er" />
+    					<xs:enumeration value="S" />
+    					<xs:enumeration value="M" />
+    					<xs:enumeration value="D" />
+    					<xs:enumeration value="A" />
+    					<xs:enumeration value="G" />
+    					<xs:enumeration value="W" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3310,8 +3330,8 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="No" />
-    					<xs:enumeration value="Yes" />
+    					<xs:enumeration value="N" />
+    					<xs:enumeration value="Y" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3323,9 +3343,9 @@
         			</xs:annotation>
         			<xs:simpleType>
         				<xs:restriction base="CodeType">
-        					<xs:enumeration value="Biological" />
-        					<xs:enumeration value="Sexual" />
-        					<xs:enumeration value="Social" />
+        					<xs:enumeration value="1" />
+        					<xs:enumeration value="2" />
+        					<xs:enumeration value="3" />
         				</xs:restriction>
         			</xs:simpleType>
     		</xs:element>
@@ -3341,8 +3361,8 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="No" />
-    					<xs:enumeration value="Yes" />
+    					<xs:enumeration value="N" />
+    					<xs:enumeration value="Y" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3361,8 +3381,8 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Reactive" />
-    					<xs:enumeration value="Non-Reactive" />
+    					<xs:enumeration value="R" />
+    					<xs:enumeration value="NR" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3430,10 +3450,10 @@
         	<xs:sequence>
 			<xs:element name="TestResult"
     		type="TestResultType" minOccurs="0"
-    		maxOccurs="unbounded" />
+    		maxOccurs="1" />
         	<xs:element name="RecencyTesting"
     		type="RecencyTestingType" minOccurs="0"
-    		maxOccurs="unbounded" />
+    		maxOccurs="1" />
         	</xs:sequence>
         </xs:complexType>
 
@@ -3455,8 +3475,8 @@
         			</xs:annotation>
         			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Recent" />
-    					<xs:enumeration value="Long Term" />
+    					<xs:enumeration value="R" />
+    					<xs:enumeration value="L" />
     				</xs:restriction>
     			</xs:simpleType>
         		</xs:element>
@@ -3473,8 +3493,8 @@
         			</xs:annotation>
         			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Recent" />
-    					<xs:enumeration value="Long Term" />
+    					<xs:enumeration value="R" />
+    					<xs:enumeration value="L" />
     				</xs:restriction>
     			</xs:simpleType>
         		</xs:element>
@@ -3490,8 +3510,8 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Reactive" />
-    					<xs:enumeration value="Non-Reactive" />
+    					<xs:enumeration value="R" />
+    					<xs:enumeration value="NR" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3510,8 +3530,8 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Reactive" />
-    					<xs:enumeration value="Non-Reactive" />
+    					<xs:enumeration value="R" />
+    					<xs:enumeration value="NR" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3530,8 +3550,8 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Reactive" />
-    					<xs:enumeration value="Non-Reactive" />
+    					<xs:enumeration value="R" />
+    					<xs:enumeration value="NR" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3550,8 +3570,8 @@
     			</xs:annotation>
     			<xs:simpleType>
     				<xs:restriction base="CodeType">
-    					<xs:enumeration value="Positive" />
-    					<xs:enumeration value="Negative" />
+    					<xs:enumeration value="Pos" />
+    					<xs:enumeration value="Neg" />
     				</xs:restriction>
     			</xs:simpleType>
     		</xs:element>
@@ -3569,8 +3589,8 @@
         			</xs:annotation>
         			<xs:simpleType>
         				<xs:restriction base="CodeType">
-        					<xs:enumeration value="Male" />
-        					<xs:enumeration value="Female" />
+        					<xs:enumeration value="M" />
+        					<xs:enumeration value="F" />
         				</xs:restriction>
         			</xs:simpleType>
         		</xs:element>
@@ -3582,9 +3602,9 @@
         			</xs:annotation>
         			<xs:simpleType>
         				<xs:restriction base="CodeType">
-        					<xs:enumeration value="Biological" />
-        					<xs:enumeration value="Sexual" />
-        					<xs:enumeration value="Social" />
+        					<xs:enumeration value="1" />
+        					<xs:enumeration value="2" />
+        					<xs:enumeration value="3" />
         				</xs:restriction>
         			</xs:simpleType>
         		</xs:element>
