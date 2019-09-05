@@ -535,7 +535,7 @@ public class PharmacyDictionary {
                 return null;
             }
 
-            if (pmtctIdentifier != null) {
+         //   if (pmtctIdentifier != null) {
 
                 try {
                     //set regimen line
@@ -611,7 +611,7 @@ public class PharmacyDictionary {
                     }
                 }
 
-            }
+          //  }
 
             //set regimen code
             /*

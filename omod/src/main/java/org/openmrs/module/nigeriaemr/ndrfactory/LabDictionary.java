@@ -216,7 +216,7 @@ public class LabDictionary {
                 labReportType.setARTStatusCode("N");
             }
 
-            if (pmtctIdentifier != null || htsIdentifier != null) {
+          //  if (pmtctIdentifier != null || htsIdentifier != null) {
                 Obs obs = extractObs(Visit_Type_Concept_Id, labObsList);
                 if (obs != null && obs.getValueCoded() != null) {
                     LoggerUtils.write(LabDictionary.class.getName(), "About to pull Visit_Type_Concept_Id", LogFormat.FATAL, LogLevel.debug);
@@ -252,8 +252,8 @@ public class LabDictionary {
                 } else {
                     return null;
                 }
-            }
-            return labReportType;
+          //  }
+          //  return labReportType;
 
         } catch (Exception ex) {
             LoggerUtils.write(LabDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);

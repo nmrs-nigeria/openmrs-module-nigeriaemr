@@ -355,7 +355,7 @@ public class NDRMainDictionary {
             HIVQuestionsType hiv = new HIVQuestionsType();
             boolean onART = false;
 
-            if (pmtctIdentifier != null) {
+           // if (pmtctIdentifier != null) {
                 //get first regimen
                 Obs FirstRegimen = Utils.getFirstRegimen(encounters);
 
@@ -376,7 +376,7 @@ public class NDRMainDictionary {
                     onART = true;
                     hiv.setARTStartDate(getXmlDate(FirstRegimen.getObsDatetime()));
                 }
-            }
+          //  }
 
             int conceptID;
             double value_numeric;
@@ -393,7 +393,7 @@ public class NDRMainDictionary {
 
                 conceptID = obs.getConcept().getConceptId();
 
-                if (pmtctIdentifier != null) {
+              //  if (pmtctIdentifier != null) {
 
                     switch (conceptID) {
 
@@ -482,9 +482,9 @@ public class NDRMainDictionary {
                         default:
                             break;
                     }
-                }
+           //     }
 
-                if (htsIdentifier != null) {
+            //    if (htsIdentifier != null) {
                     switch (conceptID) {
                         case Care_Entry_Point:
                             if (null == obs.getValueCoded()) {
@@ -517,7 +517,7 @@ public class NDRMainDictionary {
                         default:
                             break;
                     }
-                }
+              //  }
 
                 switch (conceptID) {
 
