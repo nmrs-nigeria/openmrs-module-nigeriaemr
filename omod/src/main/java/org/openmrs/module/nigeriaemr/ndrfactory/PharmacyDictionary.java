@@ -508,12 +508,12 @@ public class PharmacyDictionary {
                 stopDateTime = startDateTime.plusDays(durationDays);
             }
         }
-        if (stopDateTime == null) {
+        /*if (stopDateTime == null) {
             obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsList);
             if (obs != null) {
                 stopDateTime = new DateTime(obs.getValueDate());
             }
-        }
+        }*/
         return stopDateTime;
     }
 
