@@ -214,9 +214,9 @@ public class NDRMainDictionary {
             throws DatatypeConfigurationException {
         return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList );
     }*/
-    public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList)
+    public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList,Date artStartDate)
             throws DatatypeConfigurationException {
-        return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList);
+        return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList,artStartDate);
     }
 
     public ChildBirthDetailsType createChildBirthDetailsType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
@@ -260,10 +260,9 @@ public class NDRMainDictionary {
         return htsDictionary.createHIVTestResult(patient, enc, allObs);
     }
 
-    public List<IndexNotificationServicesType> createIndexNotificationServicesTypes(Patient patient, Encounter enc, List<Obs> allObs) {
-        List<IndexNotificationServicesType> indexNotificationServicesTypes = new ArrayList<>();
-        indexNotificationServicesTypes = htsDictionary.createIndexNotificationServicesTypes(patient, enc, allObs);
-        return indexNotificationServicesTypes;
+    public IndexNotificationServicesType createIndexNotificationServicesTypes(Patient patient, Encounter enc, List<Obs> allObs) {        
+      IndexNotificationServicesType  indexNotificationServicesType = htsDictionary.createIndexNotificationServicesTypes(patient, enc, allObs);
+        return indexNotificationServicesType;
     }
 
     public List<HIVRiskAssessmentType> createHivRiskAssessment(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
@@ -323,14 +322,18 @@ public class NDRMainDictionary {
     public List<PartnerDetailsType> createPartnerDetails(Patient pts, List<Encounter> encounters, List<Obs> obsList) throws DatatypeConfigurationException {
 
         List<PartnerDetailsType> partnerDetailsTypes = new ArrayList<>();
-        for (Encounter enc : encounters) {
-            if (enc.getEncounterType().getEncounterTypeId() == Utils.Partner_register_Encounter_Id) {
-                PartnerDetailsType p_details = htsDictionary.createPartnerDetails(pts, enc, obsList);
-                if (p_details != null) {
-                    partnerDetailsTypes.add(p_details);
-                }
-            }
-        }
+       try{
+           for (Encounter enc : encounters) {
+               if (enc.getEncounterType().getEncounterTypeId() == Utils.Partner_register_Encounter_Id) {
+                   PartnerDetailsType p_details = htsDictionary.createPartnerDetails(pts, enc, obsList);
+                   if (p_details != null) {
+                       partnerDetailsTypes.add(p_details);
+                   }
+               }
+           }
+       }catch(Exception ex){
+           LoggerUtils.write(NDRMainDictionary.class.getName(),ex.getMessage(),LogFormat.WARNING,LogLevel.debug);
+       }
         return partnerDetailsTypes;
     }
 }

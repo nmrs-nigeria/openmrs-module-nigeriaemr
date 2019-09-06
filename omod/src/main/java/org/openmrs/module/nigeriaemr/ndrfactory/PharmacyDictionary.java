@@ -499,21 +499,25 @@ public class PharmacyDictionary {
         DateTime startDateTime = null;
         int durationDays = 0;
         Obs obs = null;
+        List<Obs> targetObsList=new ArrayList<Obs>();
+        
         Obs obsGroup = Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
-        if (obs != null) {
-            obs = Utils.extractObsGroupMemberWithConceptID(Utils.MEDICATION_DURATION_CONCEPT, obsList, obsGroup);
+        if (obsGroup != null) {
+            targetObsList.addAll(obsGroup.getGroupMembers());
+            obs = Utils.extractObs(Utils.MEDICATION_DURATION_CONCEPT, targetObsList);
             if (obs != null) {
                 durationDays = (int) obs.getValueNumeric().doubleValue();
                 startDateTime = new DateTime(visitDate);
                 stopDateTime = startDateTime.plusDays(durationDays);
             }
         }
-        if (stopDateTime == null) {
+        
+        /*if (stopDateTime == null) {
             obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsList);
             if (obs != null) {
                 stopDateTime = new DateTime(obs.getValueDate());
             }
-        }
+        }*/
         return stopDateTime;
     }
 
@@ -535,7 +539,7 @@ public class PharmacyDictionary {
                 return null;
             }
 
-            if (pmtctIdentifier != null) {
+         //   if (pmtctIdentifier != null) {
 
                 try {
                     //set regimen line
@@ -611,7 +615,7 @@ public class PharmacyDictionary {
                     }
                 }
 
-            }
+          //  }
 
             //set regimen code
             /*

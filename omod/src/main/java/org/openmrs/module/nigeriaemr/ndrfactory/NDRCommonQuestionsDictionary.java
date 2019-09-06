@@ -457,7 +457,7 @@ public class NDRCommonQuestionsDictionary {
                 //set estimated delivery date concept id
                 //obs = Utils.extractObs(Estimated_Delivery_Date_Concept_Id, hivEnrollmentObs);
                 obs = Utils.getLastObsOfConceptByDate(allObs, Utils.PREGNANCY_BREASTFEEDING_STATUS);
-                if (obs != null) {
+                if (obs != null && obs.getValueCoded() != null) {
                     valueCoded=obs.getValueCoded().getConceptId();
                     ndrCode=getMappedValue(valueCoded);
                     common.setPatientPregnancyStatusCode(ndrCode);

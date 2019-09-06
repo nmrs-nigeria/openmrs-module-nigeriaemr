@@ -540,9 +540,12 @@ public class Utils {
                 regimenLineObsList.add(ele);
             }
         }
-        regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
-        int size = regimenLineObsList.size();
-        return regimenLineObsList.get(size - 1);
+        if(!regimenLineObsList.isEmpty()){
+			regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
+			int size = regimenLineObsList.size();
+			return regimenLineObsList.get(size - 1);
+		}
+       return null;
     }
 	
 	public static Set<Date> extractUniqueVisitsForEncounterTypes(Patient pts, List<Encounter> encounterList,

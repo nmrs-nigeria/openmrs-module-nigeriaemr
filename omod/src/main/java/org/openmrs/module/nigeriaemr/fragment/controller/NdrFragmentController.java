@@ -118,78 +118,77 @@ public class NdrFragmentController {
 			//            });
 			//
 			long loop_start_time = System.currentTimeMillis();
+			int counter = 0;
+			Container cnt = null;
 			for (Patient patient : patients) {
 				
 				long startTime = System.currentTimeMillis();
-				int indexofPatient = patients.indexOf(patient);
-				System.out.println("pateint " + indexofPatient + " of " + patients.size());
+				counter++;
+				System.out.println("pateint  " + counter + " of " + patients.size() + " with ID " + patient.getId());
 				
-				if (patient.getId() == 10809) {
-					Container cnt = null;
+				// if (patient.getId() == 15 || patient.getId() == 16 || patient.getId() == 17) {
+				try {
+					LoggerUtils.write(NdrFragmentController.class.getName(),
+					    "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
+					LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
+					        + patient.getId(), LoggerUtils.LogFormat.INFO, LogLevel.live);
+					
+					cnt = generator.createContainer(patient, facility);
+					
+				}
+				catch (Exception ex) {
+					LoggerUtils.write(
+					    NdrFragmentController.class.getName(),
+					    MessageFormat.format("Could not parse patient with id: {0},{1},{2} ",
+					        Integer.toString(patient.getId()), "\r\n", ex.getMessage()), LogFormat.FATAL, LogLevel.live);
+					cnt = null;
+				}
+				
+				if (cnt != null) {
+					LoggerUtils.write(NdrFragmentController.class.getName(),
+					    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
 					try {
-						LoggerUtils
-						        .write(NdrFragmentController.class.getName(),
-						            "#################### #################### ####################", LogFormat.FATAL,
-						            LogLevel.live);
-						LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
-						        + patient.getId(), LoggerUtils.LogFormat.INFO, LogLevel.live);
 						
-						cnt = generator.createContainer(patient, facility);
+						String pepFarId = Utils.getPatientPEPFARId(patient);
 						
+						if (pepFarId != null) { //remove forward slashes / from file names
+							pepFarId = pepFarId.replace("/", "_").replace(".", "_");
+						} else {
+							pepFarId = "";
+						}
+						
+						String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_" + pepFarId;
+						
+						// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
+						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
+						
+						File aXMLFile = new File(xmlFile);
+						Boolean b;
+						if (aXMLFile.exists()) {
+							b = aXMLFile.delete();
+							System.out.println("deleting file : " + xmlFile + "was successful : " + b);
+						}
+						b = aXMLFile.createNewFile();
+						
+						System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
+						generator.writeFile(cnt, aXMLFile, jaxbMarshaller);
 					}
 					catch (Exception ex) {
-						LoggerUtils.write(
-						    NdrFragmentController.class.getName(),
-						    MessageFormat.format("Could not parse patient with id: {0},{1},{2} ",
-						        Integer.toString(patient.getId()), "\r\n", ex.getMessage()), LogFormat.FATAL, LogLevel.live);
-						cnt = null;
+						LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
+						    LogLevel.live);
 					}
-					
-					if (cnt != null) {
-						LoggerUtils.write(NdrFragmentController.class.getName(),
-						    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
-						try {
-							
-							String pepFarId = Utils.getPatientPEPFARId(patient);
-							
-							if (pepFarId != null) { //remove forward slashes / from file names
-								pepFarId = pepFarId.replace("/", "_").replace(".", "_");
-							} else {
-								pepFarId = "";
-							}
-							
-							String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_" + pepFarId;
-							
-							// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
-							String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
-							
-							File aXMLFile = new File(xmlFile);
-							Boolean b;
-							if (aXMLFile.exists()) {
-								b = aXMLFile.delete();
-								System.out.println("deleting file : " + xmlFile + "was successful : " + b);
-							}
-							b = aXMLFile.createNewFile();
-							
-							System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
-							generator.writeFile(cnt, aXMLFile, jaxbMarshaller);
-						}
-						catch (Exception ex) {
-							LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
-							    LogLevel.live);
-						}
-					}
-					
-					long endTime = System.currentTimeMillis();
-					LoggerUtils.write(NdrFragmentController.class.getName(), "Finished Export for patient with id: "
-					        + patient.getId() + " Time Taken: " + (endTime - startTime) + " milliseconds",
-					    LoggerUtils.LogFormat.INFO, LogLevel.live);
-					System.out.println("generating ndr took : " + (endTime - startTime) + " milli secs : ");
-					//	}
 				}
-				long loop_end_time = System.currentTimeMillis();
-				System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
+				
+				long endTime = System.currentTimeMillis();
+				LoggerUtils.write(NdrFragmentController.class.getName(),
+				    "Finished Export for patient with id: " + patient.getId() + " Time Taken: " + (endTime - startTime)
+				            + " milliseconds", LoggerUtils.LogFormat.INFO, LogLevel.live);
+				System.out.println("generating ndr took : " + (endTime - startTime) + " milli secs : ");
+				//	}
 			}
+			long loop_end_time = System.currentTimeMillis();
+			System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
+			//}
 			
 			//Update ndr last run date
 			Utils.updateLast_NDR_Run_Date(new Date());

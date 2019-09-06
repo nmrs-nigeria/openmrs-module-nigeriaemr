@@ -3416,7 +3416,7 @@
     		</xs:element>
     		<xs:element name="IndexNotificationServices"
     			type="IndexNotificationServicesType" minOccurs="0"
-    			maxOccurs="unbounded" />
+    			maxOccurs="1" />
     		<xs:element name="CompletedBy" type="xs:string"
     			minOccurs="0" maxOccurs="1">
     		</xs:element>
@@ -3580,6 +3580,13 @@
 
         <xs:complexType name="IndexNotificationServicesType">
         	<xs:sequence>
+        	        		<xs:element name="Partner" type="PartnerNotificationType" minOccurs="0" maxOccurs="unbounded"></xs:element>
+        	</xs:sequence>
+        </xs:complexType>
+
+        <xs:complexType name="PartnerNotificationType">
+
+        	<xs:sequence>
         		<xs:element name="Partnername" type="xs:string"></xs:element>
         		<xs:element name="PartnerGender">
         			<xs:annotation>
@@ -3612,6 +3619,7 @@
         			type="xs:string">
         		</xs:element>
         		<xs:element name="PhoneNumber" type="xs:string"></xs:element>
+        	
         	</xs:sequence>
         </xs:complexType>
 </xs:schema>

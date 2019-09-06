@@ -194,7 +194,7 @@ public class LabDictionary {
         return labTestDictionary.keySet().contains(conceptID);
     }
 
-    public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList)
+    public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList,Date artStartDate)
             throws DatatypeConfigurationException {
 
         try {
@@ -209,14 +209,14 @@ public class LabDictionary {
             labReportType.setVisitDate(convertedDate);
             labReportType.setCollectionDate(convertedDate);
 
-            Date artStartDate = Utils.extractARTStartDate(pts,labObsList);
+           // Date artStartDate = Utils.extractARTStartDate(pts,labObsList);
             if (artStartDate.after(enc.getEncounterDatetime()) || artStartDate.equals(enc.getEncounterDatetime())) {
                 labReportType.setARTStatusCode("A");
             }else {
                 labReportType.setARTStatusCode("N");
             }
 
-            if (pmtctIdentifier != null || htsIdentifier != null) {
+          //  if (pmtctIdentifier != null || htsIdentifier != null) {
                 Obs obs = extractObs(Visit_Type_Concept_Id, labObsList);
                 if (obs != null && obs.getValueCoded() != null) {
                     LoggerUtils.write(LabDictionary.class.getName(), "About to pull Visit_Type_Concept_Id", LogFormat.FATAL, LogLevel.debug);
@@ -252,8 +252,8 @@ public class LabDictionary {
                 } else {
                     return null;
                 }
-            }
-            return labReportType;
+          //  }
+          //  return labReportType;
 
         } catch (Exception ex) {
             LoggerUtils.write(LabDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
@@ -318,7 +318,7 @@ OtherLaboratoryInformation
 
         AnswerType answer;
         NumericType numeric;
-        Date orderedDate = new Date();
+        Date orderedDate = null;
 
         Obs obsEle = extractObs(Ordered_Date_Concept_id, obsList);
         if (obsEle != null) {

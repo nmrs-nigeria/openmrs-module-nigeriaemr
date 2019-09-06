@@ -241,7 +241,7 @@ public class ClinicalDictionary {
         CodedSimpleType codedSimpleType = null;
         PatientIdentifier pepfarIdentifier = patient.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
         //Check for nulls before calling these methods
-        if (pepfarIdentifier != null) {
+      //  if (pepfarIdentifier != null) {
             pepfarID = pepfarIdentifier.getIdentifier();
             visitID = Utils.getVisitId(pepfarID, visitDate);
             hivEncounterType = new HIVEncounterType();
@@ -413,7 +413,7 @@ public class ClinicalDictionary {
             if (nextAppointmentDate != null) {
                 hivEncounterType.setNextAppointmentDate(Utils.getXmlDate(nextAppointmentDate.toDate()));
             }
-        }
+       // }
 
         return hivEncounterType;
     }
