@@ -126,7 +126,7 @@ public class NdrFragmentController {
 				counter++;
 				System.out.println("pateint  " + counter + " of " + patients.size() + " with ID " + patient.getId());
 				
-				// if (patient.getId() == 15 || patient.getId() == 16 || patient.getId() == 17) {
+				//	if (patient.getId() == 497) {
 				try {
 					LoggerUtils.write(NdrFragmentController.class.getName(),
 					    "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
@@ -184,11 +184,11 @@ public class NdrFragmentController {
 				    "Finished Export for patient with id: " + patient.getId() + " Time Taken: " + (endTime - startTime)
 				            + " milliseconds", LoggerUtils.LogFormat.INFO, LogLevel.live);
 				System.out.println("generating ndr took : " + (endTime - startTime) + " milli secs : ");
+				
+				long loop_end_time = System.currentTimeMillis();
+				System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
 				//	}
 			}
-			long loop_end_time = System.currentTimeMillis();
-			System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
-			//}
 			
 			//Update ndr last run date
 			Utils.updateLast_NDR_Run_Date(new Date());

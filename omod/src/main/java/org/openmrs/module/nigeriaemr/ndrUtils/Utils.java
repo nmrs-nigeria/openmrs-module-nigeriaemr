@@ -330,8 +330,12 @@ public class Utils {
         List<Encounter> filteredEncounters = encs.stream().filter(encounter -> Objects.equals(encounterTypes, encounter.getEncounterType()
                 .getEncounterTypeId()))
                 .collect(Collectors.toList());
-        filteredEncounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
-        return filteredEncounters.get(filteredEncounters.size() - 1);
+        if(!filteredEncounters.isEmpty()){
+			filteredEncounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
+			return filteredEncounters.get(filteredEncounters.size() - 1);
+		}
+        return null;
+
     }
 	
 	public static String getFacilityName() {
@@ -528,8 +532,12 @@ public class Utils {
                 regimenLineObsList.add(ele);
             }
         }
-        regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
-        return regimenLineObsList.get(0);
+        if(!regimenLineObsList.isEmpty()){
+			regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
+			return regimenLineObsList.get(0);
+		}
+        return null;
+
     }
 	
 	public static Obs getLastObsOfConceptByDate(List<Obs> obsList, int conceptID) {
@@ -698,8 +706,11 @@ public class Utils {
 	public static Encounter getLastEncounter(List<Encounter> encList) {
         //sort the list by date
         encList.sort(Comparator.comparing(Encounter::getEncounterDatetime));
-        int size = encList.size();
-        return encList.get(size - 1);
+        if(!encList.isEmpty()){
+			int size = encList.size();
+			return encList.get(size - 1);
+		}
+        return null;
     }
 	
 	public static List<Obs> getCareCardObs(Patient patient, Date endDate) {

@@ -205,7 +205,7 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDNumber(pepfarid.getIdentifier());
                 demo.setPatientIdentifier(pepfarid.getIdentifier());
             } else {
-                demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX).getIdentifier() + "_" + pts.getId());
+               // demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX).getIdentifier() + "_" + pts.getId());
             }
             if (pidHospital != null) {
                 idt = new IdentifierType();
@@ -269,9 +269,14 @@ public class NDRCommonQuestionsDictionary {
                 demo.setPhoneNumber(pts.getPerson().getAttribute(8).getValue());
             }
 
-            String testCode = pts.getFamilyName() + " " + pts.getGivenName() + "" + pts.getMiddleName();
-            Soundex soundex = new Soundex();
-            demo.setEnrolleeCode(soundex.encode(testCode));
+            try{
+                String testCode = pts.getFamilyName() + " " + pts.getGivenName() + "" + pts.getMiddleName();
+                Soundex soundex = new Soundex();
+                demo.setEnrolleeCode(soundex.encode(testCode));
+            }catch (Exception ex){
+                //
+            }
+
             String ndrCodedValue;
             Integer[] formEncounterTypeTargets = {Utils.ADULT_INITIAL_ENCOUNTER_TYPE,Utils.PED_INITIAL_ENCOUNTER_TYPE,Utils.INITIAL_ENCOUNTER_TYPE, Utils.HIV_Enrollment_Encounter_Type_Id, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
             List<Obs> obsListForEncounterTypes = Utils.extractObsListForEncounterType(allObsListForPatient, formEncounterTypeTargets);
@@ -293,9 +298,14 @@ public class NDRCommonQuestionsDictionary {
                 }
                 //check Educational level
                 obs = Utils.extractObs(Utils.EDUCATIONAL_LEVEL_CONCEPT, obsListForEncounterTypes);
-                if (obs != null) {
+                if (obs != null && obs.getValueCoded() != null) {
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
-                    demo.setPatientEducationLevelCode(ndrCodedValue);
+                    if(ndrCodedValue.equals("N")){
+                        demo.setPatientEducationLevelCode("1");
+                    }else{
+                        demo.setPatientEducationLevelCode(ndrCodedValue);
+                    }
+
                 }
                 //check primary Concept Id
                 //obs = Utils.extractObs(Utils.PRIMARY_LANGUAGE_CONCEPT, obsListForEncounterTypes);
@@ -305,13 +315,13 @@ public class NDRCommonQuestionsDictionary {
                 // }
                 //check Occupational Code
                 obs = Utils.extractObs(Utils.OCCUPATIONAL_STATUS_CONCEPT, obsListForEncounterTypes);
-                if (obs != null) {
+                if (obs != null && obs.getValueCoded() != null) {
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
                     demo.setPatientOccupationCode(ndrCodedValue);
                 }
                 //check Marital Status Code
                 obs = Utils.extractObs(Utils.MARITAL_STATUS_CONCEPT, obsListForEncounterTypes);
-                if (obs != null) {
+                if (obs != null && obs.getValueCoded() != null) {
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
                     demo.setPatientMaritalStatusCode(ndrCodedValue);
                 }
@@ -340,15 +350,17 @@ public class NDRCommonQuestionsDictionary {
 
             connection = DriverManager.getConnection(connResult.getUrl(), connResult.getUsername(), connResult.getPassword());
             Statement statement = connection.createStatement();
-            String sqlStatement = ("SELECT template, fingerPosition, date_created FROM biometricinfo WHERE patient_Id = " + id);
+            String sqlStatement = ("SELECT template, fingerPosition, date_created,creator FROM biometricinfo WHERE patient_Id = " + id);
             ResultSet result = statement.executeQuery(sqlStatement);
             FingerPrintType fingerPrintsType = new FingerPrintType();
             if (result.next()) {
                 RightHandType rightFingerType = new RightHandType();
                 LeftHandType leftFingerType = new LeftHandType();
                 XMLGregorianCalendar dataCaptured = null;
+                Integer creator = null;
                 while(result.next()){
                     String fingerPosition = result.getString("fingerPosition");
+                    creator = result.getInt("creator");
                     dataCaptured = Utils.getXmlDateTime(result.getDate("date_created"));
                     switch(fingerPosition){
                         case "RightThumb":
@@ -386,7 +398,13 @@ public class NDRCommonQuestionsDictionary {
                 /*do{
 
                 } while(result.next());*/
-
+                if(creator == 0){
+                    fingerPrintsType.setSource("N");
+                }else if(creator == 1){
+                    fingerPrintsType.setSource("M");
+                }else {
+                    fingerPrintsType.setSource("UNK");
+                }
                 fingerPrintsType.setDateCaptured(dataCaptured);
 
                 fingerPrintsType.setPresent(true);

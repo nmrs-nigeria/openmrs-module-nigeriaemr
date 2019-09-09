@@ -487,12 +487,7 @@ public class HTSDictionary {
 
         TestResultType testResultType = new TestResultType();
 
-        SCREENING_TEST_RESULT = 165840;
-        CONFIRMATORY_TEST_RESULT = 165841;
-        TIE_BREAKER_RESULT = 165842;
-        SCREENING_TEST_RESULT_DATE = 165844;
-        CONFIRMATORY_TEST_RESULT_date = 165845;
-        TIE_BREAKER_RESULT_DATE = 165846;
+
 
         //screening test result
         Obs obs = extractObs(SCREENING_TEST_RESULT, allObs);
