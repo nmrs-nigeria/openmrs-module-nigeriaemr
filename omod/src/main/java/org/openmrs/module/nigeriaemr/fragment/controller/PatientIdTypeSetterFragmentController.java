@@ -59,7 +59,7 @@ public class PatientIdTypeSetterFragmentController {
 			}
 		}
 		catch (Exception e) {
-			result.message = "An unknown error was encountered and the request could not be processed. Please contact technical support";
+			result.message = e.getMessage();
 			result.code = -1;
 			return result;
 		}
