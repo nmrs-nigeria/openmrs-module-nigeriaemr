@@ -43,23 +43,7 @@ def id = config.id
     });
 
 
-    jq(function() {
-        jq('#${ id }_button_tester').click(function() {
-    jq('#gen-wait').show();
 
-            jq.getJSON('${ ui.actionLink("reloadTester") }')
-    .success(function(data) {
-    jq('#gen-wait').hide();
-    alert(data);
-    console.log(data);
-    })
-    .error(function(xhr, status, err) {
-    jq('#gen-wait').hide();
-    alert(data);
-
-    })
-    });
-    });
 
 </script>
 
@@ -69,9 +53,5 @@ def id = config.id
     <p>Generate NDR</p>
 </a>
 
-<a id="${ id }_button_tester"  class="button app big" style="font-size:12px;min-height: 10px;">
-    <i class="icon-download"></i>
-    <br/>
-    <p>Refresh Community Testers</p>
-</a>
+
 

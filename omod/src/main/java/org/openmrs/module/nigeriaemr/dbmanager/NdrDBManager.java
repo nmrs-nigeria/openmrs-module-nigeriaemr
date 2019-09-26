@@ -214,4 +214,8 @@ public class NdrDBManager {
         return response;
         
     }
+	
+	public void getFacilityLocationByLocationId(int locationId) {
+		
+	}
 }

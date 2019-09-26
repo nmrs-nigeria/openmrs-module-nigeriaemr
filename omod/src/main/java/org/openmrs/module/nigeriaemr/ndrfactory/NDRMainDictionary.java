@@ -218,7 +218,7 @@ public class NDRMainDictionary {
             throws DatatypeConfigurationException {
         return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList,artStartDate);
     }
-
+/*
     public ChildBirthDetailsType createChildBirthDetailsType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
         return pmtctDictionary.createChildBirthDetailsType(pts, null, antenatalObsList);
     }
@@ -234,7 +234,7 @@ public class NDRMainDictionary {
     public InfantPCRTestingType createInfantPcr(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
         return pmtctDictionary.createInfantPcr(pts, null, antenatalObsList);
     }
-
+*/
     public List<ClinicalTBScreeningType> createClinicalTbScreening(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<ClinicalTBScreeningType> clinicalTBScreeningTypes = new ArrayList<>();
 

@@ -135,19 +135,7 @@ public class PharmacyDictionary {
         regimenMap.put(165631, "Missing NDR Code from IHVN Instance"); //Dolutegravir
         regimenMap.put(1674, "Missing NDR Code frm IHVN Instance");//RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS
 
-        //Added By Nelson Attah
-        //OI drug
-        /*regimenMap.put("Cotrimoxazole 960mg", "CTX960");
-        regimenMap.put("Cotrimoxazole 800mg", "CTX800");
-        regimenMap.put("Cotrimoxazole 480mg", "CTX480");
-        regimenMap.put("Cotrimoxazole 400mg", "CTX400");
-        regimenMap.put("Cotrimoxazole 240mg/5ml", "CTX240");
-        regimenMap.put("Fluconazole", "FLUC");
-        regimenMap.put("Dapsone", "DDS");
-        regimenMap.put("Isoniazid-Pyridoxine", "INHB6");*/
- /*
-		* Added by Johnbosco
-		* */
+		
  /*regimenMap.put(165257, "CTX480");
 		regimenMap.put(76488, "UnknownCode");
 		regimenMap.put(1679, "UnknownCode");

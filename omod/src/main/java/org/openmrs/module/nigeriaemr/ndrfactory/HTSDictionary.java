@@ -134,7 +134,7 @@ public class HTSDictionary {
     public static int HIV_RECENCY_TEST_DATE_CONCEPT = 165850;
     public static int HIV_RECENCY_ASSAY_CONCEPT = 165853;
     public static int SAMPLE_TEST_DATE_CONCEPT = 165854;
-    public static int SAMPLE_TEST_RESULT_CONCEPT = 165855;
+    public static int SAMPLE_TEST_RESULT_CONCEPT = 856;
     public static int FINAL_HIV_RECENCY_INFECTION_TESTING_ALGORITHM_RESULT_CONCEPT = 165856;
 
     //syphillis and hepatitis
@@ -469,8 +469,8 @@ public class HTSDictionary {
 
         //result copies
         obs = extractObs(SAMPLE_TEST_RESULT_CONCEPT, allObs);
-        if (obs != null && obs.getValueText() != null) {
-            recencyTestingType.setViralLoadConfirmationResult(obs.getValueText());
+        if (obs != null && obs.getValueNumeric() != null) {
+            recencyTestingType.setViralLoadConfirmationResult(String.valueOf(obs.getValueNumeric()));
         }
 
         //final HIV Result

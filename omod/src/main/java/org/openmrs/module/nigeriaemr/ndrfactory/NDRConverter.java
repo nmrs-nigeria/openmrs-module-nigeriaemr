@@ -277,8 +277,11 @@ public class NDRConverter {
                 encType.getHIVEncounter().addAll(hivEncounter);
                 condition.setEncounters(encType);
             }
+            
 
+            //comment out PMTCT for now
             //create Child birth details
+         /*   
             ChildBirthDetailsType childBirthDetailsType = mainDictionary.createChildBirthDetailsType(patient,
                     this.encounters, this.allobs);
             if (childBirthDetailsType != null && childBirthDetailsType.getChildHospitalNumber() != null) {
@@ -292,24 +295,28 @@ public class NDRConverter {
                 condition.getChildFollowup().add(childFollowupType);
             }
 
-            /*	//immunization Type
+            	//immunization Type
 				ImmunizationType immunizationType = mainDictionary.createImmunizationType(patient, this.encounters, this.allobs);
 				if (immunizationType != null) {
 					condition.getImmunization().add(immunizationType);
-				}*/
+				}
             //Infant PCR Testing Type
             InfantPCRTestingType infantPCRTestingType = mainDictionary
                     .createInfantPcr(patient, this.encounters, this.allobs);
             if (infantPCRTestingType != null) {
                 condition.getInfantPCRTesting().add(infantPCRTestingType);
             }
-
+*/
+            
+           
+            
 //                        List<LaboratoryReportType> laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
 //			    this.encounters, this.allobs);
 //			if (laboratoryReport != null && laboratoryReport.size() > 0) {
 //				condition.getLaboratoryReport().addAll(laboratoryReport);
 //			}
-            //Lab report
+            
+//Lab report
             List<Encounter> tempEncs = encounters.stream().filter(e -> e.getEncounterType().getEncounterTypeId() == Utils.Laboratory_Encounter_Type_Id).collect(Collectors.toList());
             if (!tempEncs.isEmpty()) {
                 Date artStartdate = Utils.extractARTStartDate(patient, allobs);
@@ -424,7 +431,7 @@ public class NDRConverter {
 		
 		header.setMessageCreationDateTime(Utils.getXmlDateTime(cal.getTime()));
 		header.setMessageStatusCode("INITIAL");
-		header.setMessageSchemaVersion(new BigDecimal("1.3"));
+		header.setMessageSchemaVersion(new BigDecimal("1.4"));
 		header.setMessageUniqueID(UUID.randomUUID().toString());
 		return header;
 	}

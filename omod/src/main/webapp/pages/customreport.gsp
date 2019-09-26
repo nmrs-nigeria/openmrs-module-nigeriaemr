@@ -23,10 +23,6 @@
 
 ${ ui.includeFragment("nigeriaemr", "ndr")}
 
-${ ui.includeFragment("nigeriaemr", "nigeriaqual")}
-
-${ ui.includeFragment("nigeriaemr", "nigeriaqualpeads") }
-
 ${ ui.includeFragment("nigeriaemr", "ndrVersion") }
 
 
