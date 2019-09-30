@@ -14,11 +14,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javafx.scene.transform.Transform;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getXmlDateTime;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
+import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientContactsModel;
+import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.TesterModel;
 import org.openmrs.util.OpenmrsUtil;
 
@@ -169,12 +172,72 @@ public class NdrDBManager {
 		
 	}
 	
+	public List<FacilityLocation> getFacilityLocationByLocationId() throws SQLException {
+		String sql_txt = "select id,uuid,location_id,datimCode,facility_name,date_created,creator,date_modified,modified_by";
+		pStatement = conn.prepareStatement(sql_txt);
+		pStatement.execute();
+		
+		return convertFacilityLocationToList(resultSet);
+		
+	}
+	
+	public List<PatientLocation> getPatientLocation() throws SQLException {
+		
+		String sql = "select distinct p.patient_id,pd.location_id from patient p \n"
+		        + "inner join patient_identifier pd on p.patient_id = pd.patient_id and pd.location_id is not null \n"
+		        + "group by p.patient_id";
+		
+		pStatement = conn.prepareStatement(sql);
+		resultSet = pStatement.executeQuery();
+		
+		return convertPatientLocationToList(resultSet);
+		
+	}
+	
+	private List<FacilityLocation> convertFacilityLocationToList(ResultSet resultSet) throws SQLException {
+        List<FacilityLocation> facilityLocations = new ArrayList<>();
+        while (resultSet.next()) {
+            FacilityLocation facilityLocation = new FacilityLocation();
+            facilityLocation.setCreator(resultSet.getString("creator"));
+            facilityLocation.setDate_created(resultSet.getDate("date_created"));
+            facilityLocation.setDate_modified(resultSet.getDate("date_modified"));
+            facilityLocation.setDatimCode(resultSet.getString("datimCode"));
+            facilityLocation.setFacility_name(resultSet.getString("facility_name"));
+            facilityLocation.setId(resultSet.getInt("id"));
+            facilityLocation.setLocation_id(resultSet.getInt("location_id"));
+            facilityLocation.setModified_by(resultSet.getString("modified_by"));
+            facilityLocation.setUuid(resultSet.getString("uuid"));
+
+            facilityLocations.add(facilityLocation);
+        }
+
+        return facilityLocations;
+    }
+	
+	private List<PatientLocation> convertPatientLocationToList(ResultSet resultSet) throws SQLException {
+
+        List<PatientLocation> patientLocations = new ArrayList<>();
+
+        while (resultSet.next()) {
+
+            PatientLocation pl = new PatientLocation();
+            pl.setLocation_id(resultSet.getInt("location_id"));
+            pl.setPatient_id(resultSet.getInt("patient_id"));
+
+            patientLocations.add(pl);
+
+        }
+
+        return patientLocations;
+
+    }
+	
 	private List<PatientContactsModel> convertResultsetsToPatientContacts(ResultSet resultset) throws SQLException {
-        
+
         List<PatientContactsModel> response = new ArrayList<>();
-        
+
         while (resultset.next()) {
-            
+
             PatientContactsModel pModel = new PatientContactsModel();
             pModel.setAge(resultset.getInt("age"));
             pModel.setAssign_contact_to_cec(resultset.getInt("assign_contact_to_cec"));
@@ -206,16 +269,12 @@ public class NdrDBManager {
             pModel.setCountry(resultset.getString("country"));
             pModel.setFirstname(resultset.getString("firstname"));
             pModel.setLastname(resultset.getString("lastname"));
-            
+
             response.add(pModel);
-            
+
         }
-        
+
         return response;
-        
+
     }
-	
-	public void getFacilityLocationByLocationId(int locationId) {
-		
-	}
 }

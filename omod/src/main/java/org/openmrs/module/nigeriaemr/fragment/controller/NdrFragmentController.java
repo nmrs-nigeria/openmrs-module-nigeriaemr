@@ -22,11 +22,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
+import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
+import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
 import org.openmrs.module.nigeriaemr.service.CommunityTesters;
+import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
 import org.openmrs.module.nigeriaemr.service.PatientContacts;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -38,9 +42,23 @@ public class NdrFragmentController {
 	
 	public String generateNDRFile(HttpServletRequest request) throws DatatypeConfigurationException, IOException,
 	        SAXException, JAXBException, Throwable {
-		
+	
+                FacilityLocationService facilityLocationService = new FacilityLocationService();
+                Integer locationId = 8;
+            
 		DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
-		
+                
+		List<FacilityLocation> allFacilityLocations = facilityLocationService.getAllFacilityLocations();
+                List<PatientLocation> allPatientLocations = facilityLocationService.getAllPatientLocation();
+                
+                
+                FacilityLocation facilityLocation = allFacilityLocations.stream()
+                        .filter(a -> a.getLocation_id().equals(locationId)).findFirst().get();
+                List<Integer> filteredPatientByLocation = allPatientLocations.stream()
+                        .filter(a -> a.getLocation_id().equals(locationId))
+                        .map(PatientLocation::getPatient_id).collect(Collectors.toList());
+                
+                
 		//check i fglobal variable for logging exists
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		
@@ -55,6 +73,9 @@ public class NdrFragmentController {
 		Marshaller jaxbMarshaller = generator.createMarshaller(jaxbContext);
 		
 		List<Patient> patients = Context.getPatientService().getAllPatients();
+                //filter the patient by location
+		List<Patient> filteredPatients = patients.stream().filter(a -> filteredPatientByLocation.contains(a.getId()))
+                        .collect(Collectors.toList());
 		//Patient pts = null;
 		//List<Patient> patients = new ArrayList<Patient>();
 		//pts = Context.getPatientService().getPatient(28417);
@@ -66,65 +87,18 @@ public class NdrFragmentController {
 		String IPShortName = Utils.getIPShortName();
 		String formattedDate = new SimpleDateFormat("ddMMyy").format(new Date());
 		
-		FacilityType facility = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
+		FacilityType facility = Utils.createFacilityType(facilityLocation.getFacility_name(), facilityLocation.getDatimCode(), FacilityType);
 		
 		try {
-			//
-			//            patients.parallelStream().forEach(patient -> {
-			//
-			//                Container cnt = null;
-			//                try {
-			//                    LoggerUtils.write(NdrFragmentController.class.getName(), "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
-			//                    LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
-			//                            + patient.getId(), LoggerUtils.LogFormat.INFO,LogLevel.live);
-			//                    long startTime = System.currentTimeMillis();
-			//                    cnt = generator.createContainer(patient, facility);
-			//                    long endTime = System.currentTimeMillis();
-			//                    LoggerUtils.write(NdrFragmentController.class.getName(), "Finished Export for patient with id: "
-			//                            + patient.getId() + ", Time Taken: " + (endTime - startTime) + " milliseconds",
-			//                            LoggerUtils.LogFormat.INFO,LogLevel.live);
-			//                } catch (Exception ex) {
-			//                    LoggerUtils.write(NdrFragmentController.class.getName(), MessageFormat.format(
-			//                            "Could not parse patient with id: {0},{1},{2} ", Integer.toString(patient.getId()), "\r\n",
-			//                            ex.getMessage()), LogFormat.FATAL,LogLevel.live);
-			//                    cnt = null;
-			//                }
-			//
-			//                if (cnt != null) {
-			//
-			//                    try {
-			//                        cnt.setValidation(generator.getValidation());
-			//                        String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_"
-			//                                + Utils.getPatientPEPFARId(patient);
-			//
-			//                        // old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
-			//                        String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
-			//
-			//                        File aXMLFile = new File(xmlFile);
-			//                        Boolean b;
-			//                        if (aXMLFile.exists()) {
-			//                            b = aXMLFile.delete();
-			//                            System.out.println("deleting file : " + xmlFile + "was successful : " + b);
-			//                        }
-			//                        b = aXMLFile.createNewFile();
-			//
-			//                        System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
-			//                        generator.writeFile(cnt, aXMLFile);
-			//                    } catch (Exception ex) {
-			//                        LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,LogLevel.live);
-			//                    }
-			//                }
-			//
-			//            });
-			//
+			
 			long loop_start_time = System.currentTimeMillis();
 			int counter = 0;
 			Container cnt = null;
-			for (Patient patient : patients) {
+			for (Patient patient : filteredPatients) {
 				
 				long startTime = System.currentTimeMillis();
 				counter++;
-				System.out.println("pateint  " + counter + " of " + patients.size() + " with ID " + patient.getId());
+				System.out.println("pateint  " + counter + " of " + filteredPatients.size() + " with ID " + patient.getId());
 				
 				//	if (patient.getId() == 497) {
 				try {

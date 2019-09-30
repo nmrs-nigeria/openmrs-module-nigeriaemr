@@ -18,9 +18,9 @@ public class FacilityLocation {
 	
 	private Integer location_id;
 	
-	private Integer datimCode;
+	private String datimCode;
 	
-	private Integer facility_name;
+	private String facility_name;
 	
 	private Date date_created;
 	
@@ -54,19 +54,19 @@ public class FacilityLocation {
 		this.location_id = location_id;
 	}
 	
-	public Integer getDatimCode() {
+	public String getDatimCode() {
 		return datimCode;
 	}
 	
-	public void setDatimCode(Integer datimCode) {
+	public void setDatimCode(String datimCode) {
 		this.datimCode = datimCode;
 	}
 	
-	public Integer getFacility_name() {
+	public String getFacility_name() {
 		return facility_name;
 	}
 	
-	public void setFacility_name(Integer facility_name) {
+	public void setFacility_name(String facility_name) {
 		this.facility_name = facility_name;
 	}
 	
