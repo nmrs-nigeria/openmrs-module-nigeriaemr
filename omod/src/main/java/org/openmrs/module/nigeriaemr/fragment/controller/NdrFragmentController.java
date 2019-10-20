@@ -18,19 +18,13 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
-import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
-import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
 import org.openmrs.module.nigeriaemr.service.CommunityTesters;
-import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
 import org.openmrs.module.nigeriaemr.service.PatientContacts;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -42,23 +36,23 @@ public class NdrFragmentController {
 	
 	public String generateNDRFile(HttpServletRequest request) throws DatatypeConfigurationException, IOException,
 	        SAXException, JAXBException, Throwable {
-	
-                FacilityLocationService facilityLocationService = new FacilityLocationService();
-                Integer locationId = 8;
-            
+		
+		//   FacilityLocationService facilityLocationService = new FacilityLocationService();
+		// Integer locationId = 8;
+		
 		DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
-                
-		List<FacilityLocation> allFacilityLocations = facilityLocationService.getAllFacilityLocations();
-                List<PatientLocation> allPatientLocations = facilityLocationService.getAllPatientLocation();
-                
-                
-                FacilityLocation facilityLocation = allFacilityLocations.stream()
-                        .filter(a -> a.getLocation_id().equals(locationId)).findFirst().get();
-                List<Integer> filteredPatientByLocation = allPatientLocations.stream()
-                        .filter(a -> a.getLocation_id().equals(locationId))
-                        .map(PatientLocation::getPatient_id).collect(Collectors.toList());
-                
-                
+		
+		//		List<FacilityLocation> allFacilityLocations = facilityLocationService.getAllFacilityLocations();
+		//                List<PatientLocation> allPatientLocations = facilityLocationService.getAllPatientLocation();
+		//                
+		//                
+		//                FacilityLocation facilityLocation = allFacilityLocations.stream()
+		//                        .filter(a -> a.getLocation_id().equals(locationId)).findFirst().get();
+		//                List<Integer> filteredPatientByLocation = allPatientLocations.stream()
+		//                        .filter(a -> a.getLocation_id().equals(locationId))
+		//                        .map(PatientLocation::getPatient_id).collect(Collectors.toList());
+		//                
+		
 		//check i fglobal variable for logging exists
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		
@@ -73,9 +67,9 @@ public class NdrFragmentController {
 		Marshaller jaxbMarshaller = generator.createMarshaller(jaxbContext);
 		
 		List<Patient> patients = Context.getPatientService().getAllPatients();
-                //filter the patient by location
-		List<Patient> filteredPatients = patients.stream().filter(a -> filteredPatientByLocation.contains(a.getId()))
-                        .collect(Collectors.toList());
+		//filter the patient by location
+		//	List<Patient> filteredPatients = patients.stream().filter(a -> filteredPatientByLocation.contains(a.getId()))
+		//        .collect(Collectors.toList());
 		//Patient pts = null;
 		//List<Patient> patients = new ArrayList<Patient>();
 		//pts = Context.getPatientService().getPatient(28417);
@@ -87,18 +81,19 @@ public class NdrFragmentController {
 		String IPShortName = Utils.getIPShortName();
 		String formattedDate = new SimpleDateFormat("ddMMyy").format(new Date());
 		
-		FacilityType facility = Utils.createFacilityType(facilityLocation.getFacility_name(), facilityLocation.getDatimCode(), FacilityType);
+		FacilityType facility = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
+		//FacilityType facility = Utils.createFacilityType(facilityLocation.getFacility_name(), facilityLocation.getDatimCode(), FacilityType);
 		
 		try {
 			
 			long loop_start_time = System.currentTimeMillis();
 			int counter = 0;
 			Container cnt = null;
-			for (Patient patient : filteredPatients) {
+			for (Patient patient : patients) {
 				
 				long startTime = System.currentTimeMillis();
 				counter++;
-				System.out.println("pateint  " + counter + " of " + filteredPatients.size() + " with ID " + patient.getId());
+				System.out.println("pateint  " + counter + " of " + patients.size() + " with ID " + patient.getId());
 				
 				//	if (patient.getId() == 497) {
 				try {

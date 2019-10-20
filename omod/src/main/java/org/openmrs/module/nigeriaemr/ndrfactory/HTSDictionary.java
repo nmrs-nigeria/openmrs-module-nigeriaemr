@@ -240,7 +240,8 @@ public class HTSDictionary {
         hivTestingReport.setVisitDate(Utils.getXmlDate(enc.getEncounterDatetime()));
 
         //setting with others been retrieved
-        obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
+       // obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
+        obs = extractObs(HTS_Client_Intake_SETTING_ConceptID, allObs);
         if (obs != null && obs.getValueCoded() != null) {
             if (obs.getValueCoded().getConceptId().equals(HTS_CLIENT_INTAKE_SETTINGS_OTHERS)) {
                 obs = extractObs(HTS_CLIENT_INTAKE_SETTINGS_OTHERS_VALUE, allObs);

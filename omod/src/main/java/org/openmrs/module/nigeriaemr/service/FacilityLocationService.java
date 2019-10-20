@@ -15,14 +15,13 @@ import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
 
 /**
- *
  * @author MORRISON.I
  */
 public class FacilityLocationService {
-
-    NdrDBManager dbManageer = null;
-
-    public List<FacilityLocation> getAllFacilityLocations() {
+	
+	NdrDBManager dbManageer = null;
+	
+	public List<FacilityLocation> getAllFacilityLocations() {
 
         List<FacilityLocation> response = new ArrayList<>();
 
@@ -37,9 +36,8 @@ public class FacilityLocationService {
 
         return response;
     }
-    
-    
-    public List<PatientLocation> getAllPatientLocation(){
+	
+	public List<PatientLocation> getAllPatientLocation(){
        
         List<PatientLocation> patientLocations = new ArrayList<>();
         
@@ -55,5 +53,4 @@ public class FacilityLocationService {
         return patientLocations;
     
     }
-
 }
