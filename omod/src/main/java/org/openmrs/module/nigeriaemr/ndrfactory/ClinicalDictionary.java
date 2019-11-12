@@ -281,7 +281,7 @@ public class ClinicalDictionary {
             }
             obs = Utils.extractObs(Utils.FAMILY_PLANNING_STATUS_CONCEPT, obsListForOneVisit);
             //Does False Mean Not on Family Planninng
-            if (obs != null && obs.getValueCoded() != null) {
+            if (obs != null && obs.getValueAsBoolean() != null) {
                 valueBoolean = obs.getValueAsBoolean();
                 if (valueBoolean) {
                     hivEncounterType.setPatientFamilyPlanningCode("FP");
