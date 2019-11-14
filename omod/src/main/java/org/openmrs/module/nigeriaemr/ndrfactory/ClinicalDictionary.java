@@ -281,9 +281,15 @@ public class ClinicalDictionary {
             }
             obs = Utils.extractObs(Utils.FAMILY_PLANNING_STATUS_CONCEPT, obsListForOneVisit);
             //Does False Mean Not on Family Planninng
+<<<<<<< HEAD
             if (obs != null && obs.getValueCoded() != null) {
 
                 if (obs.getValueCoded().getConceptId() == Utils.Yes_Concept_Id ) {
+=======
+            if (obs != null && obs.getValueAsBoolean() != null) {
+                valueBoolean = obs.getValueAsBoolean();
+                if (valueBoolean) {
+>>>>>>> 9aa1354fc32c4b6cd44d6a21d5b1edb9d81b6c17
                     hivEncounterType.setPatientFamilyPlanningCode("FP");
                 } else {
                     hivEncounterType.setPatientFamilyPlanningCode("NOFP");
