@@ -533,18 +533,18 @@ HIVQuestionsType
         if (obsList != null && !obsList.isEmpty()) {
             hivQuestionsType = new HIVQuestionsType();
             obs = Utils.extractObs(Utils.CARE_ENTRY_POINT_CONCEPT, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setCareEntryPoint(ndrCode);
             }
             obs = Utils.extractObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueDate() != null) {
                 valueDateTime = obs.getValueDate();
                 hivQuestionsType.setFirstConfirmedHIVTestDate(getXmlDate(valueDateTime));
             }
             obs = Utils.extractObs(Utils.MODE_OF_HIV_TEST, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setFirstHIVTestMode(ndrCode);
@@ -552,7 +552,7 @@ HIVQuestionsType
             // Where first tested positive missing
 
             obs = Utils.extractObs(Utils.PRIOR_ART_CONCEPT, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setPriorArt(ndrCode);
@@ -563,7 +563,7 @@ HIVQuestionsType
                 hivQuestionsType.setMedicallyEligibleDate(getXmlDate(valueDateTime));
             }
             obs = Utils.extractObs(Utils.REASON_MEDICALLY_ELIGIBLE_CONCEPT, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setReasonMedicallyEligible(ndrCode);
@@ -593,7 +593,7 @@ HIVQuestionsType
             if (obs != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 obs = Utils.extractObs(valueCoded, obsList);
-                if (obs != null) {
+                if (obs != null && obs.getValueCoded() != null) {
                     valueCoded = obs.getValueCoded().getConceptId();
                     ndrCode = pharmacyDictionary.getRegimenMapValue(valueCoded);
                     cst = new CodedSimpleType();
@@ -608,29 +608,29 @@ HIVQuestionsType
                 hivQuestionsType.setARTStartDate(Utils.getXmlDate(artStartDate));
             }
             obs = Utils.extractObs(Utils.WHO_CLINICAL_STAGGING_AT_START_CONCEPT, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setWHOClinicalStageARTStart(ndrCode);
             }
             obs = Utils.extractObs(Utils.WEIGHT_AT_START_CONCEPT, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueNumeric() != null) {
                 valueNumericInt = obs.getValueNumeric().intValue();
                 hivQuestionsType.setWeightAtARTStart(valueNumericInt);
             }
             obs = Utils.extractObs(Utils.CHILD_HEIGHT_AT_START, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueNumeric() != null) {
                 valueNumericInt = obs.getValueNumeric().intValue();
                 hivQuestionsType.setChildHeightAtARTStart(valueNumericInt);
             }
             obs = Utils.extractObs(Utils.FUNCTIONAL_STATUS_ART_START, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setFunctionalStatusStartART(ndrCode);
             }
             obs = Utils.extractObs(Utils.CD4_AT_START, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueNumeric() != null) {
                 valueNumericInt = obs.getValueNumeric().intValue();
                 hivQuestionsType.setCD4AtStartOfART(String.valueOf(valueNumericInt));
             }
@@ -656,7 +656,7 @@ HIVQuestionsType
                 hivQuestionsType.setEnrolledInHIVCareDate(Utils.getXmlDate(enrollmentDate));
             }
             obs = Utils.extractObs(Utils.INITIAL_TB_STATUS, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setInitialTBStatus(ndrCode);
