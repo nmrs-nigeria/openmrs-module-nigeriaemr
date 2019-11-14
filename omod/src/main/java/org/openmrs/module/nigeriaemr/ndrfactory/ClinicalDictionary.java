@@ -386,7 +386,7 @@ public class ClinicalDictionary {
                 }
                 obs = Utils.extractObs(Utils.CD4_COUNT_CONCEPT, obsListForOneVisit);
 
-                if (obs != null && obs.getValueNumeric() != null) {
+                if (obs != null && obs.getValueNumeric() != null && obs.getValueNumeric().intValue() !=0) {
                     int  cd4Count = obs.getValueNumeric().intValue();
                     hivEncounterType.setCD4(cd4Count);
                     hivEncounterType.setCD4TestDate(Utils.getXmlDate(obs.getObsDatetime()));
@@ -420,7 +420,6 @@ public class ClinicalDictionary {
             int diff = period.getMonths();
             hivEncounter.setDurationOnArt(diff);
         }
-
         int conceptID;
         int value_numeric;
         int value_coded;
