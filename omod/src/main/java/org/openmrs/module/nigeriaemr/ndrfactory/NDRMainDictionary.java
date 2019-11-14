@@ -1,27 +1,16 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import com.mchange.v2.encounter.EncounterCounter;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import org.openmrs.util.OpenmrsUtil;
-
 import javax.xml.datatype.DatatypeConfigurationException;
-import java.io.*;
-import java.nio.file.Paths;
-import java.sql.*;
 import java.util.Date;
 import java.util.*;
-import org.apache.commons.codec.language.Soundex;
-import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
-
-import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getXmlDate;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 
 //on master
@@ -56,12 +45,12 @@ public class NDRMainDictionary {
     private String appDirectory = "";
 
     private static Map<Integer, String> map = new HashMap<>();
-    private ClinicalDictionary clinicalDictionary = null;
-    private PMTCTDictionary pmtctDictionary = null;
-    private HTSDictionary htsDictionary = null;
-    private LabDictionary labDictionary = null;
-    private PharmacyDictionary pharmDictionary = null;
-    private NDRCommonQuestionsDictionary commonQuestionDictionary = null;
+    private ClinicalDictionary clinicalDictionary;
+    private PMTCTDictionary pmtctDictionary;
+    private HTSDictionary htsDictionary;
+    private LabDictionary labDictionary;
+    private PharmacyDictionary pharmDictionary;
+    private NDRCommonQuestionsDictionary commonQuestionDictionary;
 
     public NDRMainDictionary() {
         loadDictionary();
@@ -170,7 +159,6 @@ public class NDRMainDictionary {
         map.put(164948, "HIVPCR");
          */
         map.put(0, "");
-        map.put(0, "");
 
     }
 
@@ -189,9 +177,7 @@ public class NDRMainDictionary {
     }
 
     public CommonQuestionsType createCommonQuestionType2(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
-        CommonQuestionsType commonQuestionsType = null;
-        commonQuestionsType = commonQuestionDictionary.createCommonQuestionType(patient, allPatientEncounterList, allPatientObsList);
-        return commonQuestionsType;
+        return commonQuestionDictionary.createCommonQuestionType(patient, allPatientEncounterList, allPatientObsList);
     }
 
     public ConditionSpecificQuestionsType createCommConditionSpecificQuestionsType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
@@ -203,7 +189,7 @@ public class NDRMainDictionary {
     }
 
     public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
-        List<RegimenType> allRegimenTypeList = new ArrayList<RegimenType>();
+        List<RegimenType> allRegimenTypeList = new ArrayList<>();
         allRegimenTypeList.addAll(pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient, allPatientObsList));
         allRegimenTypeList.addAll(pharmDictionary.createOIRegimenTypeList(patient, allEncounterForPatient, allPatientObsList));
         return allRegimenTypeList;
