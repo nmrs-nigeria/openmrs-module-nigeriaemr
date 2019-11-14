@@ -199,8 +199,8 @@ public class LabDictionary {
 
         try {
 
-            PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
-            PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
+            //PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
+            //PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
 
             LaboratoryReportType labReportType = new LaboratoryReportType();
 
@@ -210,7 +210,7 @@ public class LabDictionary {
             labReportType.setCollectionDate(convertedDate);
 
            // Date artStartDate = Utils.extractARTStartDate(pts,labObsList);
-            if (artStartDate.after(enc.getEncounterDatetime()) || artStartDate.equals(enc.getEncounterDatetime())) {
+            if (artStartDate!=null && (artStartDate.after(enc.getEncounterDatetime()) || artStartDate.equals(enc.getEncounterDatetime()))) {
                 labReportType.setARTStatusCode("A");
             }else {
                 labReportType.setARTStatusCode("N");
@@ -260,7 +260,6 @@ public class LabDictionary {
             System.out.println(ex.getMessage());
             throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
-
     }
 
     public List<LaboratoryReportType> createLaboratoryOrderAndResult(Patient pts, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) {

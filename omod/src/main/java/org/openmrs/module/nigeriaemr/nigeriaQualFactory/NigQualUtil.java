@@ -50,26 +50,6 @@ public class NigQualUtil {
 		return patients;
 	}
 	
-	private static Marshaller createMarshaller(JAXBContext jaxbContext, String xsd) throws JAXBException, SAXException {
-		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-		
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		
-		java.net.URL xsdFilePath = Thread.currentThread().getContextClassLoader().getResource(xsd);
-		assert xsdFilePath != null;
-		
-		Schema schema = sf.newSchema(xsdFilePath);
-		
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-		
-		jaxbMarshaller.setSchema(schema);
-		
-		//Call Validator class to perform the validation
-		jaxbMarshaller.setEventHandler(new Validator());
-		return jaxbMarshaller;
-	}
-	
 	public static void createXMLFile(Object data, String xmlFile, String xsdContextPath, String xsdFileName)
 	        throws IOException, SAXException, JAXBException {
 		
@@ -85,7 +65,7 @@ public class NigQualUtil {
 		CustomErrorHandler errorHandler = new CustomErrorHandler();
 		JAXBContext jaxbContext = JAXBContext.newInstance(xsdContextPath);
 		
-		Marshaller jaxbMarshaller = createMarshaller(jaxbContext, xsdFileName);
+		Marshaller jaxbMarshaller = Utils.createMarshaller(jaxbContext, xsdFileName);
 		
 		javax.xml.validation.Validator validator = jaxbMarshaller.getSchema().newValidator();
 		jaxbMarshaller.marshal(data, aXMLFile);

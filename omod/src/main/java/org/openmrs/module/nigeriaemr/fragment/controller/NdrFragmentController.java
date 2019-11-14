@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
@@ -64,16 +65,10 @@ public class NdrFragmentController {
 		//Create an xml file and save in today's folder
 		NDRConverter generator = new NDRConverter(Utils.getIPFullName(), Utils.getIPShortName(), openmrsConn);
 		JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
-		Marshaller jaxbMarshaller = generator.createMarshaller(jaxbContext);
+		Marshaller jaxbMarshaller = Utils.createMarshaller(jaxbContext, "NDR 1.4.xsd"); //generator.createMarshaller(jaxbContext);
 		
-		List<Patient> patients = Context.getPatientService().getAllPatients();
-		//filter the patient by location
-		//	List<Patient> filteredPatients = patients.stream().filter(a -> filteredPatientByLocation.contains(a.getId()))
-		//        .collect(Collectors.toList());
-		//Patient pts = null;
-		//List<Patient> patients = new ArrayList<Patient>();
-		//pts = Context.getPatientService().getPatient(28417);
-		//patients.add(pts);
+		ArrayList<Integer> patient_ids = Utils.GetPatientIds(openmrsConn);
+		//List<Patient> patients = Context.getPatientService().getAllPatients();
 		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
@@ -89,33 +84,36 @@ public class NdrFragmentController {
 			long loop_start_time = System.currentTimeMillis();
 			int counter = 0;
 			Container cnt = null;
-			for (Patient patient : patients) {
+			for (Integer id : patient_ids) {
+				
+				Patient patient = Context.getPatientService().getPatient(id);
 				
 				long startTime = System.currentTimeMillis();
 				counter++;
-				System.out.println("pateint  " + counter + " of " + patients.size() + " with ID " + patient.getId());
+				System.out.println("patient " + counter + " of " + patient_ids.size() + " with ID " + id);
 				
 				//	if (patient.getId() == 497) {
 				try {
-					LoggerUtils.write(NdrFragmentController.class.getName(),
+					LoggerUtils.write("NdrFragmentController",
 					    "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
-					LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
-					        + patient.getId(), LoggerUtils.LogFormat.INFO, LogLevel.live);
+					
+					LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: " + id,
+					    LoggerUtils.LogFormat.INFO, LogLevel.live);
 					
 					cnt = generator.createContainer(patient, facility);
-					
+					System.out.println("generating container obj took : " + (System.currentTimeMillis() - startTime)
+					        + " milli secs : ");
 				}
 				catch (Exception ex) {
-					LoggerUtils.write(
-					    NdrFragmentController.class.getName(),
-					    MessageFormat.format("Could not parse patient with id: {0},{1},{2} ",
-					        Integer.toString(patient.getId()), "\r\n", ex.getMessage()), LogFormat.FATAL, LogLevel.live);
+					LoggerUtils.write("NdrFragmentController", MessageFormat.format(
+					    "Could not parse patient with id: {0},{1},{2} ", Integer.toString(id), "\r\n", ex.getMessage()),
+					    LogFormat.FATAL, LogLevel.live);
 					cnt = null;
 				}
 				
 				if (cnt != null) {
-					LoggerUtils.write(NdrFragmentController.class.getName(),
-					    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
+					LoggerUtils.write("NdrFragmentController", "Got data for patient with ID: " + id, LogFormat.INFO,
+					    LogLevel.live);
 					try {
 						
 						String pepFarId = Utils.getPatientPEPFARId(patient);
@@ -143,35 +141,30 @@ public class NdrFragmentController {
 						generator.writeFile(cnt, aXMLFile, jaxbMarshaller);
 					}
 					catch (Exception ex) {
-						LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
-						    LogLevel.live);
+						LoggerUtils.write("NdrFragmentController", ex.getMessage(), LogFormat.FATAL, LogLevel.live);
 					}
 				}
 				
-				long endTime = System.currentTimeMillis();
-				LoggerUtils.write(NdrFragmentController.class.getName(),
-				    "Finished Export for patient with id: " + patient.getId() + " Time Taken: " + (endTime - startTime)
-				            + " milliseconds", LoggerUtils.LogFormat.INFO, LogLevel.live);
-				System.out.println("generating ndr took : " + (endTime - startTime) + " milli secs : ");
-				
-				long loop_end_time = System.currentTimeMillis();
-				System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
-				//	}
+				//LoggerUtils.write("NdrFragmentController", "Finished Export for patient with id: " + id + " Time Taken: "
+				//      + (endTime - startTime) + " milliseconds", LoggerUtils.LogFormat.INFO, LogLevel.live);
+				System.out.println("generated ndr file for patient id " + id + ". total time taken : "
+				        + (System.currentTimeMillis() - startTime) + " milli secs : ");
 			}
 			
 			//Update ndr last run date
 			Utils.updateLast_NDR_Run_Date(new Date());
 			
 			String zipFileName = IPShortName + "_" + DATIMID + "_" + formattedDate + ".zip";
-			/*String response = "Files Exported successfully, view uploaded files here: \n"
-			        + util.ZipFolder(request, reportFolder, zipFileName, reportType);*/
 			String response = util.ZipFolder(request, reportFolder, zipFileName, reportType);
+			
+			System.out.println("total time to generate ndr files : " + (System.currentTimeMillis() - loop_start_time)
+			        + " milli secs : ");
+			
 			return response;
 			//request.getContextPath() + "/downloads/" + zipFileName;
 		}
 		catch (Exception ex) {
-			LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-			    LogLevel.live);
+			LoggerUtils.write("NdrFragmentController", ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
 			//Update ndr last run date
 			Utils.updateLast_NDR_Run_Date(new Date());
 			
