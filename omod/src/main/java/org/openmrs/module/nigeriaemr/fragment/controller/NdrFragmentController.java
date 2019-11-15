@@ -55,6 +55,7 @@ public class NdrFragmentController {
 		
 		//check i fglobal variable for logging exists
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
+                LoggerUtils.clearLogFile();
 		
 		//create report download folder at the server. skip if already exist
 		Utils util = new Utils();
