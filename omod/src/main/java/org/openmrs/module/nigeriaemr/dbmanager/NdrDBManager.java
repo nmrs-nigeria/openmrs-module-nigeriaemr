@@ -173,7 +173,7 @@ public class NdrDBManager {
 	}
 	
 	public List<FacilityLocation> getFacilityLocationByLocationId() throws SQLException {
-		String sql_txt = "select id,uuid,location_id,datimCode,facility_name,date_created,creator,date_modified,modified_by";
+		String sql_txt = "select id,uuid,location_id,datimCode,facility_name,date_created,creator,date_modified,modified_by from "+ConstantsUtil.FACILITY_LOCATION_TABLE;
 		pStatement = conn.prepareStatement(sql_txt);
 		pStatement.execute();
 		
@@ -193,7 +193,42 @@ public class NdrDBManager {
 		return convertPatientLocationToList(resultSet);
 		
 	}
+        
+        public int insertFacilityLocation(FacilityLocation facilityLocation) throws SQLException{
+            String sql = "insert into "+ConstantsUtil.FACILITY_LOCATION_TABLE +"(uuid,location_id,datimCode,facility_name,date_created,creator)"
+                    + "values(?,?,?,?,NOW(),?)";
+            pStatement = conn.prepareStatement(sql);
+            pStatement.setString(1, UUID.randomUUID().toString());
+            pStatement.setInt(2, facilityLocation.getLocation_id());
+            pStatement.setString(3, facilityLocation.getDatimCode());
+            pStatement.setString(4, facilityLocation.getFacility_name());
+            pStatement.setString(5, facilityLocation.getCreator());
+            
+            return pStatement.executeUpdate();
+            
+        }
+        
+        public int updateFacilityLocation(FacilityLocation facilityLocation) throws SQLException{
+            String sql = "update "+ ConstantsUtil.FACILITY_LOCATION_TABLE+" set datimCode = ?, modified_by = ?, date_modified = NOW() where location_id = ? ";
+            pStatement = conn.prepareStatement(sql);
+            pStatement.setString(1, facilityLocation.getDatimCode());
+            pStatement.setString(2, facilityLocation.getModified_by());
+            pStatement.setInt(3, facilityLocation.getLocation_id());
+            
+            return pStatement.executeUpdate();
+            
+        }
 	
+        
+        public void deleteFacilityLocation(int facilityLocationId) throws SQLException{
+        String sql = "delete from "+ConstantsUtil.FACILITY_LOCATION_TABLE+" where id = ? ";
+        pStatement = conn.prepareStatement(sql);
+        pStatement.setInt(1, facilityLocationId);
+        
+        pStatement.executeUpdate();
+        }
+        
+        
 	private List<FacilityLocation> convertFacilityLocationToList(ResultSet resultSet) throws SQLException {
         List<FacilityLocation> facilityLocations = new ArrayList<>();
         while (resultSet.next()) {

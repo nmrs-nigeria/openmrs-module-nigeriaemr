@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openmrs.Location;
 import org.openmrs.module.nigeriaemr.dbmanager.NdrDBManager;
 import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
@@ -53,4 +54,9 @@ public class FacilityLocationService {
         return patientLocations;
     
     }
+        
+        
+        public void createFacilityLocation(FacilityLocation facilityLocation){
+            
+        }
 }

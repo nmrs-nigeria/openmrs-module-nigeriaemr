@@ -115,8 +115,8 @@ public class LoggerUtils {
 			//if it's live
 			if (!level.equals(LogLevel.debug)) {
 				log(className, logText, formater, level);
-			} else  {				
-					log(className, logText, formater, level);
+			} else {
+				log(className, logText, formater, level);
 				
 			}
 			
@@ -126,27 +126,27 @@ public class LoggerUtils {
 		}
 		
 	}
-        
-        public static void clearLogFile(){
-           
-             try {
-            String folder = Paths.get(System.getProperty("user.home"), "NMRS_LOGS").toString();
-		File dir = new File(folder);
-		if (!dir.exists()) {
-			dir.mkdir();
-		}
-		
-		String dateString = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-		
-		Path completePath = Paths.get(folder, "logs_" + dateString + ".log");
-
-                    Files.deleteIfExists(completePath);
 	
-                
-                } catch (IOException ex) {
-                    Logger.getLogger(LoggerUtils.class.getName()).log(Level.SEVERE, null, ex);
-                }
-        }
+	public static void clearLogFile() {
+		
+		try {
+			String folder = Paths.get(System.getProperty("user.home"), "NMRS_LOGS").toString();
+			File dir = new File(folder);
+			if (!dir.exists()) {
+				dir.mkdir();
+			}
+			
+			String dateString = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+			
+			Path completePath = Paths.get(folder, "logs_" + dateString + ".log");
+			
+			Files.deleteIfExists(completePath);
+			
+		}
+		catch (IOException ex) {
+			Logger.getLogger(LoggerUtils.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 	
 	public static String getExportPath() {
 		return Paths.get(System.getProperty("user.home"), "NMRS_LOGS").toString();

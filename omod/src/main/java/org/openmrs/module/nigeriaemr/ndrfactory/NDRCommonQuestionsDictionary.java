@@ -109,11 +109,14 @@ public class NDRCommonQuestionsDictionary {
         //care entry point
         map.put(160539, "3"); //HTS
         map.put(160538, "9"); //ANC/PMTCT
-        map.put(160537, "12"); //In Patient
-        map.put(160536, "12");//Current Clinic Patient
+        map.put(160536, "12"); //In Patient
+        map.put(160537, "12");//Current Clinic Patient
         map.put(160542, "2");//OPD
         map.put(160541, "6");//TB DOTS
-        map.put(160543, "4");//Outreaches
+        map.put(160543, "4");//CBO
+        map.put(160545, "4");//Outreaches
+        map.put(160546, "1"); //STI
+      //  map.put(5622, ""); //Other
 
         //Mode of HIV Test
         map.put(164949, "HIVAb");
@@ -535,8 +538,12 @@ HIVQuestionsType
             obs = Utils.extractObs(Utils.CARE_ENTRY_POINT_CONCEPT, obsList);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
-                ndrCode = getMappedValue(valueCoded);
-                hivQuestionsType.setCareEntryPoint(ndrCode);
+               ndrCode = getMappedValue(valueCoded);
+                if(!ndrCode.equals("")){
+                   hivQuestionsType.setCareEntryPoint(ndrCode); 
+                }
+                
+                
             }
             obs = Utils.extractObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, obsList);
             if (obs != null && obs.getValueDate() != null) {
@@ -547,7 +554,9 @@ HIVQuestionsType
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
+                if(!ndrCode.equals("")){
                 hivQuestionsType.setFirstHIVTestMode(ndrCode);
+                }  
             }
             // Where first tested positive missing
 
