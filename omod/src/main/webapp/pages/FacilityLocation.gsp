@@ -1,3 +1,7 @@
+<% ui.decorateWith("appui", "standardEmrPage") %>
+
+<%= ui.resourceLinks() %>
+
 <style>
     /* Style the tab */
     .tab {
@@ -80,45 +84,6 @@
 <!-- Tab content -->
 <div id="Create_Facility_Location" class="tabcontent">
 
-  <!--  <% ui.decorateWith("appui", "standardEmrPage") %>
-
-    <%= ui.resourceLinks() %>
-
-    <% ui.includeJavascript("patientindextracing", "lga.js") %>
-
-
- <script>
-
-        var globalPatientID = "";
-        function getUrlVars()
-        {
-            let vars = [], hash;
-            let hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-            console.log(hashes);
-            for(let i = 0; i < hashes.length; i++)
-            {
-                hash = hashes[i].split('=');
-                vars.push(hash[0]);
-                vars[hash[0]] = hash[1];
-            }
-            console.log(vars);
-            return vars;
-        }
-
-
-        let patientId;
-        patientId = getUrlVars()["patientId"];
-        globalPatientID = getUrlVars()["patientId"];
-       
-        
-      
-    
-
-    </script>
-
-
-
--->
 
     <style>
 
@@ -166,7 +131,7 @@
                 </div><br>
 
                 <div>
-                        <input style="background-color: #E8F0FE; margin-left: 45px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px" type="button" value="Add facility location" class="btn btn-primary" />
+                    <input style="background-color: #E8F0FE; margin-left: 45px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px" type="button" value="Add facility location" class="btn btn-primary" onclick="saveFacilityLocation()" />
                 </div>
         <br/><br/>
 
@@ -242,7 +207,7 @@
     jqq('#gen-wait').show();
 
     jqq.ajax({
-        url: "${ ui.actionLink("patientindextracing", "ndr", "getAllLocation") }",
+        url: "${ ui.actionLink("nigeriaemr", "ndr", "getAllLocation") }",
     dataType: "json",
     
 
@@ -252,8 +217,8 @@
      
     var obj = jq.parseJSON(data);
     globalTester = jq.parseJSON(data);
-    var testerID = "";
-    var testeName = "";
+    var locationID = "";
+    var locationName = "";
 
      console.log(obj.length);
      console.log(obj);
@@ -265,13 +230,13 @@
         for(var i=0;i<obj.length;i++)
         {
         
-            testerID = obj[i].id+'';
-            testerName = obj[i].username+' ('+obj[i].facility_name+')';
-            console.log(testerName);
-            console.log(testerID);
+            locationID = obj[i].locationId+'';
+            locationName = obj[i].locationName+'';
+            console.log(locationID);
+            console.log(locationName);
           
             
-            jqq('#locations').append("<option value=\""+testerID+"\">"+testerName+"</option>");
+            jqq('#locations').append("<option value=\""+locationID+"\">"+locationName+"</option>");
 
   
       }
@@ -286,5 +251,61 @@
     }); 
 
     });
+
+</script>
+
+
+<script>
+    function saveFacilityLocation(){
+        
+        var location = jQuery('#locations').val();
+        var datimcode = jQuery('#datimcode').val();
+        var facility_name = jQuery('#facility_name').val();
+            
+        console.log(location);
+        console.log(datimcode);
+        console.log(facility_name);
+        
+
+        <!-- 
+
+        var jsonResult =  JSON.stringify(result[0]);
+     console.log(jsonResult);
+
+        jq = jQuery;
+        jq('#wait').hide();
+        
+        jqq(function() {
+       
+    jqq('#gen-wait').show();
+
+    jqq.ajax({
+         url: "${ ui.actionLink("patientindextracing", "ndr", "reassignContact") }",
+    dataType: "json",
+    data: {
+    'contactId': contactId,
+    'tester' : jsonResult
+    }
+
+        -->
+
+    }).success(function(data) {
+    jqq('#gen-wait').hide();
+    console.log(data);
+      
+    alert(data);
+    
+    })
+    .error(function(xhr, status, err) {
+    jqq('#gen-wait').hide();
+    alert('An error occured');
+
+    }); 
+
+    });
+    
+    }
+    
+    
 
 </script>
