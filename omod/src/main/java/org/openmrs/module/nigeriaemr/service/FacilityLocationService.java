@@ -38,11 +38,11 @@ public class FacilityLocationService {
         return response;
     }
 	
-	public List<PatientLocation> getAllPatientLocation(){
-       
+	public List<PatientLocation> getAllPatientLocation() {
+
         List<PatientLocation> patientLocations = new ArrayList<>();
-        
-         try {
+
+        try {
             dbManageer = new NdrDBManager();
             dbManageer.openConnection();
             patientLocations = dbManageer.getPatientLocation();
@@ -52,10 +52,53 @@ public class FacilityLocationService {
         }
 
         return patientLocations;
-    
+
     }
 	
-	public void createFacilityLocation(FacilityLocation facilityLocation) {
+	public int createFacilityLocation(FacilityLocation facilityLocation) {
+		
+		int response = -1;
+		
+		try {
+			dbManageer = new NdrDBManager();
+			dbManageer.openConnection();
+			response = dbManageer.insertFacilityLocation(facilityLocation);
+			dbManageer.closeConnection();
+		}
+		catch (SQLException ex) {
+			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		return response;
 		
 	}
+	
+	public int editFacilityLocation(FacilityLocation facilityLocation) {
+		int response = -1;
+		
+		try {
+			dbManageer = new NdrDBManager();
+			dbManageer.openConnection();
+			response = dbManageer.updateFacilityLocation(facilityLocation);
+			dbManageer.closeConnection();
+		}
+		catch (SQLException ex) {
+			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		return response;
+	}
+	
+	public void deleteFacilityLocation(int facilityLocationId) {
+		try {
+			dbManageer = new NdrDBManager();
+			dbManageer.openConnection();
+			dbManageer.deleteFacilityLocation(facilityLocationId);
+			dbManageer.closeConnection();
+		}
+		catch (SQLException ex) {
+			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+	
 }
