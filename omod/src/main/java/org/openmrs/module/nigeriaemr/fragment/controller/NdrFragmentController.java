@@ -33,12 +33,12 @@ import org.openmrs.module.nigeriaemr.service.PatientContacts;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class NdrFragmentController {
-
-    public void controller() {
-
-    }
-
-    public String generateNDRFile(HttpServletRequest request) throws DatatypeConfigurationException, IOException,
+	
+	public void controller() {
+		
+	}
+	
+	public String generateNDRFile(HttpServletRequest request) throws DatatypeConfigurationException, IOException,
             SAXException, JAXBException, Throwable {
 
         FacilityLocationService facilityLocationService = new FacilityLocationService();
@@ -184,44 +184,46 @@ public class NdrFragmentController {
         }
 
     }
-
-    //get host for openmrs instance
-    public String retrieveBiometricServer(String msg) {
-        System.out.println("This is from the UI: " + msg);
-        return Utils.getBiometricServer();
-    }
-
-    // pull community testers from the web.
-    public String reloadTester() {
-
-        CommunityTesters ctService = new CommunityTesters();
-
-        try {
-            ctService.refreshCommunityTesterList();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
-            return "Error occurred, operation aborted!";
-        }
-
-        return "The data was refreshed successfully";
-
-    }
-
-    public String getIndexContacts(@RequestParam(value = "indexClientId", required = true) int indexClientId) {
-
-        PatientContacts pcService = new PatientContacts();
-
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(pcService.getAllPatientContactsByIndexId(indexClientId));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return null;
-
-    }
-
+	
+	//get host for openmrs instance
+	public String retrieveBiometricServer(String msg) {
+		System.out.println("This is from the UI: " + msg);
+		return Utils.getBiometricServer();
+	}
+	
+	// pull community testers from the web.
+	public String reloadTester() {
+		
+		CommunityTesters ctService = new CommunityTesters();
+		
+		try {
+			ctService.refreshCommunityTesterList();
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
+			return "Error occurred, operation aborted!";
+		}
+		
+		return "The data was refreshed successfully";
+		
+	}
+	
+	public String getIndexContacts(@RequestParam(value = "indexClientId", required = true) int indexClientId) {
+		
+		PatientContacts pcService = new PatientContacts();
+		
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			return mapper.writeValueAsString(pcService.getAllPatientContactsByIndexId(indexClientId));
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+	
 }

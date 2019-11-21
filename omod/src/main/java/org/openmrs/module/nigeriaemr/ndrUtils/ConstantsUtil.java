@@ -27,8 +27,8 @@ public class ConstantsUtil {
 	public static final String COMMUNITY_TESTER_TABLE = "community_testers";
 	
 	public static final String PATIENT_CONTACT_TABLE = "patient_contacts";
-        
-        public static final String FACILITY_LOCATION_TABLE = "facility_has_location";
+	
+	public static final String FACILITY_LOCATION_TABLE = "facility_has_location";
 	
 	public static final int ADMISSION_ENCOUNTER_TYPE = 2;
 	

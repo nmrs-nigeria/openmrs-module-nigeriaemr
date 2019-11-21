@@ -54,9 +54,8 @@ public class FacilityLocationService {
         return patientLocations;
     
     }
-        
-        
-        public void createFacilityLocation(FacilityLocation facilityLocation){
-            
-        }
+	
+	public void createFacilityLocation(FacilityLocation facilityLocation) {
+		
+	}
 }
