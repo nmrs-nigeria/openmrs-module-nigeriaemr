@@ -89,11 +89,11 @@ public class FacilityLocationService {
 		return response;
 	}
 	
-	public void deleteFacilityLocation(int facilityLocationId) {
+	public void deleteFacilityLocation(String facilityLocationUUID) {
 		try {
 			dbManageer = new NdrDBManager();
 			dbManageer.openConnection();
-			dbManageer.deleteFacilityLocation(facilityLocationId);
+			dbManageer.deleteFacilityLocation(facilityLocationUUID);
 			dbManageer.closeConnection();
 		}
 		catch (SQLException ex) {

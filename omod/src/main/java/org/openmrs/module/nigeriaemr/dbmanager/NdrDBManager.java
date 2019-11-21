@@ -173,7 +173,7 @@ public class NdrDBManager {
 	}
 	
 	public List<FacilityLocation> getFacilityLocationByLocationId() throws SQLException {
-		String sql_txt = "select id,uuid,location_id,datimCode,facility_name,date_created,creator,date_modified,modified_by from "
+		String sql_txt = "select uuid,location_id,datimCode,facility_name,date_created,creator,date_modified,modified_by from "
 		        + ConstantsUtil.FACILITY_LOCATION_TABLE;
 		pStatement = conn.prepareStatement(sql_txt);
 		pStatement.execute();
@@ -221,10 +221,10 @@ public class NdrDBManager {
 		
 	}
 	
-	public void deleteFacilityLocation(int facilityLocationId) throws SQLException {
-		String sql = "delete from " + ConstantsUtil.FACILITY_LOCATION_TABLE + " where id = ? ";
+	public void deleteFacilityLocation(String facilityLocationUUID) throws SQLException {
+		String sql = "delete from " + ConstantsUtil.FACILITY_LOCATION_TABLE + " where uuid = ? ";
 		pStatement = conn.prepareStatement(sql);
-		pStatement.setInt(1, facilityLocationId);
+		pStatement.setString(1, facilityLocationUUID);
 		
 		pStatement.executeUpdate();
 	}
@@ -238,7 +238,6 @@ public class NdrDBManager {
             facilityLocation.setDate_modified(resultSet.getDate("date_modified"));
             facilityLocation.setDatimCode(resultSet.getString("datimCode"));
             facilityLocation.setFacility_name(resultSet.getString("facility_name"));
-            facilityLocation.setId(resultSet.getInt("id"));
             facilityLocation.setLocation_id(resultSet.getInt("location_id"));
             facilityLocation.setModified_by(resultSet.getString("modified_by"));
             facilityLocation.setUuid(resultSet.getString("uuid"));
