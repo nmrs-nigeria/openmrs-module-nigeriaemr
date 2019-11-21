@@ -235,10 +235,10 @@ public class NdrFragmentController {
 		return "Error occurred, try again";
 	}
 	
-	public void deleteFacilityLocation(int facilityLocation) {
+	public void deleteFacilityLocation(String facilityLocationUUID) {
 		FacilityLocationService facilityLocationService = new FacilityLocationService();
 		try {
-			facilityLocationService.deleteFacilityLocation(facilityLocation);
+			facilityLocationService.deleteFacilityLocation(facilityLocationUUID);
 		}
 		catch (Exception ex) {
 			Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);

@@ -12,8 +12,6 @@ import java.util.Date;
  */
 public class FacilityLocation {
 	
-	private Integer id;
-	
 	private String uuid;
 	
 	private Integer location_id;
@@ -29,14 +27,6 @@ public class FacilityLocation {
 	private Date date_modified;
 	
 	private String modified_by;
-	
-	public Integer getId() {
-		return id;
-	}
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}
 	
 	public String getUuid() {
 		return uuid;
