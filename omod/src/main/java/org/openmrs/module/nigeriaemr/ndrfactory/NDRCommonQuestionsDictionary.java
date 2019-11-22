@@ -414,6 +414,7 @@ public class NDRCommonQuestionsDictionary {
         Date valueDateTime = null;
         int valueCoded=0;
         String ndrCode="";
+        Boolean ndrBooleanCode = null;
         try {
             PatientIdentifier pepfarIdentifier = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
 
@@ -457,10 +458,14 @@ public class NDRCommonQuestionsDictionary {
                 //set estimated delivery date concept id
                 //obs = Utils.extractObs(Estimated_Delivery_Date_Concept_Id, hivEnrollmentObs);
                 obs = Utils.getLastObsOfConceptByDate(allObs, Utils.PREGNANCY_BREASTFEEDING_STATUS);
-                if (obs != null && obs.getValueCoded() != null) {
-                    valueCoded=obs.getValueCoded().getConceptId();
-                    ndrCode=getMappedValue(valueCoded);
-                    common.setPatientPregnancyStatusCode(ndrCode);
+                if (obs != null && obs.getValueAsBoolean()!= null) {
+                    ndrBooleanCode=obs.getValueBoolean();
+                    if(ndrBooleanCode == true){
+                     common.setPatientPregnancyStatusCode("P");
+                    }else if(ndrBooleanCode == false){
+                      common.setPatientPregnancyStatusCode("NP");
+                    }
+                   
                 }
 
             }
