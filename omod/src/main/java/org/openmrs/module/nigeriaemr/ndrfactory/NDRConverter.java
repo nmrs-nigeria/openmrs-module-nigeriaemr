@@ -69,8 +69,14 @@ public class NDRConverter {
 
             //only run if patient has had any encounter between the last run date and now
             if (lastDate != null) {
-                this.encounters = this.encounters.stream().filter(e -> e.getDateCreated().after(lastDate)
-                        || e.getDateChanged().after(lastDate) || e.getDateCreated().equals(lastDate) || e.getDateChanged().equals(lastDate)).collect(Collectors.toList());
+                List<Encounter> list = new ArrayList<>();
+                for (Encounter e : this.encounters) {
+                    if ((e.getDateCreated().after(lastDate) || Objects.equals(e.getDateCreated(), lastDate))
+                         ||  (e.getDateChanged() !=null && (e.getDateChanged().after(lastDate) || Objects.equals(e.getDateChanged(), lastDate)))) {
+                        list.add(e);
+                    }
+                }
+                this.encounters = list;
             }
             if (this.encounters == null || this.encounters.isEmpty()) {
                 return null;
@@ -85,7 +91,7 @@ public class NDRConverter {
             this.allobs = Context.getObsService().getObservationsByPerson(this.patient);
             endTime = System.currentTimeMillis();
             if ((endTime - startTime) > 1000) {
-                System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
+                System.out.println("took too long to get obs : " + (endTime - startTime) + " milli secs : ");
             }
 
             Container container = new Container();
@@ -368,7 +374,8 @@ public class NDRConverter {
 			//p.setTown(pa.getAddress1());
 			String lga = pa.getCityVillage();
 			String state = pa.getStateProvince();
-			
+			Connection connection = null;
+			ResultSet result = null;
 			try {
 				String sql = String
 				        .format(
@@ -379,10 +386,9 @@ public class NDRConverter {
 				                    + " WHERE level_id =3 AND NAME ='%s' AND parent_id = (SELECT address_hierarchy_entry_id FROM address_hierarchy_entry\n"
 				                    + " WHERE level_id =2 AND NAME = '%s')", state, lga, state);
 				
-				Connection connection = DriverManager.getConnection(this.openmrsConn.getUrl(),
-				    this.openmrsConn.getUsername(), this.openmrsConn.getPassword());
-				Statement statement = connection.createStatement();
-				ResultSet result = statement.executeQuery(sql);
+				connection = DriverManager.getConnection(this.openmrsConn.getUrl(), this.openmrsConn.getUsername(),
+				    this.openmrsConn.getPassword());
+				result = connection.createStatement().executeQuery(sql);
 				while (result.next()) {
 					//String name = result.getString("name");
 					String coded_value = result.getString("user_generated_id");
@@ -398,6 +404,17 @@ public class NDRConverter {
 				e.printStackTrace();
 				LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
 				    LogLevel.live);
+			}
+			finally {
+				try {
+					if (connection != null)
+						connection.close();
+					if (result != null)
+						result.close();
+				}
+				catch (SQLException ex) {
+					System.out.println(ex.getMessage());
+				}
 			}
 		}
 		return p;

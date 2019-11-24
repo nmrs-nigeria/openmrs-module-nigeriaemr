@@ -764,7 +764,6 @@ public class Utils {
 	}
 	
 	public static List<Obs> getHIVEnrollmentObs(Patient patient) {
-		
 		return null;
 	}
 	
@@ -778,20 +777,14 @@ public class Utils {
 				.getEncountersByPatient(patient).stream()
 				.filter(x -> x.getEncounterType().getEncounterTypeId() == HIV_Enrollment_Encounter_Type_Id)
 				.findAny();
-		if (hivEnrollmentEncounter.isPresent()) {
-			return new ArrayList<>(hivEnrollmentEncounter.get().getAllObs(false));
-		}
-		return null;
+		return hivEnrollmentEncounter.map(encounter -> new ArrayList<>(encounter.getAllObs(false))).orElse(null);
 	}
 	
 	public static List<Obs> getHIVEnrollmentObs(List<Obs> obs) {
 		Optional<Obs> hivObs = obs.stream()
 				.filter(x -> x.getEncounter().getEncounterId() == HIV_Enrollment_Encounter_Type_Id)
 				.findAny();
-		if (hivObs.isPresent()) {
-			return new ArrayList<>(Collections.singletonList(hivObs.get()));
-		}
-		return null;
+		return hivObs.<List<Obs>>map(value -> new ArrayList<>(Collections.singletonList(value))).orElse(null);
 	}
 	
 	public static List<Encounter> getAllRegimenObs(Patient patient) {
@@ -1632,11 +1625,13 @@ public class Utils {
 	
 	public static ArrayList<Integer> GetPatientIds(DBConnection openmrsConn) {
 		ArrayList<Integer> patient_ids = new ArrayList<>();
+		Connection connection = null;
+		ResultSet result = null;
 		try {
 
-			String sql = String.format("SELECT patient_id FROM patient");
-			Connection connection = DriverManager.getConnection(openmrsConn.getUrl(), openmrsConn.getUsername(), openmrsConn.getPassword());
-			ResultSet result = connection.createStatement().executeQuery(sql);
+			String sql = "SELECT patient_id FROM patient";
+			connection = DriverManager.getConnection(openmrsConn.getUrl(), openmrsConn.getUsername(), openmrsConn.getPassword());
+			result = connection.createStatement().executeQuery(sql);
 			while (result.next()) {
 				patient_ids.add(result.getInt("patient_id"));
 			}
@@ -1644,6 +1639,14 @@ public class Utils {
 			e.printStackTrace();
 			LoggerUtils.write("Utils.GetPatientIds", e.getMessage(), LoggerUtils.LogFormat.FATAL,
 					LogLevel.live);
+		} finally {
+			try {
+				if (connection != null) connection.close();
+				if (result != null) result.close();
+			}
+			catch (SQLException ex) {
+				System.out.println(ex.getMessage());
+			}
 		}
 		return patient_ids;
 	}

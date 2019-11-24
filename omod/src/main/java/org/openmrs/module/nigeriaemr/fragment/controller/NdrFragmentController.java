@@ -35,26 +35,9 @@ public class NdrFragmentController {
 		
 	}
 	
-	public String generateNDRFile(HttpServletRequest request) throws DatatypeConfigurationException, IOException,
-	        SAXException, JAXBException, Throwable {
-		
-		//   FacilityLocationService facilityLocationService = new FacilityLocationService();
-		// Integer locationId = 8;
+	public String generateNDRFile(HttpServletRequest request) throws Throwable {
 		
 		DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
-		
-		//		List<FacilityLocation> allFacilityLocations = facilityLocationService.getAllFacilityLocations();
-		//                List<PatientLocation> allPatientLocations = facilityLocationService.getAllPatientLocation();
-		//                
-		//                
-		//                FacilityLocation facilityLocation = allFacilityLocations.stream()
-		//                        .filter(a -> a.getLocation_id().equals(locationId)).findFirst().get();
-		//                List<Integer> filteredPatientByLocation = allPatientLocations.stream()
-		//                        .filter(a -> a.getLocation_id().equals(locationId))
-		//                        .map(PatientLocation::getPatient_id).collect(Collectors.toList());
-		//                
-		
-		//check i fglobal variable for logging exists
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		
 		//create report download folder at the server. skip if already exist

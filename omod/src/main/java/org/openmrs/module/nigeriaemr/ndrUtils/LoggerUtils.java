@@ -162,11 +162,8 @@ public class LoggerUtils {
 				pStatement.setString(2, DEFAULT_LOGGER_GLOBAL_PROP_VALUE);
 				pStatement.setString(3, DEFAULT_LOGGER_GLOBAL_PROP_DESCRIPTION);
 				pStatement.setString(4, UUID.randomUUID().toString());
-				
 				pStatement.executeUpdate();
-				
 			}
-			
 		}
 		catch (SQLException ex) {
 			LoggerUtils.write(LoggerUtils.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
@@ -179,13 +176,9 @@ public class LoggerUtils {
 				if (pStatement != null) {
 					pStatement.close();
 				}
-				
 			}
-			catch (SQLException ex) {
-				
-			}
+			catch (SQLException ex) {}
 		}
-		
 	}
 	
 	public static String getCurrentInstanceLogLevel() {
