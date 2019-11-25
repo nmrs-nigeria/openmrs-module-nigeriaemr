@@ -266,28 +266,23 @@
         console.log(datimcode);
         console.log(facility_name);
         
-
-        <!-- 
-
-        var jsonResult =  JSON.stringify(result[0]);
-     console.log(jsonResult);
-
+        var combined = JSON.stringify({locationId: location, datimcode: datimcode, facility_name: facility_name});
+        console.log(combined);
+        
         jq = jQuery;
         jq('#wait').hide();
         
-        jqq(function() {
+        jq(function() {
        
-    jqq('#gen-wait').show();
+    jq('#gen-wait').show();
 
-    jqq.ajax({
-         url: "${ ui.actionLink("patientindextracing", "ndr", "reassignContact") }",
+    jq.ajax({
+         url: "${ ui.actionLink("nigeriaemr", "ndr", "createFacilityLocation") }",
     dataType: "json",
     data: {
-    'contactId': contactId,
-    'tester' : jsonResult
+    'falicityLocationString' : combined
     }
-
-        -->
+    
 
     }).success(function(data) {
     jqq('#gen-wait').hide();
