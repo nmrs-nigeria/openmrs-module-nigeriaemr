@@ -41,11 +41,11 @@ public class NdrFragmentController {
 		
 	}
 	
-	public String generateNDRFile(HttpServletRequest request) throws DatatypeConfigurationException, IOException,
+	public String generateNDRFile(HttpServletRequest request,@RequestParam(value = "locationId") Integer locationId) throws DatatypeConfigurationException, IOException,
             SAXException, JAXBException, Throwable {
         
         FacilityLocationService facilityLocationService = new FacilityLocationService();
-        Integer locationId = 8;
+      //  Integer locationId = 8;
         
         DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
         
