@@ -202,7 +202,7 @@ public class NdrFragmentController {
 		try {
 			FacilityLocation facilityLocation = mapper.readValue(falicityLocationString, FacilityLocation.class);
 			facilityLocation.setCreator(Context.getAuthenticatedUser().toString());
-                        response = facilityLocationService.createFacilityLocation(facilityLocation);
+			response = facilityLocationService.createFacilityLocation(facilityLocation);
 			
 		}
 		catch (IOException ex) {

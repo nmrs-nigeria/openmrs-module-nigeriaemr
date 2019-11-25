@@ -266,7 +266,11 @@
         console.log(datimcode);
         console.log(facility_name);
         
-        var combined = JSON.stringify({locationId: location, datimcode: datimcode, facility_name: facility_name});
+        var combined = JSON.stringify({locationId: location, 
+        datimcode: datimcode, facility_name: facility_name, 
+        uuid: " ", location_id: " ", date_created: " ", 
+        creator: " ", date_modified: " ", modified_by: " "});
+        
         console.log(combined);
         
         jq = jQuery;
