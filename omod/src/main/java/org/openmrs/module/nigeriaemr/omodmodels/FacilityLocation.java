@@ -5,11 +5,13 @@
  */
 package org.openmrs.module.nigeriaemr.omodmodels;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Date;
 
 /**
  * @author MORRISON.I
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FacilityLocation {
 	
 	private String uuid;
