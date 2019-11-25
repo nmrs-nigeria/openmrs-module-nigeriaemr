@@ -23,12 +23,11 @@ def id = config.id
 
         </div>
         <div class="table-responsive">
-            <table class="table table-striped table-bordered  table-hover" id="facility_locations">
+            <table class="table table-striped table-bordered  table-hover" id="delete_facility_locations">
                 <thead>
                     <tr>
-                           <th>${ ui.message("Location") }</th>
-                        <th>${ ui.message("Datimcode") }</th>
-                        <th>${ ui.message("Facility Name") }</th>
+                          <th>${ ui.message("Location ID") }</th>
+                        <th>${ ui.message("Location Name") }</th>
                         <th>${ ui.message("Action") }</th>
 
                     </tr>
@@ -52,7 +51,7 @@ def id = config.id
     var input, filter, table, tr, td, i, txtValue;
     input = document.getElementById("nameSearch");
     filter = input.value.toUpperCase();
-    table = document.getElementById("tb_commtester");
+    table = document.getElementById("edit_facility_locations");
     tr = table.getElementsByTagName("tr");
 
     // Loop through all table rows, and hide those who don't match the search query
@@ -85,12 +84,9 @@ def id = config.id
     jq('#gen-wait').show();
 
     jq.ajax({
-        url: "${ ui.actionLink("nigeriaemr", "ndr", "getIndexContacts") }",
+        url: "${ ui.actionLink("nigeriaemr", "ndr", "getAllLocation") }",
     dataType: "json",
-    data: {
-    'indexClientId': '7'
-    }
-    
+  
 
     }).success(function(data) {
     jq('#gen-wait').hide();
@@ -106,7 +102,9 @@ def id = config.id
     
         for(var i=0;i<obj.length;i++)
         {
-            jq('#TableBody').append("<tr><td>"+obj[i].lastname+"</td><td>"+obj[i].firstname+"</td><td>"+obj[i].sex+"</td><td>"+obj[i].state+"</td></tr>");
+           facilityID = obj[i].locationId+'';
+            deleteButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="deleteLocation(' + facilityID + ')">'+"Delete"+'</button>';
+            jq('#TableBody').append("<tr><td>"+obj[i].locationId+"</td><td>"+obj[i].locationName+"</td><td>"+deleteButton+"</td></tr>");
 
         }
     
