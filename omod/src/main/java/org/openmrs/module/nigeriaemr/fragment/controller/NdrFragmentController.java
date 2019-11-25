@@ -33,6 +33,7 @@ import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.LocationModel;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
 import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public class NdrFragmentController {
 	
@@ -193,7 +194,7 @@ public class NdrFragmentController {
 		return Utils.getBiometricServer();
 	}
 	
-	public String createFacilityLocation(String falicityLocationString) {
+	public String createFacilityLocation(@RequestParam(value = "falicityLocationString") String falicityLocationString) {
 		
 		ObjectMapper mapper = new ObjectMapper();
 		FacilityLocationService facilityLocationService = new FacilityLocationService();
@@ -218,12 +219,13 @@ public class NdrFragmentController {
 		
 	}
 	
-	public String editFacilityLocation(FacilityLocation facilityLocationString) {
+	public String editFacilityLocation(@RequestParam(value = "facilityLocationString") String facilityLocationString) {
 		ObjectMapper mapper = new ObjectMapper();
 		FacilityLocationService facilityLocationService = new FacilityLocationService();
 		int response = 0;
 		try {
-			response = facilityLocationService.editFacilityLocation(facilityLocationString);
+			FacilityLocation facilityLocation = mapper.readValue(facilityLocationString, FacilityLocation.class);
+			response = facilityLocationService.editFacilityLocation(facilityLocation);
 		}
 		catch (Exception ex) {
 			Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
@@ -236,7 +238,7 @@ public class NdrFragmentController {
 		return "Error occurred, try again";
 	}
 	
-	public void deleteFacilityLocation(String facilityLocationUUID) {
+	public void deleteFacilityLocation(@RequestParam(value = "facilityLocationUUID") String facilityLocationUUID) {
 		FacilityLocationService facilityLocationService = new FacilityLocationService();
 		try {
 			facilityLocationService.deleteFacilityLocation(facilityLocationUUID);
