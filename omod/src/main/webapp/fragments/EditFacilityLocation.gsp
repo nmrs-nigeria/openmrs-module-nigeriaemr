@@ -104,9 +104,9 @@ def id = config.id
     
         for(var i=0;i<obj.length;i++)
         {
-            facilityID = obj[i].locationId+'';
-            editButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="editLocation(' + facilityID + ')">'+"Edit"+'</button>';
-            jq('#EditTableBody').append("<tr><td>"+obj[i].locationId+"</td><td>"+obj[i].locationName+"</td><td>"+editButton+"</td></tr>");
+            facilityID = obj[i].uuid+'';
+            editButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="editLocation(facilityID)">'+"Edit"+'</button>';
+            jq('#EditTableBody').append("<tr><td>"+obj[i].datimCode+"</td><td>"+obj[i].facility_name+"</td><td>"+editButton+"</td></tr>");
 
         }
     

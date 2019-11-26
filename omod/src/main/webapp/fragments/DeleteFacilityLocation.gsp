@@ -26,8 +26,8 @@ def id = config.id
             <table class="table table-striped table-bordered  table-hover" id="delete_facility_locations">
                 <thead>
                     <tr>
-                          <th>${ ui.message("Location ID") }</th>
-                        <th>${ ui.message("Location Name") }</th>
+                          <th>${ ui.message("Datim Code") }</th>
+                        <th>${ ui.message("Facility Name") }</th>
                         <th>${ ui.message("Action") }</th>
 
                     </tr>
@@ -104,10 +104,10 @@ def id = config.id
     
         for(var i=0;i<obj.length;i++)
         {
-           facilityID = obj[i].locationId+'';
+           facilityID = obj[i].uuid+'';
 
-            deleteButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="deleteLocation(' + facilityID + ')">'+"Delete"+'</button>';
-            jq('#DeleteTableBody').append("<tr><td>"+obj[i].locationId+"</td><td>"+obj[i].locationName+"</td><td>"+deleteButton+"</td></tr>");
+            deleteButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="deleteLocation(facilityID)">'+"Delete"+'</button>';
+            jq('#DeleteTableBody').append("<tr><td>"+obj[i].datimCode+"</td><td>"+obj[i].facility_name+"</td><td>"+deleteButton+"</td></tr>");
 
         }
     
@@ -138,12 +138,12 @@ def id = config.id
                     url: "${ ui.actionLink("nigeriaemr", "ndr", "deleteFacilityLocation") }",
                 dataType: "json",
                  data: {
-                'facilityLocation' : facilityID
+                'facilityLocationUUID' : facilityID
                 }
 
                 }).success(function(data) {
                 jq('#gen-wait').hide();
-                alert(data);
+                alert("Delete operation was successful");
 
 
 

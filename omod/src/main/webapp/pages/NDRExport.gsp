@@ -30,10 +30,122 @@
                </div><br>
 
                 <div>
-                        <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px" type="button" value="Export" class="btn btn-primary" />
+                    <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px" type="button" value="Export" onclick="exportData()" class="btn btn-primary" />
                 </div>
         <br/><br/>
 
 
         </h5>
     </div>
+    
+    
+<script>
+    jqq = jQuery;
+    jqq('#wait').hide();
+    var globalTester = "";
+    jqq(function() {
+       
+    jqq('#gen-wait').show();
+
+    jqq.ajax({
+        url: "${ ui.actionLink("nigeriaemr", "ndr", "getAllFacilityLocation") }",
+    dataType: "json",
+    
+
+    }).success(function(data) {
+    jqq('#gen-wait').hide();
+    console.log(data);
+     
+    var obj = jq.parseJSON(data);
+    globalTester = jq.parseJSON(data);
+    var uuID = "";
+    var facilityName = "";
+
+     console.log(obj.length);
+     console.log(obj);
+ 
+
+    if(obj !="")
+    {
+    
+        for(var i=0;i<obj.length;i++)
+        {
+        
+            location_id = obj[i].location_id+'';
+            facilityName = obj[i].facility_name+'';
+            console.log(uuID);
+            console.log(facilityName);
+          
+            
+            jqq('#facility_location').append("<option value=\""+location_id+"\">"+facilityName+"</option>");
+
+  
+      }
+    
+    }
+    
+    })
+    .error(function(xhr, status, err) {
+    jqq('#gen-wait').hide();
+    alert('An error occured');
+
+    }); 
+
+    });
+
+</script>
+
+
+<script>
+    
+    
+   function exportData() 
+    {
+        
+        var location_id = jQuery('#facility_location').val();
+                console.log(location_id);
+                
+                jq = jQuery;
+                    jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "generateNDRFile") }",
+                dataType: "json",
+                 data: {
+                'locationId' : location_id
+                }
+
+                }).success(function(filename) {
+                 if(filename == "no new patient record found"){
+                    jq('#wait').hide();
+                    alert("no updated patient record found")
+                    }
+                    else{
+                    window.location = filename;
+                    }
+                   /* if(filename.startsWith("Files Exported successfully")){
+                    //export was successful
+                    alert(filename);
+                    }
+                    else{
+                    //export was partially successful
+                    //this may require directing the user to an erro summary page.
+                    alert(filename);
+                    }*/
+                    jq('#wait').hide();
+
+
+
+                })
+                .error(function(xhr, status, err) {
+                jq('#gen-wait').hide();
+                alert('There was an error generating all NDR files, check generated files at downloads directory in the application root folder ' + err);
+
+                }); 
+        
+        
+    }
+    
+
+
+
+
+</script>
