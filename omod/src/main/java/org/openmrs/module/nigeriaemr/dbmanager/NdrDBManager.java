@@ -186,8 +186,7 @@ public class NdrDBManager {
 		
 		String sql = "select distinct p.patient_id,pd.location_id from patient p \n"
 		        + "inner join patient_identifier pd on p.patient_id = pd.patient_id and pd.location_id is not null \n"
-                        + "where p.voided = 0"
-		        + "group by p.patient_id";
+		        + "where p.voided = 0" + "group by p.patient_id";
 		
 		pStatement = conn.prepareStatement(sql);
 		resultSet = pStatement.executeQuery();

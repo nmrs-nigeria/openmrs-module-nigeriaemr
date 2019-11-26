@@ -100,7 +100,5 @@ public class FacilityLocationService {
 			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-        
-        
 	
 }

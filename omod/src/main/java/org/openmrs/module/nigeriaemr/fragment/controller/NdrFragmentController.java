@@ -36,12 +36,12 @@ import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class NdrFragmentController {
-
-    public void controller() {
-
-    }
-
-    public String generateNDRFile(HttpServletRequest request, @RequestParam(value = "locationId") Integer locationId) throws DatatypeConfigurationException, IOException,
+	
+	public void controller() {
+		
+	}
+	
+	public String generateNDRFile(HttpServletRequest request, @RequestParam(value = "locationId") Integer locationId) throws DatatypeConfigurationException, IOException,
             SAXException, JAXBException, Throwable {
 
         FacilityLocationService facilityLocationService = new FacilityLocationService();
@@ -187,79 +187,83 @@ public class NdrFragmentController {
         }
 
     }
-
-    public String getAllFacilityLocation() {
-        ObjectMapper mapper = new ObjectMapper();
-        FacilityLocationService facilityLocationService = new FacilityLocationService();
-        String response = "";
-        try {
-            response = mapper.writeValueAsString(facilityLocationService.getAllFacilityLocations());
-        } catch (JsonProcessingException ex) {
-            Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return response;
-    }
-
-    //get host for openmrs instance
-    public String retrieveBiometricServer(String msg) {
-        System.out.println("This is from the UI: " + msg);
-        return Utils.getBiometricServer();
-    }
-
-    public String createFacilityLocation(@RequestParam(value = "falicityLocationString") String falicityLocationString) {
-
-        ObjectMapper mapper = new ObjectMapper();
-        FacilityLocationService facilityLocationService = new FacilityLocationService();
-        int response = 0;
-
-        try {
-            FacilityLocation facilityLocation = mapper.readValue(falicityLocationString, FacilityLocation.class);
-            facilityLocation.setCreator(Context.getAuthenticatedUser().toString());
-            response = facilityLocationService.createFacilityLocation(facilityLocation);
-
-        } catch (IOException ex) {
-            Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
-            return "Error occurred, try again";
-        }
-
-        if (response != -1) {
-            return "Successfully created facility location";
-        }
-
-        return "Error occurred, try again";
-
-    }
-
-    public String editFacilityLocation(@RequestParam(value = "facilityLocationString") String facilityLocationString) {
-        ObjectMapper mapper = new ObjectMapper();
-        FacilityLocationService facilityLocationService = new FacilityLocationService();
-        int response = 0;
-        try {
-            FacilityLocation facilityLocation = mapper.readValue(facilityLocationString, FacilityLocation.class);
-            response = facilityLocationService.editFacilityLocation(facilityLocation);
-        } catch (Exception ex) {
-            Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (response != -1) {
-            return "Successfully updated facility location";
-        }
-
-        return "Error occurred, try again";
-    }
-
-    public void deleteFacilityLocation(@RequestParam(value = "facilityLocationUUID") String facilityLocationUUID) {
-        FacilityLocationService facilityLocationService = new FacilityLocationService();
-        try {
-            facilityLocationService.deleteFacilityLocation(facilityLocationUUID);
-
-        } catch (Exception ex) {
-            Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public String getAllLocation() {
+	
+	public String getAllFacilityLocation() {
+		ObjectMapper mapper = new ObjectMapper();
+		FacilityLocationService facilityLocationService = new FacilityLocationService();
+		String response = "";
+		try {
+			response = mapper.writeValueAsString(facilityLocationService.getAllFacilityLocations());
+		}
+		catch (JsonProcessingException ex) {
+			Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		return response;
+	}
+	
+	//get host for openmrs instance
+	public String retrieveBiometricServer(String msg) {
+		System.out.println("This is from the UI: " + msg);
+		return Utils.getBiometricServer();
+	}
+	
+	public String createFacilityLocation(@RequestParam(value = "falicityLocationString") String falicityLocationString) {
+		
+		ObjectMapper mapper = new ObjectMapper();
+		FacilityLocationService facilityLocationService = new FacilityLocationService();
+		int response = 0;
+		
+		try {
+			FacilityLocation facilityLocation = mapper.readValue(falicityLocationString, FacilityLocation.class);
+			facilityLocation.setCreator(Context.getAuthenticatedUser().toString());
+			response = facilityLocationService.createFacilityLocation(facilityLocation);
+			
+		}
+		catch (IOException ex) {
+			Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
+			return "Error occurred, try again";
+		}
+		
+		if (response != -1) {
+			return "Successfully created facility location";
+		}
+		
+		return "Error occurred, try again";
+		
+	}
+	
+	public String editFacilityLocation(@RequestParam(value = "facilityLocationString") String facilityLocationString) {
+		ObjectMapper mapper = new ObjectMapper();
+		FacilityLocationService facilityLocationService = new FacilityLocationService();
+		int response = 0;
+		try {
+			FacilityLocation facilityLocation = mapper.readValue(facilityLocationString, FacilityLocation.class);
+			response = facilityLocationService.editFacilityLocation(facilityLocation);
+		}
+		catch (Exception ex) {
+			Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+		if (response != -1) {
+			return "Successfully updated facility location";
+		}
+		
+		return "Error occurred, try again";
+	}
+	
+	public void deleteFacilityLocation(@RequestParam(value = "facilityLocationUUID") String facilityLocationUUID) {
+		FacilityLocationService facilityLocationService = new FacilityLocationService();
+		try {
+			facilityLocationService.deleteFacilityLocation(facilityLocationUUID);
+			
+		}
+		catch (Exception ex) {
+			Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+	
+	public String getAllLocation() {
         List<LocationModel> locationModels = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         String locationString = "";
