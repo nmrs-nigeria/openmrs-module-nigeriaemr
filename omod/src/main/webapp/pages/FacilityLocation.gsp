@@ -146,12 +146,12 @@
 
 
 
-<div id="Contacts_Listing" class="tabcontent">
+<div id="Edit_Facility_Location" class="tabcontent">
     ${ ui.includeFragment("nigeriaemr", "EditFacilityLocation") }
 
 </div>
 
-<div id="Contacts_Listing" class="tabcontent">
+<div id="Delete_Facility_Location" class="tabcontent">
     ${ ui.includeFragment("nigeriaemr", "DeleteFacilityLocation") }
 
 </div>
@@ -266,9 +266,9 @@
         console.log(datimcode);
         console.log(facility_name);
         
-        var combined = JSON.stringify({locationId: location, 
-        datimcode: datimcode, facility_name: facility_name, 
-        uuid: " ", location_id: " ", date_created: " ", 
+        var combined = JSON.stringify({location_id: location, 
+        datimCode: datimcode, facility_name: facility_name, 
+        uuid: " ", date_created: " ", 
         creator: " ", date_modified: " ", modified_by: " "});
         
         console.log(combined);
