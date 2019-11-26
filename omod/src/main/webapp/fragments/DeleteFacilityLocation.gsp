@@ -14,7 +14,7 @@ def id = config.id
 
                 <h5>
                     <br/>
-                    <input style="width: 40%;font-size: 16px; padding: 12px 20px 12px 40px; border: 1px solid #ddd; margin-bottom: 12px;" class="heading-text pull-left" type="text" id="nameSearch" onkeyup="myFunction()" placeholder="Search..">
+                    <input style="width: 40%;font-size: 16px; padding: 12px 20px 12px 40px; border: 1px solid #ddd; margin-bottom: 12px;" class="heading-text pull-left" type="text" id="nameDeleteSearch" onkeyup="myDeleteFunction()" placeholder="Search..">
 
                     <br/><br/>
                 </h5>
@@ -32,7 +32,7 @@ def id = config.id
 
                     </tr>
                 </thead>
-                <tbody id="TableBody">
+                <tbody id="DeleteTableBody">
 
 
 
@@ -46,12 +46,12 @@ def id = config.id
 </div>
 
 <script>
-    function myFunction() {
+    function myDeleteFunction() {
     // Declare variables 
     var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("nameSearch");
+    input = document.getElementById("nameDeleteSearch");
     filter = input.value.toUpperCase();
-    table = document.getElementById("edit_facility_locations");
+    table = document.getElementById("delete_facility_locations");
     tr = table.getElementsByTagName("tr");
 
     // Loop through all table rows, and hide those who don't match the search query
@@ -75,6 +75,8 @@ def id = config.id
     }
 </script>
 
+
+
 <script>
  
     jq = jQuery;
@@ -84,7 +86,7 @@ def id = config.id
     jq('#gen-wait').show();
 
     jq.ajax({
-        url: "${ ui.actionLink("nigeriaemr", "ndr", "getAllLocation") }",
+        url: "${ ui.actionLink("nigeriaemr", "ndr", "getAllFacilityLocation") }",
     dataType: "json",
   
 
@@ -103,8 +105,9 @@ def id = config.id
         for(var i=0;i<obj.length;i++)
         {
            facilityID = obj[i].locationId+'';
+
             deleteButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="deleteLocation(' + facilityID + ')">'+"Delete"+'</button>';
-            jq('#TableBody').append("<tr><td>"+obj[i].locationId+"</td><td>"+obj[i].locationName+"</td><td>"+deleteButton+"</td></tr>");
+            jq('#DeleteTableBody').append("<tr><td>"+obj[i].locationId+"</td><td>"+obj[i].locationName+"</td><td>"+deleteButton+"</td></tr>");
 
         }
     
@@ -119,4 +122,43 @@ def id = config.id
 
     });
 
+</script>
+
+<script type="text/javascript">
+
+    function deleteLocation(facilityID) 
+    {
+        
+          if(facilityID)
+           {
+                console.log(facilityID);
+                
+                jq = jQuery;
+                    jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "deleteFacilityLocation") }",
+                dataType: "json",
+                 data: {
+                'facilityLocation' : facilityID
+                }
+
+                }).success(function(data) {
+                jq('#gen-wait').hide();
+                alert(data);
+
+
+
+                })
+                .error(function(xhr, status, err) {
+                jq('#gen-wait').hide();
+                alert('An error occured');
+
+                }); 
+           }
+           else
+           {
+                alert('Invalid Facility');
+           }
+        
+    }
+    
 </script>
