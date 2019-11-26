@@ -14,6 +14,7 @@ import org.openmrs.Location;
 import org.openmrs.module.nigeriaemr.dbmanager.NdrDBManager;
 import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
+import org.openmrs.module.nigeriaemr.omodmodels.PatientLocationAggregate;
 
 /**
  * @author MORRISON.I
@@ -99,6 +100,23 @@ public class FacilityLocationService {
 		catch (SQLException ex) {
 			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+        
+        
+        public List<PatientLocationAggregate> getPatientLocationAggregate() {
+            List<PatientLocationAggregate> patientLocationAggregates = null;
+		try {
+                    patientLocationAggregates = new ArrayList<>();
+			dbManageer = new NdrDBManager();
+			dbManageer.openConnection();
+		patientLocationAggregates = 	dbManageer.getCurrentPatientLocationAgg();
+			dbManageer.closeConnection();
+		}
+		catch (SQLException ex) {
+			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
+		}
+                
+                return patientLocationAggregates;
 	}
 	
 }
