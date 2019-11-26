@@ -29,7 +29,7 @@ public class FacilityLocationService {
         try {
             dbManageer = new NdrDBManager();
             dbManageer.openConnection();
-            response = dbManageer.getFacilityLocationByLocationId();
+            response = dbManageer.getAllFacilityLocation();
             dbManageer.closeConnection();
         } catch (SQLException ex) {
             Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
@@ -100,5 +100,7 @@ public class FacilityLocationService {
 			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
+        
+        
 	
 }
