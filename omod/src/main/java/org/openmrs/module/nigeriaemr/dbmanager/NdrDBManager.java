@@ -174,7 +174,7 @@ public class NdrDBManager {
 	}
 	
 	public List<FacilityLocation> getAllFacilityLocation() throws SQLException {
-		String sql_txt = "select uuid,location_id,datimCode,facility_name,date_created,creator,date_modified,modified_by from "
+		String sql_txt = "select uuid,location_id,location_name,datimCode,facility_name,date_created,creator,date_modified,modified_by from "
 		        + ConstantsUtil.FACILITY_LOCATION_TABLE;
 		pStatement = conn.prepareStatement(sql_txt);
 		resultSet = pStatement.executeQuery();
@@ -198,13 +198,14 @@ public class NdrDBManager {
 	
 	public int insertFacilityLocation(FacilityLocation facilityLocation) throws SQLException {
 		String sql = "insert into " + ConstantsUtil.FACILITY_LOCATION_TABLE
-		        + "(uuid,location_id,datimCode,facility_name,date_created,creator)" + "values(?,?,?,?,NOW(),?)";
+		        + "(uuid,location_id,location_name,datimCode,facility_name,date_created,creator)" + "values(?,?,?,?,?,NOW(),?)";
 		pStatement = conn.prepareStatement(sql);
 		pStatement.setString(1, UUID.randomUUID().toString());
 		pStatement.setInt(2, facilityLocation.getLocation_id());
-		pStatement.setString(3, facilityLocation.getDatimCode());
-		pStatement.setString(4, facilityLocation.getFacility_name());
-		pStatement.setString(5, facilityLocation.getCreator());
+                pStatement.setString(3, facilityLocation.getLocation_name());
+		pStatement.setString(4, facilityLocation.getDatimCode());
+		pStatement.setString(5, facilityLocation.getFacility_name());
+		pStatement.setString(6, facilityLocation.getCreator());
 		
 		return pStatement.executeUpdate();
 		
@@ -212,11 +213,12 @@ public class NdrDBManager {
 	
 	public int updateFacilityLocation(FacilityLocation facilityLocation) throws SQLException {
 		String sql = "update " + ConstantsUtil.FACILITY_LOCATION_TABLE
-		        + " set datimCode = ?, modified_by = ?, date_modified = NOW() where location_id = ? ";
+		        + " set datimCode = ?,facility_name = ?, modified_by = ?, date_modified = NOW() where location_id = ? ";
 		pStatement = conn.prepareStatement(sql);
 		pStatement.setString(1, facilityLocation.getDatimCode());
-		pStatement.setString(2, facilityLocation.getModified_by());
-		pStatement.setInt(3, facilityLocation.getLocation_id());
+                pStatement.setString(2, sql);
+		pStatement.setString(3, facilityLocation.getModified_by());
+		pStatement.setInt(4, facilityLocation.getLocation_id());
 		
 		return pStatement.executeUpdate();
 		
@@ -271,6 +273,7 @@ public class NdrDBManager {
             facilityLocation.setDatimCode(resultSet.getString("datimCode"));
             facilityLocation.setFacility_name(resultSet.getString("facility_name"));
             facilityLocation.setLocation_id(resultSet.getInt("location_id"));
+            facilityLocation.setLocation_name(resultSet.getString("location_name"));
             facilityLocation.setModified_by(resultSet.getString("modified_by"));
             facilityLocation.setUuid(resultSet.getString("uuid"));
 
