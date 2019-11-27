@@ -101,9 +101,8 @@ public class FacilityLocationService {
 			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-        
-        
-        public List<PatientLocationAggregate> getPatientLocationAggregate() {
+	
+	public List<PatientLocationAggregate> getPatientLocationAggregate() {
             List<PatientLocationAggregate> patientLocationAggregates = null;
 		try {
                     patientLocationAggregates = new ArrayList<>();
@@ -118,5 +117,4 @@ public class FacilityLocationService {
                 
                 return patientLocationAggregates;
 	}
-	
 }

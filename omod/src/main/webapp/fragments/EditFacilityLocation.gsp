@@ -22,12 +22,42 @@ def id = config.id
             </div>
 
         </div>
+        
+          <div class="container" id="edit_form" name="edit_form" style="padding-top: 10px; display: none">
+         <h5 style="margin-left: 2%; width: 40%; height: 90%; background-color: #00463f; border-radius: 10px; ">
+                        <br/> <br/>
+      
+               
+
+               <div>
+                        <label style="font-size: 16px; padding: 12px 20px 12px 40px; margin-bottom: 12px; color: #fff; margin-top: 20px" for="datimcode">Datimcode</label>
+                        <input style="margin-left: 20px; width: 70%;font-size: 16px; padding: 12px 20px 12px 40px; border: 1px solid #ddd; margin-bottom: 12px; border-radius: 15px 50px;" class="form-control heading-text pull-left" type="text" id="editDatimcode" name="editDatimcode" placeholder="Enter datimcode"></td>
+
+                </div><br>
+                
+                <div>
+                        <label style="font-size: 16px; padding: 12px 20px 12px 40px; margin-bottom: 12px; color: #fff; margin-top: 20px" for="facility_name">Facility Name</label>
+                        <input style="margin-left: 20px; width: 70%;font-size: 16px; padding: 12px 20px 12px 40px; border: 1px solid #ddd; margin-bottom: 12px; border-radius: 15px 50px;" type="text" class="form-control" id="edit_facility_name" name="edit_facility_name" placeholder="Enter facility name"></td>
+                        <input type="text" id="uuid" disabled="true"  name="uuid" style="border: none; display: none;"/>
+
+                </div><br>
+
+                <div>
+                    <input style="background-color: #E8F0FE; margin-left: 45px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px" type="button" value="Update facility location" class="btn btn-primary" onclick="updateFacilityLocation()" />
+                </div>
+        <br/><br/>
+
+
+        </h5><br>
+    </div>
+        
         <div class="table-responsive">
             <table class="table table-striped table-bordered  table-hover" id="edit_facility_locations">
                 <thead>
                     <tr>
-                        <th>${ ui.message("Location ID") }</th>
-                        <th>${ ui.message("Location Name") }</th>
+                        <th>${ ui.message("Datim Code") }</th>
+                        <th>${ ui.message("Facility Name") }</th>
+                       
                         <th>${ ui.message("Action") }</th>
 
                     </tr>
@@ -79,6 +109,8 @@ def id = config.id
  
     jq = jQuery;
     jq('#wait').hide();
+    var globalLocations = "";
+
     jq(function() {
        
     jq('#gen-wait').show();
@@ -94,6 +126,7 @@ def id = config.id
     console.log(data);
      
     var obj = jq.parseJSON(data);
+    globalLocations = jq.parseJSON(data);
 
      console.log(obj.length);
      console.log(obj);
@@ -125,6 +158,8 @@ def id = config.id
 
 
 
+
+
 <script type="text/javascript">
 
     function editLocation(facilityID) 
@@ -132,6 +167,21 @@ def id = config.id
         if(facilityID)
            {
                 console.log(facilityID);
+                    
+                console.log(globalLocations);
+
+                var result = jQuery.grep(globalLocations, function(e){ return e.uuid == facilityID; });
+
+                console.log(result); 
+
+                jQuery('#edit_form').hide(500);
+
+                jQuery('#editDatimcode').val(result[0].datimCode);
+                jQuery('#edit_facility_name').val(result[0].facility_name);
+                jQuery('#uuid').val(facilityID);
+                
+                
+                jQuery('#edit_form').show(500);
            }
            else
            {
@@ -139,4 +189,59 @@ def id = config.id
            }
     }
     
+</script>
+
+
+<script>
+    function updateFacilityLocation(){
+        
+        var uuid = jQuery('#uuid').val();
+        var editDatimcode = jQuery('#editDatimcode').val();
+        var edit_facility_name = jQuery('#edit_facility_name').val();
+            
+        console.log(uuid);
+        console.log(editDatimcode);
+        console.log(edit_facility_name);
+        
+       
+        
+        var combined = JSON.stringify({datimCode: editDatimcode, facility_name: edit_facility_name, 
+        uuid: uuid});
+        
+        console.log(combined);
+        
+        jq = jQuery;
+        jq('#wait').hide();
+        
+        jq(function() {
+       
+    jq('#gen-wait').show();
+
+    jq.ajax({
+         url: "${ ui.actionLink("nigeriaemr", "ndr", "editFacilityLocation") }",
+    dataType: "json",
+    data: {
+    'falicityLocationString' : combined
+    }
+    
+
+    }).success(function(data) {
+    jqq('#gen-wait').hide();
+    console.log(data);
+      
+    alert(data);
+    
+    })
+    .error(function(xhr, status, err) {
+    jqq('#gen-wait').hide();
+    alert('An error occured');
+
+    }); 
+
+    });
+    
+    }
+    
+    
+
 </script>

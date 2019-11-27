@@ -266,7 +266,11 @@
         console.log(datimcode);
         console.log(facility_name);
         
-        var combined = JSON.stringify({location_id: location, 
+        var result = jQuery.grep(globalTester, function(e){ return e.locationId == location; });
+        console.log(result[0].locationName);
+        var location_name = result[0].locationName;
+        
+        var combined = JSON.stringify({location_id: location,location_name: location_name, 
         datimCode: datimcode, facility_name: facility_name, 
         uuid: " ", date_created: " ", 
         creator: " ", date_modified: " ", modified_by: " "});
