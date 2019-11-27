@@ -78,6 +78,8 @@
     
     <button class="tablinks" onclick="openTab(event, 'Delete_Facility_Location')">Delete Facility Location</button>
 
+    <button class="tablinks" onclick="openTab(event, 'Patient_Location_Aggregate')">Patient Location Aggregate</button>
+
 
 </div>
 
@@ -156,7 +158,10 @@
 
 </div>
 
+<div id="Patient_Location_Aggregate" class="tabcontent">
+    ${ ui.includeFragment("nigeriaemr", "PatientLocationAggregate") }
 
+</div>
 
 
 </div>

@@ -203,10 +203,11 @@ def id = config.id
         console.log(editDatimcode);
         console.log(edit_facility_name);
         
-       
         
-        var combined = JSON.stringify({datimCode: editDatimcode, facility_name: edit_facility_name, 
-        uuid: uuid});
+        var combined = JSON.stringify({location_id: " ",location_name: " ", 
+        datimCode: editDatimcode, facility_name: edit_facility_name, 
+        uuid: uuid, date_created: " ", 
+        creator: " ", date_modified: " ", modified_by: " "});
         
         console.log(combined);
         

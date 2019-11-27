@@ -198,11 +198,12 @@ public class NdrDBManager {
 	
 	public int insertFacilityLocation(FacilityLocation facilityLocation) throws SQLException {
 		String sql = "insert into " + ConstantsUtil.FACILITY_LOCATION_TABLE
-		        + "(uuid,location_id,location_name,datimCode,facility_name,date_created,creator)" + "values(?,?,?,?,?,NOW(),?)";
+		        + "(uuid,location_id,location_name,datimCode,facility_name,date_created,creator)"
+		        + "values(?,?,?,?,?,NOW(),?)";
 		pStatement = conn.prepareStatement(sql);
 		pStatement.setString(1, UUID.randomUUID().toString());
 		pStatement.setInt(2, facilityLocation.getLocation_id());
-                pStatement.setString(3, facilityLocation.getLocation_name());
+		pStatement.setString(3, facilityLocation.getLocation_name());
 		pStatement.setString(4, facilityLocation.getDatimCode());
 		pStatement.setString(5, facilityLocation.getFacility_name());
 		pStatement.setString(6, facilityLocation.getCreator());
@@ -216,7 +217,7 @@ public class NdrDBManager {
 		        + " set datimCode = ?,facility_name = ?, modified_by = ?, date_modified = NOW() where location_id = ? ";
 		pStatement = conn.prepareStatement(sql);
 		pStatement.setString(1, facilityLocation.getDatimCode());
-                pStatement.setString(2, sql);
+		pStatement.setString(2, sql);
 		pStatement.setString(3, facilityLocation.getModified_by());
 		pStatement.setInt(4, facilityLocation.getLocation_id());
 		
