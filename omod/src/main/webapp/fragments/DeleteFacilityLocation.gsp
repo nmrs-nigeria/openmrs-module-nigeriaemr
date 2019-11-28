@@ -26,6 +26,7 @@ def id = config.id
             <table class="table table-striped table-bordered  table-hover" id="delete_facility_locations">
                 <thead>
                     <tr>
+                         <th>${ ui.message("Location Name") }</th>
                           <th>${ ui.message("Datim Code") }</th>
                         <th>${ ui.message("Facility Name") }</th>
                         <th>${ ui.message("Action") }</th>
@@ -104,10 +105,11 @@ def id = config.id
     
         for(var i=0;i<obj.length;i++)
         {
-           facilityID = obj[i].uuid+'';
+           facilityID = "\'"+obj[i].uuid+"\'";
+            console.log(facilityID);
 
-            deleteButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="deleteLocation(facilityID)">'+"Delete"+'</button>';
-            jq('#DeleteTableBody').append("<tr><td>"+obj[i].datimCode+"</td><td>"+obj[i].facility_name+"</td><td>"+deleteButton+"</td></tr>");
+            deleteButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="deleteLocation(' + facilityID + ')">'+"Delete"+'</button>';
+            jq('#DeleteTableBody').append("<tr><td>"+obj[i].location_name+"</td><td>"+obj[i].datimCode+"</td><td>"+obj[i].facility_name+"</td><td>"+deleteButton+"</td></tr>");
 
         }
     

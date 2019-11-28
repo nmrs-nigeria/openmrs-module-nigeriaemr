@@ -55,6 +55,7 @@ def id = config.id
             <table class="table table-striped table-bordered  table-hover" id="edit_facility_locations">
                 <thead>
                     <tr>
+                         <th>${ ui.message("Location Name") }</th>
                         <th>${ ui.message("Datim Code") }</th>
                         <th>${ ui.message("Facility Name") }</th>
                        
@@ -137,9 +138,10 @@ def id = config.id
     
         for(var i=0;i<obj.length;i++)
         {
-            facilityID = obj[i].uuid+'';
-            editButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="editLocation(facilityID)">'+"Edit"+'</button>';
-            jq('#EditTableBody').append("<tr><td>"+obj[i].datimCode+"</td><td>"+obj[i].facility_name+"</td><td>"+editButton+"</td></tr>");
+            facilityID = "\'"+obj[i].uuid+"\'";
+            console.log(facilityID);
+            editButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="editLocation(' + facilityID + ')">'+"Edit"+'</button>';
+            jq('#EditTableBody').append("<tr><td>"+obj[i].location_name+"</td><td>"+obj[i].datimCode+"</td><td>"+obj[i].facility_name+"</td><td>"+editButton+"</td></tr>");
 
         }
     
@@ -178,7 +180,7 @@ def id = config.id
 
                 jQuery('#editDatimcode').val(result[0].datimCode);
                 jQuery('#edit_facility_name').val(result[0].facility_name);
-                jQuery('#uuid').val(facilityID);
+                jQuery('#uuid').val(result[0].uuid);
                 
                 
                 jQuery('#edit_form').show(500);
