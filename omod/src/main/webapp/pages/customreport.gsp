@@ -23,7 +23,6 @@
 
 ${ ui.includeFragment("nigeriaemr", "ndr")}
 
-${ ui.includeFragment("nigeriaemr", "ndrVersion") }
 
 
 <div id="wait" class="dialog" style="display: none; ">
