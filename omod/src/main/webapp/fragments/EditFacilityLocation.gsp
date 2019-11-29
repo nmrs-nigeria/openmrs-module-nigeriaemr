@@ -205,11 +205,17 @@ def id = config.id
         console.log(editDatimcode);
         console.log(edit_facility_name);
         
+        var location = " ";
+        var location_name = " ";
+        var date_created = " ";
+        var creator = " ";
+        var date_modified = " ";
+        var modified_by = " ";
         
-        var combined = JSON.stringify({location_id: " ",location_name: " ", 
+        var combined = JSON.stringify({location_id: location,location_name: location_name, 
         datimCode: editDatimcode, facility_name: edit_facility_name, 
-        uuid: uuid, date_created: " ", 
-        creator: " ", date_modified: " ", modified_by: " "});
+        uuid: uuid, date_created: date_created, 
+        creator: creator, date_modified: date_modified, modified_by: modified_by});
         
         console.log(combined);
         
