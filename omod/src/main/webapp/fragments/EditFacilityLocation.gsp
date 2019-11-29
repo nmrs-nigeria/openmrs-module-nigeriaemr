@@ -55,6 +55,7 @@ def id = config.id
             <table class="table table-striped table-bordered  table-hover" id="edit_facility_locations">
                 <thead>
                     <tr>
+                         <th>${ ui.message("Location Name") }</th>
                         <th>${ ui.message("Datim Code") }</th>
                         <th>${ ui.message("Facility Name") }</th>
                        
@@ -137,9 +138,10 @@ def id = config.id
     
         for(var i=0;i<obj.length;i++)
         {
-            facilityID = obj[i].uuid+'';
-            editButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="editLocation(facilityID)">'+"Edit"+'</button>';
-            jq('#EditTableBody').append("<tr><td>"+obj[i].datimCode+"</td><td>"+obj[i].facility_name+"</td><td>"+editButton+"</td></tr>");
+            facilityID = "\'"+obj[i].uuid+"\'";
+            console.log(facilityID);
+            editButton = '<button type="Reload List" class="btn btn-primary heading-text" style="width: 80%;" onclick="editLocation(' + facilityID + ')">'+"Edit"+'</button>';
+            jq('#EditTableBody').append("<tr><td>"+obj[i].location_name+"</td><td>"+obj[i].datimCode+"</td><td>"+obj[i].facility_name+"</td><td>"+editButton+"</td></tr>");
 
         }
     
@@ -178,7 +180,7 @@ def id = config.id
 
                 jQuery('#editDatimcode').val(result[0].datimCode);
                 jQuery('#edit_facility_name').val(result[0].facility_name);
-                jQuery('#uuid').val(facilityID);
+                jQuery('#uuid').val(result[0].uuid);
                 
                 
                 jQuery('#edit_form').show(500);
@@ -203,11 +205,17 @@ def id = config.id
         console.log(editDatimcode);
         console.log(edit_facility_name);
         
+        var location = " ";
+        var location_name = " ";
+        var date_created = " ";
+        var creator = " ";
+        var date_modified = " ";
+        var modified_by = " ";
         
-        var combined = JSON.stringify({location_id: " ",location_name: " ", 
+        var combined = JSON.stringify({location_id: location,location_name: location_name, 
         datimCode: editDatimcode, facility_name: edit_facility_name, 
-        uuid: uuid, date_created: " ", 
-        creator: " ", date_modified: " ", modified_by: " "});
+        uuid: uuid, date_created: date_created, 
+        creator: creator, date_modified: date_modified, modified_by: modified_by});
         
         console.log(combined);
         
