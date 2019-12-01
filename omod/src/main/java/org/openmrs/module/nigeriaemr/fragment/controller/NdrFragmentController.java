@@ -245,7 +245,7 @@ public class NdrFragmentController {
 			Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		
-		if (response != -1) {
+		if (response > 0) {
 			return "Successfully updated facility location";
 		}
 		

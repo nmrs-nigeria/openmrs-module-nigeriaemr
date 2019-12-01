@@ -230,7 +230,7 @@ def id = config.id
          url: "${ ui.actionLink("nigeriaemr", "ndr", "editFacilityLocation") }",
     dataType: "json",
     data: {
-    'falicityLocationString' : combined
+    'facilityLocationString' : combined
     }
     
 

@@ -217,7 +217,7 @@ public class NdrDBManager {
 		        + " set datimCode = ?,facility_name = ?, modified_by = ?, date_modified = NOW() where location_id = ? ";
 		pStatement = conn.prepareStatement(sql);
 		pStatement.setString(1, facilityLocation.getDatimCode());
-		pStatement.setString(2, sql);
+		pStatement.setString(2, facilityLocation.getFacility_name());
 		pStatement.setString(3, facilityLocation.getModified_by());
 		pStatement.setInt(4, facilityLocation.getLocation_id());
 		
