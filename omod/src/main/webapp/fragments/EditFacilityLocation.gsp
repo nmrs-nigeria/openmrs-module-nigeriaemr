@@ -39,6 +39,8 @@ def id = config.id
                         <label style="font-size: 16px; padding: 12px 20px 12px 40px; margin-bottom: 12px; color: #fff; margin-top: 20px" for="facility_name">Facility Name</label>
                         <input style="margin-left: 20px; width: 70%;font-size: 16px; padding: 12px 20px 12px 40px; border: 1px solid #ddd; margin-bottom: 12px; border-radius: 15px 50px;" type="text" class="form-control" id="edit_facility_name" name="edit_facility_name" placeholder="Enter facility name"></td>
                         <input type="text" id="uuid" disabled="true"  name="uuid" style="border: none; display: none;"/>
+                        <input type="text" id="location_id" disabled="true"  name="uuid" style="border: none; display: none;"/>
+                        <input type="text" id="location_name" disabled="true"  name="uuid" style="border: none; display: none;"/>
 
                 </div><br>
 
@@ -181,6 +183,8 @@ def id = config.id
                 jQuery('#editDatimcode').val(result[0].datimCode);
                 jQuery('#edit_facility_name').val(result[0].facility_name);
                 jQuery('#uuid').val(result[0].uuid);
+                 jQuery('#location_id').val(result[0].location_id);
+                  jQuery('#location_name').val(result[0].location_name);
                 
                 
                 jQuery('#edit_form').show(500);
@@ -200,19 +204,20 @@ def id = config.id
         var uuid = jQuery('#uuid').val();
         var editDatimcode = jQuery('#editDatimcode').val();
         var edit_facility_name = jQuery('#edit_facility_name').val();
+        var location_id = jQuery('#location_id').val();
+        var location_name = jQuery('#location_name').val();
             
         console.log(uuid);
         console.log(editDatimcode);
         console.log(edit_facility_name);
         
-        var location = " ";
-        var location_name = " ";
+      
         var date_created = " ";
         var creator = " ";
         var date_modified = " ";
         var modified_by = " ";
         
-        var combined = JSON.stringify({location_id: location,location_name: location_name, 
+        var combined = JSON.stringify({location_id: location_id,location_name: location_name, 
         datimCode: editDatimcode, facility_name: edit_facility_name, 
         uuid: uuid, date_created: date_created, 
         creator: creator, date_modified: date_modified, modified_by: modified_by});
