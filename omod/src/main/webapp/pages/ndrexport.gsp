@@ -8,8 +8,7 @@
 
 <div class="row wrapper  white-bg page-heading"  style="">
 
-        <h4 style="text-align: center">
-                    
+        <h4 style="text-align: center"> 
                     NDR Export Page
                     
         </h4>
@@ -107,7 +106,7 @@
                 
                 jq = jQuery;
                     jq.ajax({
-                    url: "${ ui.actionLink("nigeriaemr", "ndr", "generateNDRFile") }",
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "generateNDRFileByLocation") }",
                 dataType: "json",
                  data: {
                 'locationId' : location_id
