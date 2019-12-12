@@ -356,7 +356,7 @@ public class PharmacyDictionary {
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(getXmlDate(visitDate));
             obs = Utils.extractObs(Utils.VISIT_TYPE_CONCEPT, obsListForAVisit);//PrescribedRegimenInitialIndicator
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 if (valueCoded == Utils.VISIT_TYPE_INITIAL_CONCEPT) {
                     regimenType.setPrescribedRegimenInitialIndicator(Boolean.TRUE);
@@ -365,7 +365,7 @@ public class PharmacyDictionary {
                 }
             }
             obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit); //PrescribedRegimenLineCode
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getRegimenMapValue(valueCoded);
                 regimenType.setPrescribedRegimenLineCode(ndrCode);
@@ -402,7 +402,7 @@ public class PharmacyDictionary {
             regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(obsListForAVisit));//SubstitutionIndicator
             regimenType.setSwitchIndicator(retrieveSwitchIndicator(obsListForAVisit));//SwitchIndicator
             obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, obsListForAVisit);//ReasonForRegimenSwitchSubs
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getRegimenMapValue(valueCoded);
                 regimenType.setReasonForRegimenSwitchSubs(ndrCode);
@@ -419,14 +419,14 @@ public class PharmacyDictionary {
             regimenType.setDateRegimenStartedYYYY(Utils.getYearYYYY(visitDate));
 
             obs = Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForAVisit);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 if (valueCoded == Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT) {
                     regimenType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
                 }
             } else {
                 obs = Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForAVisit);
-                if (obs != null) {
+                if (obs != null && obs.getValueCoded() != null) {
                     valueCoded = obs.getValueCoded().getConceptId();
                     if (valueCoded == Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT) {
                         regimenType.setPoorAdherenceIndicator(Boolean.TRUE);
@@ -443,14 +443,14 @@ public class PharmacyDictionary {
         int valueCoded = 0;
         Boolean ans = Boolean.FALSE;
         obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN, obsList);
-        if (obs != null) {
+        if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             if (valueCoded == Utils.REGIMEN_MEDICATION_PLAN_SUBSTITUTE_REGIMEN_CONCEPT_VALUE) {
                 ans = Boolean.TRUE;
             }
         } else {
             obs = Utils.extractObs(Utils.PICKUP_REASON_CONCEPT, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SUBSTITUTE_VALUE) {
                     ans = Boolean.TRUE;
@@ -465,14 +465,14 @@ public class PharmacyDictionary {
         int valueCoded = 0;
         Boolean ans = Boolean.FALSE;
         obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN, obsList);
-        if (obs != null) {
+        if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             if (valueCoded == Utils.REGIMEN_MEDICATION_PLAN_SWITCH_REGIMEN_CONCEPT_VALUE) {
                 ans = Boolean.TRUE;
             }
         } else {
             obs = Utils.extractObs(Utils.PICKUP_REASON_CONCEPT, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SWITCH_VALUE) {
                     ans = Boolean.TRUE;

@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -54,6 +56,7 @@ public class NDRConverter {
 	
 	public Container createContainer(Patient pts, FacilityType facility) throws DatatypeConfigurationException {
 
+            Container container = new Container();
         try {
             patient = pts;
             this.facility = facility;
@@ -92,7 +95,7 @@ public class NDRConverter {
                 return null;
             }
 
-            Container container = new Container();
+            
             MessageHeaderType header = createMessageHeaderType();
             FacilityType sendingOrganization = Utils.createFacilityType(this.ipName, this.ipCode, "IP");
             header.setMessageSendingOrganization(sendingOrganization);
@@ -107,12 +110,14 @@ public class NDRConverter {
             return container;
         } catch (Exception ex) {
             LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
-            throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+           // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
+        return container;
     }
 	
 	private IndividualReportType createIndividualReportType() throws DatatypeConfigurationException {
 
+            IndividualReportType individualReport = new IndividualReportType();
         try {
             PatientIdentifier htsIdentifier = patient.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
             //create patient data
@@ -130,7 +135,7 @@ public class NDRConverter {
                 return null; //return null if the condition parameters are empty
             }
 
-            IndividualReportType individualReport = new IndividualReportType();
+            
             individualReport.setPatientDemographics(patientDemography);
 
             //retrieve latest encounter for client intake form
@@ -156,8 +161,10 @@ public class NDRConverter {
 
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            throw ex;
+           // throw ex;
         }
+        
+        return individualReport;
     }
 	
 	private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter, List<Obs> allObs) {
@@ -241,13 +248,15 @@ public class NDRConverter {
 	
 	private ConditionType createHIVCondition() throws DatatypeConfigurationException {
 
+              ConditionType condition = new ConditionType();
+            
         try {
 
             long startTime = System.currentTimeMillis();
 
             NDRMainDictionary mainDictionary = new NDRMainDictionary();
 
-            ConditionType condition = new ConditionType();
+          
             condition.setConditionCode("86406008");
 
             //create address
@@ -362,8 +371,10 @@ public class NDRConverter {
 
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
-            throw ex;
+           // throw ex;
         }
+        
+        return condition;
     }
 	
 	/**
@@ -383,6 +394,8 @@ public class NDRConverter {
 		AddressType p = new AddressType();
 		p.setAddressTypeCode("H");
 		p.setCountryCode("NGA");
+		Connection connection = null;
+		Statement statement = null;
 		
 		PersonAddress pa = patient.getPersonAddress();
 		if (pa != null) {
@@ -400,9 +413,9 @@ public class NDRConverter {
 				                    + " WHERE level_id =3 AND NAME ='%s' AND parent_id = (SELECT address_hierarchy_entry_id FROM address_hierarchy_entry\n"
 				                    + " WHERE level_id =2 AND NAME = '%s')", state, lga, state);
 				
-				Connection connection = DriverManager.getConnection(this.openmrsConn.getUrl(),
-				    this.openmrsConn.getUsername(), this.openmrsConn.getPassword());
-				Statement statement = connection.createStatement();
+				connection = DriverManager.getConnection(this.openmrsConn.getUrl(), this.openmrsConn.getUsername(),
+				    this.openmrsConn.getPassword());
+				statement = connection.createStatement();
 				ResultSet result = statement.executeQuery(sql);
 				while (result.next()) {
 					//String name = result.getString("name");
@@ -420,6 +433,23 @@ public class NDRConverter {
 				LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
 				    LogLevel.live);
 			}
+			finally {
+				
+				try {
+					if (connection != null) {
+						connection.close();
+					}
+					
+					if (statement != null) {
+						statement.close();
+					}
+					
+				}
+				catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+			
 		}
 		return p;
 	}

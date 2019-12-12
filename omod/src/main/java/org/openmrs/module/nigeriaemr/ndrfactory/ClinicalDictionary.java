@@ -479,12 +479,17 @@ public class ClinicalDictionary {
                         break;
                     case Systolic_Blood_Pressure_Concept_Id:
 
-                        SystolicBloodPressure = String.valueOf((int) Math.round(obs.getValueNumeric()));
+                        if(obs.getValueNumeric() != null){
+                         SystolicBloodPressure = String.valueOf(obs.getValueNumeric().intValue());
+                        }
+                       
 
                         break;
                     case Dystolic_Blood_Pressure_Concept_Id:
-
-                        DistolicBloodPressure = String.valueOf((int) Math.round(obs.getValueNumeric()));
+                         if(obs.getValueNumeric() != null){
+                          DistolicBloodPressure = String.valueOf(obs.getValueNumeric().intValue());
+                         }
+                       
 
                         break;
                     case Pregnancy_Breastfeeding_Status_Concept_Id:

@@ -204,12 +204,14 @@ public class PMTCTDictionary {
     }
 
     public DeliveryEncounterType createDeliveryEncounterType(Patient pts, Encounter enc, List<Obs> anthenatalObsList) throws DatatypeConfigurationException {
+        DeliveryEncounterType deliveryEncounterType = new DeliveryEncounterType();
+        
         try {
 
             PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
             //PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
 
-            DeliveryEncounterType deliveryEncounterType = new DeliveryEncounterType();
+           
             int value_numeric;
 
             //if (pmtctIdentifier != null) {
@@ -295,15 +297,20 @@ public class PMTCTDictionary {
             return deliveryEncounterType;
         } catch (Exception ex) {
             LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+           // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
+        
+        return deliveryEncounterType;
     }
 
     public ChildBirthDetailsType createChildBirthDetailsType(Patient pts, Encounter enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+       
+         ChildBirthDetailsType childBirthDetailsType = new ChildBirthDetailsType();
+        
         try {
-            PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
+           // PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
 
-            ChildBirthDetailsType childBirthDetailsType = new ChildBirthDetailsType();
+           
             int value_numeric;
             float value_float;
 
@@ -370,14 +377,18 @@ public class PMTCTDictionary {
             return childBirthDetailsType;
         } catch (Exception ex) {
             LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+           // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
+        
+        return childBirthDetailsType;
     }
 
     public ChildFollowupType createChildFollowupType(Patient pts, Encounter enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+       
+        ChildFollowupType childFollowupType = new ChildFollowupType();
         try {
-            PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
-            ChildFollowupType childFollowupType = new ChildFollowupType();
+          // PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
+            
             int value_numeric;
 
             //if (pmtctIdentifier != null) {
@@ -419,14 +430,18 @@ public class PMTCTDictionary {
             return childFollowupType;
         } catch (Exception ex) {
             LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+            //throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
+        
+        return childFollowupType;
     }
 
     public ImmunizationType createImmunizationType(Patient pts, Encounter enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+       
+         ImmunizationType immunizationType = new ImmunizationType();
         try {
-            ImmunizationType immunizationType = new ImmunizationType();
-            PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
+           
+           // PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
 
             //if (pmtctIdentifier != null) {
             XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
@@ -449,15 +464,20 @@ public class PMTCTDictionary {
 
         } catch (Exception ex) {
             LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+          //  throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
+        
+        return immunizationType;
     }
 
     public InfantPCRTestingType createInfantPcr(Patient pts, Encounter enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+        
+         InfantPCRTestingType infantPCRTestingType = new InfantPCRTestingType();
+         
         try {
-            PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
+           // PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
 
-            InfantPCRTestingType infantPCRTestingType = new InfantPCRTestingType();
+           
 
             //if (pmtctIdentifier != null) {
             Obs obs = extractObs(Date_Sample_Collected, antenatalObsList);
@@ -500,8 +520,10 @@ public class PMTCTDictionary {
             return infantPCRTestingType;
         } catch (Exception ex) {
             LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+           // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
+        
+        return infantPCRTestingType;
     }
 
     private String getMappedValue(int conceptID) {

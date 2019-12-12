@@ -266,7 +266,7 @@ public class NDRCommonQuestionsDictionary {
             if (obsListForEncounterTypes != null && !obsListForEncounterTypes.isEmpty()) {
                 //check for disease indicator
                 obs = Utils.extractObs(Utils.REASON_FOR_TERMINATION_CONCEPT, obsListForEncounterTypes);
-                if (obs != null) {
+                if (obs != null && obs.getValueCoded() != null) {
                     if (obs.getValueCoded().getConceptId() == Utils.DEAD_CONCEPT) {
                         demo.setPatientDeceasedIndicator(true);
                         obs = Utils.extractObs(Utils.DATE_OF_TERMINATION_CONCEPT, obsListForEncounterTypes);
@@ -604,7 +604,7 @@ HIVQuestionsType
             }
             //Need to create a transferred in patient id
             obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsList);
-            if (obs != null) {
+            if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 obs = Utils.extractObs(valueCoded, obsList);
                 if (obs != null && obs.getValueCoded() != null) {
