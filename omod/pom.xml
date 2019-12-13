@@ -71,23 +71,31 @@
             <version>2.9.4</version>
         </dependency>
 
-      <dependency>
-		    <groupId>org.openmrs.module</groupId>
-		    <artifactId>htmlformentry-api</artifactId>
-		    <scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>htmlformentry-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 		
-		<dependency>
+        <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>htmlformentryui-api</artifactId>
             <scope>provided</scope>
         </dependency>
         
         <dependency>
-    <groupId>org.openmrs.api</groupId>
-    <artifactId>openmrs-api</artifactId>
+            <groupId>org.openmrs.api</groupId>
+            <artifactId>openmrs-api</artifactId>
             <scope>provided</scope>
-</dependency>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.10.2</version>
+        </dependency>
+
         
     </dependencies>
 

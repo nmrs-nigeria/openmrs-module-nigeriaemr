@@ -320,6 +320,17 @@ public class Utils {
 	        
 	 */
 	
+	private static Date convertDateTimeToDate(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		date = calendar.getTime();
+		return date;
+	}
+	
 	public static List<Obs> getAllObsGroups(List<Obs> obsList, Integer groupingConceptId){
         List<Obs> response = obsList.stream().filter(obb -> obb.getConcept().getConceptId().equals(groupingConceptId)).collect(Collectors.toList());
          return  response;
@@ -660,42 +671,6 @@ public class Utils {
 		return obs;
 	}
 	
-	/*public static List<Obs> extractObsPerVisitDate(Date visitDate, List<Obs> obsList) {
-		List<Obs> obsListForVisitDate = new ArrayList<Obs>();
-		DateTime obsDateTime = null;
-		DateTime visitDateTime = null;
-		for (Obs ele : obsList) {
-			if (DateUtils.isSameDay(visitDate, ele.getObsDatetime())) {
-				obsListForVisitDate.add(ele);
-			}
-		}
-		return obsListForVisitDate;
-	}*/
-	/*public static Obs extractObs(int conceptID, List<Obs> obsList) {
-	=======
-
-		if (obsList == null) {
-			return null;
-		}
-		return obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID).findFirst().orElse(null);
-	}
-	
-	public static Obs extractObsByValues(int conceptID, List<Obs> obsList) {
-	>>>>>>> 297da059a7012136c02fbdf529dc899de87d270f
-
-		if (obsList == null) {
-			return null;
-		}
-	<<<<<<< HEAD
-		return obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID).findFirst().orElse(null);
-	}*/
-	/*public static Obs extractObsByValues(int conceptID, List<Obs> obsList) {
-
-		if (obsList == null) {
-			return null;
-		}
-		return obsList.stream().filter(ele -> ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
-	}*/
 	public static Encounter getFirstEncounter(Patient patient, List<Encounter> encList) {
         //sort the list by date
         encList.sort(Comparator.comparing(Encounter::getEncounterDatetime));
