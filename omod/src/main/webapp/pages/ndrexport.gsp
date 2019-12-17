@@ -74,8 +74,7 @@
             facilityName = obj[i].facility_name+'';
             console.log(uuID);
             console.log(facilityName);
-          
-            
+                     
             jqq('#facility_location').append("<option value=\""+location_id+"\">"+facilityName+"</option>");
 
   

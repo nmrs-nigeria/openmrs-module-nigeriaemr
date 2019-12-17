@@ -319,6 +319,15 @@ public class Utils {
 	       HIVQuestionsType
 	        
 	 */
+	public static List<Obs> extractObsfromEncounter(List<Encounter> encs) {      
+        List<Obs> responseObs = new ArrayList<>();
+
+        encs.forEach(a -> {
+            responseObs.addAll(new ArrayList<>(a.getAllObs()));
+        });
+
+        return responseObs;
+    }
 	
 	private static Date convertDateTimeToDate(Date date) {
 		Calendar calendar = Calendar.getInstance();
@@ -331,20 +340,20 @@ public class Utils {
 		return date;
 	}
 	
-	public static List<Obs> getAllObsGroups(List<Obs> obsList, Integer groupingConceptId){
+	public static List<Obs> getAllObsGroups(List<Obs> obsList, Integer groupingConceptId) {
         List<Obs> response = obsList.stream().filter(obb -> obb.getConcept().getConceptId().equals(groupingConceptId)).collect(Collectors.toList());
-         return  response;
-        }
+        return response;
+    }
 	
 	public static Encounter getLatestEncounter(List<Encounter> encs, Integer encounterTypes) {
 
         List<Encounter> filteredEncounters = encs.stream().filter(encounter -> Objects.equals(encounterTypes, encounter.getEncounterType()
                 .getEncounterTypeId()))
                 .collect(Collectors.toList());
-        if(!filteredEncounters.isEmpty()){
-			filteredEncounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
-			return filteredEncounters.get(filteredEncounters.size() - 1);
-		}
+        if (!filteredEncounters.isEmpty()) {
+            filteredEncounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
+            return filteredEncounters.get(filteredEncounters.size() - 1);
+        }
         return null;
 
     }
@@ -543,10 +552,10 @@ public class Utils {
                 regimenLineObsList.add(ele);
             }
         }
-        if(!regimenLineObsList.isEmpty()){
-			regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
-			return regimenLineObsList.get(0);
-		}
+        if (!regimenLineObsList.isEmpty()) {
+            regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
+            return regimenLineObsList.get(0);
+        }
         return null;
 
     }
@@ -559,12 +568,12 @@ public class Utils {
                 regimenLineObsList.add(ele);
             }
         }
-        if(!regimenLineObsList.isEmpty()){
-			regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
-			int size = regimenLineObsList.size();
-			return regimenLineObsList.get(size - 1);
-		}
-       return null;
+        if (!regimenLineObsList.isEmpty()) {
+            regimenLineObsList.sort(Comparator.comparing(Obs::getObsDatetime));
+            int size = regimenLineObsList.size();
+            return regimenLineObsList.get(size - 1);
+        }
+        return null;
     }
 	
 	public static Set<Date> extractUniqueVisitsForEncounterTypes(Patient pts, List<Encounter> encounterList,
@@ -681,10 +690,10 @@ public class Utils {
 	public static Encounter getLastEncounter(List<Encounter> encList) {
         //sort the list by date
         encList.sort(Comparator.comparing(Encounter::getEncounterDatetime));
-        if(!encList.isEmpty()){
-			int size = encList.size();
-			return encList.get(size - 1);
-		}
+        if (!encList.isEmpty()) {
+            int size = encList.size();
+            return encList.get(size - 1);
+        }
         return null;
     }
 	

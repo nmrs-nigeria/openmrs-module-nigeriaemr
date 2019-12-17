@@ -4,7 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2019.09.05 at 07:44:04 AM WAT 
 //
-
 package org.openmrs.module.nigeriaemr.model.ndr;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -182,6 +181,14 @@ public class RecencyTestingType {
 	 */
 	public void setFinalRecencyTestResult(String value) {
 		this.finalRecencyTestResult = value;
+	}
+	
+	public boolean isEmpty() {
+		
+		return this.finalRecencyTestResult == null && this.rapidRecencyAssay == null && this.testDate == null
+		        && this.testName == null && this.viralLoadConfirmationResult == null
+		        && this.viralLoadConfirmationTestDate == null;
+		
 	}
 	
 }

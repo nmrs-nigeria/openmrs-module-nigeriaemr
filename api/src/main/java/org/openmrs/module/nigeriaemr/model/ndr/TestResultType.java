@@ -4,7 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2019.09.05 at 07:44:04 AM WAT 
 //
-
 package org.openmrs.module.nigeriaemr.model.ndr;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -221,4 +220,11 @@ public class TestResultType {
 		this.finalTestResult = value;
 	}
 	
+	public boolean isEmpty() {
+		
+		return this.confirmatoryTestResult == null && this.confirmatoryTestResultDate == null
+		        && this.finalTestResult == null && this.screeningTestResult == null && this.screeningTestResultDate == null
+		        && this.tieBreakerTestResult == null && this.tieBreakerTestResultDate == null;
+		
+	}
 }

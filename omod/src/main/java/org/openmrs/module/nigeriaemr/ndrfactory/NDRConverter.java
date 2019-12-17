@@ -103,7 +103,10 @@ public class NDRConverter {
             }
 
             startTime = System.currentTimeMillis();
-            this.allobs = Context.getObsService().getObservationsByPerson(pts);
+          //  this.allobs = Context.getObsService().getObservationsByPerson(pts);
+            
+            
+            
             endTime = System.currentTimeMillis();
             if ((endTime - startTime) > 1000) {
                 System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
@@ -113,6 +116,8 @@ public class NDRConverter {
             if (this.encounters == null || this.encounters.isEmpty()) {
                 return null;
             }
+            
+            this.allobs = Utils.extractObsfromEncounter(filteredEncs);
 
             MessageHeaderType header = createMessageHeaderType();
             FacilityType sendingOrganization = Utils.createFacilityType(this.ipName, this.ipCode, "IP");
@@ -303,40 +308,7 @@ public class NDRConverter {
                 condition.setEncounters(encType);
             }
 
-            //comment out PMTCT for now
-            //create Child birth details
-            /*   
-            ChildBirthDetailsType childBirthDetailsType = mainDictionary.createChildBirthDetailsType(patient,
-                    this.encounters, this.allobs);
-            if (childBirthDetailsType != null && childBirthDetailsType.getChildHospitalNumber() != null) {
-                condition.getChildBirthDetails().add(childBirthDetailsType);
-            }
 
-            //create child follow up
-            ChildFollowupType childFollowupType = mainDictionary.createChildFollowupType(patient, this.encounters,
-                    this.allobs);
-            if (childFollowupType != null) {
-                condition.getChildFollowup().add(childFollowupType);
-            }
-
-            	//immunization Type
-				ImmunizationType immunizationType = mainDictionary.createImmunizationType(patient, this.encounters, this.allobs);
-				if (immunizationType != null) {
-					condition.getImmunization().add(immunizationType);
-				}
-            //Infant PCR Testing Type
-            InfantPCRTestingType infantPCRTestingType = mainDictionary
-                    .createInfantPcr(patient, this.encounters, this.allobs);
-            if (infantPCRTestingType != null) {
-                condition.getInfantPCRTesting().add(infantPCRTestingType);
-            }
-             */
-//                        List<LaboratoryReportType> laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
-//			    this.encounters, this.allobs);
-//			if (laboratoryReport != null && laboratoryReport.size() > 0) {
-//				condition.getLaboratoryReport().addAll(laboratoryReport);
-//			}
-//Lab report
             List<Encounter> tempEncs = encounters.stream().filter(e -> e.getEncounterType().getEncounterTypeId() == Utils.Laboratory_Encounter_Type_Id).collect(Collectors.toList());
             if (!tempEncs.isEmpty()) {
                 Date artStartdate = Utils.extractARTStartDate(patient, allobs);
@@ -534,5 +506,8 @@ public class NDRConverter {
 			throw ex;
 		}
 	}
+        
+        
+        
 	
 }

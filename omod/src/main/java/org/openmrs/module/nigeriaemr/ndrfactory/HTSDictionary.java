@@ -240,7 +240,7 @@ public class HTSDictionary {
         hivTestingReport.setVisitDate(Utils.getXmlDate(enc.getEncounterDatetime()));
 
         //setting with others been retrieved
-       // obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
+        // obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
         obs = extractObs(HTS_Client_Intake_SETTING_ConceptID, allObs);
         if (obs != null && obs.getValueCoded() != null) {
             if (obs.getValueCoded().getConceptId().equals(HTS_CLIENT_INTAKE_SETTINGS_OTHERS)) {
@@ -265,7 +265,7 @@ public class HTSDictionary {
 
             //session
             obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
-            if(obs != null && obs.getValueCoded() != null){
+            if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setSessionType(getMappedValue(obs.getValueCoded().getConceptId()));
             }
 
@@ -367,21 +367,24 @@ public class HTSDictionary {
             hIVTestResultType.setTestResult(testResultTypes);
         }
 
+        if (hIVTestResultType.getRecencyTesting() == null && hIVTestResultType.getTestResult() == null) {
+            return null;
+        }
+
         return hIVTestResultType;
     }
 
     public IndexNotificationServicesType createIndexNotificationServicesTypes(Patient patient, Encounter enc, List<Obs> allObs) {
         List<PartnerNotificationType> partnerNotificationTypes = new ArrayList<>();
         IndexNotificationServicesType indexNotificationServicesType = new IndexNotificationServicesType();
-        
 
-        try{
+        try {
             List<Obs> allIndexGroupObs = Utils.getAllObsGroups(allObs, PARTNER_ELICITATION_GROUPING_CONCEPT);
-            
+
             allIndexGroupObs.stream().forEach(gObs -> {
-                
+
                 PartnerNotificationType partnerNotificationType = new PartnerNotificationType();
-                
+
                 List<Obs> allMembers = new ArrayList(gObs.getGroupMembers());
                 //extract all the members using the concept
 
@@ -418,16 +421,16 @@ public class HTSDictionary {
                 partnerNotificationTypes.add(partnerNotificationType);
 
             });
-        }catch (Exception ex){
+        } catch (Exception ex) {
             LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
         }
 
-        if(!partnerNotificationTypes.isEmpty()){
-        indexNotificationServicesType.getPartner().addAll(partnerNotificationTypes);
-        }else{
-        return null;
+        if (!partnerNotificationTypes.isEmpty()) {
+            indexNotificationServicesType.getPartner().addAll(partnerNotificationTypes);
+        } else {
+            return null;
         }
-        
+
         return indexNotificationServicesType;
     }
 
@@ -480,6 +483,10 @@ public class HTSDictionary {
             recencyTestingType.setFinalRecencyTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
+        if (recencyTestingType.isEmpty()) {
+            return null;
+        }
+
         return recencyTestingType;
 
     }
@@ -487,8 +494,6 @@ public class HTSDictionary {
     public TestResultType createTestResultType(Patient patient, Encounter enc, List<Obs> allObs) {
 
         TestResultType testResultType = new TestResultType();
-
-
 
         //screening test result
         Obs obs = extractObs(SCREENING_TEST_RESULT, allObs);
@@ -542,6 +547,10 @@ public class HTSDictionary {
         obs = extractObs(FINAL_RESULT, allObs);
         if (obs != null && obs.getValueCoded() != null) {
             testResultType.setFinalTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
+        }
+
+        if (testResultType.isEmpty()) {
+            return null;
         }
 
         return testResultType;
