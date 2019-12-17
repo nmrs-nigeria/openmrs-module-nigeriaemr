@@ -2,8 +2,8 @@
 
 <%= ui.resourceLinks() %>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+<!--<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>-->
 
 
 <div class="row wrapper  white-bg page-heading"  style="">
@@ -102,8 +102,10 @@
         
         var location_id = jQuery('#facility_location').val();
                 console.log(location_id);
-                
+       
                 jq = jQuery;
+                jq('#gen-wait').show();
+                 
                     jq.ajax({
                     url: "${ ui.actionLink("nigeriaemr", "ndr", "generateNDRFileByLocation") }",
                 dataType: "json",
@@ -113,7 +115,7 @@
 
                 }).success(function(filename) {
                  if(filename == "no new patient record found"){
-                    jq('#wait').hide();
+                    jq('#gen-wait').hide();
                     alert("no updated patient record found")
                     }
                     else{
@@ -121,6 +123,7 @@
                     }
                    /* if(filename.startsWith("Files Exported successfully")){
                     //export was successful
+                    jq('#gen-wait').hide();
                     alert(filename);
                     }
                     else{
@@ -128,7 +131,7 @@
                     //this may require directing the user to an erro summary page.
                     alert(filename);
                     }*/
-                    jq('#wait').hide();
+                    jq('#gen-wait').hide();
 
 
 
