@@ -18,7 +18,7 @@
 
 
     <div class="container" style="padding-top: 10px;">
-         <h5 style="margin-left: 32%; width: 40%; height: 50%; background-color: #00463f; border-radius: 10px; ">
+         <div style="margin-left: 32%; width: 40%; height: 50%; background-color: #00463f; border-radius: 10px; ">
                         <br/> <br/>
       
                 <div>
@@ -34,7 +34,21 @@
         <br/><br/>
 
 
-        </h5>
+        </div>
+        
+        <div id="gen-wait" class="dialog" style="display: none; ">
+    <div class="row">
+        <div class="col-md-3 col-xs-3 offset-2" >
+            <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:100px">
+        </div>              
+    </div>
+
+    <div>
+        <div class="col-md-7 col-xs-7 " style="text-align:center;">
+            <h1>Please wait, operation in progress...</h1>
+        </div>
+    </div>
+</div>
     </div>
     
     
