@@ -129,13 +129,24 @@ public class HTSDictionary {
     public static int PARTNER_INDEX_TYPE_CONCEPT = 165798;
     public static int PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT = 166021;
     public static int PARTNER_INDEX_RELATION_PHONE_CONCEPT = 166022;
+    
     //HIV Recency Testing
-    public static int HIV_RECENCY_TEST_NAME_CONCEPT = 165849;
+    public static int HIV_RECENCY_TEST_NAME_CONCEPT = 166216;//formerly 165849
     public static int HIV_RECENCY_TEST_DATE_CONCEPT = 165850;
     public static int HIV_RECENCY_ASSAY_CONCEPT = 165853;
     public static int SAMPLE_TEST_DATE_CONCEPT = 165854;
     public static int SAMPLE_TEST_RESULT_CONCEPT = 856;
     public static int FINAL_HIV_RECENCY_INFECTION_TESTING_ALGORITHM_RESULT_CONCEPT = 165856;
+    public static int OPT_OUT_OF_RTRI = 165805;
+    public static int RECENCY_NUMBER = 166209;
+    public static int CONTROL_LINE = 166212;
+    public static int VERIFICATION_LINE = 165976;
+    public static int LONG_TERM_LINE = 166211;
+    public static int RECENCY_INTERPRETATION = 166213;
+    public static int VIRALLOAD_REQUEST_MADE = 143264;
+    
+    
+    
 
     //syphillis and hepatitis
     private static int SYPHILLIS_STATUS_RESULT = 299;
@@ -145,10 +156,12 @@ public class HTSDictionary {
     public HTSDictionary() {
         loadDictionary();
         loadBooleanDictionary();
+        loadYNCodeTypeDictionary();
     }
 
     private Map<Integer, String> htsDictionary = new HashMap<>();
     private Map<Integer, Boolean> htsBooleanDictionary = new HashMap<>();
+    private Map<Integer,YNCodeType> htsYNCodeTypeDict = new HashMap<>();
 
     private void loadDictionary() {
         //Map OpenMRS concepts to corresponding NDR values
@@ -198,10 +211,16 @@ public class HTSDictionary {
         htsDictionary.put(165797, "2");
         htsDictionary.put(165795, "3");
 
-        //recency assay
+        //recency
         htsDictionary.put(165852, "R");
         htsDictionary.put(165851, "L");
-
+        htsDictionary.put(166215, "AS");
+        htsDictionary.put(5622, "OTH");
+        htsDictionary.put(165853, "L");
+        htsDictionary.put(165855, "Neg");
+        htsDictionary.put(165854, "Inv");
+        
+        
         //gender
         htsDictionary.put(165184, "M");
         htsDictionary.put(165185, "F");
@@ -214,7 +233,22 @@ public class HTSDictionary {
         htsBooleanDictionary.put(1066, false);
 
     }
+    
+    private void loadYNCodeTypeDictionary(){
+        htsYNCodeTypeDict.put(1065, YNCodeType.YES);
+        htsYNCodeTypeDict.put(1066, YNCodeType.NO);
+    }
 
+    private YNCodeType getYNCodeTypeValue(int key){
+        YNCodeType response = YNCodeType.NO;
+                
+        if(htsYNCodeTypeDict.containsKey(key)){
+        response = htsYNCodeTypeDict.get(key);
+        }
+        
+        return response;
+    }
+            
     private Boolean getBooleanMappedValue(int key) {
         Boolean uio = htsBooleanDictionary.get(key);
         if (htsBooleanDictionary.containsKey(key)) {
@@ -441,10 +475,10 @@ public class HTSDictionary {
 
         //test name
         Obs obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT, allObs);
-        if (obs != null && obs.getValueText() != null) {
-            recencyTestingType.setTestName(obs.getValueText());
+        if (obs != null && obs.getValueCoded() != null) {
+            recencyTestingType.setTestName(getMappedValue(obs.getValueCoded().getConceptId()));
         }
-
+  
         //test date
         obs = extractObs(HIV_RECENCY_TEST_DATE_CONCEPT, allObs);
         if (obs != null && obs.getValueDate() != null) {
@@ -455,6 +489,45 @@ public class HTSDictionary {
             }
         }
 
+        
+          //consent
+        obs = extractObs(OPT_OUT_OF_RTRI, allObs);
+        if(obs != null && obs.getValueCoded() != null){
+            recencyTestingType.setConsent(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
+        }
+        
+        //recency number
+        obs = extractObs(RECENCY_NUMBER, allObs);
+        if(obs != null && obs.getValueText() != null){
+        recencyTestingType.setRecencyNumber(obs.getValueText());
+        }
+        
+        //control line
+        obs = extractObs(CONTROL_LINE, allObs);
+        if(obs != null && obs.getValueCoded() != null){
+            recencyTestingType.setControlLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
+        }
+        
+        //verification line
+        obs = extractObs(VERIFICATION_LINE, allObs);
+        if(obs != null && obs.getValueCoded() != null){
+        recencyTestingType.setVerificationLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
+        }
+        
+        //long term line
+        obs = extractObs(LONG_TERM_LINE, allObs);
+        if(obs != null && obs.getValueCoded() != null){
+            recencyTestingType.setLongTermLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
+        }
+        
+        //recency interpretation
+        obs = extractObs(RECENCY_INTERPRETATION, allObs);
+        if(obs != null && obs.getValueCoded() != null){
+            recencyTestingType.setRecencyInterpretation(getMappedValue(obs.getValueCoded().getConceptId()));
+        }
+        
+        
+        
         //rapid recency assay
         obs = extractObs(HIV_RECENCY_ASSAY_CONCEPT, allObs);
         if (obs != null && obs.getValueCoded() != null) {
@@ -474,7 +547,7 @@ public class HTSDictionary {
         //result copies
         obs = extractObs(SAMPLE_TEST_RESULT_CONCEPT, allObs);
         if (obs != null && obs.getValueNumeric() != null) {
-            recencyTestingType.setViralLoadConfirmationResult(String.valueOf(obs.getValueNumeric()));
+            recencyTestingType.setViralLoadConfirmationResult(obs.getValueNumeric());
         }
 
         //final HIV Result

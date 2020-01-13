@@ -64,6 +64,8 @@ public class ClinicalDictionary {
         map.put(165289, "P");
         map.put(165287, "G");
         map.put(165288, "F");
+        
+        
         //encounter type WHO clinical stage concept
 
         map.put(1204, "1");
@@ -71,7 +73,8 @@ public class ClinicalDictionary {
         map.put(1206, "3");
         map.put(1207, "4");
 
-        map.put(1220, "I");//pediatric
+        //pediatric
+        map.put(1220, "I");
         map.put(1221, "II");
         map.put(1222, "III");
         map.put(1223, "IV");
