@@ -16,6 +16,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -168,6 +169,8 @@ public class NdrFragmentController {
 						
 						// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
 						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
+						
+						//  Path xmlFilePath = Paths.get(reportFolder, fileName + ".xml");
 						
 						File aXMLFile = new File(xmlFile);
 						Boolean b;
