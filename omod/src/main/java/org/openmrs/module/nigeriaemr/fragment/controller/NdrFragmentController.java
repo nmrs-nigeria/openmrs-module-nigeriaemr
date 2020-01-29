@@ -87,9 +87,20 @@ public class NdrFragmentController {
 		//check if global variable for logging exists
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		LoggerUtils.clearLogFile();
+                LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
+                
 		
-		List<Patient> patients = Context.getPatientService().getAllPatients();
+	//	List<Patient> patients = Context.getPatientService().getAllPatients();
+                
+                String patientIdLimit = Utils.getPatientIdLimit();
+               String[] patientIdArray =  patientIdLimit.split(",");
+                
+                int startIndex = Integer.parseInt(patientIdArray[0]);
+                int endIndex = Integer.parseInt(patientIdArray[1]);
 		
+                List<Patient> patients = Context.getPatientService().getAllPatients().stream()
+                        .filter(x-> x.getId() >= startIndex && x.getId() <= endIndex).collect(Collectors.toList());
+                
 		//Patient pts = null;
 		//List<Patient> patients = new ArrayList<Patient>();
 		//pts = Context.getPatientService().getPatient(28417);
@@ -128,6 +139,7 @@ public class NdrFragmentController {
 			long loop_start_time = System.currentTimeMillis();
 			int counter = 0;
 			Container cnt = null;
+			
 			for (Patient patient : filteredPatients) {
 				
 				long startTime = System.currentTimeMillis();
@@ -165,19 +177,17 @@ public class NdrFragmentController {
 							pepFarId = "";
 						}
 						
-						String fileName = IPShortName + "_" + DATIMID + "_" + formattedDate + "_" + pepFarId;
+						String fileName = IPShortName + "_" + DATIMID + "_" + counter + "_" + formattedDate + "_" + pepFarId;
 						
-						// old implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
+						// older implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
 						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
-						
-						//  Path xmlFilePath = Paths.get(reportFolder, fileName + ".xml");
 						
 						File aXMLFile = new File(xmlFile);
 						Boolean b;
-						if (aXMLFile.exists()) {
-							b = aXMLFile.delete();
-							System.out.println("deleting file : " + xmlFile + "was successful : " + b);
-						}
+						//						if (aXMLFile.exists()) {
+						//							b = aXMLFile.delete();
+						//							System.out.println("deleting file : " + xmlFile + "was successful : " + b);
+						//						}
 						b = aXMLFile.createNewFile();
 						
 						System.out.println("creating xml file : " + xmlFile + "was successful : " + b);

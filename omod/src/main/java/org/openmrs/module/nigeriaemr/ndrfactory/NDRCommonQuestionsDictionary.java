@@ -283,7 +283,7 @@ public class NDRCommonQuestionsDictionary {
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
                     if (ndrCodedValue.equals("N")) {
                         demo.setPatientEducationLevelCode("1");
-                    } else {
+                    } else if(!"".equals(ndrCodedValue)) {
                         demo.setPatientEducationLevelCode(ndrCodedValue);
                     }
 
@@ -298,13 +298,19 @@ public class NDRCommonQuestionsDictionary {
                 obs = Utils.extractObs(Utils.OCCUPATIONAL_STATUS_CONCEPT, obsListForEncounterTypes);
                 if (obs != null && obs.getValueCoded() != null) {
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
-                    demo.setPatientOccupationCode(ndrCodedValue);
+                    if(!"".equals(ndrCodedValue)){
+                         demo.setPatientOccupationCode(ndrCodedValue);
+                    }
+               
                 }
                 //check Marital Status Code
                 obs = Utils.extractObs(Utils.MARITAL_STATUS_CONCEPT, obsListForEncounterTypes);
                 if (obs != null && obs.getValueCoded() != null) {
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
-                    demo.setPatientMaritalStatusCode(ndrCodedValue);
+                    if(!"".equals(ndrCodedValue)){
+                      demo.setPatientMaritalStatusCode(ndrCodedValue);
+                    }
+                  
                 }
             }
 

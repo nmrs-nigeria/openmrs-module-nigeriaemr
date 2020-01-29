@@ -47,6 +47,12 @@ public class LoggerUtils {
 	
 	public static final String DEFAULT_LOGGER_GLOBAL_PROP_DESCRIPTION = "This property is used for control the nigeria emr logger level, the value can be debug or live";
 	
+	public static final String PATIENT_LIMIT_PROPERTY = "patient_id_limit";
+	
+	public static final String DEFAULT_PATIENT_LIMIT_VALUE = "1,10";
+	
+	public static final String DEFAULT_PATIENT_LIMIT_GLOBAL_PROP_DESCRIPTION = "This property is used to control the number of patient to be export by the nmrs-ndr extraction tool";
+	
 	public static FileHandler getHandler() {
 		
 		try {
@@ -82,19 +88,18 @@ public class LoggerUtils {
 	}
 	
 	private static void log(String className, String logText, LogFormat formater, LogLevel level) throws IOException {
-		String folder = Paths.get(System.getProperty("user.home"), "NMRS_LOGS").toString();
-		File dir = new File(folder);
-		if (!dir.exists()) {
-			dir.mkdir();
-		}
 		
+		//   Path folder = Paths.get(System.getProperty("user.home"), "NMRS_LOGS");
 		String dateString = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 		
-		Path completePath = Paths.get(folder, "logs_" + dateString + ".log");
-		if (!Files.exists(completePath)) {
-			Files.createFile(completePath);
-		}
+		Path completePath = Paths.get(getExportPath(), "logs_" + dateString + ".log");
 		
+		//                if(!completePath.toFile().exists()){
+		//                    Files.createFile(completePath);
+		//                    }
+		//                if (!Files.exists(completePath)) {
+		//			Files.createFile(completePath);
+		//		}
 		try {
 			
 			BufferedWriter bWriter = Files.newBufferedWriter(completePath, Charset.forName("UTF-8"),
@@ -130,17 +135,21 @@ public class LoggerUtils {
 	public static void clearLogFile() {
 		
 		try {
-			String folder = Paths.get(System.getProperty("user.home"), "NMRS_LOGS").toString();
-			File dir = new File(folder);
+			//	String folder = Paths.get(System.getProperty("user.home"), "NMRS_LOGS").toString();
+			File dir = new File(getExportPath());
 			if (!dir.exists()) {
 				dir.mkdir();
 			}
 			
 			String dateString = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 			
-			Path completePath = Paths.get(folder, "logs_" + dateString + ".log");
+			Path completePath = Paths.get(getExportPath(), "logs_" + dateString + ".log");
 			
 			Files.deleteIfExists(completePath);
+			
+			if (!completePath.toFile().exists()) {
+				Files.createFile(completePath);
+			}
 			
 		}
 		catch (IOException ex) {
@@ -181,6 +190,50 @@ public class LoggerUtils {
 				pStatement.setString(1, NMRS_LOGGER_PROPERTY);
 				pStatement.setString(2, DEFAULT_LOGGER_GLOBAL_PROP_VALUE);
 				pStatement.setString(3, DEFAULT_LOGGER_GLOBAL_PROP_DESCRIPTION);
+				pStatement.setString(4, UUID.randomUUID().toString());
+				
+				pStatement.executeUpdate();
+				
+			}
+			
+		}
+		catch (SQLException ex) {
+			LoggerUtils.write(LoggerUtils.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+		}
+		finally {
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+				if (pStatement != null) {
+					pStatement.close();
+				}
+				
+			}
+			catch (SQLException ex) {
+				
+			}
+		}
+		
+	}
+	
+	public static void checkPatientLimitGlobalProperty(DBConnection openmrsConn) {
+		
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		try {
+			
+			conn = DriverManager.getConnection(openmrsConn.getUrl(), openmrsConn.getUsername(), openmrsConn.getPassword());
+			pStatement = conn.prepareStatement("select property_value from global_property where property = ? ");
+			pStatement.setString(1, PATIENT_LIMIT_PROPERTY);
+			ResultSet result = pStatement.executeQuery();
+			if (!result.next()) {
+				pStatement.close();
+				pStatement = conn.prepareStatement("insert into " + GLOBAL_PROPERTY_TABLENAME
+				        + "(property, property_value, description, uuid) values(?,?,?,?)");
+				pStatement.setString(1, PATIENT_LIMIT_PROPERTY);
+				pStatement.setString(2, DEFAULT_PATIENT_LIMIT_VALUE);
+				pStatement.setString(3, DEFAULT_PATIENT_LIMIT_GLOBAL_PROP_DESCRIPTION);
 				pStatement.setString(4, UUID.randomUUID().toString());
 				
 				pStatement.executeUpdate();

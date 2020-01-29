@@ -129,7 +129,7 @@ public class HTSDictionary {
     public static int PARTNER_INDEX_TYPE_CONCEPT = 165798;
     public static int PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT = 166021;
     public static int PARTNER_INDEX_RELATION_PHONE_CONCEPT = 166022;
-    
+
     //HIV Recency Testing
     public static int HIV_RECENCY_TEST_NAME_CONCEPT = 166216;//formerly 165849
     public static int HIV_RECENCY_TEST_DATE_CONCEPT = 165850;
@@ -144,9 +144,10 @@ public class HTSDictionary {
     public static int LONG_TERM_LINE = 166211;
     public static int RECENCY_INTERPRETATION = 166213;
     public static int VIRALLOAD_REQUEST_MADE = 143264;
-    
-    
-    
+    public static int VIRAL_LOAD_SAMPLE_COLLECTION_DATE = 159951;
+    public static int VIRAL_LOAD_SAMPLE_SENT_DATE = 165988;
+    public static int SAMPLE_TYPE = 162476;
+    public static int RECEIVING_PCR_LAB = 162476;
 
     //syphillis and hepatitis
     private static int SYPHILLIS_STATUS_RESULT = 299;
@@ -161,7 +162,7 @@ public class HTSDictionary {
 
     private Map<Integer, String> htsDictionary = new HashMap<>();
     private Map<Integer, Boolean> htsBooleanDictionary = new HashMap<>();
-    private Map<Integer,YNCodeType> htsYNCodeTypeDict = new HashMap<>();
+    private Map<Integer, YNCodeType> htsYNCodeTypeDict = new HashMap<>();
 
     private void loadDictionary() {
         //Map OpenMRS concepts to corresponding NDR values
@@ -219,8 +220,27 @@ public class HTSDictionary {
         htsDictionary.put(165853, "L");
         htsDictionary.put(165855, "Neg");
         htsDictionary.put(165854, "Inv");
-        
-        
+        htsDictionary.put(1000, "P");
+        htsDictionary.put(165568, "D");
+
+        //PCR Lab
+        htsDictionary.put(166217, "1");
+        htsDictionary.put(166218, "2");
+        htsDictionary.put(166219, "3");
+        htsDictionary.put(166220, "4");
+        htsDictionary.put(166221, "5");
+        htsDictionary.put(166222, "6");
+        htsDictionary.put(166223, "7");
+        htsDictionary.put(166224, "8");
+        htsDictionary.put(166225, "9");
+        htsDictionary.put(166226, "10");
+        htsDictionary.put(166227, "11");
+        htsDictionary.put(166228, "12");
+        htsDictionary.put(166229, "13");
+        htsDictionary.put(166230, "14");
+        htsDictionary.put(166231, "15");
+        htsDictionary.put(166232, "16");
+
         //gender
         htsDictionary.put(165184, "M");
         htsDictionary.put(165185, "F");
@@ -233,24 +253,24 @@ public class HTSDictionary {
         htsBooleanDictionary.put(1066, false);
 
     }
-    
-    private void loadYNCodeTypeDictionary(){
+
+    private void loadYNCodeTypeDictionary() {
         htsYNCodeTypeDict.put(1065, YNCodeType.YES);
         htsYNCodeTypeDict.put(1066, YNCodeType.NO);
     }
 
-    private YNCodeType getYNCodeTypeValue(int key){
+    private YNCodeType getYNCodeTypeValue(int key) {
         YNCodeType response = YNCodeType.NO;
-                
-        if(htsYNCodeTypeDict.containsKey(key)){
-        response = htsYNCodeTypeDict.get(key);
+
+        if (htsYNCodeTypeDict.containsKey(key)) {
+            response = htsYNCodeTypeDict.get(key);
         }
-        
+
         return response;
     }
-            
+
     private Boolean getBooleanMappedValue(int key) {
-        Boolean uio = htsBooleanDictionary.get(key);
+        //  Boolean uio = htsBooleanDictionary.get(key);
         if (htsBooleanDictionary.containsKey(key)) {
             return htsBooleanDictionary.get(key);
         } else {
@@ -478,7 +498,7 @@ public class HTSDictionary {
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setTestName(getMappedValue(obs.getValueCoded().getConceptId()));
         }
-  
+
         //test date
         obs = extractObs(HIV_RECENCY_TEST_DATE_CONCEPT, allObs);
         if (obs != null && obs.getValueDate() != null) {
@@ -489,45 +509,42 @@ public class HTSDictionary {
             }
         }
 
-        
-          //consent
+        //consent
         obs = extractObs(OPT_OUT_OF_RTRI, allObs);
-        if(obs != null && obs.getValueCoded() != null){
+        if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setConsent(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
-        
+
         //recency number
         obs = extractObs(RECENCY_NUMBER, allObs);
-        if(obs != null && obs.getValueText() != null){
-        recencyTestingType.setRecencyNumber(obs.getValueText());
+        if (obs != null && obs.getValueText() != null) {
+            recencyTestingType.setRecencyNumber(obs.getValueText());
         }
-        
+
         //control line
         obs = extractObs(CONTROL_LINE, allObs);
-        if(obs != null && obs.getValueCoded() != null){
+        if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setControlLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
-        
+
         //verification line
         obs = extractObs(VERIFICATION_LINE, allObs);
-        if(obs != null && obs.getValueCoded() != null){
-        recencyTestingType.setVerificationLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
+        if (obs != null && obs.getValueCoded() != null) {
+            recencyTestingType.setVerificationLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
-        
+
         //long term line
         obs = extractObs(LONG_TERM_LINE, allObs);
-        if(obs != null && obs.getValueCoded() != null){
+        if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setLongTermLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
-        
+
         //recency interpretation
         obs = extractObs(RECENCY_INTERPRETATION, allObs);
-        if(obs != null && obs.getValueCoded() != null){
+        if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setRecencyInterpretation(getMappedValue(obs.getValueCoded().getConceptId()));
         }
-        
-        
-        
+
         //rapid recency assay
         obs = extractObs(HIV_RECENCY_ASSAY_CONCEPT, allObs);
         if (obs != null && obs.getValueCoded() != null) {
@@ -555,6 +572,45 @@ public class HTSDictionary {
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setFinalRecencyTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
         }
+
+        //sample collection
+        obs = extractObs(VIRAL_LOAD_SAMPLE_COLLECTION_DATE, allObs);
+        if (obs != null && obs.getValueDate() != null) {
+            try {
+                recencyTestingType.setDateSampleCollected(Utils.getXmlDate(obs.getValueDate()));
+            } catch (Exception ex) {
+                LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+            }
+
+        }
+
+        //sample type
+        obs = extractObs(SAMPLE_TYPE, allObs);
+        if (obs != null && obs.getValueCoded() != null) {
+                recencyTestingType.setSampleType(getMappedValue(obs.getValueCoded().getConceptId()));
+        }
+
+        //receiving PCR LAB
+        obs = extractObs(RECEIVING_PCR_LAB, allObs);
+        if (obs != null && obs.getValueCoded() != null) {
+                recencyTestingType.setPCRLab(getMappedValue(obs.getValueCoded().getConceptId()));
+        }
+        
+        //date sample sent to PCR Lab
+        obs = extractObs(VIRAL_LOAD_SAMPLE_SENT_DATE, allObs);
+        if(obs != null && obs.getValueCoded() != null){
+            try{
+            recencyTestingType.setDateSampleSent(Utils.getXmlDate(obs.getValueDate()));
+            }catch(Exception ex){
+             LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+            }
+        }
+        
+        obs = extractObs(VIRALLOAD_REQUEST_MADE, allObs);
+        if(obs != null && obs.getValueCoded() != null){
+        recencyTestingType.setViralLoadRequest(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
+        }
+        
 
         if (recencyTestingType.isEmpty()) {
             return null;

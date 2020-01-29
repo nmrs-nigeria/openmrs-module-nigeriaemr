@@ -319,6 +319,11 @@ public class Utils {
 	       HIVQuestionsType
 	        
 	 */
+	
+	public static String getPatientIdLimit() {
+		return Context.getAdministrationService().getGlobalProperty(LoggerUtils.PATIENT_LIMIT_PROPERTY);
+	}
+	
 	public static List<Obs> extractObsfromEncounter(List<Encounter> encs) {      
         List<Obs> responseObs = new ArrayList<>();
 
