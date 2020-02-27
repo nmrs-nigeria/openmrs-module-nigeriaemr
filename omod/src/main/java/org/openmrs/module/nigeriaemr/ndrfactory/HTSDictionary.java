@@ -136,7 +136,7 @@ public class HTSDictionary {
     public static int HIV_RECENCY_ASSAY_CONCEPT = 165853;
     public static int SAMPLE_TEST_DATE_CONCEPT = 165854;
     public static int SAMPLE_TEST_RESULT_CONCEPT = 856;
-    public static int FINAL_HIV_RECENCY_INFECTION_TESTING_ALGORITHM_RESULT_CONCEPT = 165856;
+    public static int FINAL_HIV_RECENCY_INFECTION_TESTING_ALGORITHM_RESULT_CONCEPT = 166214;
     public static int OPT_OUT_OF_RTRI = 165805;
     public static int RECENCY_NUMBER = 166209;
     public static int CONTROL_LINE = 166212;
@@ -147,7 +147,9 @@ public class HTSDictionary {
     public static int VIRAL_LOAD_SAMPLE_COLLECTION_DATE = 159951;
     public static int VIRAL_LOAD_SAMPLE_SENT_DATE = 165988;
     public static int SAMPLE_TYPE = 162476;
-    public static int RECEIVING_PCR_LAB = 162476;
+    public static int RECEIVING_PCR_LAB = 166233;
+    public static int SAMPLE_ID = 165715;
+    public static int VIRAL_LOAD_CLASSIFICATION = 166241;
 
     //syphillis and hepatitis
     private static int SYPHILLIS_STATUS_RESULT = 299;
@@ -213,33 +215,46 @@ public class HTSDictionary {
         htsDictionary.put(165795, "3");
 
         //recency
+        //recency interpretation
         htsDictionary.put(165852, "R");
         htsDictionary.put(165851, "L");
+        htsDictionary.put(664, "Neg");
+        htsDictionary.put(163611, "Inv");
+
+        //new final recency result
+        htsDictionary.put(166236, "RR");
+        htsDictionary.put(166235, "RL");
+        htsDictionary.put(166237, "RI");
+
         htsDictionary.put(166215, "AS");
         htsDictionary.put(5622, "OTH");
-        htsDictionary.put(165853, "L");
-        htsDictionary.put(165855, "Neg");
-        htsDictionary.put(165854, "Inv");
+
+        //  htsDictionary.put(165853, "L");
         htsDictionary.put(1000, "P");
         htsDictionary.put(165568, "D");
 
+        htsDictionary.put(166238, "<1000");
+        htsDictionary.put(166239, ">1000");
+        htsDictionary.put(166240, "failed VL");
+
         //PCR Lab
-        htsDictionary.put(166217, "1");
-        htsDictionary.put(166218, "2");
-        htsDictionary.put(166219, "3");
-        htsDictionary.put(166220, "4");
-        htsDictionary.put(166221, "5");
-        htsDictionary.put(166222, "6");
-        htsDictionary.put(166223, "7");
-        htsDictionary.put(166224, "8");
-        htsDictionary.put(166225, "9");
-        htsDictionary.put(166226, "10");
-        htsDictionary.put(166227, "11");
-        htsDictionary.put(166228, "12");
-        htsDictionary.put(166229, "13");
-        htsDictionary.put(166230, "14");
-        htsDictionary.put(166231, "15");
-        htsDictionary.put(166232, "16");
+        htsDictionary.put(166217, "LIMS190001");
+        htsDictionary.put(166218, "LIMS040001");
+        htsDictionary.put(166219, "LIMS330001");
+        htsDictionary.put(166220, "LIMS150001");
+        htsDictionary.put(166221, "LIMS070001");
+        htsDictionary.put(166222, "LIMS160001");
+        htsDictionary.put(166223, "LIMS320001");
+        htsDictionary.put(166224, "LIMS250001");
+        htsDictionary.put(166225, "LIMS150002");
+        htsDictionary.put(166226, "LIMS250002");
+        htsDictionary.put(166227, "LIMS040002");
+        htsDictionary.put(166228, "LIMS300001");
+        htsDictionary.put(166229, "LIMS080001");
+        htsDictionary.put(166230, "LIMS030001");
+        htsDictionary.put(166231, "LIMS340001");
+        htsDictionary.put(166232, "LIMS350001");
+        htsDictionary.put(166234, "LIMS250003");
 
         //gender
         htsDictionary.put(165184, "M");
@@ -492,6 +507,8 @@ public class HTSDictionary {
     public RecencyTestingType createRecencyType(Patient patient, Encounter enc, List<Obs> allObs) {
 
         RecencyTestingType recencyTestingType = new RecencyTestingType();
+        //for recency Code
+        String recencyId = String.valueOf(patient.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX));
 
         //test name
         Obs obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT, allObs);
@@ -516,9 +533,8 @@ public class HTSDictionary {
         }
 
         //recency number
-        obs = extractObs(RECENCY_NUMBER, allObs);
-        if (obs != null && obs.getValueText() != null) {
-            recencyTestingType.setRecencyNumber(obs.getValueText());
+        if (recencyId != null) {
+            recencyTestingType.setRecencyNumber(recencyId);
         }
 
         //control line
@@ -587,30 +603,41 @@ public class HTSDictionary {
         //sample type
         obs = extractObs(SAMPLE_TYPE, allObs);
         if (obs != null && obs.getValueCoded() != null) {
-                recencyTestingType.setSampleType(getMappedValue(obs.getValueCoded().getConceptId()));
+            recencyTestingType.setSampleType(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //receiving PCR LAB
         obs = extractObs(RECEIVING_PCR_LAB, allObs);
         if (obs != null && obs.getValueCoded() != null) {
-                recencyTestingType.setPCRLab(getMappedValue(obs.getValueCoded().getConceptId()));
+            recencyTestingType.setPCRLab(getMappedValue(obs.getValueCoded().getConceptId()));
         }
-        
+
         //date sample sent to PCR Lab
         obs = extractObs(VIRAL_LOAD_SAMPLE_SENT_DATE, allObs);
-        if(obs != null && obs.getValueCoded() != null){
-            try{
-            recencyTestingType.setDateSampleSent(Utils.getXmlDate(obs.getValueDate()));
-            }catch(Exception ex){
-             LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+        if (obs != null && obs.getValueDate() != null) {
+            try {
+                recencyTestingType.setDateSampleSent(Utils.getXmlDate(obs.getValueDate()));
+            } catch (Exception ex) {
+                LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
             }
         }
-        
+
         obs = extractObs(VIRALLOAD_REQUEST_MADE, allObs);
-        if(obs != null && obs.getValueCoded() != null){
-        recencyTestingType.setViralLoadRequest(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
+        if (obs != null && obs.getValueCoded() != null) {
+            recencyTestingType.setViralLoadRequest(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
-        
+
+        //sample ID
+        obs = extractObs(SAMPLE_ID, allObs);
+        if (obs != null && obs.getValueText() != null) {
+            recencyTestingType.setSampleReferenceNumber(obs.getValueText());
+        }
+
+        //VL Classification
+        obs = extractObs(VIRAL_LOAD_CLASSIFICATION, allObs);
+        if (obs != null && obs.getValueCoded() != null) {
+            recencyTestingType.setViralLoadClassification(getMappedValue(obs.getValueCoded().getConceptId()));
+        }
 
         if (recencyTestingType.isEmpty()) {
             return null;

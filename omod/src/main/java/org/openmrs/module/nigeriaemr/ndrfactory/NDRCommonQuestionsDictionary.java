@@ -164,7 +164,7 @@ public class NDRCommonQuestionsDictionary {
         try {
 
             //Identifier 4 is Pepfar ID
-            PatientIdentifier pepfarid, pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId;
+            PatientIdentifier pepfarid, pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId,recencyId;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
             pepfarid = new PatientIdentifier();
@@ -177,6 +177,7 @@ public class NDRCommonQuestionsDictionary {
             exposedInfantId = pts.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
             pepId = pts.getPatientIdentifier(Utils.PEP_IDENTIFIER_INDEX);
             pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
+            recencyId = pts.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX);
 
             IdentifierType idt;
             IdentifiersType identifiersType = new IdentifiersType();
@@ -222,6 +223,12 @@ public class NDRCommonQuestionsDictionary {
                 idt = new IdentifierType();
                 idt.setIDNumber(pepId.getIdentifier());
                 idt.setIDTypeCode("PEP");
+                identifiersType.getIdentifier().add(idt);
+            }
+            if(recencyId != null){
+                idt = new IdentifierType();
+                idt.setIDNumber(recencyId.getIdentifier());
+                idt.setIDTypeCode("RECENT");
                 identifiersType.getIdentifier().add(idt);
             }
 

@@ -299,6 +299,8 @@ public class Utils {
 	
 	public static final int PEP_IDENTIFIER_INDEX = 9;
 	
+	public static final int RECENCY_INDENTIFIER_INDEX = 10;
+	
 	/* KEY FORMS */
 	//--These 4 forms was used to construct a HIVEncounterType
 	public final static int ADULT_INITIAL_ENCOUNTER_TYPE = 26;
