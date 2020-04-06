@@ -71,20 +71,39 @@ public class PharmacyDictionary {
         regimenMap.put(162565, "1f");//"TDF-3TC-NVP"
         regimenMap.put(817, "1g"); //"AZT-3TC-ABC" same as ABC/3TC/AZT
         regimenMap.put(165522, "1h"); //"AZT-3TC-TDF” same as TDF-3TC-AZT
-        regimenMap.put(162563, "1l"); //"ABC-3TC-EFV"
+     //   regimenMap.put(162563, "1l"); //"ABC-3TC-EFV"
         regimenMap.put(165681, "1m"); //"TDF-3TC-DTG"
         regimenMap.put(165686, "1n"); //"TDF-3TC-EFV400"
         regimenMap.put(165682, "1o"); //"TDF-FTC-DTG"
         regimenMap.put(165687, "1p"); //"TDF-FTC-EFV400"
+      
+        //added latest new regimen list
+        regimenMap.put(160104, "1q"); //D4T-3TC-EFV
+        regimenMap.put(166179, "1r"); // ABC-FTC-EFV
+        regimenMap.put(165690, "1s"); //ABC-FTC-NVP  //changed to 1s
+        regimenMap.put(166181, "1u"); //ABC-3TC-TDF
+        regimenMap.put(166183, "1v"); //D4T-3TC-ABC
+        regimenMap.put(166185, "1w"); //AZT-TDF-NVP
+        regimenMap.put(166186, "1x"); // DDI-3TC-EFV
+        regimenMap.put(166187, "1z"); //AZT-3TC-DTG
+        //pending concept id for DDI/3TC/ABC
+        regimenMap.put(162564, "2h");//"ABC-AZT-LPV/r" change concept ID from 165530
+        regimenMap.put(166188, "2i");// DDI-3TC-LPV/r
+        regimenMap.put(162559, "2j"); //ABC-DDI-LPV/r
+        
+        regimenMap.put(165530, "3a");//"AZT-TDF-3TC-LPV/r" // formerlly 2h
+        
+        
+        
         regimenMap.put(165523, "2a"); //"TDF-FTC-LPV/r"
         regimenMap.put(162201, "2b");//"TDF-3TC-LPV/r"
         regimenMap.put(165524, "2c"); //"TDF-FTC-ATV/r"
         regimenMap.put(164512, "2d");//"TDF-3TC-ATV/r"
         regimenMap.put(162561, "2e");//"AZT-3TC-LPV/r"
         regimenMap.put(164511, "2f");//"AZT-3TC-ATV/r"
-        regimenMap.put(165530, "2h");//"AZT-TDF-3TC-LPV/r"
-        regimenMap.put(165537, "2i");//"TDF-AZT-3TC-ATV/r"
-        regimenMap.put(165688, "3a ");//"DRV/r-DTG + 1-2 NRTIs"
+       // regimenMap.put(165530, "2h");//"AZT-TDF-3TC-LPV/r"
+        regimenMap.put(165537, "3c");//"TDF-AZT-3TC-ATV/r" //formerly 2i
+       // regimenMap.put(165688, "3a ");//"DRV/r-DTG + 1-2 NRTIs"
         regimenMap.put(160124, "4a");//"AZT-3TC-EFV"
         regimenMap.put(1652, "4b");//"AZT-3TC-NVP"
         regimenMap.put(162563, "4c");//"ABC-3TC-EFV"
@@ -97,7 +116,7 @@ public class PharmacyDictionary {
         regimenMap.put(162200, "4j"); //ABC-3TC-LPV/r
         regimenMap.put(165692, "4k"); //ABC-FTC-DTG
         regimenMap.put(165694, "4l"); //ABC-FTC-EFV400
-        regimenMap.put(165690, "4m"); //ABC-FTC-NVP
+       
         regimenMap.put(162561, "4n"); //AZT-3TC-LPV/r
         regimenMap.put(165695, "4o");//AZT-3TC-RAL
         regimenMap.put(165681, "4p"); //TDF-3TC-DTG
@@ -111,8 +130,8 @@ public class PharmacyDictionary {
         regimenMap.put(162200, "5a");;//"ABC-3TC-LPV/r"
         regimenMap.put(162561, "5b");;//"AZT-3TC-LPV/r"
         regimenMap.put(162560, "5c");;//"d4T-3TC-LPV/r"
-        regimenMap.put(165526, "5e");;//"ABC-3TC-ddi"
-        regimenMap.put(165696, "5g");//ABC-3TC-RAL
+        regimenMap.put(165526, "1y");;//"ABC-3TC-ddi" //change 5e to 1y
+        regimenMap.put(165696, "3v");//ABC-3TC-RAL // change 5g to 3v
         regimenMap.put(164511, "5h"); // AZT-3TC-ATV/r
         regimenMap.put(165695, "5i");  //AZT-3TC-RAL
         regimenMap.put(164512, "5j"); //TDF-3TC-ATV/r
@@ -142,7 +161,7 @@ public class PharmacyDictionary {
 		regimenMap.put(80945, "UnknownCode"); */
         //Added By Nelson
         regimenMap.put(165257, "CTX480");//
-        regimenMap.put(76488, "FLUC");//Added By Nelson
+        regimenMap.put(76488, "FLUC");
         regimenMap.put(1679, "H");
         regimenMap.put(80945, "CTX960");
 
@@ -240,7 +259,10 @@ public class PharmacyDictionary {
         regimenCodeDescTextMap.put(165631, "Dolutegravir");// Missing NDR Code from IHVN Instance
         regimenCodeDescTextMap.put(1674, "RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS");// Missing NDR Code from IHVN Instance
 
-        //Added By Nelson Attah
+        //added new regimen
+      //  regimenCodeDescTextMap.put(160104, "D")
+        
+        
         //OI drug
         regimenCodeDescTextMap.put(71160, "CTX960");//71160 "C00"); //Cotrimoxazole 800mg 105281 No NDR Code
         /*regimenCodeDescTextMap.put("Cotrimoxotrimoxazole 960mg"
@@ -527,7 +549,8 @@ public class PharmacyDictionary {
                 try {
                     cst = new CodedSimpleType();
                     cst.setCode(getRegimenMapValue(obs.getValueCoded().getConceptId()));
-                    cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
+                     cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
+                   // cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
                     regimenType.setPrescribedRegimen(cst);
                 } catch (Exception ex) {
                     LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_Drug_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);

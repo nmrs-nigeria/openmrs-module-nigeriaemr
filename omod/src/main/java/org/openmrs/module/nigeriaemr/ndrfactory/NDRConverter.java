@@ -293,7 +293,7 @@ public class NDRConverter {
                     .setCommonQuestions(common);
             }
             
-
+            
             ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(patient, encounters, allobs);
             if(hivSpecs.getHIVQuestions() != null){
             condition.setConditionSpecificQuestions(hivSpecs);
