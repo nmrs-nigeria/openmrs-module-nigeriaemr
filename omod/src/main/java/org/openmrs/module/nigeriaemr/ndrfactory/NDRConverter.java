@@ -286,11 +286,19 @@ public class NDRConverter {
             //create program area
             condition.setProgramArea(createProgramArea());
 
+            CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.encounters, this.allobs);
             //create common question tags by calling the factory method and passing the encounter, patient and obs list
+            if(!common.isEmpty()){
             condition
-                    .setCommonQuestions(mainDictionary.createCommonQuestionType2(this.patient, this.encounters, this.allobs));
+                    .setCommonQuestions(common);
+            }
+            
 
-            condition.setConditionSpecificQuestions(mainDictionary.createCommConditionSpecificQuestionsType(patient, encounters, allobs));
+            ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(patient, encounters, allobs);
+            if(hivSpecs.getHIVQuestions() != null){
+            condition.setConditionSpecificQuestions(hivSpecs);
+            }
+            
             //create condition specific question tag
             //HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
             //if (hivQuestionsType != null) {

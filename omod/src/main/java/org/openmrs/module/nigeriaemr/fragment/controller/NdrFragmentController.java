@@ -89,16 +89,16 @@ public class NdrFragmentController {
 		LoggerUtils.clearLogFile();
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
 		
-		List<Patient> patients = Context.getPatientService().getAllPatients();
+	//	List<Patient> patients = Context.getPatientService().getAllPatients();
 		
-		//                String patientIdLimit = Utils.getPatientIdLimit();
-		//               String[] patientIdArray =  patientIdLimit.split(",");
-		//                
-		//                int startIndex = Integer.parseInt(patientIdArray[0]);
-		//                int endIndex = Integer.parseInt(patientIdArray[1]);
-		//		
-		//                List<Patient> patients = Context.getPatientService().getAllPatients().stream()
-		//                        .filter(x-> x.getId() >= startIndex && x.getId() <= endIndex).collect(Collectors.toList());
+		                String patientIdLimit = Utils.getPatientIdLimit();
+		               String[] patientIdArray =  patientIdLimit.split(",");
+		                
+		                int startIndex = Integer.parseInt(patientIdArray[0]);
+		                int endIndex = Integer.parseInt(patientIdArray[1]);
+				
+		                List<Patient> patients = Context.getPatientService().getAllPatients().stream()
+		                        .filter(x-> x.getId() >= startIndex && x.getId() <= endIndex).collect(Collectors.toList());
 		
 		//Patient pts = null;
 		//List<Patient> patients = new ArrayList<Patient>();

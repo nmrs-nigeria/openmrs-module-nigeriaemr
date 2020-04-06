@@ -5,9 +5,14 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.joda.time.DateTime;
 import org.openmrs.Obs;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
@@ -45,24 +50,55 @@ public class RandomTest {
 	}
 	
 	public static void main(String args[]) {
-		
-		DateTime stopDateTime = null;
-		DateTime startDateTime = null;
-		int durationDays = (int) 60.0;
-		int finaldurationInDays = 0;
-		
-		//  durationDays = (int) obs.getValueNumeric().doubleValue();
-		//  startDateTime = new DateTime(visitDate);
-		Date tempDate = new Date();
-		
-		startDateTime = new DateTime(tempDate);
-		stopDateTime = startDateTime.plusDays(durationDays);
-		
-		//   stopDateTime = retrieveMedicationDuration(visitDate, obsListForAVisit);
-		startDateTime = new DateTime();
-		finaldurationInDays = Utils.getDateDiffInDays(startDateTime.toDate(), stopDateTime.toDate());
-		System.out.println(finaldurationInDays);
+	
+         Runtime runtime =   Runtime.getRuntime();
+            RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+            Map<String,String> allProps = runtimeMXBean.getSystemProperties();
+          
+            long memorySize = ((com.sun.management.OperatingSystemMXBean) ManagementFactory
+        .getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
+            
+            File[] roots = File.listRoots();
+            File eachRoot = Arrays.asList(roots).get(0);
+         
+            System.out.println(runtime.availableProcessors());
+            System.out.println(runtime.freeMemory());
+            System.out.println(runtime.totalMemory());
+            System.out.println(runtime.maxMemory());
+            System.out.println(allProps.get("java.version"));
+            System.out.println(allProps.get("java.home"));
+            System.out.println(allProps.get("java.vendor"));
+            System.out.println(allProps.get("os.name"));
+            System.out.println(allProps.get("sun.arch.data.model")); //JVM bit size
+            System.out.println(memorySize); //returns actual + 1 gig
+            System.out.println(eachRoot.getTotalSpace());
+            System.out.println(System.getProperty("sun.arch.data.model"));
+            
+            allProps.entrySet().forEach(a ->{
+                System.out.println(a);
+            });
+            
+//		DateTime stopDateTime = null;
+//		DateTime startDateTime = null;
+//		int durationDays = (int) 60.0;
+//		int finaldurationInDays = 0;
+//		
+//		//  durationDays = (int) obs.getValueNumeric().doubleValue();
+//		//  startDateTime = new DateTime(visitDate);
+//		Date tempDate = new Date();
+//		
+//		startDateTime = new DateTime(tempDate);
+//		stopDateTime = startDateTime.plusDays(durationDays);
+//		
+//		//   stopDateTime = retrieveMedicationDuration(visitDate, obsListForAVisit);
+//		startDateTime = new DateTime();
+//		finaldurationInDays = Utils.getDateDiffInDays(startDateTime.toDate(), stopDateTime.toDate());
+//		System.out.println(finaldurationInDays);
+
+
+    
+
+
 		
 	}
-	
 }

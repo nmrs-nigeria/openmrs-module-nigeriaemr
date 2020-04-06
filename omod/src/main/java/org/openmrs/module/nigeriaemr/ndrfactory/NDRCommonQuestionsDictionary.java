@@ -164,7 +164,7 @@ public class NDRCommonQuestionsDictionary {
         try {
 
             //Identifier 4 is Pepfar ID
-            PatientIdentifier pepfarid, pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId,recencyId;
+            PatientIdentifier pepfarid, pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
             pepfarid = new PatientIdentifier();
@@ -225,7 +225,7 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDTypeCode("PEP");
                 identifiersType.getIdentifier().add(idt);
             }
-            if(recencyId != null){
+            if (recencyId != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(recencyId.getIdentifier());
                 idt.setIDTypeCode("RECENT");
@@ -290,7 +290,7 @@ public class NDRCommonQuestionsDictionary {
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
                     if (ndrCodedValue.equals("N")) {
                         demo.setPatientEducationLevelCode("1");
-                    } else if(!"".equals(ndrCodedValue)) {
+                    } else if (!"".equals(ndrCodedValue)) {
                         demo.setPatientEducationLevelCode(ndrCodedValue);
                     }
 
@@ -305,19 +305,19 @@ public class NDRCommonQuestionsDictionary {
                 obs = Utils.extractObs(Utils.OCCUPATIONAL_STATUS_CONCEPT, obsListForEncounterTypes);
                 if (obs != null && obs.getValueCoded() != null) {
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
-                    if(!"".equals(ndrCodedValue)){
-                         demo.setPatientOccupationCode(ndrCodedValue);
+                    if (!"".equals(ndrCodedValue)) {
+                        demo.setPatientOccupationCode(ndrCodedValue);
                     }
-               
+
                 }
                 //check Marital Status Code
                 obs = Utils.extractObs(Utils.MARITAL_STATUS_CONCEPT, obsListForEncounterTypes);
                 if (obs != null && obs.getValueCoded() != null) {
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
-                    if(!"".equals(ndrCodedValue)){
-                      demo.setPatientMaritalStatusCode(ndrCodedValue);
+                    if (!"".equals(ndrCodedValue)) {
+                        demo.setPatientMaritalStatusCode(ndrCodedValue);
                     }
-                  
+
                 }
             }
 
@@ -326,8 +326,8 @@ public class NDRCommonQuestionsDictionary {
             LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
             //throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
-        
-         return demo;
+
+        return demo;
 
     }
 
@@ -435,11 +435,11 @@ public class NDRCommonQuestionsDictionary {
             //List<Obs> hivEnrollmentObs = Utils.FilterObsByEncounterTypeId(allObs, Utils.HIV_Enrollment_Encounter_Type_Id); // Utils.getHIVEnrollmentObs(pts);
 
             if (pepfarIdentifier != null) {
-
+                
                 try {
                     common.setHospitalNumber(pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX).getIdentifier());
                 } catch (Exception e) {
-                    common.setHospitalNumber(pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX).getIdentifier());
+                  //  common.setHospitalNumber(pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX).getIdentifier());
                 }
                 /*  Assuming Hospital No is 3*/
                 //old code commented for throwing error change by the try and catch code abowe
