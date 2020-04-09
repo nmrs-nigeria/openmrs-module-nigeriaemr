@@ -33,6 +33,7 @@ import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.LocationModel;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
+import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -342,5 +343,19 @@ public class NdrFragmentController {
 		}
 		
 		return responseString;
+	}
+        
+        public String getVersionNumber(HttpServletRequest request) {
+		Version version = null;
+		String response = "";
+		try {
+			version = Utils.getNmrsVersion();
+			ObjectMapper mapper = new ObjectMapper();
+			response = mapper.writeValueAsString(version);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return response;
 	}
 }
