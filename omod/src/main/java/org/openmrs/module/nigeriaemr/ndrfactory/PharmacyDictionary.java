@@ -69,7 +69,7 @@ public class PharmacyDictionary {
         regimenMap.put(164854, "1d");//"TDF-FTC-NVP"
         regimenMap.put(164505, "1e"); //"TDF-3TC-EFV"
         regimenMap.put(162565, "1f");//"TDF-3TC-NVP"
-        regimenMap.put(817, "1g"); //"AZT-3TC-ABC" same as ABC/3TC/AZT
+        regimenMap.put(817, "1g"); //"ABC-3TC-AZT" same as ABC/3TC/AZT
         regimenMap.put(165522, "1h"); //"AZT-3TC-TDF” same as TDF-3TC-AZT
         //   regimenMap.put(162563, "1l"); //"ABC-3TC-EFV"
         regimenMap.put(165681, "1m"); //"TDF-3TC-DTG"
@@ -142,7 +142,7 @@ public class PharmacyDictionary {
         regimenMap.put(1652, "4b");//"AZT-3TC-NVP"
         regimenMap.put(162563, "4c");//"ABC-3TC-EFV"
         regimenMap.put(162199, "4d");//"ABC-3TC-NVP"
-        regimenMap.put(817, "4e");//"AZT-3TC-ABC" Same as ABC-3TC-AZT
+      //  regimenMap.put(817, "4e");//"AZT-3TC-ABC" Same as ABC-3TC-AZT (took it off)
         regimenMap.put(792, "4f");//"d4T-3TC-NVP"
         regimenMap.put(166074, "4g"); // Nelson Added Concept in NigeriaMRS and mapped it here as code already exist on NDR.
         // regimenMap.put(165691, "4h"); //ABC-3TC-DTG (took it off)
