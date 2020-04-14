@@ -38,55 +38,21 @@ text-align: center;
 
                     <br/><br/>
                 </h5>
-         <form method="post">       
-            <div id="assignment_community_tester" class="form-control" style="display: none">
-
-                <fieldset>
-                    <legend>
-                        Choose Community Tester
-                    </legend>
-                    <div >
-                        
-                        <input type="text" id="user_name" disabled="true"  name="user_name" style="border: none"/>
-                        
-                        <select id="testers" name="testers_list" class="form-control js-example-basic-single" style="width: 60%">
-                           
-                            
-                            <option selected>Choose...</option>
-                            
-                        </select>
-
-                        <input type="text" id="community_tester_name_input" name="community_tester_name" disabled="true" style="display: none"/>
-                        
-                        <input type="text" id="user_id" disabled="true"  name="user_id" style="border: none; display: none;"/>
-
-                    </div>
-                </fieldset>
-                
-                 <br>
-            <div> <br>
-                <input type="button" value="Assign/Re-assign contact" class="btn btn-primary" onclick="processAssignment()" />
-            </div>
-            <br>
-            </div>
-           
-        </form>
+   
 
             </div>
 
         </div>
         <div class="table-responsive">
-            <table class="table table-striped table-bordered  table-hover" id="tb_assignment">
+            <table class="table table-striped table-bordered  table-hover" id="tb_version">
                 <thead>
                     <tr>
-                        <th>${ ui.message("First Name") }</th>
-                        <th>${ ui.message("Last Name") }</th>
+                        <th style="background-color: #00463f; color: #fff">${ ui.message("Module") }</th>
+                        <th style="background-color: #00463f; color: #fff" >${ ui.message("Version") }</th>
                        
-                        <th>${ ui.message("Assigned To") }</th>
-                        <th>${ ui.message("Actions") }</th>
                     </tr>
                 </thead>
-                <tbody id="AssignTableBody">
+                <tbody id="VersionTableBody">
 
 
 
@@ -107,7 +73,7 @@ text-align: center;
     var input, filter, table, tr, td, i, txtValue;
     input = document.getElementById("nameSearchAssign");
     filter = input.value.toUpperCase();
-    table = document.getElementById("tb_assignment");
+    table = document.getElementById("tb_version");
     tr = table.getElementsByTagName("tr");
 
     // Loop through all table rows, and hide those who don't match the search query
@@ -132,70 +98,6 @@ text-align: center;
 </script>
 
 <script>
-
-
-    var global = "";
-    jq = jQuery;
-    jq('#wait').hide();
-    jq(function() {
-       
-    jq('#gen-wait').show();
-
-    jq.ajax({
-        url: "${ ui.actionLink("nigeriaemr", "ndr", "getVersionNumber") }",
-    dataType: "json",
-    
-
-    }).success(function(data) {
-    jq('#gen-wait').hide();
-    console.log(data);
-     
-    var obj = jq.parseJSON(data);
-
-     console.log(obj.length);
-     console.log(obj);
- 
-    
-    })
-    .error(function(xhr, status, err) {
-    jq('#gen-wait').hide();
-    alert('An error occured');
-
-    }); 
-
-    });
-
-</script>
-
-<script type="text/javascript">
-
-    function showAssignmentTester(userid){
-    
-    console.log(userid);
-    
-    console.log(global);
-    
-    var result = jQuery.grep(global, function(e){ return e.id == userid; });
-    
-    console.log(result[0].firstname);
-    
-    var name = result[0].firstname + " " + result[0].lastname;
-    
-    jQuery('#assignment_community_tester').hide(500);
-    
-    jQuery('#user_id').val(userid);
-    
-    jQuery('#user_name').val("Assign/Re-assign "+name+" to:"); 
-
-    jQuery('#assignment_community_tester').show(500);
-
-    
-    
-    }
-
-</script>
-
-<script>
     
     jQuery(document).ready(function() {
     
@@ -212,16 +114,31 @@ text-align: center;
     
 
     }).success(function(data) {
-    jqq('#gen-wait').hide();
+    jq('#gen-wait').hide();
     console.log(data);
      
     var obj = jq.parseJSON(data);
-    globalTester = jq.parseJSON(data);
-    var testerID = "";
-    var testeName = "";
 
-     console.log(obj.length);
      console.log(obj);
+     
+     if(obj !="")
+    {
+        var keys = Object.keys(obj);
+        console.log(keys);
+
+         for (var i = 0, len = keys.length; i < len; i++) {
+
+         console.log(keys[i]);  
+         console.log(obj[keys[i]]);
+
+            jq('#VersionTableBody').append("<tr><td>"+keys[i]+"</td><td>"+obj[keys[i]]+"</td></tr>");
+
+
+        }
+    
+    }
+     
+    
  
     
     })
@@ -233,115 +150,4 @@ text-align: center;
 
     });
 });
-</script>
-
-
-<script>
-    jqq = jQuery;
-    jqq('#wait').hide();
-    var globalTester = "";
-    jqq(function() {
-       
-    jqq('#gen-wait').show();
-
-    jqq.ajax({
-        url: "${ ui.actionLink("patientindextracing", "ndr", "getAllTesters") }",
-    dataType: "json",
-    
-
-    }).success(function(data) {
-    jqq('#gen-wait').hide();
-    console.log(data);
-     
-    var obj = jq.parseJSON(data);
-    globalTester = jq.parseJSON(data);
-    var testerID = "";
-    var testeName = "";
-
-     console.log(obj.length);
-     console.log(obj);
- 
-
-    if(obj !="")
-    {
-    
-        for(var i=0;i<obj.length;i++)
-        {
-        
-            testerID = obj[i].id+'';
-            testerName = obj[i].username+' ('+obj[i].facility_name+')';
-            console.log(testerName);
-            console.log(testerID);
-          
-            
-            jqq('#testers').append("<option value=\""+testerID+"\">"+testerName+"</option>");
-
-  
-      }
-    
-    }
-    
-    })
-    .error(function(xhr, status, err) {
-    jqq('#gen-wait').hide();
-    alert('An error occured');
-
-    }); 
-
-    });
-
-</script>
-
-
-<script>
-    function processAssignment(){
-        
-        var contactId = jQuery('#user_id').val();
-        var tester = jQuery('#testers').val();
-        
-        var result = jQuery.grep(globalTester, function(e){ return e.id == tester; });
-    
-        console.log(result[0]);
-        console.log(tester);
-        console.log(contactId);
-        
-        var jsonResult =  JSON.stringify(result[0]);
-
-        console.log(jsonResult);
-
-        jq = jQuery;
-        jq('#wait').hide();
-        
-        jqq(function() {
-       
-    jqq('#gen-wait').show();
-
-    jqq.ajax({
-         url: "${ ui.actionLink("patientindextracing", "ndr", "reassignContact") }",
-    dataType: "json",
-    data: {
-    'contactId': contactId,
-    'tester' : jsonResult
-    }
-    
-
-    }).success(function(data) {
-    jqq('#gen-wait').hide();
-    console.log(data);
-      
-    alert(data);
-    
-    })
-    .error(function(xhr, status, err) {
-    jqq('#gen-wait').hide();
-    alert('An error occured');
-
-    }); 
-
-    });
-    
-    }
-    
-    
-
 </script>
