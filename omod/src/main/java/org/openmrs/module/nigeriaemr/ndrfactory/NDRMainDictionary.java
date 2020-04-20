@@ -204,8 +204,19 @@ public class NDRMainDictionary {
 
     public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
         List<RegimenType> allRegimenTypeList = new ArrayList<RegimenType>();
-        allRegimenTypeList.addAll(pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient, allPatientObsList));
-        allRegimenTypeList.addAll(pharmDictionary.createOIRegimenTypeList(patient, allEncounterForPatient, allPatientObsList));
+        try{
+            allRegimenTypeList.addAll(pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient, allPatientObsList));
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+
+        try{
+            allRegimenTypeList.addAll(pharmDictionary.createOIRegimenTypeList(patient, allEncounterForPatient, allPatientObsList));
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+
+
         return allRegimenTypeList;
 
     }

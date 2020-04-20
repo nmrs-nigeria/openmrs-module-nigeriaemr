@@ -649,6 +649,19 @@ public class Utils {
 		return obsListForVisitDate;
 	}
 	
+	public static List<Obs> extractObsPerVisitDateNew(Date visitDate, List<Obs> obsList) {
+		List<Obs> obsListForVisitDate = new ArrayList<Obs>();
+		DateTime obsDateTime = null;
+		DateTime visitDateTime = null;
+		
+		for (Obs ele : obsList) {
+			if (DateUtils.isSameDay(visitDate, ele.getObsDatetime())) {
+				obsListForVisitDate.add(ele);
+			}
+		}
+		return obsListForVisitDate;
+	}
+	
 	public static Obs extractObs(int conceptID, List<Obs> obsList) {
 
         if (obsList == null) {

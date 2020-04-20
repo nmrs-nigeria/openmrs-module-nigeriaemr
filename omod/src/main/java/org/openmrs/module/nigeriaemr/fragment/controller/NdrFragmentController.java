@@ -344,8 +344,8 @@ public class NdrFragmentController {
 		
 		return responseString;
 	}
-        
-        public String getVersionNumber(HttpServletRequest request) {
+	
+	public String getVersionNumber(HttpServletRequest request) {
 		Version version = null;
 		String response = "";
 		try {
