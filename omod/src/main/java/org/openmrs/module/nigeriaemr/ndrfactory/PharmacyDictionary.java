@@ -39,6 +39,7 @@ public class PharmacyDictionary {
     public final static int TB_regimen_Concept_set = 165728;
     public final static int OI_regimen_Concept_set = 165726;
     public final static int OI_Drug_Concept_Id = 165727;
+    public final static int ANTI_DRUG_Concept_ID = 165304;
     //public final static int Prescribed_Regimen_Line_Concept_Id=165708;
     public final static int Prescribed_Regimen_Line_Concept_Id = 165724;
     public final static int Adult_Ist_Regimen_Line_Concept_Id = 164506;
@@ -180,6 +181,8 @@ public class PharmacyDictionary {
         regimenMap.put(165701, "6d"); //DRV/r-RAL + 1-2NRTIs
         regimenMap.put(165697, "6e"); //DTG+2 NRTIs
         regimenMap.put(165699, "6f"); //RAL + 2 NRTIs
+        
+        //for drug combination
         regimenMap.put(86663, "9a");//"AZT" Concept ID didnt match. So, Changed concept id from 26 to 86663 as defined In NMRS
         regimenMap.put(78643, "9b");//3TC Concept ID didnt match. So, changed ID from 27 to 78643 as defined In NMRS
         regimenMap.put(80586, "9c");//"NVP" Concept ID didnt match. So, Changed concept id from 28 to 80586 as defined in NMRS
@@ -331,8 +334,10 @@ public class PharmacyDictionary {
         Integer[] targetEncounterTypes = {Utils.CARE_CARD_ENCOUNTER_TYPE, Utils.PHARMACY_ENCOUNTER_TYPE};
         RegimenType regimenType = null;
         List<Obs> obsPerVisit = null;
+        //CHECK THIS
         Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(patient, allEncounterForPatient, targetEncounterTypes);
         for (Date visitDate : visitDateSet) {
+            //CHECK THIS
             obsPerVisit = Utils.extractObsPerVisitDate(visitDate, patientsObsList);
             regimenType = createRegimenType(patient, visitDate, obsPerVisit);
             regimenTypeList.add(regimenType);
@@ -349,7 +354,8 @@ public class PharmacyDictionary {
             if (enc.getEncounterType().getEncounterTypeId() == Utils.PHARMACY_ENCOUNTER_TYPE) {
                 obsPerVisit = new ArrayList<Obs>(enc.getAllObs());
                 //regimenType=createOIType(patient, enc, obsPerVisit);
-                regimenTypeList.addAll(createOITypes(patient, enc, patientsObsList));
+              //  regimenTypeList.addAll(createOITypes(patient, enc, patientsObsList));
+              regimenTypeList.addAll(createOITypes(patient, enc, obsPerVisit));
             }
         }
         return regimenTypeList;
@@ -568,8 +574,10 @@ public class PharmacyDictionary {
 
     private RegimenType createOIType(Patient pts, Encounter enc, List<Obs> OIDrugObsList)
             throws DatatypeConfigurationException {
+        RegimenType regimenType = new RegimenType();
+
         try {
-            RegimenType regimenType = new RegimenType();
+
             CodedSimpleType cst;
 
             regimenType.setVisitID(Utils.getVisitId(pts, enc));
@@ -588,6 +596,19 @@ public class PharmacyDictionary {
                 } catch (Exception ex) {
                     LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_Drug_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
                 }
+            }else{
+              //set regimen--do this for TB
+            obs = Utils.extractObs(ANTI_DRUG_Concept_ID, OIDrugObsList);
+            try {
+                    cst = new CodedSimpleType();
+                    cst.setCode(getRegimenMapValue(obs.getValueCoded().getConceptId()));
+                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
+                    // cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
+                    regimenType.setPrescribedRegimen(cst);
+                } catch (Exception ex) {
+                    LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_Drug_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+                }
+            
             }
 
             try {
@@ -628,11 +649,13 @@ public class PharmacyDictionary {
                 regimenType.setDateRegimenEndedYYYY(String.valueOf(cal.get(Calendar.YEAR)));
             }
 
-            return regimenType;
+
         } catch (Exception ex) {
             LoggerUtils.write(PharmacyDictionary.class.getName(), Arrays.toString(ex.getStackTrace()), LogFormat.FATAL, LogLevel.live);
-            throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+          //  throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
+
+        return regimenType;
     }
 
     public List<RegimenType> createOITypes(Patient pts, Encounter enc, List<Obs> pharmacyObsList)
@@ -654,7 +677,7 @@ public class PharmacyDictionary {
                 }
             } catch (Exception ex) {
                 LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_regimen_Concept_set & TB_regimen_Concept_set: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-                throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+               // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
             }
         }
         for (Obs ele : groupObsSet) {
@@ -670,7 +693,7 @@ public class PharmacyDictionary {
                 drugObsList.clear();
             } catch (Exception ex) {
                 LoggerUtils.write(PharmacyDictionary.class.getName(), Arrays.toString(ex.getStackTrace()), LogFormat.DEBUG, LogLevel.live);
-                throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+               // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
             }
         }
         return regimenTypeList;
