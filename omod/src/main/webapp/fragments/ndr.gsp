@@ -65,5 +65,11 @@ def id = config.id
     <p>Manage Facility Location</p>
 </a>
 
+<a id="${ id }_button_manage_location"  class="button app big" style="font-size:12px;min-height: 10px;" href="GetVersion.page">
+    <i class="icon-eye-open"></i>
+    <br/>
+    <p>Version Info</p>
+</a>
+
 
 

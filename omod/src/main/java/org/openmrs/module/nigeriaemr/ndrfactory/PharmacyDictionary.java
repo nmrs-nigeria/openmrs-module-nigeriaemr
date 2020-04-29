@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.datatype.DatatypeConfigurationException;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -136,32 +137,18 @@ public class PharmacyDictionary {
         regimenMap.put(164512, "2d");//"TDF-3TC-ATV/r"
         regimenMap.put(162561, "2e");//"AZT-3TC-LPV/r"
         regimenMap.put(164511, "2f");//"AZT-3TC-ATV/r"
-        // regimenMap.put(165530, "2h");//"AZT-TDF-3TC-LPV/r"
-
-        // regimenMap.put(165688, "3a ");//"DRV/r-DTG + 1-2 NRTIs"
-        //   regimenMap.put(160124, "4a");//"AZT-3TC-EFV" (took it off)
+     
         regimenMap.put(1652, "4b");//"AZT-3TC-NVP"
         regimenMap.put(162563, "4c");//"ABC-3TC-EFV"
         regimenMap.put(162199, "4d");//"ABC-3TC-NVP"
-      //  regimenMap.put(817, "4e");//"AZT-3TC-ABC" Same as ABC-3TC-AZT (took it off)
+        //  regimenMap.put(817, "4e");//"AZT-3TC-ABC" Same as ABC-3TC-AZT (took it off)
         regimenMap.put(792, "4f");//"d4T-3TC-NVP"
         regimenMap.put(166074, "4g"); // Nelson Added Concept in NigeriaMRS and mapped it here as code already exist on NDR.
-        // regimenMap.put(165691, "4h"); //ABC-3TC-DTG (took it off)
-        //  regimenMap.put(165693, "4i"); //ABC-3TC-EFV400 (took this off)
-        //    regimenMap.put(162200, "4j"); //ABC-3TC-LPV/r (took this off)
-        //   regimenMap.put(165692, "4k"); //ABC-FTC-DTG (took it off)
-        //   regimenMap.put(165694, "4l"); //ABC-FTC-EFV400 (took this off)
+   
 
         regimenMap.put(162561, "5b"); //AZT-3TC-LPV/r //formaerlly 4n
 
-        //   regimenMap.put(165681, "4p"); //TDF-3TC-DTG (took it off)
-        //   regimenMap.put(164505, "4q"); //TDF-3TC-EFV// (took it off)
-        //   regimenMap.put(165686, "4r"); //TDF-3TC-EFV400 (took it off)
-        //   regimenMap.put(162565, "4s"); // TDF-3TC-NVP (took it off)
-        //    regimenMap.put(165682, "4t"); // TDF-FTC-DTG (took it off)
-        //   regimenMap.put(104565, "4u"); //TDF-FTC-EFV (took it off)
-        //   regimenMap.put(165687, "4v"); // TDF-FTC-EFV400 (took it off)
-        //   regimenMap.put(164854, "4w");// TDF-FTC-NVP (took it off)
+
         regimenMap.put(162200, "5a");;//"ABC-3TC-LPV/r"
         regimenMap.put(162561, "5b");;//"AZT-3TC-LPV/r"
         regimenMap.put(162560, "5c");;//"d4T-3TC-LPV/r"
@@ -171,17 +158,15 @@ public class PharmacyDictionary {
 
         regimenMap.put(165526, "1y");;//"ABC-3TC-ddi" //change 5e to 1y
 
-        //    regimenMap.put(164511, "5h"); // AZT-3TC-ATV/r (took it off)
-        //    regimenMap.put(165695, "5i");  //AZT-3TC-RAL (took it off)
-        //   regimenMap.put(164512, "5j"); //TDF-3TC-ATV/r (took it off)
-        //   regimenMap.put(162201, "5k");//TDF-3TC-LPV/r  (took it off)
+ 
         regimenMap.put(165698, "6a"); //DRV/r + 2 NRTIs + 2 NNRTI
         regimenMap.put(165700, "6b"); //DRV/r +2NRTIs
         regimenMap.put(165688, "6c"); //DRV/r-DTG + 1-2 NRTIs
         regimenMap.put(165701, "6d"); //DRV/r-RAL + 1-2NRTIs
         regimenMap.put(165697, "6e"); //DTG+2 NRTIs
         regimenMap.put(165699, "6f"); //RAL + 2 NRTIs
-        
+        regimenMap.put(165689, "6g");
+
         //for drug combination
         regimenMap.put(86663, "9a");//"AZT" Concept ID didnt match. So, Changed concept id from 26 to 86663 as defined In NMRS
         regimenMap.put(78643, "9b");//3TC Concept ID didnt match. So, changed ID from 27 to 78643 as defined In NMRS
@@ -195,11 +180,7 @@ public class PharmacyDictionary {
         regimenMap.put(165631, "Missing NDR Code from IHVN Instance"); //Dolutegravir
         regimenMap.put(1674, "Missing NDR Code frm IHVN Instance");//RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS
 
-        /*regimenMap.put(165257, "CTX480");
-		regimenMap.put(76488, "UnknownCode");
-		regimenMap.put(1679, "UnknownCode");
-		regimenMap.put(80945, "UnknownCode"); */
-        //Added By Nelson
+       
         regimenMap.put(165257, "CTX480");//
         regimenMap.put(76488, "FLUC");
         regimenMap.put(1679, "H");
@@ -303,13 +284,7 @@ public class PharmacyDictionary {
         //  regimenCodeDescTextMap.put(160104, "D")
         //OI drug
         regimenCodeDescTextMap.put(71160, "CTX960");//71160 "C00"); //Cotrimoxazole 800mg 105281 No NDR Code
-        /*regimenCodeDescTextMap.put("Cotrimoxotrimoxazole 960mg"
-        regimenCodeDescTextMap.put("Cotrimoxazole 800mg", "CTX8azole 480mg", "CTX480");
-        regimenCodeDescTextMap.put("Cotrimoxazole 400mg", "CTX400");
-        regimenCodeDescTextMap.put("Cotrimoxazole 240mg/5ml", "CTX240");
-        regimenCodeDescTextMap.put("Fluconazole", "FLUC");
-        regimenCodeDescTextMap.put("Dapsone", "DDS");
-        regimenCodeDescTextMap.put("Isoniazid-Pyridoxine", "INHB6");*/
+    
 
     }
 
@@ -331,9 +306,19 @@ public class PharmacyDictionary {
 
     public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient, List<Obs> patientsObsList) throws DatatypeConfigurationException {
         List<RegimenType> regimenTypeList = new ArrayList<RegimenType>();
-        Integer[] targetEncounterTypes = {Utils.CARE_CARD_ENCOUNTER_TYPE, Utils.PHARMACY_ENCOUNTER_TYPE};
+        Integer[] targetEncounterTypes = {Utils.CARE_CARD_ENCOUNTER_TYPE,  Utils.PHARMACY_ENCOUNTER_TYPE};
         RegimenType regimenType = null;
         List<Obs> obsPerVisit = null;
+
+//        for (Encounter enc : allEncounterForPatient) {
+//            if (enc.getEncounterType().getEncounterTypeId() == Utils.PHARMACY_ENCOUNTER_TYPE) {
+//                obsPerVisit = new ArrayList<Obs>(enc.getAllObs());
+//                Date visitDate = DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE);
+//                regimenType = createRegimenType(patient, visitDate, obsPerVisit);
+//                regimenTypeList.add(regimenType);
+//            }
+//        }
+
         //CHECK THIS
         Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(patient, allEncounterForPatient, targetEncounterTypes);
         for (Date visitDate : visitDateSet) {
@@ -354,8 +339,8 @@ public class PharmacyDictionary {
             if (enc.getEncounterType().getEncounterTypeId() == Utils.PHARMACY_ENCOUNTER_TYPE) {
                 obsPerVisit = new ArrayList<Obs>(enc.getAllObs());
                 //regimenType=createOIType(patient, enc, obsPerVisit);
-              //  regimenTypeList.addAll(createOITypes(patient, enc, patientsObsList));
-              regimenTypeList.addAll(createOITypes(patient, enc, obsPerVisit));
+                //  regimenTypeList.addAll(createOITypes(patient, enc, patientsObsList));
+                regimenTypeList.addAll(createOITypes(patient, enc, obsPerVisit));
             }
         }
         return regimenTypeList;
@@ -596,10 +581,10 @@ public class PharmacyDictionary {
                 } catch (Exception ex) {
                     LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_Drug_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
                 }
-            }else{
-              //set regimen--do this for TB
-            obs = Utils.extractObs(ANTI_DRUG_Concept_ID, OIDrugObsList);
-            try {
+            } else {
+                //set regimen--do this for TB
+                obs = Utils.extractObs(ANTI_DRUG_Concept_ID, OIDrugObsList);
+                try {
                     cst = new CodedSimpleType();
                     cst.setCode(getRegimenMapValue(obs.getValueCoded().getConceptId()));
                     cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
@@ -608,7 +593,7 @@ public class PharmacyDictionary {
                 } catch (Exception ex) {
                     LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_Drug_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
                 }
-            
+
             }
 
             try {
@@ -649,10 +634,9 @@ public class PharmacyDictionary {
                 regimenType.setDateRegimenEndedYYYY(String.valueOf(cal.get(Calendar.YEAR)));
             }
 
-
         } catch (Exception ex) {
             LoggerUtils.write(PharmacyDictionary.class.getName(), Arrays.toString(ex.getStackTrace()), LogFormat.FATAL, LogLevel.live);
-          //  throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+            //  throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
 
         return regimenType;
@@ -677,7 +661,7 @@ public class PharmacyDictionary {
                 }
             } catch (Exception ex) {
                 LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_regimen_Concept_set & TB_regimen_Concept_set: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-               // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+                // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
             }
         }
         for (Obs ele : groupObsSet) {
@@ -693,7 +677,7 @@ public class PharmacyDictionary {
                 drugObsList.clear();
             } catch (Exception ex) {
                 LoggerUtils.write(PharmacyDictionary.class.getName(), Arrays.toString(ex.getStackTrace()), LogFormat.DEBUG, LogLevel.live);
-               // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
+                // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
             }
         }
         return regimenTypeList;
