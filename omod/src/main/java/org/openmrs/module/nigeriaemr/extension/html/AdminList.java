@@ -46,7 +46,7 @@ public class AdminList extends AdministrationSectionExt {
 		map.put("module/nigeriaemr/nigeriaemr.form", "nigeriaemr.title");
 		map.put("nigeriaemr/biometricform.page", "nigeriaemr.biometricform");
 		map.put("nigeriaemr/customreport.page", "nigeriaemr.customreport");
-		
+		map.put("nigeriaemr/GetVersion.page", "View module versions");
 		return map;
 	}
 	
