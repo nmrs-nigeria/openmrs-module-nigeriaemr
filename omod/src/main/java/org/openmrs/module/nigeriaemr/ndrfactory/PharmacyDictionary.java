@@ -5,6 +5,7 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -14,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.xml.datatype.DatatypeConfigurationException;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -137,17 +139,15 @@ public class PharmacyDictionary {
         regimenMap.put(164512, "2d");//"TDF-3TC-ATV/r"
         regimenMap.put(162561, "2e");//"AZT-3TC-LPV/r"
         regimenMap.put(164511, "2f");//"AZT-3TC-ATV/r"
-     
+
         regimenMap.put(1652, "4b");//"AZT-3TC-NVP"
         regimenMap.put(162563, "4c");//"ABC-3TC-EFV"
         regimenMap.put(162199, "4d");//"ABC-3TC-NVP"
         //  regimenMap.put(817, "4e");//"AZT-3TC-ABC" Same as ABC-3TC-AZT (took it off)
         regimenMap.put(792, "4f");//"d4T-3TC-NVP"
         regimenMap.put(166074, "4g"); // Nelson Added Concept in NigeriaMRS and mapped it here as code already exist on NDR.
-   
 
         regimenMap.put(162561, "5b"); //AZT-3TC-LPV/r //formaerlly 4n
-
 
         regimenMap.put(162200, "5a");;//"ABC-3TC-LPV/r"
         regimenMap.put(162561, "5b");;//"AZT-3TC-LPV/r"
@@ -158,7 +158,6 @@ public class PharmacyDictionary {
 
         regimenMap.put(165526, "1y");;//"ABC-3TC-ddi" //change 5e to 1y
 
- 
         regimenMap.put(165698, "6a"); //DRV/r + 2 NRTIs + 2 NNRTI
         regimenMap.put(165700, "6b"); //DRV/r +2NRTIs
         regimenMap.put(165688, "6c"); //DRV/r-DTG + 1-2 NRTIs
@@ -180,7 +179,6 @@ public class PharmacyDictionary {
         regimenMap.put(165631, "Missing NDR Code from IHVN Instance"); //Dolutegravir
         regimenMap.put(1674, "Missing NDR Code frm IHVN Instance");//RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS
 
-       
         regimenMap.put(165257, "CTX480");//
         regimenMap.put(76488, "FLUC");
         regimenMap.put(1679, "H");
@@ -284,7 +282,6 @@ public class PharmacyDictionary {
         //  regimenCodeDescTextMap.put(160104, "D")
         //OI drug
         regimenCodeDescTextMap.put(71160, "CTX960");//71160 "C00"); //Cotrimoxazole 800mg 105281 No NDR Code
-    
 
     }
 
@@ -306,27 +303,32 @@ public class PharmacyDictionary {
 
     public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient, List<Obs> patientsObsList) throws DatatypeConfigurationException {
         List<RegimenType> regimenTypeList = new ArrayList<RegimenType>();
-        Integer[] targetEncounterTypes = {Utils.CARE_CARD_ENCOUNTER_TYPE,  Utils.PHARMACY_ENCOUNTER_TYPE};
+        //     Integer[] targetEncounterTypes = {Utils.CARE_CARD_ENCOUNTER_TYPE,  Utils.PHARMACY_ENCOUNTER_TYPE};
+        List<Encounter> careCardEncs = filterCareCardEncounters(allEncounterForPatient);
+
         RegimenType regimenType = null;
         List<Obs> obsPerVisit = null;
+        List<Obs> careCardObs = null;
 
-//        for (Encounter enc : allEncounterForPatient) {
-//            if (enc.getEncounterType().getEncounterTypeId() == Utils.PHARMACY_ENCOUNTER_TYPE) {
-//                obsPerVisit = new ArrayList<Obs>(enc.getAllObs());
-//                Date visitDate = DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE);
-//                regimenType = createRegimenType(patient, visitDate, obsPerVisit);
-//                regimenTypeList.add(regimenType);
-//            }
-//        }
-
-        //CHECK THIS
-        Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(patient, allEncounterForPatient, targetEncounterTypes);
-        for (Date visitDate : visitDateSet) {
-            //CHECK THIS
-            obsPerVisit = Utils.extractObsPerVisitDate(visitDate, patientsObsList);
-            regimenType = createRegimenType(patient, visitDate, obsPerVisit);
-            regimenTypeList.add(regimenType);
+        for (Encounter enc : allEncounterForPatient) {
+            if (enc.getEncounterType().getEncounterTypeId() == Utils.PHARMACY_ENCOUNTER_TYPE) {
+                obsPerVisit = new ArrayList<Obs>(enc.getAllObs());
+                Date visitDate = DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE);
+                
+                careCardObs = getLastCardObsbyVisit(visitDate, careCardEncs);
+                regimenType = createRegimenType(patient, visitDate, obsPerVisit,careCardObs);
+                regimenTypeList.add(regimenType);
+            }
         }
+
+//        //CHECK THIS
+//        Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(patient, allEncounterForPatient, targetEncounterTypes);
+//        for (Date visitDate : visitDateSet) {
+//            //CHECK THIS
+//            obsPerVisit = Utils.extractObsPerVisitDate(visitDate, patientsObsList);
+//            regimenType = createRegimenType(patient, visitDate, obsPerVisit);
+//            regimenTypeList.add(regimenType);
+//        }
         return regimenTypeList;
     }
 
@@ -353,10 +355,7 @@ public class PharmacyDictionary {
 
     }
 
-    /*
-       Added by Bright Ibezim CDC
-     */
-    public RegimenType createRegimenType(Patient patient, Date visitDate, List<Obs> obsListForAVisit) throws DatatypeConfigurationException {
+    public RegimenType createRegimenType(Patient patient, Date visitDate, List<Obs> obsListForAVisit,List<Obs> careCardObs) throws DatatypeConfigurationException {
         /*
            RegimenType Properties
   -VisitID
@@ -447,9 +446,9 @@ public class PharmacyDictionary {
 
                 }
             }
-            regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(obsListForAVisit));//SubstitutionIndicator
-            regimenType.setSwitchIndicator(retrieveSwitchIndicator(obsListForAVisit));//SwitchIndicator
-            obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, obsListForAVisit);//ReasonForRegimenSwitchSubs
+            regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(careCardObs));//SubstitutionIndicator
+            regimenType.setSwitchIndicator(retrieveSwitchIndicator(careCardObs));//SwitchIndicator
+            obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, careCardObs);//ReasonForRegimenSwitchSubs
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getRegimenMapValue(valueCoded);
@@ -682,4 +681,40 @@ public class PharmacyDictionary {
         }
         return regimenTypeList;
     }
+
+    private List<Encounter> filterCareCardEncounters(List<Encounter> allPatientEncounters) {
+
+        return allPatientEncounters.stream()
+                .filter(a -> a.getEncounterType().getEncounterTypeId().equals(Utils.CARE_CARD_ENCOUNTER_TYPE))
+                .collect(Collectors.toList());
+
+    }
+
+    private List<Obs> getLastCardObsbyVisit(Date visitDate, List<Encounter> careCardObs) {
+
+        List<Obs> response = new ArrayList<>();
+
+        for (Encounter enc : careCardObs) {
+
+            Date tempVisitDate = DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE);
+
+            int durationInDays = Utils.getDateDiffInDays(tempVisitDate, visitDate);
+
+            if (visitDate.equals(tempVisitDate)) {
+                // same day pickup
+                response = enc.getAllObs().stream().collect(Collectors.toList());
+                break;
+            } else if (durationInDays > 1 && durationInDays < 29) {
+                //care follow up within a month
+                response = enc.getAllObs().stream().collect(Collectors.toList());
+                break;
+
+            }
+
+        }
+
+        return response;
+
+    }
+
 }
