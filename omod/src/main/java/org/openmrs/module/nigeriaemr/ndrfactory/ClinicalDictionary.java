@@ -280,7 +280,7 @@ public class ClinicalDictionary {
         HIVEncounterType hivEncounterType = null;
         String visitID = "", pepfarID = "", ndrCode = "";
         //Date artStartDate=null;
-        int monthsOnARV = 0, valueCoded = 0;
+        int daysOnARV = 0, valueCoded = 0;
         boolean valueBoolean = false;
         Obs obs = null;
         List<Obs> obsL = null;
@@ -294,11 +294,21 @@ public class ClinicalDictionary {
         hivEncounterType.setVisitID(visitID);
         hivEncounterType.setVisitDate(Utils.getXmlDate(visitDate));
         //artStartDate=Utils.extractARTStartDate(patient, allObsForPatient);
-        if (artStartDate != null) {
-            monthsOnARV = Utils.getDateDiffInMonth(artStartDate, visitDate);
-            hivEncounterType.setDurationOnArt(monthsOnARV);
+        
+          DateTime nextAppointmentDate = null;
+        //  nextAppointmentDate = Utils.extractMedicationDuration(visitDate, obsListForOneVisit);
+        obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsListForOneVisit);
+        if (obs != null) {
+            nextAppointmentDate = new DateTime(obs.getValueDate());
+            hivEncounterType.setNextAppointmentDate(Utils.getXmlDate(nextAppointmentDate.toDate()));
 
         }
+        
+        if (nextAppointmentDate != null) {
+            daysOnARV = Utils.getDateDiffInDays(visitDate,nextAppointmentDate.toDate());
+            hivEncounterType.setDurationOnArt(daysOnARV);
+        }
+        
         obs = Utils.extractObs(Utils.WEIGHT_CONCEPT, obsListForOneVisit); // Weight
         if (obs != null && obs.getValueNumeric() != null) {
             hivEncounterType.setWeight(obs.getValueNumeric().intValue());
@@ -454,13 +464,9 @@ public class ClinicalDictionary {
             hivEncounterType.setCD4(cd4Count);
             hivEncounterType.setCD4TestDate(Utils.getXmlDate(obs.getObsDatetime()));
         }
-        DateTime nextAppointmentDate = null;
-        nextAppointmentDate = Utils.extractMedicationDuration(visitDate, obsListForOneVisit);
-        if (nextAppointmentDate != null) {
-            hivEncounterType.setNextAppointmentDate(Utils.getXmlDate(nextAppointmentDate.toDate()));
-        }
-        // }
+      
 
+        // }
         return hivEncounterType;
     }
 
