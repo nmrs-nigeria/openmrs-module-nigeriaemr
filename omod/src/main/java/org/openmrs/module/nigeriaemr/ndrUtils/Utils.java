@@ -504,12 +504,14 @@ public class Utils {
 		obs = Utils.extractObs(Utils.ART_START_DATE_CONCEPT, allPatientsObsList);
 		if (obs != null) {
 			artStartDate = obs.getValueDate();
-		} else {
-			obs = getFirstObsOfConceptByDate(allPatientsObsList, Utils.CURRENT_REGIMEN_LINE_CONCEPT);
-			if (obs != null) {
-				artStartDate = obs.getObsDatetime();
-			}
 		}
+		
+		//                else {
+		//			obs = getFirstObsOfConceptByDate(allPatientsObsList, Utils.CURRENT_REGIMEN_LINE_CONCEPT);
+		//			if (obs != null) {
+		//				artStartDate = obs.getObsDatetime();
+		//			}
+		//		}
 		return artStartDate;
 	}
 	
