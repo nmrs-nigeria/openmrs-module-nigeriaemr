@@ -678,7 +678,7 @@ HIVQuestionsType
              */
             Date enrollmentDate = Utils.extractEnrollmentDate(patient, allObsList, allEncounterList);
             if (enrollmentDate != null) {
-                hivQuestionsType.setEnrolledInHIVCareDate(Utils.getXmlDate(enrollmentDate));
+                hivQuestionsType.setEnrolledInHIVCareDate(Utils.getXmlDate(enrollmentDate)); 
             }
             obs = Utils.extractObs(Utils.INITIAL_TB_STATUS, obsList);
             if (obs != null && obs.getValueCoded() != null) {
