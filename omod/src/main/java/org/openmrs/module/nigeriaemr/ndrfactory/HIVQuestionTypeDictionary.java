@@ -16,10 +16,6 @@ import org.openmrs.module.nigeriaemr.model.ndr.CommonQuestionsType;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
-/**
- * @author The Bright The goal of this class is to abstract the creation of the CommonQuestionsType
- *         object.
- */
 public class HIVQuestionTypeDictionary {
 	
 	/*

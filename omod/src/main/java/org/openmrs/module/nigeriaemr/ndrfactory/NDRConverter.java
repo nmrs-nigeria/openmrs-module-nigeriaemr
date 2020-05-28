@@ -51,6 +51,8 @@ public class NDRConverter {
 	
 	private DBConnection openmrsConn;
 	
+	private List<Obs> patientBaselineObs;
+	
 	public NDRConverter(String _ipName, String _ipCode, DBConnection _openmrsConn) {
 		this.ipName = _ipName;
 		this.ipCode = _ipCode;
@@ -118,6 +120,7 @@ public class NDRConverter {
             }
             
             this.allobs = Utils.extractObsfromEncounter(filteredEncs);
+            patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
 
             MessageHeaderType header = createMessageHeaderType();
             FacilityType sendingOrganization = Utils.createFacilityType(this.ipName, this.ipCode, "IP");
@@ -286,7 +289,9 @@ public class NDRConverter {
             //create program area
             condition.setProgramArea(createProgramArea());
 
-            CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.encounters, this.allobs);
+            //for baseline data
+             CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.encounters, patientBaselineObs);
+          //  CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.encounters, this.allobs);
             //create common question tags by calling the factory method and passing the encounter, patient and obs list
             if(!common.isEmpty()){
             condition
@@ -294,7 +299,9 @@ public class NDRConverter {
             }
             
             
-            ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(patient, encounters, allobs);
+          
+           ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(patient, encounters, patientBaselineObs);
+          //  ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(patient, encounters, allobs);
             if(hivSpecs.getHIVQuestions() != null){
             condition.setConditionSpecificQuestions(hivSpecs);
             }

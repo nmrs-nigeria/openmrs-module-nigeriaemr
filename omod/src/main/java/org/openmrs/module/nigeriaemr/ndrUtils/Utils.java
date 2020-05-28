@@ -527,16 +527,17 @@ public class Utils {
 		//if (patientProgram != null) {
 		//enrollmentDate = patientProgram.getDateEnrolled();
 		//} else {
-		obs = extractObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, allPatientObs);
+		obs = extractLastObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, allPatientObs);
 		if (obs != null) {
 			enrollmentDate = obs.getValueDate();
-		} else {
-			Encounter firstEncounter = getFirstEncounter(patient, allPatientEncounterList);
-			if (firstEncounter != null) {
-				enrollmentDate = firstEncounter.getEncounterDatetime();
-			}
-			//}
 		}
+		//                else {
+		//			Encounter firstEncounter = getFirstEncounter(patient, allPatientEncounterList);
+		//			if (firstEncounter != null) {
+		//				enrollmentDate = firstEncounter.getEncounterDatetime();
+		//			}
+		//			//}
+		//		}
 		
 		return enrollmentDate;
 	}
@@ -672,6 +673,19 @@ public class Utils {
         return obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID).findFirst().orElse(null);
     }
 	
+	public static Obs extractLastObs(int conceptID, List<Obs> obsList) {
+        
+        List<Obs> obs = obsList
+                .stream().filter(ele -> ele.getConcept().getConceptId() == conceptID)
+                .sorted(Comparator.comparing(Obs::getObsDatetime))
+                .collect(Collectors.toList());
+
+        if (obs.size() > 0) {
+            return obs.get(0);
+        }
+        return null;
+    }
+	
 	public static List<Obs> extractObsList(int conceptID, List<Obs> obsList) {
         List<Obs> obss = new ArrayList<>();
 
@@ -689,6 +703,17 @@ public class Utils {
         }
         return obsList.stream().filter(ele -> ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
     }
+	
+	public static Date getARTStartDate(Patient patient) {
+		
+		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
+		Obs FirstRegimen = getRegimenFromObs(FirstRegimenObs);
+		//Obs FirstRegimen = null;
+		if (FirstRegimen != null && FirstRegimen.getValueCoded() != null) {
+			return FirstRegimen.getObsDatetime();
+		}
+		return null;
+	}
 	
 	public static Obs extractObsByValues(int conceptID, int valueCoded, List<Obs> obsList) {
 		Obs obs = null;
@@ -841,17 +866,6 @@ public class Utils {
 			if (regimen != null && regimen.getValueCoded() != null) {
 				return regimen;
 			}
-		}
-		return null;
-	}
-	
-	public static Date getARTStartDate(Patient patient) {
-		
-		List<Obs> FirstRegimenObs = getFirstRegimenObs(patient);
-		Obs FirstRegimen = getRegimenFromObs(FirstRegimenObs);
-		//Obs FirstRegimen = null;
-		if (FirstRegimen != null && FirstRegimen.getValueCoded() != null) {
-			return FirstRegimen.getObsDatetime();
 		}
 		return null;
 	}
