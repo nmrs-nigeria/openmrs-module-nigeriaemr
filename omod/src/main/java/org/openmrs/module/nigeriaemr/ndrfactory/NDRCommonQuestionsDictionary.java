@@ -243,27 +243,25 @@ public class NDRCommonQuestionsDictionary {
             }
             demo.setPatientDateOfBirth(getXmlDate(pts.getBirthdate()));
 
-            /*
-             * Edited By Johnbosco
-             * */
+         
             //check Finger Print if available
             demo.setFingerPrints(getPatientsFingerPrint(pts.getPatientId(), openmrsConn));
 
             //collect data for SURGE
-            if (Utils.isSurgeSite() == "true") {
-                demo.setFamilyName(pts.getFamilyName());
-                demo.setFirstName(pts.getGivenName());
-                demo.setOtherName(pts.getMiddleName());
-                demo.setPhoneNumber(pts.getPerson().getAttribute(8).getValue());
-            }
+//            if (Utils.isSurgeSite() == "true") {
+//                demo.setFamilyName(pts.getFamilyName());
+//                demo.setFirstName(pts.getGivenName());
+//                demo.setOtherName(pts.getMiddleName());
+//                demo.setPhoneNumber(pts.getPerson().getAttribute(8).getValue());
+//            }
 
-            try {
-                String testCode = pts.getFamilyName() + " " + pts.getGivenName() + "" + pts.getMiddleName();
-                Soundex soundex = new Soundex();
-                demo.setEnrolleeCode(soundex.encode(testCode));
-            } catch (Exception ex) {
-                //
-            }
+//            try {
+//                String testCode = pts.getFamilyName() + " " + pts.getGivenName() + "" + pts.getMiddleName();
+//                Soundex soundex = new Soundex();
+//                demo.setEnrolleeCode(soundex.encode(testCode));
+//            } catch (Exception ex) {
+//                //
+//            }
 
             String ndrCodedValue;
             Integer[] formEncounterTypeTargets = {Utils.ADULT_INITIAL_ENCOUNTER_TYPE, Utils.PED_INITIAL_ENCOUNTER_TYPE, Utils.INITIAL_ENCOUNTER_TYPE, Utils.HIV_Enrollment_Encounter_Type_Id, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
@@ -390,19 +388,17 @@ public class NDRCommonQuestionsDictionary {
                             break;
                     }
                 }
-                /*do{
-
-                } while(result.next());*/
-                if (creator == 0) {
-                    fingerPrintsType.setSource("N");
-                } else if (creator == 1) {
-                    fingerPrintsType.setSource("M");
-                } else {
-                    fingerPrintsType.setSource("UNK");
-                }
+              
+//                if (creator == 0) {
+//                    fingerPrintsType.setSource("N");
+//                } else if (creator == 1) {
+//                    fingerPrintsType.setSource("M");
+//                } else {
+//                    fingerPrintsType.setSource("UNK");
+//                }
                 fingerPrintsType.setDateCaptured(dataCaptured);
 
-                fingerPrintsType.setPresent(true);
+              //  fingerPrintsType.setPresent(true);
                 //fingerPrintsType.setLeftHand(leftHand);
                 //fingerPrintsType.setRightHand(rightHand);
                 fingerPrintsType.setRightHand(rightFingerType);

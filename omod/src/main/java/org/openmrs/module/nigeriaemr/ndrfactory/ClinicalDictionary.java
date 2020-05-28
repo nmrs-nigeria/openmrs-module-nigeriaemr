@@ -240,6 +240,17 @@ public class ClinicalDictionary {
         map.put(76488, "FLUC");
         map.put(1679, "H");
         map.put(80945, "CTX960");
+        
+        //for regimen switch
+         map.put(102, "1");
+        map.put(165048, "2");
+        map.put(160559, "3");
+        map.put(160567, "4");
+        map.put(160561, "5");
+        map.put(159834, "6");
+        map.put(163523, "7");
+        map.put(160566, "8");
+        map.put(160569, "9");
     }
 
     private String getMappedValue(int conceptID) {
@@ -294,8 +305,8 @@ public class ClinicalDictionary {
         hivEncounterType.setVisitID(visitID);
         hivEncounterType.setVisitDate(Utils.getXmlDate(visitDate));
         //artStartDate=Utils.extractARTStartDate(patient, allObsForPatient);
-        
-          DateTime nextAppointmentDate = null;
+
+        DateTime nextAppointmentDate = null;
         //  nextAppointmentDate = Utils.extractMedicationDuration(visitDate, obsListForOneVisit);
         obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsListForOneVisit);
         if (obs != null) {
@@ -303,12 +314,12 @@ public class ClinicalDictionary {
             hivEncounterType.setNextAppointmentDate(Utils.getXmlDate(nextAppointmentDate.toDate()));
 
         }
-        
+
         if (nextAppointmentDate != null) {
-            daysOnARV = Utils.getDateDiffInDays(visitDate,nextAppointmentDate.toDate());
+            daysOnARV = Utils.getDateDiffInDays(visitDate, nextAppointmentDate.toDate());
             hivEncounterType.setDurationOnArt(daysOnARV);
         }
-        
+
         obs = Utils.extractObs(Utils.WEIGHT_CONCEPT, obsListForOneVisit); // Weight
         if (obs != null && obs.getValueNumeric() != null) {
             hivEncounterType.setWeight(obs.getValueNumeric().intValue());
@@ -464,13 +475,50 @@ public class ClinicalDictionary {
             hivEncounterType.setCD4(cd4Count);
             hivEncounterType.setCD4TestDate(Utils.getXmlDate(obs.getObsDatetime()));
         }
-      
+
+        //started new data elements
+        obs = Utils.extractObs(Utils.VISIT_TYPE_CONCEPT, obsListForOneVisit);//PrescribedRegimenInitialIndicator
+        if (obs != null && obs.getValueCoded() != null) {
+            valueCoded = obs.getValueCoded().getConceptId();
+            if (valueCoded == Utils.VISIT_TYPE_INITIAL_CONCEPT) {
+                hivEncounterType.setPrescribedRegimenInitialIndicator(Boolean.TRUE);
+            } else {
+                hivEncounterType.setPrescribedRegimenInitialIndicator(Boolean.FALSE);
+            }
+        }
+
+        hivEncounterType.setSubstitutionIndicator(retrieveSubstitutionIndicator(obsListForOneVisit));//SubstitutionIndicator
+        hivEncounterType.setSwitchIndicator(retrieveSwitchIndicator(obsListForOneVisit));//SwitchIndicator
+
+        obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, obsListForOneVisit);//ReasonForRegimenSwitchSubs
+        if (obs != null && obs.getValueCoded() != null) {
+            valueCoded = obs.getValueCoded().getConceptId();
+            ndrCode = getMappedValue(valueCoded);
+            hivEncounterType.setReasonForRegimenSwitchSubs(ndrCode);
+        }
+        
+        
+        obs = Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForOneVisit);
+            if (obs != null && obs.getValueCoded() != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                if (valueCoded == Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT) {
+                    hivEncounterType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
+                }
+            } else {
+                obs = Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForOneVisit);
+                if (obs != null && obs.getValueCoded() != null) {
+                    valueCoded = obs.getValueCoded().getConceptId();
+                    if (valueCoded == Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT) {
+                        hivEncounterType.setPoorAdherenceIndicator(Boolean.TRUE);
+                    }
+                }
+            }
+        
 
         // }
         return hivEncounterType;
     }
 
- 
     private String resolvePatientFamilyPlanningCode(Boolean value) {
 
         if (value) {
@@ -478,6 +526,50 @@ public class ClinicalDictionary {
         } else {
             return "NOFP";
         }
+    }
+
+    private Boolean retrieveSubstitutionIndicator(List<Obs> obsList) {
+        Obs obs = null;
+        int valueCoded = 0;
+        Boolean ans = Boolean.FALSE;
+        obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN, obsList);
+        if (obs != null && obs.getValueCoded() != null) {
+            valueCoded = obs.getValueCoded().getConceptId();
+            if (valueCoded == Utils.REGIMEN_MEDICATION_PLAN_SUBSTITUTE_REGIMEN_CONCEPT_VALUE) {
+                ans = Boolean.TRUE;
+            }
+        } else {
+            obs = Utils.extractObs(Utils.PICKUP_REASON_CONCEPT, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SUBSTITUTE_VALUE) {
+                    ans = Boolean.TRUE;
+                }
+            }
+        }
+        return ans;
+    }
+
+    private Boolean retrieveSwitchIndicator(List<Obs> obsList) {
+        Obs obs = null;
+        int valueCoded = 0;
+        Boolean ans = Boolean.FALSE;
+        obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN, obsList);
+        if (obs != null && obs.getValueCoded() != null) {
+            valueCoded = obs.getValueCoded().getConceptId();
+            if (valueCoded == Utils.REGIMEN_MEDICATION_PLAN_SWITCH_REGIMEN_CONCEPT_VALUE) {
+                ans = Boolean.TRUE;
+            }
+        } else {
+            obs = Utils.extractObs(Utils.PICKUP_REASON_CONCEPT, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SWITCH_VALUE) {
+                    ans = Boolean.TRUE;
+                }
+            }
+        }
+        return ans;
     }
 
 }

@@ -315,8 +315,8 @@ public class PharmacyDictionary {
                 obsPerVisit = new ArrayList<Obs>(enc.getAllObs());
                 Date visitDate = DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE);
                 
-                careCardObs = getLastCardObsbyVisit(visitDate, careCardEncs);
-                regimenType = createRegimenType(patient, visitDate, obsPerVisit,careCardObs);
+              //  careCardObs = getLastCardObsbyVisit(visitDate, careCardEncs);
+                regimenType = createRegimenType(patient, visitDate, obsPerVisit);
                 regimenTypeList.add(regimenType);
             }
         }
@@ -355,7 +355,7 @@ public class PharmacyDictionary {
 
     }
 
-    public RegimenType createRegimenType(Patient patient, Date visitDate, List<Obs> obsListForAVisit,List<Obs> careCardObs) throws DatatypeConfigurationException {
+    public RegimenType createRegimenType(Patient patient, Date visitDate, List<Obs> obsListForAVisit) throws DatatypeConfigurationException {
         /*
            RegimenType Properties
   -VisitID
@@ -403,14 +403,16 @@ public class PharmacyDictionary {
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(getXmlDate(visitDate));
             obs = Utils.extractObs(Utils.VISIT_TYPE_CONCEPT, obsListForAVisit);//PrescribedRegimenInitialIndicator
-            if (obs != null && obs.getValueCoded() != null) {
-                valueCoded = obs.getValueCoded().getConceptId();
-                if (valueCoded == Utils.VISIT_TYPE_INITIAL_CONCEPT) {
-                    regimenType.setPrescribedRegimenInitialIndicator(Boolean.TRUE);
-                } else {
-                    regimenType.setPrescribedRegimenInitialIndicator(Boolean.FALSE);
-                }
-            }
+           
+//            if (obs != null && obs.getValueCoded() != null) {
+//                valueCoded = obs.getValueCoded().getConceptId();
+//                if (valueCoded == Utils.VISIT_TYPE_INITIAL_CONCEPT) {
+//                    regimenType.setPrescribedRegimenInitialIndicator(Boolean.TRUE);
+//                } else {
+//                    regimenType.setPrescribedRegimenInitialIndicator(Boolean.FALSE);
+//                }
+//            }
+            
             obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit); //PrescribedRegimenLineCode
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
@@ -446,14 +448,16 @@ public class PharmacyDictionary {
 
                 }
             }
-            regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(careCardObs));//SubstitutionIndicator
-            regimenType.setSwitchIndicator(retrieveSwitchIndicator(careCardObs));//SwitchIndicator
-            obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, careCardObs);//ReasonForRegimenSwitchSubs
-            if (obs != null && obs.getValueCoded() != null) {
-                valueCoded = obs.getValueCoded().getConceptId();
-                ndrCode = getRegimenMapValue(valueCoded);
-                regimenType.setReasonForRegimenSwitchSubs(ndrCode);
-            }
+            
+//            regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(careCardObs));//SubstitutionIndicator
+//            regimenType.setSwitchIndicator(retrieveSwitchIndicator(careCardObs));//SwitchIndicator
+//            obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, careCardObs);//ReasonForRegimenSwitchSubs
+//            if (obs != null && obs.getValueCoded() != null) {
+//                valueCoded = obs.getValueCoded().getConceptId();
+//                ndrCode = getRegimenMapValue(valueCoded);
+//                regimenType.setReasonForRegimenSwitchSubs(ndrCode);
+//            }
+            
             /*
                 -DateRegimenStarted
                 -DateRegimenStartedDD
@@ -465,21 +469,23 @@ public class PharmacyDictionary {
             regimenType.setDateRegimenStartedMM(Utils.getMonthMM(visitDate));
             regimenType.setDateRegimenStartedYYYY(Utils.getYearYYYY(visitDate));
 
-            obs = Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForAVisit);
-            if (obs != null && obs.getValueCoded() != null) {
-                valueCoded = obs.getValueCoded().getConceptId();
-                if (valueCoded == Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT) {
-                    regimenType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
-                }
-            } else {
-                obs = Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForAVisit);
-                if (obs != null && obs.getValueCoded() != null) {
-                    valueCoded = obs.getValueCoded().getConceptId();
-                    if (valueCoded == Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT) {
-                        regimenType.setPoorAdherenceIndicator(Boolean.TRUE);
-                    }
-                }
-            }
+//            obs = Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForAVisit);
+//            if (obs != null && obs.getValueCoded() != null) {
+//                valueCoded = obs.getValueCoded().getConceptId();
+//                if (valueCoded == Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT) {
+//                    regimenType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
+//                }
+//            } else {
+//                obs = Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForAVisit);
+//                if (obs != null && obs.getValueCoded() != null) {
+//                    valueCoded = obs.getValueCoded().getConceptId();
+//                    if (valueCoded == Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT) {
+//                        regimenType.setPoorAdherenceIndicator(Boolean.TRUE);
+//                    }
+//                }
+//            }
+            
+            
 
         }
         return regimenType;
