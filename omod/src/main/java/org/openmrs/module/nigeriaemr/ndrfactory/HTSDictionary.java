@@ -316,7 +316,7 @@ public class HTSDictionary {
             if (obs.getValueCoded().getConceptId().equals(HTS_CLIENT_INTAKE_SETTINGS_OTHERS)) {
                 obs = extractObs(HTS_CLIENT_INTAKE_SETTINGS_OTHERS_VALUE, allObs);
                 if (obs != null && obs.getValueText() != null) {
-                    hivTestingReport.setSetting(obs.getValueText());
+                    hivTestingReport.setSetting(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
             } else {
                 hivTestingReport.setSetting(getMappedValue(obs.getValueCoded().getConceptId()));
