@@ -201,6 +201,7 @@ public class HTSDictionary {
 
         //refferred from
         htsDictionary.put(5622, "8");
+        htsDictionary.put(978, "1");
 
         //marital status
         htsDictionary.put(1057, "S");
@@ -228,7 +229,7 @@ public class HTSDictionary {
         htsDictionary.put(166237, "RI");
 
         htsDictionary.put(166215, "AS");
-        htsDictionary.put(5622, "OTH");
+       htsDictionary.put(166246, "OTH");
 
         //  htsDictionary.put(165853, "L");
         htsDictionary.put(1000, "P");
@@ -503,20 +504,21 @@ public class HTSDictionary {
 
         RecencyTestingType recencyTestingType = new RecencyTestingType();
         //for recency Code
-        String recencyId = String.valueOf(patient.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX));
+        PatientIdentifier recencyId = patient.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX);
 
         //test name
         Obs obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT, allObs);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setTestName(getMappedValue(obs.getValueCoded().getConceptId()));
-        } else {
-            //check if the old test name was used
-            obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT_OLD, allObs);
-            if (obs != null) {
-                recencyTestingType.setTestName(obs.getValueText());
-            }
-
-        }
+        } 
+//        else {
+//            //check if the old test name was used
+//            obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT_OLD, allObs);
+//            if (obs != null) {
+//                recencyTestingType.setTestName(obs.getValueText());
+//            }
+//
+//        }
 
         //test date
         obs = extractObs(HIV_RECENCY_TEST_DATE_CONCEPT, allObs);
@@ -536,7 +538,7 @@ public class HTSDictionary {
 
         //recency number
         if (recencyId != null) {
-            recencyTestingType.setRecencyNumber(recencyId);
+            recencyTestingType.setRecencyNumber(recencyId.getIdentifier());
         }
 
         //control line
