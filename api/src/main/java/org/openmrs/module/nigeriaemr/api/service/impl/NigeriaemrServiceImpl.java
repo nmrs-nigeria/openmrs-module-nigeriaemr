@@ -7,13 +7,13 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.nigeriaemr.api.impl;
+package org.openmrs.module.nigeriaemr.api.service.impl;
 
 import org.openmrs.api.APIException;
 import org.openmrs.api.UserService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.nigeriaemr.Item;
-import org.openmrs.module.nigeriaemr.api.NigeriaemrService;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao;
 
 public class NigeriaemrServiceImpl extends BaseOpenmrsService implements NigeriaemrService {

@@ -22,7 +22,9 @@ import javax.xml.validation.SchemaFactory;
 import org.joda.time.DateTimeComparator;
 
 import org.openmrs.*;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
@@ -53,10 +55,13 @@ public class NDRConverter {
 	
 	private List<Obs> patientBaselineObs;
 	
+	private NigeriaEncounterService nigeriaEncounterService;
+	
 	public NDRConverter(String _ipName, String _ipCode, DBConnection _openmrsConn) {
 		this.ipName = _ipName;
 		this.ipCode = _ipCode;
 		this.openmrsConn = _openmrsConn;
+		this.nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 	}
 	
 	public Container createContainer(Patient pts, FacilityType facility) throws DatatypeConfigurationException {
@@ -69,31 +74,7 @@ public class NDRConverter {
             Date lastDate = Utils.getLastNDRDate();
 
             long startTime = System.currentTimeMillis();
-            List<Encounter> encs = Context.getEncounterService().getEncountersByPatient(pts);
-            List<Encounter> filteredEncs = new ArrayList<>();
-
-            try {
-
-                //only run if patient has had any encounter between the last run date and now
-                //LocalDate firstDate = LocalDate.of
-                encs.forEach((enc) -> {
-                    int dateCreatedComp = enc.getDateCreated().compareTo(lastDate);
-                    int dateModifiedComp = -1;
-                    if (enc.getDateChanged() != null) {
-                        dateModifiedComp = enc.getDateChanged().compareTo(lastDate);
-                    }
-                    if (dateCreatedComp > -1 || dateModifiedComp > -1) {
-                        filteredEncs.add(enc);
-                    }
-                });//                if (lastDate != null) {
-//                    encs = encs.stream()
-//                            .filter(e -> e.getDateCreated().after(lastDate)
-//                            || e.getDateChanged().after(lastDate) || e.getDateCreated().equals(lastDate) || e.getDateChanged().equals(lastDate)).collect(Collectors.toList());
-//                }
-
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
+            List<Encounter> filteredEncs = nigeriaEncounterService.getEncountersByPatient(pts,lastDate,null);
 
             if (filteredEncs.isEmpty()) {
                 return null;
@@ -105,9 +86,6 @@ public class NDRConverter {
             }
 
             startTime = System.currentTimeMillis();
-          //  this.allobs = Context.getObsService().getObservationsByPerson(pts);
-            
-            
             
             endTime = System.currentTimeMillis();
             if ((endTime - startTime) > 1000) {
@@ -138,7 +116,6 @@ public class NDRConverter {
             return container;
         } catch (Exception ex) {
             LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
-            // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
         return container;
     }

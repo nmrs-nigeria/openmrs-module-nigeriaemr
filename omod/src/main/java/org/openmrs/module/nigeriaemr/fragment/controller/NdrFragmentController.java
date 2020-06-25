@@ -4,10 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.model.ndr.Container;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.ndrfactory.NDRConverter;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
+import org.springframework.stereotype.Controller;
 import org.xml.sax.SAXException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
@@ -16,7 +19,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -32,53 +34,40 @@ import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.LocationModel;
-import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class NdrFragmentController {
 	
+	NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
+	
 	public void controller() {
 		
 	}
 	
-	public String generateNDRFileByLocation(HttpServletRequest request, @RequestParam(value = "locationId") Integer locationId) throws DatatypeConfigurationException, IOException,
-            SAXException, JAXBException, Throwable {
-
-        FacilityLocationService facilityLocationService = new FacilityLocationService();
-        //  Integer locationId = 8;
-
-        DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
-
-        List<FacilityLocation> allFacilityLocations = facilityLocationService.getAllFacilityLocations();
-        List<PatientLocation> allPatientLocations = facilityLocationService.getAllPatientLocation();
-
-        FacilityLocation facilityLocation = allFacilityLocations.stream()
-                .filter(a -> a.getLocation_id().equals(locationId)).findFirst().get();
-        List<Integer> filteredPatientByLocation = allPatientLocations.stream()
-                .filter(a -> a.getLocation_id().equals(locationId))
-                .map(PatientLocation::getPatient_id).collect(Collectors.toList());
-
-        //check if global variable for logging exists
-        LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
-        LoggerUtils.clearLogFile();
-
-
-        List<Patient> patients = Context.getPatientService().getAllPatients();
-        //filter the patient by location
-        List<Patient> filteredPatients = patients.stream().filter(a -> filteredPatientByLocation.contains(a.getId()))
-                .collect(Collectors.toList());
-        //Patient pts = null;
-        //List<Patient> patients = new ArrayList<Patient>();
-        //pts = Context.getPatientService().getPatient(28417);
-        //patients.add(pts);
-
-   
-        String FacilityType = "FAC";
-     
-        return startGenerateFile(request, openmrsConn, filteredPatients, facilityLocation.getFacility_name(), facilityLocation.getDatimCode(), FacilityType);
-    }
+	public String generateNDRFileByLocation(HttpServletRequest request,
+	        @RequestParam(value = "locationId") Integer locationId) throws DatatypeConfigurationException, IOException,
+	        SAXException, JAXBException, Throwable {
+		
+		FacilityLocationService facilityLocationService = new FacilityLocationService();
+		
+		DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
+		
+		FacilityLocation facilityLocation = facilityLocationService.getFacilityLocationByLocationId(locationId).get(0);
+		List<Integer> filteredPatientByLocation = facilityLocationService.getPatientLocationById(locationId);
+		
+		//check if global variable for logging exists
+		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
+		LoggerUtils.clearLogFile();
+		
+		List<Patient> patients = nigeriaPatientService.getPatients(filteredPatientByLocation);
+		
+		String FacilityType = "FAC";
+		
+		return startGenerateFile(request, openmrsConn, patients, facilityLocation.getFacility_name(),
+		    facilityLocation.getDatimCode(), FacilityType);
+	}
 	
 	public String generateNDRFile(HttpServletRequest request) throws DatatypeConfigurationException, IOException,
 	        SAXException, JAXBException, Throwable {
@@ -89,22 +78,16 @@ public class NdrFragmentController {
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		LoggerUtils.clearLogFile();
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
-		
-	//	List<Patient> patients = Context.getPatientService().getAllPatients();
-		
-		                String patientIdLimit = Utils.getPatientIdLimit();
-		               String[] patientIdArray =  patientIdLimit.split(",");
-		                
-		                int startIndex = Integer.parseInt(patientIdArray[0]);
-		                int endIndex = Integer.parseInt(patientIdArray[1]);
-				
-		                List<Patient> patients = Context.getPatientService().getAllPatients().stream()
-		                        .filter(x-> x.getId() >= startIndex && x.getId() <= endIndex).collect(Collectors.toList());
-		
-		//Patient pts = null;
-		//List<Patient> patients = new ArrayList<Patient>();
-		//pts = Context.getPatientService().getPatient(28417);
-		//patients.add(pts);
+		List<Patient> patients;
+		String patientIdLimit = Utils.getPatientIdLimit();
+		if (patientIdLimit != "" && patientIdLimit != null){
+			String[] patientIdArray = patientIdLimit.split(",");
+			int startIndex = Integer.parseInt(patientIdArray[0]);
+			int endIndex = Integer.parseInt(patientIdArray[1]);
+			patients = nigeriaPatientService.getPatientsInIndex(startIndex, endIndex);
+		}else {
+			patients = Context.getPatientService().getAllPatients();
+		}
 		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
@@ -146,7 +129,6 @@ public class NdrFragmentController {
 				counter++;
 				System.out.println("pateint  " + counter + " of " + filteredPatients.size() + " with ID " + patient.getId());
 				
-				//	if (patient.getId() == 497) {
 				try {
 					LoggerUtils.write(NdrFragmentController.class.getName(),
 					    "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
@@ -184,10 +166,6 @@ public class NdrFragmentController {
 						
 						File aXMLFile = new File(xmlFile);
 						Boolean b;
-						//						if (aXMLFile.exists()) {
-						//							b = aXMLFile.delete();
-						//							System.out.println("deleting file : " + xmlFile + "was successful : " + b);
-						//						}
 						b = aXMLFile.createNewFile();
 						
 						System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
@@ -207,7 +185,6 @@ public class NdrFragmentController {
 				
 				long loop_end_time = System.currentTimeMillis();
 				System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
-				//	}
 			}
 			
 			//Update ndr last run date

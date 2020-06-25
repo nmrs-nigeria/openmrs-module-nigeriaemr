@@ -183,6 +183,16 @@ public class NdrDBManager {
 		
 	}
 	
+	public List<FacilityLocation> getFacilityLocationById(int location_id) throws SQLException {
+		String sql_txt = "select uuid,location_id,location_name,datimCode,facility_name,date_created,creator,date_modified,modified_by from "
+		        + ConstantsUtil.FACILITY_LOCATION_TABLE + "where location_id = " + location_id;
+		pStatement = conn.prepareStatement(sql_txt);
+		resultSet = pStatement.executeQuery();
+		
+		return convertFacilityLocationToList(resultSet);
+		
+	}
+	
 	public List<PatientLocation> getPatientLocation() throws SQLException {
 		
 		String sql = "select distinct p.patient_id,pd.location_id from patient p\n"
@@ -193,6 +203,19 @@ public class NdrDBManager {
 		resultSet = pStatement.executeQuery();
 		
 		return convertPatientLocationToList(resultSet);
+		
+	}
+	
+	public List<Integer> getPatientIdByLocationId(int locationId) throws SQLException {
+		
+		String sql = "select distinct p.patient_id from patient p "
+		        + "inner join patient_identifier pd on p.patient_id = pd.patient_id and pd.location_id is not null \n"
+		        + "where p.voided = 0 AND p.location_id  = " + locationId + " group by p.patient_id ";
+		
+		pStatement = conn.prepareStatement(sql);
+		resultSet = pStatement.executeQuery();
+		
+		return (List<Integer>) resultSet;
 		
 	}
 	

@@ -39,6 +39,22 @@ public class FacilityLocationService {
         return response;
     }
 	
+	public List<FacilityLocation> getFacilityLocationByLocationId(int locationId) {
+
+		List<FacilityLocation> response = new ArrayList<>();
+
+		try {
+			dbManageer = new NdrDBManager();
+			dbManageer.openConnection();
+			response = dbManageer.getFacilityLocationById(locationId);
+			dbManageer.closeConnection();
+		} catch (SQLException ex) {
+			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		return response;
+	}
+	
 	public List<PatientLocation> getAllPatientLocation() {
 
         List<PatientLocation> patientLocations = new ArrayList<>();
@@ -55,6 +71,23 @@ public class FacilityLocationService {
         return patientLocations;
 
     }
+	
+	public List<Integer> getPatientLocationById(int locationId) {
+
+		List<Integer> patientLocations = new ArrayList<>();
+
+		try {
+			dbManageer = new NdrDBManager();
+			dbManageer.openConnection();
+			patientLocations = dbManageer.getPatientIdByLocationId(locationId);
+			dbManageer.closeConnection();
+		} catch (SQLException ex) {
+			Logger.getLogger(PatientContacts.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		return patientLocations;
+
+	}
 	
 	public int createFacilityLocation(FacilityLocation facilityLocation) {
 		

@@ -352,9 +352,9 @@ public class Utils {
         return response;
     }
 	
-	public static Encounter getLatestEncounter(List<Encounter> encs, Integer encounterTypes) {
+	public static Encounter getLatestEncounter(List<Encounter> encs, Integer encounterType) {
 
-        List<Encounter> filteredEncounters = encs.stream().filter(encounter -> Objects.equals(encounterTypes, encounter.getEncounterType()
+        List<Encounter> filteredEncounters = encs.stream().filter(encounter -> Objects.equals(encounterType, encounter.getEncounterType()
                 .getEncounterTypeId()))
                 .collect(Collectors.toList());
         if (!filteredEncounters.isEmpty()) {

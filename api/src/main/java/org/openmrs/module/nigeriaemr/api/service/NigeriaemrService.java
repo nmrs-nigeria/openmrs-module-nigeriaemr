@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.nigeriaemr.api;
+package org.openmrs.module.nigeriaemr.api.service;
 
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
