@@ -15,8 +15,8 @@ public interface NigeriaPatientService extends PatientService {
 	
 	@Authorized({ "Get Patients" })
 	List<Patient> getPatients(List<Integer> patientIds) throws APIException;
-
-	@Authorized({ "Get Patients By Last Encounter Date" })
-	List<Patient> getPatients(Date LastEncounterDate) throws APIException;
+	
+	@Authorized({ "Get Patients By Encounter Date" })
+	List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate) throws APIException;
 	
 }

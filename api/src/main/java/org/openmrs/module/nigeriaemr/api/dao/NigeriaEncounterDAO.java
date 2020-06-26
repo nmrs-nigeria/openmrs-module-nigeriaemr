@@ -11,5 +11,6 @@ import java.util.List;
 public interface NigeriaEncounterDAO extends EncounterDAO {
 	
 	List<Encounter> getEncountersByPatient(Patient patient, Date fromDate, Date toDate) throws DAOException;
+	
 	List<Encounter> getEncountersByEncounterDate(Date fromDate, Date toDate) throws DAOException;
 }

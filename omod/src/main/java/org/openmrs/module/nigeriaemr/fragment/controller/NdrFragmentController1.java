@@ -168,7 +168,7 @@ public class NdrFragmentController1 {
             String zipFileName = IPShortName + "_" + DATIMID + "_" + formattedDate + ".zip";
             /*String response = "Files Exported successfully, view uploaded files here: \n"
 			        + util.ZipFolder(request, reportFolder, zipFileName, reportType);*/
-            String response = util.ZipFolder(request, reportFolder, zipFileName, reportType);
+            String response = util.ZipFolder(request.getContextPath(), reportFolder, zipFileName, reportType);
             return response;
             //request.getContextPath() + "/downloads/" + zipFileName;
         } catch (Exception ex) {
@@ -178,7 +178,7 @@ public class NdrFragmentController1 {
             Utils.updateLast_NDR_Run_Date(new Date());
 
             String zipFileName = IPShortName + "_" + DATIMID + "_" + formattedDate + ".zip";
-            util.ZipFolder(request, reportFolder, zipFileName, reportType);
+            util.ZipFolder(request.getContextPath(), reportFolder, zipFileName, reportType);
 
             //throw new Throwable(LoggerUtils.getExportPath());
             String response = "Some files exported with errors, view error log here: \n" + LoggerUtils.getExportPath();
@@ -287,7 +287,7 @@ public class NdrFragmentController1 {
 			String zipFileName = IPShortName + "_" + DATIMID + "_" + formattedDate + ".zip";
 			/*String response = "Files Exported successfully, view uploaded files here: \n"
 			        + util.ZipFolder(request, reportFolder, zipFileName, reportType);*/
-			String response = util.ZipFolder(request, reportFolder, zipFileName, reportType);
+			String response = util.ZipFolder(request.getContextPath(), reportFolder, zipFileName, reportType);
 			return response;
 			//request.getContextPath() + "/downloads/" + zipFileName;
 		}
@@ -298,7 +298,7 @@ public class NdrFragmentController1 {
 			Utils.updateLast_NDR_Run_Date(new Date());
 			
 			String zipFileName = IPShortName + "_" + DATIMID + "_" + formattedDate + ".zip";
-			util.ZipFolder(request, reportFolder, zipFileName, reportType);
+			util.ZipFolder(request.getContextPath(), reportFolder, zipFileName, reportType);
 			
 			//throw new Throwable(LoggerUtils.getExportPath());
 			String response = "Some files exported with errors, view error log here: \n" + LoggerUtils.getExportPath();

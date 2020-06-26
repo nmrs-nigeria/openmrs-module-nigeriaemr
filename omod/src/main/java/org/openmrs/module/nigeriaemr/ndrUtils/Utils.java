@@ -943,7 +943,7 @@ public class Utils {
 		
 	}
 	
-	public String ensureDownloadFolderExist(HttpServletRequest request) {
+	public static String ensureDownloadFolderExist(HttpServletRequest request) {
 		//create report download folder at the server. skip if already exist
 		
 		// old implementation // String folder = new File(request.getRealPath(request.getContextPath())).getParentFile().toString() + "\\downloads"; //request.getRealPath(request.getContextPath()) + "\\reports";
@@ -957,7 +957,7 @@ public class Utils {
 		return folder;
 	}
 	
-	public String ensureReportFolderExist(HttpServletRequest request, String reportType) {
+	public static String ensureReportFolderExist(HttpServletRequest request, String reportType) {
 		String downloadFolder = ensureDownloadFolderExist(request);
 		//old implementation
 		// String reportFolder = downloadFolder + "/" + reportType;
@@ -989,7 +989,7 @@ public class Utils {
 		return todayFolders;
 	}
 	
-	public String ZipFolder(HttpServletRequest request, String folderToZip, String zipFileName, String reportType) {
+	public static String ZipFolder(String contextPath, String folderToZip, String zipFileName, String reportType) {
 		
 		File toZIP = new File(folderToZip);
 		if (!toZIP.exists() || toZIP.listFiles() == null || Objects.requireNonNull(toZIP.listFiles()).length == 0) {
@@ -1005,7 +1005,7 @@ public class Utils {
 		
 		//old implementation
 		//  return request.getContextPath() + "/downloads/" + reportType + "/" + zipFileName;
-		return Paths.get(request.getContextPath(), "downloads", reportType, zipFileName).toString();
+		return Paths.get(contextPath, "downloads", reportType, zipFileName).toString();
 	}
 	
 	public static String formatDate(Date date) {

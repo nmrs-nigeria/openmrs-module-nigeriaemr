@@ -15,13 +15,9 @@ import java.util.List;
 public class NigeriaPatientServiceImpl extends PatientServiceImpl implements NigeriaPatientService {
 	
 	private NigeriaPatientDAO dao;
-	private NigeriaEncounterDAO nigeriaEncounterDAO;
 	
 	public void setDao(NigeriaPatientDAO dao) {
 		this.dao = dao;
-	}
-	public void setNigeriaEncounterDAO(NigeriaEncounterDAO nigeriaEncounterDAO) {
-		this.nigeriaEncounterDAO = nigeriaEncounterDAO;
 	}
 	
 	@Override
@@ -33,9 +29,9 @@ public class NigeriaPatientServiceImpl extends PatientServiceImpl implements Nig
 	public List<Patient> getPatients(List<Integer> patientIds) throws APIException {
 		return dao.getPatients(patientIds, false);
 	}
-
+	
 	@Override
-	public List<Patient> getPatients(Date LastEncounterDate) throws APIException {
-		return null;
+	public List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate) throws APIException {
+		return dao.getPatientsByEncounterDate(fromDate, toDate, false);
 	}
 }

@@ -12,6 +12,6 @@ public interface NigeriaPatientDAO extends PatientDAO {
 	public List<Patient> getPatients(Integer startId, Integer endId, boolean includeVoided) throws DAOException;
 	
 	public List<Patient> getPatients(List<Integer> patientIds, boolean includeVoided) throws DAOException;
-
+	
 	public List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException;
 }
