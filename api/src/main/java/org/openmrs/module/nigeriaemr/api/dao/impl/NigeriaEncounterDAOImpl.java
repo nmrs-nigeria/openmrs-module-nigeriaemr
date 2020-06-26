@@ -42,5 +42,20 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		}
 		return criteria.list();
 	}
-	
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Encounter> getEncountersByEncounterDate(Date fromDate, Date toDate) throws DAOException {
+		Criteria criteria = getSession().createCriteria(Encounter.class);
+
+		if (fromDate != null) {
+			criteria.add(Restrictions.ge("dateCreated", fromDate));
+		}
+
+		if (toDate != null) {
+			criteria.add(Restrictions.le("dateCreated", toDate));
+		}
+		return criteria.list();
+	}
+
 }

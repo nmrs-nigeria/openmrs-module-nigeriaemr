@@ -80,7 +80,7 @@ public class NdrFragmentController {
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
 		List<Patient> patients;
 		String patientIdLimit = Utils.getPatientIdLimit();
-		if (patientIdLimit != "" && patientIdLimit != null){
+		if (patientIdLimit != null && !"".equals(patientIdLimit) ){
 			String[] patientIdArray = patientIdLimit.split(",");
 			int startIndex = Integer.parseInt(patientIdArray[0]);
 			int endIndex = Integer.parseInt(patientIdArray[1]);

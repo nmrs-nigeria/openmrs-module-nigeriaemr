@@ -9,6 +9,7 @@ import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.api.db.hibernate.HibernatePatientDAO;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaPatientDAO;
 
+import java.util.Date;
 import java.util.List;
 
 public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements NigeriaPatientDAO {
@@ -44,4 +45,11 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		criteria.add(Restrictions.in("patientId", patientIds));
 		return criteria.list();
 	}
+
+	@Override
+	public List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException {
+		return null;
+	}
+
+	SELECT * FROM nigeriamrs.patient WHERE patient_id in (SELECT distinct(patient_id) FROM nigeriamrs.encounter where date_created > '2019-10-11 00:00:00');
 }

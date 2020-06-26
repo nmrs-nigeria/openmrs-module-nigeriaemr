@@ -5,6 +5,7 @@ import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
 
+import java.util.Date;
 import java.util.List;
 
 public interface NigeriaPatientService extends PatientService {
@@ -14,5 +15,8 @@ public interface NigeriaPatientService extends PatientService {
 	
 	@Authorized({ "Get Patients" })
 	List<Patient> getPatients(List<Integer> patientIds) throws APIException;
+
+	@Authorized({ "Get Patients By Last Encounter Date" })
+	List<Patient> getPatients(Date LastEncounterDate) throws APIException;
 	
 }
