@@ -181,9 +181,6 @@ public class NDRMainDictionary {
         return "";
     }
 
-    /*static HIVQuestionsType createHIVQuestionType(Obs firstRegimenObs, Date ARTStartDate, Date EnrollmentDate, List<Obs> obs) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}*/
     public PatientDemographicsType createPatientDemographicType2(Patient patient, FacilityType facility, DBConnection openmrsConn, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
         return commonQuestionDictionary.createPatientDemographicsType(patient, facility, allPatientObsList, allPatientEncounterList, openmrsConn);
     }
@@ -209,43 +206,15 @@ public class NDRMainDictionary {
         }catch(Exception ex){
             System.out.println(ex.getMessage());
         }
-
-        try{
-            allRegimenTypeList.addAll(pharmDictionary.createOIRegimenTypeList(patient, allEncounterForPatient, allPatientObsList));
-        }catch(Exception ex){
-            System.out.println(ex.getMessage());
-        }
-
-
         return allRegimenTypeList;
 
     }
 
-    /*   public List<LaboratoryReportType> createLaboratoryOrderAndResult(Patient pts, List<Encounter> enc, List<Obs> labObsList)
-            throws DatatypeConfigurationException {
-        return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList );
-    }*/
     public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList,Date artStartDate)
             throws DatatypeConfigurationException {
         return labDictionary.createLaboratoryOrderAndResult(pts, enc, labObsList,artStartDate);
     }
-/*
-    public ChildBirthDetailsType createChildBirthDetailsType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-        return pmtctDictionary.createChildBirthDetailsType(pts, null, antenatalObsList);
-    }
 
-    public ChildFollowupType createChildFollowupType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-        return pmtctDictionary.createChildFollowupType(pts, null, antenatalObsList);
-    }
-
-    public ImmunizationType createImmunizationType(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-        return pmtctDictionary.createImmunizationType(pts, null, antenatalObsList);
-    }
-
-    public InfantPCRTestingType createInfantPcr(Patient pts, List<Encounter> enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
-        return pmtctDictionary.createInfantPcr(pts, null, antenatalObsList);
-    }
-*/
     public List<ClinicalTBScreeningType> createClinicalTbScreening(Patient pts, Encounter encounters, List<Obs> obsList) throws DatatypeConfigurationException {
         List<ClinicalTBScreeningType> clinicalTBScreeningTypes = new ArrayList<>();
 

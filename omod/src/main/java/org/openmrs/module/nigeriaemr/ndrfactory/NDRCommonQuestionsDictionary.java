@@ -186,8 +186,6 @@ public class NDRCommonQuestionsDictionary {
                 idt = new IdentifierType();
                 idt.setIDNumber(pepfarid.getIdentifier());
                 demo.setPatientIdentifier(pepfarid.getIdentifier());
-            } else {
-                // demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX).getIdentifier() + "_" + pts.getId());
             }
             if (pidHospital != null) {
                 idt = new IdentifierType();
@@ -247,21 +245,6 @@ public class NDRCommonQuestionsDictionary {
             //check Finger Print if available
             demo.setFingerPrints(getPatientsFingerPrint(pts.getPatientId(), openmrsConn));
 
-            //collect data for SURGE
-//            if (Utils.isSurgeSite() == "true") {
-//                demo.setFamilyName(pts.getFamilyName());
-//                demo.setFirstName(pts.getGivenName());
-//                demo.setOtherName(pts.getMiddleName());
-//                demo.setPhoneNumber(pts.getPerson().getAttribute(8).getValue());
-//            }
-
-//            try {
-//                String testCode = pts.getFamilyName() + " " + pts.getGivenName() + "" + pts.getMiddleName();
-//                Soundex soundex = new Soundex();
-//                demo.setEnrolleeCode(soundex.encode(testCode));
-//            } catch (Exception ex) {
-//                //
-//            }
 
             String ndrCodedValue;
             Integer[] formEncounterTypeTargets = {Utils.ADULT_INITIAL_ENCOUNTER_TYPE, Utils.PED_INITIAL_ENCOUNTER_TYPE, Utils.INITIAL_ENCOUNTER_TYPE, Utils.HIV_Enrollment_Encounter_Type_Id, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
@@ -448,7 +431,7 @@ public class NDRCommonQuestionsDictionary {
                     common.setDateOfLastReport(getXmlDate(lastEncounterDate.getEncounterDatetime()));
                 }
 
-                Date EnrollmentDate = Utils.extractEnrollmentDate(pts, allObs, encounters);
+                Date EnrollmentDate = Utils.extractEnrollmentDate(allObs);
                 if (EnrollmentDate != null) {
                     common.setDateOfFirstReport(getXmlDate(EnrollmentDate));
                     common.setDiagnosisDate(getXmlDate(EnrollmentDate));
@@ -459,13 +442,12 @@ public class NDRCommonQuestionsDictionary {
                     common.setDiagnosisDate(getXmlDate(valueDateTime));
                 }
             } catch (Exception ex) {
-
+                System.out.println(ex.getMessage());
             }
 
             if (pts.getGender().equalsIgnoreCase("F")) {
 
                 //set estimated delivery date concept id
-                //obs = Utils.extractObs(Estimated_Delivery_Date_Concept_Id, hivEnrollmentObs);
                 obs = Utils.getLastObsOfConceptByDate(allObs, Utils.PREGNANCY_BREASTFEEDING_STATUS);
                 if (obs != null && obs.getValueAsBoolean() != null) {
                     ndrBooleanCode = obs.getValueBoolean();
@@ -488,12 +470,6 @@ public class NDRCommonQuestionsDictionary {
             } else {
                 common.setPatientDieFromThisIllness(Boolean.FALSE);
             }
-            //LoggerUtils.write(NDRMainDictionary.class.getName(), "About to pull Patient_Died_From_Illness_Concept_Id", LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.debug);
-            //if (obs != null && obs.getValueCoded().getConceptId() == Patient_Died_From_Illness_Value_Concept_Id) {
-            // common.setPatientDieFromThisIllness(true);
-            //}
-            //LoggerUtils.write(NDRMainDictionary.class.getName(), "Finished pulling Patient_Died_From_Illness_Concept_Id", LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.debug);
-
             return common;
         } catch (Exception ex) {
             LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
@@ -673,7 +649,7 @@ HIVQuestionsType
             /*
                 Use date confirmed positve or visit date of the HIVEnrollmentForm
              */
-            Date enrollmentDate = Utils.extractEnrollmentDate(patient, allObsList, allEncounterList);
+            Date enrollmentDate = Utils.extractEnrollmentDate(allObsList);
             if (enrollmentDate != null) {
                 hivQuestionsType.setEnrolledInHIVCareDate(Utils.getXmlDate(enrollmentDate)); 
             }

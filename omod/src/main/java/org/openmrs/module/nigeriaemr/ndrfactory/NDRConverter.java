@@ -4,12 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -19,12 +15,12 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import org.joda.time.DateTimeComparator;
 
 import org.openmrs.*;
-import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
@@ -51,20 +47,25 @@ public class NDRConverter {
 	
 	private List<Obs> allobs;
 	
+	private List<Integer> encounterIds;
+	
 	private DBConnection openmrsConn;
 	
 	private List<Obs> patientBaselineObs;
 	
 	private NigeriaEncounterService nigeriaEncounterService;
 	
+	private NigeriaObsService nigeriaObsService;
+	
 	public NDRConverter(String _ipName, String _ipCode, DBConnection _openmrsConn) {
 		this.ipName = _ipName;
 		this.ipCode = _ipCode;
 		this.openmrsConn = _openmrsConn;
 		this.nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
+		this.nigeriaObsService = Context.getService(NigeriaObsService.class);
 	}
 	
-	public Container createContainer(Patient pts, FacilityType facility) throws DatatypeConfigurationException {
+	public Container createContainer(Patient pts, FacilityType facility) {
 
         Container container = new Container();
         try {
@@ -75,29 +76,19 @@ public class NDRConverter {
 
             long startTime = System.currentTimeMillis();
             List<Encounter> filteredEncs = nigeriaEncounterService.getEncountersByPatient(pts,lastDate,null);
-
-            if (filteredEncs.isEmpty()) {
-                return null;
-            }
+            this.encounterIds = filteredEncs.stream().map(Encounter::getId).collect(Collectors.toList());
 
             long endTime = System.currentTimeMillis();
             if ((endTime - startTime) > 1000) {
                 System.out.println("took too loooong to get encounters : " + (endTime - startTime) + " milli secs : ");
             }
-
-            startTime = System.currentTimeMillis();
-            
-            endTime = System.currentTimeMillis();
-            if ((endTime - startTime) > 1000) {
-                System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
-            }
-
             this.encounters.addAll(filteredEncs);
             if (this.encounters == null || this.encounters.isEmpty()) {
                 return null;
             }
-            
-            this.allobs = Utils.extractObsfromEncounter(filteredEncs);
+
+//            this.allobs = Utils.extractObsfromEncounter(filteredEncs);
+            this.allobs = nigeriaObsService.getObsByEncounters(encounterIds,false);
             patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
 
             MessageHeaderType header = createMessageHeaderType();
@@ -124,10 +115,6 @@ public class NDRConverter {
 
         IndividualReportType individualReport = new IndividualReportType();
         try {
-            //   PatientIdentifier htsIdentifier = patient.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
-            //create patient data
-            //PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicsType(patient,
-            //   facility, openmrsConn);
             PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicType2(patient,
                     facility, openmrsConn, encounters, allobs);
             if (patientDemography == null) { //return null if no valid patient data exist
@@ -268,7 +255,6 @@ public class NDRConverter {
 
             //for baseline data
              CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.encounters, patientBaselineObs);
-          //  CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.encounters, this.allobs);
             //create common question tags by calling the factory method and passing the encounter, patient and obs list
             if(!common.isEmpty()){
             condition
@@ -278,18 +264,9 @@ public class NDRConverter {
             
           
            ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(patient, encounters, patientBaselineObs);
-          //  ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(patient, encounters, allobs);
             if(hivSpecs.getHIVQuestions() != null){
             condition.setConditionSpecificQuestions(hivSpecs);
             }
-            
-            //create condition specific question tag
-            //HIVQuestionsType hivQuestionsType = mainDictionary.createHIVQuestionType(patient, this.encounters, this.allobs);
-            //if (hivQuestionsType != null) {
-            //ConditionSpecificQuestionsType hivSpecificQuestions = new ConditionSpecificQuestionsType();
-            //hivSpecificQuestions.setHIVQuestions(hivQuestionsType);
-            //condition.setConditionSpecificQuestions(hivSpecificQuestions);
-            //}
 
             //create hiv encounter
             List<HIVEncounterType> hivEncounter = mainDictionary.createHIVEncounterType(this.patient, this.encounters,
@@ -331,12 +308,6 @@ public class NDRConverter {
                 condition.getRegimen().addAll(arvRegimenTypeList);
             }
 
-            //
-            /*List<HealthFacilityVisitsType> healthFacilityVisitsType = mainDictionary.createHealthFacilityVisit(patient,
-			    this.encounters, this.allobs);
-			if (healthFacilityVisitsType != null) {
-				condition.getHealthFacilityVisits().addAll(healthFacilityVisitsType);
-			}*/
             long endTime = System.currentTimeMillis();
             if ((endTime - startTime) > 1000) {
                 System.out.println("took too long to get obs : " + (endTime - startTime) + " milli secs : ");
@@ -465,17 +436,11 @@ public class NDRConverter {
 	public void writeFile(Container container, File file, Marshaller jaxbMarshaller) throws SAXException, JAXBException,
 	        IOException {
 		
-		CustomErrorHandler errorHandler = new CustomErrorHandler();
-		
 		try {
-			javax.xml.validation.Validator validator = jaxbMarshaller.getSchema().newValidator();
 			jaxbMarshaller.marshal(container, file);
-			//validator.setErrorHandler(errorHandler);
-			//validator.validate(new StreamSource(file));
 		}
 		catch (Exception ex) {
 			System.out.println("File " + file.getName() + " throw an exception \n" + ex.getMessage());
-			//	throw ex;
 		}
 	}
 	

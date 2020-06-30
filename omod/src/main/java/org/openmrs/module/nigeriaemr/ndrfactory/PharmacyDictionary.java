@@ -303,87 +303,24 @@ public class PharmacyDictionary {
 
     public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient, List<Obs> patientsObsList) throws DatatypeConfigurationException {
         List<RegimenType> regimenTypeList = new ArrayList<RegimenType>();
-        //     Integer[] targetEncounterTypes = {Utils.CARE_CARD_ENCOUNTER_TYPE,  Utils.PHARMACY_ENCOUNTER_TYPE};
-        List<Encounter> careCardEncs = filterCareCardEncounters(allEncounterForPatient);
 
         RegimenType regimenType = null;
         List<Obs> obsPerVisit = null;
-        List<Obs> careCardObs = null;
 
         for (Encounter enc : allEncounterForPatient) {
             if (enc.getEncounterType().getEncounterTypeId() == Utils.PHARMACY_ENCOUNTER_TYPE) {
                 obsPerVisit = new ArrayList<Obs>(enc.getAllObs());
                 Date visitDate = DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE);
-                
-              //  careCardObs = getLastCardObsbyVisit(visitDate, careCardEncs);
                 regimenType = createRegimenType(patient, visitDate, obsPerVisit);
                 regimenTypeList.add(regimenType);
-            }
-        }
-
-//        //CHECK THIS
-//        Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(patient, allEncounterForPatient, targetEncounterTypes);
-//        for (Date visitDate : visitDateSet) {
-//            //CHECK THIS
-//            obsPerVisit = Utils.extractObsPerVisitDate(visitDate, patientsObsList);
-//            regimenType = createRegimenType(patient, visitDate, obsPerVisit);
-//            regimenTypeList.add(regimenType);
-//        }
-        return regimenTypeList;
-    }
-
-    public List<RegimenType> createOIRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient, List<Obs> patientsObsList) throws DatatypeConfigurationException {
-        List<RegimenType> regimenTypeList = new ArrayList<RegimenType>();
-        Integer[] targetEncounterTypes = {Utils.CARE_CARD_ENCOUNTER_TYPE, Utils.PHARMACY_ENCOUNTER_TYPE};
-        RegimenType regimenType = null;
-        List<Obs> obsPerVisit = null;
-        for (Encounter enc : allEncounterForPatient) {
-            if (enc.getEncounterType().getEncounterTypeId() == Utils.PHARMACY_ENCOUNTER_TYPE) {
-                obsPerVisit = new ArrayList<Obs>(enc.getAllObs());
-                //regimenType=createOIType(patient, enc, obsPerVisit);
-                //  regimenTypeList.addAll(createOITypes(patient, enc, patientsObsList));
                 regimenTypeList.addAll(createOITypes(patient, enc, obsPerVisit));
             }
         }
         return regimenTypeList;
-        //Set<Date> visitDateSet=Utils.extractUniqueVisitsForEncounterTypes(patient, allEncounterForPatient, targetEncounterTypes);
-        //for(Date visitDate: visitDateSet){
-        //obsPerVisit=Utils.extractObsPerVisitDate(visitDate, patientsObsList);
-        //regimenType=createRegimenType(patient, visitDate, obsPerVisit);
-        //regimenTypeList.add(regimenType);
-        //}
-
     }
 
     public RegimenType createRegimenType(Patient patient, Date visitDate, List<Obs> obsListForAVisit) throws DatatypeConfigurationException {
-        /*
-           RegimenType Properties
-  -VisitID
-  -VisitDate
-  -PrescribedRegimenLineCode
-  -PrescribedRegimenTypeCode
-  -PrescribedRegimenInitialIndicator
-  -PrescribedRegimen
-  -PrescribedRegimenDispensedDate
-  -PrescribedRegimenDuration
-  -SubstitutionIndicator
-  -SwitchIndicator
-  -ReasonForRegimenSwitchSubs
-  -DateRegimenStarted
-  -DateRegimenStartedDD
-  -DateRegimenStartedMM
-  -DateRegimenStartedYYYY
-  -DateRegimenEnded
-  -DateRegimenEndedDD
-  -DateRegimenEndedMM
-  -DateRegimenEndedYYYY
-  -PrescribedRegimenCurrentIndicator
-  -TypeOfPreviousExposureCode
-  -PoorAdherenceIndicator
-  -ReasonForPoorAdherence
-  -ReasonRegimenEndedCode
-  
-         */
+
         String visitID = "";
         Date stopDate = null;
         DateTime stopDateTime = null, startDateTime = null;
@@ -402,16 +339,6 @@ public class PharmacyDictionary {
             regimenType = new RegimenType();
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(getXmlDate(visitDate));
-            obs = Utils.extractObs(Utils.VISIT_TYPE_CONCEPT, obsListForAVisit);//PrescribedRegimenInitialIndicator
-           
-//            if (obs != null && obs.getValueCoded() != null) {
-//                valueCoded = obs.getValueCoded().getConceptId();
-//                if (valueCoded == Utils.VISIT_TYPE_INITIAL_CONCEPT) {
-//                    regimenType.setPrescribedRegimenInitialIndicator(Boolean.TRUE);
-//                } else {
-//                    regimenType.setPrescribedRegimenInitialIndicator(Boolean.FALSE);
-//                }
-//            }
             
             obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit); //PrescribedRegimenLineCode
             if (obs != null && obs.getValueCoded() != null) {
@@ -435,12 +362,6 @@ public class PharmacyDictionary {
                     durationInDays = Utils.getDateDiffInDays(startDateTime.toDate(), stopDateTime.toDate());
                     regimenType.setPrescribedRegimenDuration(String.valueOf(durationInDays));//PrescribedRegimenDuration
                     stopDate = stopDateTime.toDate();
-                    /*
-                         -DateRegimenEnded
-                         -DateRegimenEndedDD
-                         -DateRegimenEndedMM
-                         -DateRegimenEndedYYYY
-                     */
                     regimenType.setDateRegimenEnded(getXmlDate(stopDate));
                     regimenType.setDateRegimenEndedDD(Utils.getDayDD(stopDate));
                     regimenType.setDateRegimenEndedMM(Utils.getMonthMM(stopDate));
@@ -448,44 +369,10 @@ public class PharmacyDictionary {
 
                 }
             }
-            
-//            regimenType.setSubstitutionIndicator(retrieveSubstitutionIndicator(careCardObs));//SubstitutionIndicator
-//            regimenType.setSwitchIndicator(retrieveSwitchIndicator(careCardObs));//SwitchIndicator
-//            obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, careCardObs);//ReasonForRegimenSwitchSubs
-//            if (obs != null && obs.getValueCoded() != null) {
-//                valueCoded = obs.getValueCoded().getConceptId();
-//                ndrCode = getRegimenMapValue(valueCoded);
-//                regimenType.setReasonForRegimenSwitchSubs(ndrCode);
-//            }
-            
-            /*
-                -DateRegimenStarted
-                -DateRegimenStartedDD
-                -DateRegimenStartedMM
-                -DateRegimenStartedYYYY
-             */
             regimenType.setDateRegimenStarted(getXmlDate(visitDate));
             regimenType.setDateRegimenStartedDD(Utils.getDayDD(visitDate));
             regimenType.setDateRegimenStartedMM(Utils.getMonthMM(visitDate));
             regimenType.setDateRegimenStartedYYYY(Utils.getYearYYYY(visitDate));
-
-//            obs = Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForAVisit);
-//            if (obs != null && obs.getValueCoded() != null) {
-//                valueCoded = obs.getValueCoded().getConceptId();
-//                if (valueCoded == Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT) {
-//                    regimenType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
-//                }
-//            } else {
-//                obs = Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForAVisit);
-//                if (obs != null && obs.getValueCoded() != null) {
-//                    valueCoded = obs.getValueCoded().getConceptId();
-//                    if (valueCoded == Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT) {
-//                        regimenType.setPoorAdherenceIndicator(Boolean.TRUE);
-//                    }
-//                }
-//            }
-            
-            
 
         }
         return regimenType;

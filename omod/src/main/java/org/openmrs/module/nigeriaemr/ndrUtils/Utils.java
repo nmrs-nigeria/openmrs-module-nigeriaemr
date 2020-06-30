@@ -6,6 +6,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.*;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
@@ -505,40 +506,15 @@ public class Utils {
 		if (obs != null) {
 			artStartDate = obs.getValueDate();
 		}
-		
-		//                else {
-		//			obs = getFirstObsOfConceptByDate(allPatientsObsList, Utils.CURRENT_REGIMEN_LINE_CONCEPT);
-		//			if (obs != null) {
-		//				artStartDate = obs.getObsDatetime();
-		//			}
-		//		}
 		return artStartDate;
 	}
 	
-	public static Date extractEnrollmentDate(Patient patient, List<Obs> allPatientObs,
-	        List<Encounter> allPatientEncounterList) {
+	public static Date extractEnrollmentDate(List<Obs> allPatientObs) {
 		Date enrollmentDate = null;
-		Obs obs = null;
-		PatientProgram patientProgram = null;
-		//ProgramWorkflowService workFlowService = Context.getProgramWorkflowService();
-		//List<PatientProgram> patientProgramList = new ArrayList<PatientProgram>();
-		//patientProgramList.addAll(workFlowService.getPatientPrograms(patient));
-		//patientProgram = extractProgramByID(patientProgramList, HIV_ENROLLMENT_PROGRAM_ID);
-		//if (patientProgram != null) {
-		//enrollmentDate = patientProgram.getDateEnrolled();
-		//} else {
-		obs = extractLastObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, allPatientObs);
+		Obs obs = extractLastObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, allPatientObs);
 		if (obs != null) {
 			enrollmentDate = obs.getValueDate();
 		}
-		//                else {
-		//			Encounter firstEncounter = getFirstEncounter(patient, allPatientEncounterList);
-		//			if (firstEncounter != null) {
-		//				enrollmentDate = firstEncounter.getEncounterDatetime();
-		//			}
-		//			//}
-		//		}
-		
 		return enrollmentDate;
 	}
 	
@@ -603,6 +579,7 @@ public class Utils {
 	}
 	
 	public static List<Obs> extractObsListForEncounterType(List<Obs> allPatientObsList, Integer[] encounterTypeArr) {
+		List<Integer> obsIds = allPatientObsList.stream().map(Obs::getId).collect(Collectors.toList());
 		List<Obs> enrollmentObsList = new ArrayList<Obs>();
 		List<Integer> encounterTypeList = new ArrayList<Integer>();
 		encounterTypeList.addAll(Arrays.asList(encounterTypeArr));
@@ -789,6 +766,7 @@ public class Utils {
 	    return obs.stream().filter(x -> x.getEncounter().getEncounterId() == encounterId)
 	            .collect(Collectors.toList());
 	}*/
+	@Deprecated
 	public static List<Obs> getHIVEnrollmentObs(Patient patient, Date date) {
 
         Optional<Encounter> hivEnrollmentEncounter = Context.getEncounterService()

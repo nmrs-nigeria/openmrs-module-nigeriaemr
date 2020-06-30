@@ -198,22 +198,17 @@ public class LabDictionary {
         LaboratoryReportType labReportType = new LaboratoryReportType();
         try {
 
-            PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
-            PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
-
             XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
             labReportType.setVisitID(Utils.getVisitId(pts, enc));
             labReportType.setVisitDate(convertedDate);
             labReportType.setCollectionDate(convertedDate);
 
-            // Date artStartDate = Utils.extractARTStartDate(pts,labObsList);
             if (artStartDate.after(enc.getEncounterDatetime()) || artStartDate.equals(enc.getEncounterDatetime())) {
                 labReportType.setARTStatusCode("A");
             } else {
                 labReportType.setARTStatusCode("N");
             }
 
-            //  if (pmtctIdentifier != null || htsIdentifier != null) {
             Obs obs = extractObs(Visit_Type_Concept_Id, labObsList);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(LabDictionary.class.getName(), "About to pull Visit_Type_Concept_Id", LogFormat.FATAL, LogLevel.debug);
@@ -249,13 +244,10 @@ public class LabDictionary {
             } else {
                 return null;
             }
-            //  }
-            //  return labReportType;
 
         } catch (Exception ex) {
             LoggerUtils.write(LabDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
             System.out.println(ex.getMessage());
-            // throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
         return labReportType;
     }

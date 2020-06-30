@@ -3,7 +3,9 @@ package org.openmrs.module.nigeriaemr.fragment.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.Patient;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.model.ndr.Container;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
@@ -24,7 +26,12 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
@@ -45,14 +52,18 @@ public class NdrFragmentController {
 	
 	FacilityLocationService facilityLocationService;
 	
-	NDRConverter generator;
-	
 	ObjectMapper mapper = new ObjectMapper();
 	
-	public NdrFragmentController() {
+	NDRConverter generator;
+	
+	JAXBContext jaxbContext;
+	
+	public NdrFragmentController() throws Exception {
 		openmrsConn = Utils.getNmrsConnectionDetails();
 		facilityLocationService = new FacilityLocationService();
 		generator = new NDRConverter(Utils.getIPFullName(), Utils.getIPShortName(), openmrsConn);
+		//Create an xml file and save in today's folder
+		jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
 	}
 	
 	public void controller() {
@@ -60,8 +71,7 @@ public class NdrFragmentController {
 	}
 	
 	public String generateNDRFileByLocation(HttpServletRequest request,
-	        @RequestParam(value = "locationId") Integer locationId) throws DatatypeConfigurationException, IOException,
-	        SAXException, JAXBException, Throwable {
+	        @RequestParam(value = "locationId") Integer locationId) {
 		
 		FacilityLocation facilityLocation = facilityLocationService.getFacilityLocationByLocationId(locationId).get(0);
 		List<Integer> filteredPatientByLocation = facilityLocationService.getPatientLocationById(locationId);
@@ -74,12 +84,11 @@ public class NdrFragmentController {
 		
 		String FacilityType = "FAC";
 		
-		return startGenerateFile(request, openmrsConn, patients, facilityLocation.getFacility_name(),
-		    facilityLocation.getDatimCode(), FacilityType);
+		return startGenerateFile(request, patients, facilityLocation.getFacility_name(), facilityLocation.getDatimCode(),
+		    FacilityType);
 	}
 	
-	public String generateNDRFile(HttpServletRequest request) throws DatatypeConfigurationException, IOException,
-	        SAXException, JAXBException, Throwable {
+	public String generateNDRFile(HttpServletRequest request) {
 		
 		DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
 		
@@ -89,134 +98,160 @@ public class NdrFragmentController {
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
 		List<Patient> patients = null;
 		String patientIdLimit = Utils.getPatientIdLimit();
-		if (patientIdLimit != null && !"".equals(patientIdLimit)) {
-			String[] patientIdArray = patientIdLimit.split(",");
-			int startIndex = Integer.parseInt(patientIdArray[0]);
-			int endIndex = Integer.parseInt(patientIdArray[1]);
-			patients = nigeriaPatientService.getPatientsInIndex(startIndex, endIndex);
-		} else {
-			Date lastDate = Utils.getLastNDRDate();
-			patients = nigeriaPatientService.getPatientsByEncounterDate(lastDate, null);
-		}
+		//		if (patientIdLimit != null && !"".equals(patientIdLimit)) {
+		//			String[] patientIdArray = patientIdLimit.split(",");
+		//			int startIndex = Integer.parseInt(patientIdArray[0]);
+		//			int endIndex = Integer.parseInt(patientIdArray[1]);
+		//			patients = nigeriaPatientService.getPatientsInIndex(startIndex, endIndex);
+		//		} else {
+		Date lastDate = Utils.getLastNDRDate();
+		patients = nigeriaPatientService.getPatientsByEncounterDate(lastDate, null);
+		//		}
 		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
 		String FacilityType = "FAC";
 		
-		return startGenerateFile(request, openmrsConn, patients, facilityName, DATIMID, FacilityType);
+		return startGenerateFile(request, patients, facilityName, DATIMID, FacilityType);
 		
 	}
 	
-	private String startGenerateFile(HttpServletRequest request, DBConnection openmrsConn, List<Patient> filteredPatients,
-	        String facilityName, String DATIMID, String FacilityType) throws JAXBException, SAXException {
+	private String startGenerateFile(HttpServletRequest request, List<Patient> filteredPatients,
+	        String facilityName, String DATIMID, String FacilityType) {
 		
 		//create report download folder at the server. skip if already exist
 		String reportType = "NDR";
 		String reportFolder = Utils.ensureReportFolderExist(request, reportType);
-		
-		//Create an xml file and save in today's folder
-		JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
-		Marshaller jaxbMarshaller = generator.createMarshaller(jaxbContext);
-		
 		String formattedDate = new SimpleDateFormat("ddMMyy").format(new Date());
 		
 		FacilityType facility = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
+
+		ExecutorService pool = Executors.newFixedThreadPool(10);
+		List<Future<?>> futures = new ArrayList<>();
 		
 		try {
 			
 			long loop_start_time = System.currentTimeMillis();
 			int counter = 0;
-			Container cnt = null;
+			UserContext userContext = Context.getUserContext();
 			
 			for (Patient patient : filteredPatients) {
-				
 				long startTime = System.currentTimeMillis();
 				counter++;
 				System.out.println("pateint  " + counter + " of " + filteredPatients.size() + " with ID " + patient.getId());
-				
-				try {
-					LoggerUtils.write(NdrFragmentController.class.getName(),
-					    "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
-					LoggerUtils.write(NdrFragmentController.class.getName(), "Started Export for patient with id: "
-					        + patient.getId(), LoggerUtils.LogFormat.INFO, LogLevel.live);
-					
-					cnt = generator.createContainer(patient, facility);
-					
-				}
-				catch (Exception ex) {
-					LoggerUtils.write(
-					    NdrFragmentController.class.getName(),
-					    MessageFormat.format("Could not parse patient with id: {0},{1},{2} ",
-					        Integer.toString(patient.getId()), "\r\n", ex.getMessage()), LogFormat.FATAL, LogLevel.live);
-					cnt = null;
-				}
-				
-				if (cnt != null) {
-					LoggerUtils.write(NdrFragmentController.class.getName(),
-					    "Got data for patient with ID: " + patient.getId(), LogFormat.INFO, LogLevel.live);
+
+				int finalCounter = counter;
+				Thread thread = new Thread(() -> {
 					try {
-						
-						String pepFarId = Utils.getPatientPEPFARId(patient);
-						
-						if (pepFarId != null) { //remove forward slashes / from file names
-							pepFarId = pepFarId.replace("/", "_").replace(".", "_");
-						} else {
-							pepFarId = "";
-						}
-						
-						String fileName = Utils.getIPShortName() + "_" + DATIMID + "_" + counter + "_" + formattedDate + "_"
-						        + pepFarId;
-						
-						// older implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
-						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
-						
-						File aXMLFile = new File(xmlFile);
-						Boolean b;
-						b = aXMLFile.createNewFile();
-						
-						System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
-						generator.writeFile(cnt, aXMLFile, jaxbMarshaller);
+						extract(DATIMID, reportFolder, facility, finalCounter, patient, userContext, formattedDate);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-					catch (Exception ex) {
-						LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
-						    LogLevel.live);
-					}
-				}
-				
+				});
+				futures.add(pool.submit(thread));
 				long endTime = System.currentTimeMillis();
 				LoggerUtils.write(NdrFragmentController.class.getName(),
-				    "Finished Export for patient with id: " + patient.getId() + " Time Taken: " + (endTime - startTime)
-				            + " milliseconds", LoggerUtils.LogFormat.INFO, LogLevel.live);
+						"Finished Export for patient with id: " + patient.getId() + " Time Taken: " + (endTime - startTime)
+								+ " milliseconds", LogFormat.INFO, LogLevel.live);
 				System.out.println("generating ndr took : " + (endTime - startTime) + " milli secs : ");
-				
+
 				long loop_end_time = System.currentTimeMillis();
 				System.out.println("generating ndr took : " + (loop_end_time - loop_start_time) + " milli secs : ");
 			}
-			
-			//Update ndr last run date
-			Utils.updateLast_NDR_Run_Date(new Date());
-			
+
+			while (!isComplete(futures)) {
+				Thread.sleep(10000);
+			}
+//			Utils.updateLast_NDR_Run_Date(new Date());
+
 			String zipFileName = Utils.getIPShortName() + "_ " + facilityName + "_" + DATIMID + "_" + formattedDate + ".zip";
-			/*String response = "Files Exported successfully, view uploaded files here: \n"
-			        + utils.ZipFolder(request, reportFolder, zipFileName, reportType);*/
-			String response = Utils.ZipFolder(request.getContextPath(), reportFolder, zipFileName, reportType);
-			return response;
-			//request.getContextPath() + "/downloads/" + zipFileName;
+			return  Utils.ZipFolder(request.getContextPath(), reportFolder, zipFileName, reportType);
 		}
 		catch (Exception ex) {
 			LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
 			    LogLevel.live);
 			//Update ndr last run date
 			Utils.updateLast_NDR_Run_Date(new Date());
-			
 			String zipFileName = Utils.getIPShortName() + "_" + DATIMID + "_" + formattedDate + ".zip";
 			Utils.ZipFolder(request.getContextPath(), reportFolder, zipFileName, reportType);
-			
-			//throw new Throwable(LoggerUtils.getExportPath());
-			String response = "Some files exported with errors, view error log here: \n" + LoggerUtils.getExportPath();
-			return response;
+
+			return "Some files exported with errors, view error log here: \n" + LoggerUtils.getExportPath();
 		}
 		
+	}
+	
+	public synchronized boolean isComplete(List<Future<?>> futures) {
+		Iterator<Future<?>> itr = futures.iterator();
+		while (itr.hasNext()) {
+			if (itr.next().isDone())
+				itr.remove();
+			else
+				return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Gets the user context from the thread local. This might be accessed by several threads at the
+	 * same time.
+	 * 
+	 * @return The current UserContext for this thread.
+	 * @should fail if session hasnt been opened
+	 */
+	
+	private void extract(String DATIMID, String reportFolder, FacilityType facility, int counter, Patient patient,
+	        UserContext userContext, String formattedDate) throws Exception {
+		Container cnt;
+		Context.setUserContext(userContext);
+		Context.openSessionWithCurrentUser();
+		
+		String pepFarId = Utils.getPatientPEPFARId(patient);
+		
+		if (pepFarId != null) { //remove forward slashes / from file names
+			pepFarId = pepFarId.replace("/", "_").replace(".", "_");
+		} else {
+			pepFarId = "";
+		}
+		try {
+			LoggerUtils.write(NdrFragmentController.class.getName(),
+			    "#################### #################### ####################", LogFormat.FATAL, LogLevel.live);
+			LoggerUtils.write(NdrFragmentController.class.getName(),
+			    "Started Export for patient with id: " + patient.getId(), LogFormat.INFO, LogLevel.live);
+			
+			cnt = generator.createContainer(patient, facility);
+			
+		}
+		catch (Exception ex) {
+			LoggerUtils.write(NdrFragmentController.class.getName(),
+			    MessageFormat.format("Could not parse patient with id: {0},{1},{2} ", Integer.toString(patient.getId()),
+			        "\r\n", ex.getMessage()), LogFormat.FATAL, LogLevel.live);
+			cnt = null;
+		}
+		
+		if (cnt != null) {
+			LoggerUtils.write(NdrFragmentController.class.getName(), "Got data for patient with ID: " + patient.getId(),
+			    LogFormat.INFO, LogLevel.live);
+			try {
+				
+				String fileName = Utils.getIPShortName() + "_" + DATIMID + "_" + counter + "_" + formattedDate + "_"
+				        + pepFarId;
+				
+				String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
+				
+				File aXMLFile = new File(xmlFile);
+				boolean b = aXMLFile.createNewFile();
+				
+				System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
+				if (cnt.getMessageHeader() != null) {
+					Marshaller jaxbMarshaller = generator.createMarshaller(jaxbContext);
+					generator.writeFile(cnt, aXMLFile, jaxbMarshaller);
+				}
+			}
+			catch (Exception ex) {
+				LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+			}
+		}
+		Context.closeSession();
 	}
 	
 	public String getAllFacilityLocation() {

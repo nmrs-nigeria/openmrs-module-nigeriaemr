@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openmrs.module</groupId>
         <artifactId>nigeriaemr</artifactId>
-        <version>1.4.1-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT-TEST</version>
     </parent>
 
     <artifactId>nigeriaemr-omod</artifactId>
@@ -77,9 +77,8 @@
             <artifactId>htmlformentryui-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        
 
-        
+
         <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
         <dependency>
             <groupId>joda-time</groupId>
