@@ -14,12 +14,11 @@ import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.nigeriaemr.Item;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-@Repository("nigeriaemr.NigeriaemrDao")
 public class NigeriaemrDao {
 	
-	@Autowired
 	DbSessionFactory sessionFactory;
 	
 	private DbSession getSession() {
@@ -33,5 +32,12 @@ public class NigeriaemrDao {
 	public Item saveItem(Item item) {
 		getSession().saveOrUpdate(item);
 		return item;
+	}
+	
+	/**
+	 * @param sessionFactory the sessionFactory to set
+	 */
+	public void setSessionFactory(DbSessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 }
