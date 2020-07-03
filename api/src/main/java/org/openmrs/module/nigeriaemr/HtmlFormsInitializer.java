@@ -44,14 +44,13 @@ public class HtmlFormsInitializer implements Initializer {
 	 * @see Initializer#started()
 	 */
 	public synchronized void started() {
-		
 		final ResourceFactory resourceFactory = ResourceFactory.getInstance();
 		final ResourceProvider resourceProvider = resourceFactory.getResourceProviders().get(providerName);
 		
 		// Scanning the forms resources folder
 		final List<String> formPaths = new ArrayList<String>();
 		final File formsDir = resourceProvider.getResource(formsPath); // The ResourceFactory can't return File instances, hence the ResourceProvider need
-		if (formsDir == null || formsDir.isDirectory() == false) {
+		if (formsDir == null || !formsDir.isDirectory()) {
 			log.error("No HTML forms could be retrieved from the provided folder: " + providerName + ":" + formsPath);
 			return;
 		}

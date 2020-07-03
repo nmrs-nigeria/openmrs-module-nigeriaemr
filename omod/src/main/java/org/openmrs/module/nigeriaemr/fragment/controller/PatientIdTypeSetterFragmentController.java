@@ -1,30 +1,14 @@
 package org.openmrs.module.nigeriaemr.fragment.controller;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import jdk.nashorn.internal.parser.JSONParser;
-import org.json.JSONObject;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
-import org.openmrs.User;
 import org.openmrs.api.PatientService;
-import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.impl.PatientServiceImpl;
 import org.openmrs.module.nigeriaemr.omodmodels.AjaxResponseBody;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientIdentifierData;
-import org.openmrs.ui.framework.annotation.SpringBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class PatientIdTypeSetterFragmentController {

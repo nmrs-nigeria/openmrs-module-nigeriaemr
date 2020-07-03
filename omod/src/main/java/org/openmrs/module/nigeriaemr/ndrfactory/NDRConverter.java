@@ -7,24 +7,19 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 import java.util.stream.Collectors;
-import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import org.openmrs.module.nigeriaemr.ndrUtils.Validator;
 import org.openmrs.module.nigeriaemr.ndrUtils.CustomErrorHandler;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.xml.sax.SAXException;
@@ -412,46 +407,12 @@ public class NDRConverter {
 		return header;
 	}
 	
-	public Marshaller createMarshaller(JAXBContext jaxbContext) throws JAXBException, SAXException {
-		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-		
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		
-		java.net.URL xsdFilePath = Thread.currentThread().getContextClassLoader().getResource("NDR 1.6.xsd");
-		
-		assert xsdFilePath != null;
-		
-		Schema schema = sf.newSchema(xsdFilePath);
-		
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-		
-		jaxbMarshaller.setSchema(schema);
-		
-		//Call Validator class to perform the validation
-		jaxbMarshaller.setEventHandler(new Validator());
-		return jaxbMarshaller;
-	}
-	
-	public void writeFile(Container container, File file, Marshaller jaxbMarshaller) throws SAXException, JAXBException,
-	        IOException {
-		
-		try {
-			jaxbMarshaller.marshal(container, file);
-		}
-		catch (Exception ex) {
-			System.out.println("File " + file.getName() + " throw an exception \n" + ex.getMessage());
-		}
-	}
-	
 	public void writeFile(Container container, File file) throws SAXException, JAXBException, IOException {
 		
 		CustomErrorHandler errorHandler = new CustomErrorHandler();
 		
 		try {
-			
-			JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
-			Marshaller jaxbMarshaller = createMarshaller(jaxbContext);
+			Marshaller jaxbMarshaller = NDRUtils.createMarshaller();
 			
 			javax.xml.validation.Validator validator = jaxbMarshaller.getSchema().newValidator();
 			jaxbMarshaller.marshal(container, file);

@@ -1,48 +1,147 @@
 <%
-def id = config.id
+    def id = config.id
 %>
 <%= ui.resourceLinks() %>
 
 <script>
     jq = jQuery;
     jq('#wait').hide();
-    /*var popupDialog = emr.setupConfirmationDialog({
-    selector: '#wait'
-    });*/
+
+
     jq(function() {
-        jq('#${ id }_button').click(function() {
-    //popupDialog.show();
-    jq('#wait').show();
-            jq.getJSON('${ ui.actionLink("generateNDRFile") }')
-    .success(function(filename) {
-    //Old implementation
-    if(filename == "no new patient record found"){
-    jq('#wait').hide();
-    alert("no updated patient record found")
-    }
-    else{
-    window.location = filename;
-    }
-   /* if(filename.startsWith("Files Exported successfully")){
-    //export was successful
-    alert(filename);
-    }
-    else{
-    //export was partially successful
-    //this may require directing the user to an erro summary page.
-    alert(filename);
-    }*/
-    jq('#wait').hide();
-    })
-    .error(function(xhr, status, err) {
-    alert('There was an error generating all NDR files, check generated files at downloads directory in the application root folder ' + err);
-    //popupDialog.close();
-    jq('#wait').hide();
-    })
-    });
+        jq('#${ id }_button').click(function () {
+            //popupDialog.show();
+            jq('#wait').show();
+            jq.ajax('${ ui.actionLink("generateNDRFile") }',
+                {
+                    dataType: 'json', // type of response data
+                    timeout: 30000,     // timeout milliseconds
+                    success: function (filename) {
+                        //Old implementation
+                        if (filename === "no new patient record found") {
+                            jq('#wait').hide();
+                            alert("no updated patient record found")
+                            loadFileList()
+                        } else {
+                            window.location = filename;
+                            loadFileList()
+                        }
+                        jq('#wait').hide();
+                    },
+                    error: function (xhr, status, err) {
+                        console.log(status);
+                        if(status === 'timeout'){
+                            alert("the export will take a while, the list will be updated when it's done");
+                            loadFileList();
+                        }else {
+                            alert('There was an error generating all NDR files, check generated files at downloads directory in the application root folder ' + err);
+                            loadFileList();
+                        }//popupDialog.close();
+                        jq('#wait').hide();
+                    }
+                });
+        });
+        loadFileList()
     });
 
+    function loadFileList() {
+        jq('#gen-wait').show();
+        //load all file generated
+        jq.getJSON('${ ui.actionLink("getFileList") }').success(function (fileList) {
+            jq("#TableBody").empty();
+            const fileListObj = jq.parseJSON(fileList);
+            for (let i = 0; i < fileListObj.length; i++) {
+                if(fileListObj[i].active) {
+                    jq('#TableBody')
+                        .append("<tr>" +
+                            "<td>" + fileListObj[i].name + "</td>" +
+                            "<td>" + fileListObj[i].date + "</td>" +
+                            "<td>" + fileListObj[i].size + "</td>" +
+                            "<td><a title='download file' onclick=\"downloadFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-download\"></i></a> <p/>" +
+                            "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
+                            "</tr>");
+                }else{
+                    jq('#TableBody')
+                        .append("<tr style=\"opacity:0.6;filter: alpha(opacity = 60)\">" +
+                            "<td>" + fileListObj[i].name + "</td>" +
+                            "<td>" + fileListObj[i].date + "</td>" +
+                            "<td>" + fileListObj[i].size + "</td>" +
+                            "<td><img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p/>" +
+                            "<a title='refresh' onclick=\"refreshList()\" class=\"button\"><i class=\"icon-refresh \"></i></a></td>" +
+                            "</tr>");
+                }
 
+            //
+            }
+            jq('#gen-wait').hide();
+        }).error(function (xhr, status, err) {
+            alert('There was an error loading file list ' + err);
+            jq('#gen-wait').hide();
+        });
+    }
+    function refreshList(){
+        loadFileList();
+    }
+    function deleteFile(file){
+        if (confirm("Are you sure you want to delete this file ?") === true) {
+            jq('#gen-wait').show();
+            console.log(file);
+            if(file)
+            {
+                console.log(file);
+                jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "deleteFile") }",
+                    dataType: "json",
+                    data: {
+                        'fileName' : file
+                    }
+
+                }).success(function(data) {
+                    jq('#gen-wait').hide();
+                    if(data){
+                        alert('file deleted');
+                        loadFileList()
+                    }else{
+                        alert('There was an error deleting file');
+                        loadFileList()
+                    }
+
+                })
+                    .error(function(xhr, status, err) {
+                        jq('#gen-wait').hide();
+                        alert('There was an error deleting file');
+                        loadFileList()
+                    });
+            }
+        }
+    }
+
+
+    function downloadFile(file){
+        jq('#gen-wait').show();
+        console.log(file);
+        if(file)
+        {
+            console.log(file);
+            jq.ajax({
+                url: "${ ui.actionLink("nigeriaemr", "ndr", "downloadFile") }",
+                dataType: "json",
+                data: {
+                    'fileName' : file
+                }
+
+            }).success(function(data) {
+                jq('#gen-wait').hide();
+                window.location = data
+
+            })
+            .error(function(xhr, status, err) {
+                jq('#gen-wait').hide();
+                alert('An error occured');
+
+            });
+        }
+    }
 
 
 </script>
@@ -71,5 +170,18 @@ def id = config.id
     <p>Version Info</p>
 </a>
 
+<div class="table-responsive">
+    <table class="table table-striped table-bordered  table-hover" id="tb_commtester">
+        <thead>
+            <tr>
+                <th>${ ui.message("File Name") }</th>
+                <th>${ ui.message("Date") }</th>
+                <th>${ ui.message("Size") }</th>
+                <th>${ ui.message("Actions") }</th>
+            </tr>
+        </thead>
+        <tbody id="TableBody">
 
-
+        </tbody>
+    </table>
+</div>

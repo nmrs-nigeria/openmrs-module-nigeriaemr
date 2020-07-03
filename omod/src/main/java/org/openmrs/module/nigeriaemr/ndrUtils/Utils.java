@@ -6,12 +6,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.*;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.PharmacyDictionary;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
+import org.openmrs.module.nigeriaemr.util.FileUtils;
 import org.openmrs.module.nigeriaemr.util.ZipUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,10 +20,8 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -31,18 +29,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import org.codehaus.jackson.map.ObjectMapper;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
-import org.openmrs.api.ProgramWorkflowService;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
-import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.util.OpenmrsUtil;
 
 public class Utils {
@@ -940,6 +933,8 @@ public class Utils {
 		//old implementation
 		// String reportFolder = downloadFolder + "/" + reportType;
 		String reportFolder = Paths.get(downloadFolder, reportType).toString();
+		//clean up directory
+		FileUtils.deleteNonZip(reportFolder);
 		File dir = new File(reportFolder);
 		dir.mkdir();
 		System.out.println(reportType + " folder exist ? : " + dir.exists());
@@ -971,18 +966,15 @@ public class Utils {
 		
 		File toZIP = new File(folderToZip);
 		if (!toZIP.exists() || toZIP.listFiles() == null || Objects.requireNonNull(toZIP.listFiles()).length == 0) {
+			FileUtils.deleteFolder(folderToZip, true);
 			return "no new patient record found";
 		}
 		
 		//Zip today's folder and name it with today's date
-		//String zipFileName = new SimpleDateFormat("dd-MM-yyyy").format(new Date()) + ".zip";
 		ZipUtil appZip = new ZipUtil(folderToZip);
 		appZip.generateFileList(toZIP);
-		// old implementation               appZip.zipIt(toZIP.getParent() + "/" + zipFileName);
-		appZip.zipIt(Paths.get(toZIP.getParent(), zipFileName).toString());
+		appZip.zipIt(Paths.get(toZIP.getParent(), zipFileName).toString(), true);
 		
-		//old implementation
-		//  return request.getContextPath() + "/downloads/" + reportType + "/" + zipFileName;
 		return Paths.get(contextPath, "downloads", reportType, zipFileName).toString();
 	}
 	
@@ -1304,7 +1296,7 @@ public class Utils {
 			//            props.load(inputStream);
 			//            // throw new FileNotFoundException("property file '" + appDirectory + "' not found in the classpath");
 			//starts here
-			Properties props = new Properties();
+			Properties props;
 			props = OpenmrsUtil.getRuntimeProperties("openmrs");
 			if (props == null) {
 				props = OpenmrsUtil.getRuntimeProperties("openmrs-standalone");
@@ -1344,4 +1336,17 @@ public class Utils {
                 .collect(Collectors.toList()).get(0).getEncounterDatetime();
         return enrollmentDate;
     }
+	
+	public static String getProperty(String propertyName, Object defaultValue) {
+		Properties props;
+		props = OpenmrsUtil.getRuntimeProperties("openmrs");
+		if (props == null) {
+			props = OpenmrsUtil.getRuntimeProperties("openmrs-standalone");
+		}
+		if (props.get(propertyName) != null) {
+			return (String) props.get(propertyName);
+		} else {
+			return (String) defaultValue;
+		}
+	}
 }

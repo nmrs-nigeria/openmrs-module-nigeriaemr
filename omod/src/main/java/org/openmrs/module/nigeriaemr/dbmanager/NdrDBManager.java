@@ -6,7 +6,6 @@
 package org.openmrs.module.nigeriaemr.dbmanager;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,17 +13,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import javafx.scene.transform.Transform;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getXmlDateTime;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientContactsModel;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientLocationAggregate;
 import org.openmrs.module.nigeriaemr.omodmodels.TesterModel;
-import org.openmrs.util.OpenmrsUtil;
 
 /**
  * @author MORRISON.I

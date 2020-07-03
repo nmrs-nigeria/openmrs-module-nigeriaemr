@@ -37,6 +37,7 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 			criteria.add(Restrictions.eq("patient", patient));
 		}
 		criteria.add(Restrictions.ge("dateCreated", fromDate));
+		//		criteria.add(Restrictions.ge("dateChanged", fromDate));
 		if (toDate != null) {
 			criteria.add(Restrictions.le("dateCreated", toDate));
 		}
