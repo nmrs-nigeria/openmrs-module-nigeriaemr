@@ -15,6 +15,11 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.nigeriaemr.Item;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao;
+import org.openmrs.module.nigeriaemr.model.BiometricInfo;
+import org.openmrs.module.nigeriaemr.model.NDRExport;
+
+import java.util.List;
+import java.util.Map;
 
 public class NigeriaemrServiceImpl extends BaseOpenmrsService implements NigeriaemrService {
 	
@@ -29,24 +34,64 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 		this.dao = dao;
 	}
 	
-	/**
-	 * Injected in moduleApplicationContext.xml
-	 */
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-	
 	@Override
-	public Item getItemByUuid(String uuid) throws APIException {
-		return dao.getItemByUuid(uuid);
-	}
-	
-	@Override
-	public Item saveItem(Item item) throws APIException {
-		if (item.getOwner() == null) {
-			item.setOwner(userService.getUser(1));
+	public NDRExport getNDRExportById(int id) throws APIException {
+		NDRExport ndrExport = null;
+		try {
+			ndrExport = dao.getNDRExportById(id);
 		}
-		
-		return dao.saveItem(item);
+		catch (Exception e) {
+			//log error
+		}
+		return ndrExport;
 	}
+	
+	@Override
+	public NDRExport saveNdrExportItem(NDRExport ndrExport) throws APIException {
+		if (ndrExport.getOwner() == null) {
+			ndrExport.setOwner(userService.getUser(1));
+		}
+		return dao.saveNdrExport(ndrExport);
+	}
+	
+	@Override
+	public void updateNdrExportItemProcessedCount(int id, int count) throws APIException {
+		NDRExport ndrExport = getNDRExportById(id);
+		if (ndrExport != null) {
+			ndrExport.setPatientsProcessed(count);
+			dao.saveNdrExport(ndrExport);
+		}
+	}
+	
+	@Override
+	public void updateStatus(int id, String status) throws APIException {
+		NDRExport ndrExport = getNDRExportById(id);
+		if (ndrExport != null) {
+			ndrExport.setStatus(status);
+			dao.saveNdrExport(ndrExport);
+		}
+	}
+	
+	@Override
+	public List<NDRExport> getExports(Map<String, Object> conditions, boolean includeVoided) throws APIException {
+		return dao.getExports(conditions, includeVoided);
+	}
+	
+	@Override
+	public List<BiometricInfo> getBiometricInfoByPatientId(Integer patientId) throws APIException {
+		return dao.getBiometricInfoByPatientId(patientId);
+	}
+	
+	@Override
+	public List<NDRExport> getExports(boolean includeVoided) throws APIException {
+		return dao.getExports(includeVoided);
+	}
+	
+	@Override
+	public void voidExportEntry(int id) throws APIException {
+		NDRExport ndrExport = getNDRExportById(id);
+		ndrExport.setVoided(true);
+		dao.saveNdrExport(ndrExport);
+	}
+	
 }

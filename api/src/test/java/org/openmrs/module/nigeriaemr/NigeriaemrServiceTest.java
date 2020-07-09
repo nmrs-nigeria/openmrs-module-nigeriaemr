@@ -18,6 +18,8 @@ import org.openmrs.User;
 import org.openmrs.api.UserService;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao;
 import org.openmrs.module.nigeriaemr.api.service.impl.NigeriaemrServiceImpl;
+import org.openmrs.module.nigeriaemr.model.NDRExport;
+
 import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -45,16 +47,16 @@ public class NigeriaemrServiceTest {
 	@Test
 	public void saveItem_shouldSetOwnerIfNotSet() {
 		//Given
-		Item item = new Item();
-		item.setDescription("some description");
+		NDRExport item = new NDRExport();
+		item.setPath("some description");
 		
-		when(dao.saveItem(item)).thenReturn(item);
+		when(dao.saveNdrExport(item)).thenReturn(item);
 		
 		User user = new User();
 		when(userService.getUser(1)).thenReturn(user);
 		
 		//When
-		basicModuleService.saveItem(item);
+		basicModuleService.saveNdrExportItem(item);
 		
 		//Then
 		assertThat(item, hasProperty("owner", is(user)));

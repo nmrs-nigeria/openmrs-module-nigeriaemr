@@ -18,12 +18,13 @@
                     timeout: 30000,     // timeout milliseconds
                     success: function (filename) {
                         //Old implementation
-                        if (filename === "no new patient record found") {
+                        if (filename.endsWith(".zip")){
                             jq('#wait').hide();
-                            alert("no updated patient record found")
-                            loadFileList()
-                        } else {
                             window.location = filename;
+                            loadFileList()
+                        }else{
+                            alert(filename)
+                            jq('#wait').hide();
                             loadFileList()
                         }
                         jq('#wait').hide();
@@ -43,57 +44,88 @@
         });
         loadFileList()
     });
-
     function loadFileList() {
-        jq('#gen-wait').show();
+        if(loadFileListDefault(true)){
+            refresher
+        }
+    }
+    function loadFileListDefault(showProgressDialog) {
+        processing = false
+        if (showProgressDialog) jq('#gen-wait').show();
         //load all file generated
         jq.getJSON('${ ui.actionLink("getFileList") }').success(function (fileList) {
             jq("#TableBody").empty();
             const fileListObj = jq.parseJSON(fileList);
             for (let i = 0; i < fileListObj.length; i++) {
+                var success = (fileListObj[i].status) === 'Completed'
                 if(fileListObj[i].active) {
-                    jq('#TableBody')
-                        .append("<tr>" +
-                            "<td>" + fileListObj[i].name + "</td>" +
-                            "<td>" + fileListObj[i].date + "</td>" +
-                            "<td>" + fileListObj[i].size + "</td>" +
-                            "<td><a title='download file' onclick=\"downloadFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-download\"></i></a> <p/>" +
-                            "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
-                            "</tr>");
+                    if(success) {
+                        jq('#TableBody')
+                            .append("<tr>" +
+                                "<td>" + fileListObj[i].owner + "</td>" +
+                                "<td>" + fileListObj[i].name + "</td>" +
+                                "<td>" + fileListObj[i].dateStarted + "</td>" +
+                                "<td>" + fileListObj[i].dateEnded + "</td>" +
+                                "<td>" + fileListObj[i].total + "</td>" +
+                                "<td>" + fileListObj[i].status + "</td>" +
+                                "<td><a title='download file' onclick=\"downloadFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-download\"></i></a> <p/>" +
+                                "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
+                                "</tr>");
+                    }else{
+                        jq('#TableBody')
+                            .append("<tr>" +
+                                "<td>" + fileListObj[i].owner + "</td>" +
+                                "<td>" + fileListObj[i].name + "</td>" +
+                                "<td>" + fileListObj[i].dateStarted + "</td>" +
+                                "<td>" + fileListObj[i].dateEnded + "</td>" +
+                                "<td>" + fileListObj[i].total + "</td>" +
+                                "<td>" + fileListObj[i].status + "</td>" +
+                                "<td><a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
+                                "</tr>");
+                    }
                 }else{
+                    processing = true
+
                     jq('#TableBody')
                         .append("<tr style=\"opacity:0.6;filter: alpha(opacity = 60)\">" +
+                            "<td>" + fileListObj[i].owner + "</td>" +
                             "<td>" + fileListObj[i].name + "</td>" +
-                            "<td>" + fileListObj[i].date + "</td>" +
-                            "<td>" + fileListObj[i].size + "</td>" +
-                            "<td><img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p/>" +
+                            "<td>" + fileListObj[i].dateStarted + "</td>" +
+                            "<td>" + fileListObj[i].dateEnded + "</td>" +
+                            "<td>" + fileListObj[i].total + "</td>" +
+                            "<td>" + fileListObj[i].status + "</td>" +
+                            "<td><img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p>"+fileListObj[i].progress+"</p>" +
                             "<a title='refresh' onclick=\"refreshList()\" class=\"button\"><i class=\"icon-refresh \"></i></a></td>" +
                             "</tr>");
                 }
-
-            //
             }
             jq('#gen-wait').hide();
         }).error(function (xhr, status, err) {
-            alert('There was an error loading file list ' + err);
+            if (showProgressDialog) alert('There was an error loading file list ' + err);
             jq('#gen-wait').hide();
         });
+        return processing
     }
     function refreshList(){
         loadFileList();
     }
-    function deleteFile(file){
+
+    const refresher = setInterval(function () {
+        loadFileListDefault(false);
+    }, 10000);
+
+    function deleteFile(id){
         if (confirm("Are you sure you want to delete this file ?") === true) {
             jq('#gen-wait').show();
-            console.log(file);
-            if(file)
+            console.log(id);
+            if(id)
             {
-                console.log(file);
+                console.log(id);
                 jq.ajax({
                     url: "${ ui.actionLink("nigeriaemr", "ndr", "deleteFile") }",
                     dataType: "json",
                     data: {
-                        'fileName' : file
+                        'id' : id
                     }
 
                 }).success(function(data) {
@@ -116,31 +148,8 @@
         }
     }
 
-
     function downloadFile(file){
-        jq('#gen-wait').show();
-        console.log(file);
-        if(file)
-        {
-            console.log(file);
-            jq.ajax({
-                url: "${ ui.actionLink("nigeriaemr", "ndr", "downloadFile") }",
-                dataType: "json",
-                data: {
-                    'fileName' : file
-                }
-
-            }).success(function(data) {
-                jq('#gen-wait').hide();
-                window.location = data
-
-            })
-            .error(function(xhr, status, err) {
-                jq('#gen-wait').hide();
-                alert('An error occured');
-
-            });
-        }
+        window.location = file
     }
 
 
@@ -174,9 +183,12 @@
     <table class="table table-striped table-bordered  table-hover" id="tb_commtester">
         <thead>
             <tr>
+                <th>${ ui.message("Created By") }</th>
                 <th>${ ui.message("File Name") }</th>
-                <th>${ ui.message("Date") }</th>
-                <th>${ ui.message("Size") }</th>
+                <th>${ ui.message("Date Started") }</th>
+                <th>${ ui.message("Date Completed") }</th>
+                <th>${ ui.message("Total No. of Patients") }</th>
+                <th>${ ui.message("status") }</th>
                 <th>${ ui.message("Actions") }</th>
             </tr>
         </thead>

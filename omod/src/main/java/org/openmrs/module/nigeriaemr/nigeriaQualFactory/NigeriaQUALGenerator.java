@@ -10,6 +10,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.model.nigeriaqual.DataPatientMonitoringReviewPeriod;
 import org.openmrs.module.nigeriaemr.model.nigeriaqual.art.ARTRecordType;
 import org.openmrs.module.nigeriaemr.model.nigeriaqual.art.ArtRecordDataSetType;
@@ -68,6 +69,8 @@ public class NigeriaQUALGenerator {
 	private Date startDate;
 	
 	private Date endDate;
+	
+	private NigeriaEncounterService nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 	
 	public NigeriaQUALGenerator(String facilityId, Date startDate, Date endDate) {
 		this.facilityId = facilityId;
@@ -258,7 +261,8 @@ public class NigeriaQUALGenerator {
 			dataHepatitisB.setHepatitisBAssayEverDoneForPatient("No");
 		}
 
-		Encounter enc = Utils.getLastEncounter(pts, endDate);
+//		Encounter enc = Utils.getLastEncounter(pts, endDate);
+		Encounter enc = nigeriaEncounterService.getLastEncounterByPatient(pts, null, endDate);
 
 		if(enc !=null){
 			dataHepatitisB.setClinicalEvaluationARTFormFilledAtLastVisit("Yes");
@@ -324,7 +328,8 @@ public class NigeriaQUALGenerator {
 		Obs educationalObs = Utils.extractObs(NDRMainDictionary.Patient_Education_Level_Code_Concept_Id, enrollmentObs);
 		Obs maritalObs = Utils.extractObs(NDRMainDictionary.Patient_Marital_Status_Code_Concept_Id, enrollmentObs);
 		
-		Encounter lastEncounter = Utils.getLastEncounter(pts, endDate);
+		//		Encounter lastEncounter = Utils.getLastEncounter(pts, endDate);
+		Encounter lastEncounter = nigeriaEncounterService.getLastEncounterByPatient(pts, null, endDate);
 		
 		PatientDemographicsRecordType dataPatientDemographics = new PatientDemographicsRecordType();
 		dataPatientDemographics.setFirstname("");

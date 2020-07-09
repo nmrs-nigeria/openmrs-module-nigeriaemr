@@ -12,9 +12,7 @@ import javax.xml.validation.SchemaFactory;
 
 public class NDRUtils {
 	
-	public static Marshaller createMarshaller() throws JAXBException, SAXException {
-		
-		JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
+	public static Marshaller createMarshaller(JAXBContext jaxbContext) throws JAXBException, SAXException {
 		
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 		

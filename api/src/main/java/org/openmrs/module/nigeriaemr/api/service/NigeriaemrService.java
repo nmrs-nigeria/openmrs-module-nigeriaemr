@@ -9,12 +9,18 @@
  */
 package org.openmrs.module.nigeriaemr.api.service;
 
+import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.nigeriaemr.NigeriaemrConfig;
 import org.openmrs.module.nigeriaemr.Item;
+import org.openmrs.module.nigeriaemr.model.BiometricInfo;
+import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * The main service of this module, which is exposed for other modules. See
@@ -26,23 +32,47 @@ public interface NigeriaemrService extends OpenmrsService {
 	 * Returns an item by uuid. It can be called by any authenticated user. It is fetched in read
 	 * only transaction.
 	 * 
-	 * @param uuid
+	 * @param id
 	 * @return
 	 * @throws APIException
 	 */
 	@Authorized()
 	@Transactional(readOnly = true)
-	Item getItemByUuid(String uuid) throws APIException;
+	NDRExport getNDRExportById(int id) throws APIException;
 	
 	/**
 	 * Saves an item. Sets the owner to superuser, if it is not set. It can be called by users with
 	 * this module's privilege. It is executed in a transaction.
 	 * 
-	 * @param item
+	 * @param ndrExport
 	 * @return
 	 * @throws APIException
 	 */
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
-	Item saveItem(Item item) throws APIException;
+	NDRExport saveNdrExportItem(NDRExport ndrExport) throws APIException;
+	
+	//	@Authorized()
+	@Transactional
+	void updateNdrExportItemProcessedCount(int id, int count) throws APIException;
+	
+	@Transactional
+	void updateStatus(int id, String status) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	List<NDRExport> getExports(boolean includeVoided) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	void voidExportEntry(int id) throws APIException;
+	
+	//	@Authorized()
+	@Transactional
+	List<NDRExport> getExports(Map<String, Object> conditions, boolean includeVoided) throws APIException;
+	
+	@Authorized
+	@Transactional
+	public List<BiometricInfo> getBiometricInfoByPatientId(Integer patientId) throws APIException;
+	
 }

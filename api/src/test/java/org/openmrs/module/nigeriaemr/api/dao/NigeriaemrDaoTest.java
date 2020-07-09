@@ -14,6 +14,7 @@ import org.junit.Ignore;
 import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.Item;
+import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.hamcrest.Matchers.*;
@@ -37,22 +38,22 @@ public class NigeriaemrDaoTest extends BaseModuleContextSensitiveTest {
 	@Ignore("Unignore if you want to make the Item class persistable, see also Item and liquibase.xml")
 	public void saveItem_shouldSaveAllPropertiesInDb() {
 		//Given
-		Item item = new Item();
-		item.setDescription("some description");
+		NDRExport item = new NDRExport();
+		item.setPath("some description");
 		item.setOwner(userService.getUser(1));
 		
 		//When
-		dao.saveItem(item);
+		dao.saveNdrExport(item);
 		
 		//Let's clean up the cache to be sure getItemByUuid fetches from DB and not from cache
 		Context.flushSession();
 		Context.clearSession();
 		
 		//Then
-		Item savedItem = dao.getItemByUuid(item.getUuid());
+		NDRExport savedItem = dao.getNDRExportById(item.getId());
 		
-		assertThat(savedItem, hasProperty("uuid", is(item.getUuid())));
+		assertThat(savedItem, hasProperty("id", is(item.getId())));
 		assertThat(savedItem, hasProperty("owner", is(item.getOwner())));
-		assertThat(savedItem, hasProperty("description", is(item.getDescription())));
+		assertThat(savedItem, hasProperty("path", is(item.getPath())));
 	}
 }

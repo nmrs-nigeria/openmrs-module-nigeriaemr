@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
@@ -946,63 +947,66 @@ public class HTSDictionary {
         return clinicalTBScreeningType;
     }
 
-    public PartnerDetailsType createPartnerDetails(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public PartnerDetailsType createPartnerDetails(Patient pts, List<Obs> obsList) {
+        List<Integer> list = Arrays.asList(Partner_Age,Partner_preTest_counselled_,Partner_accepts_HIV_test,
+                Partner_HIV_test_result,Partner_postTest_counseled,Partner_HBV_status,Partner_HCV_status,
+                SYPHILLIS_STATUS_RESULT,Partner_referred_to);
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
 
         PartnerDetailsType partnerDetailsType = new PartnerDetailsType();
         int value_numeric;
 
         if (htsIdentifier != null) {
-
-            Obs obs = extractObs(Partner_Age, obsList);
+            Map<Integer, Obs> details = Utils.extractObs(list,obsList);
+            Obs obs = details.get(Partner_Age);
             if (obs != null && obs.getValueNumeric() != null) {
                 value_numeric = (int) Math.round(obs.getValueNumeric());
                 partnerDetailsType.setPartnerAge(value_numeric);
             }
-            obs = extractObs(Partner_preTest_counselled_, obsList);
+            obs = details.get(Partner_preTest_counselled_);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_preTest_counselled_", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerPreTestCounseled(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_preTest_counselled_", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = extractObs(Partner_accepts_HIV_test, obsList);
+            obs = details.get(Partner_accepts_HIV_test);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_accepts_HIV_test", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerAcceptsHIVTest(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_accepts_HIV_test", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = extractObs(Partner_HIV_test_result, obsList);
+            obs = details.get(Partner_HIV_test_result);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_HIV_test_result", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerHIVTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HIV_test_result", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = extractObs(Partner_postTest_counseled, obsList);
+            obs = details.get(Partner_postTest_counseled);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_postTest_counseled", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerPostTestCounseled(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_postTest_counseled", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = extractObs(Partner_HBV_status, obsList);
+            obs = details.get(Partner_HBV_status);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_HBV_status", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerHBVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HBV_status", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = extractObs(Partner_HCV_status, obsList);
+            obs = details.get(Partner_HCV_status);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_HCV_status", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerHCVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HCV_status", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = extractObs(SYPHILLIS_STATUS_RESULT, obsList);
+            obs = details.get(SYPHILLIS_STATUS_RESULT);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerSyphilisStatus(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
             }
 
-            obs = extractObs(Partner_referred_to, obsList);
+            obs = details.get(Partner_referred_to);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_referred_to", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerReferredTo(getMappedValue(obs.getValueCoded().getConceptId()));
@@ -1024,7 +1028,8 @@ public class HTSDictionary {
         try {
             return htsDictionary.get(conceptID);
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
             return "";
         }
     }

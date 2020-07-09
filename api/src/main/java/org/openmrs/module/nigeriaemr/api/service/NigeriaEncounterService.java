@@ -16,4 +16,14 @@ public interface NigeriaEncounterService extends EncounterService {
 	@Authorized({ "Get Encounters By Patient Id From the last run date" })
 	List<Encounter> getEncountersByPatient(Patient patient, Date from, Date to) throws APIException;
 	
+	@Authorized({ "Get Last Encounters By Patient" })
+	Encounter getLastEncounterByPatient(Patient patient, Date from, Date to) throws APIException;
+	
+	@Authorized({ "Get Last Encounters By Patient By encountertypesId" })
+	List<Encounter> getEncountersByEncounterTypeIds(Patient patient, Date fromDate, Date toDate,
+	        List<Integer> encounterTypeIds) throws APIException;
+	
+	@Authorized({ "Get Last Encounter By Patient By encountertypesId" })
+	Encounter getLastEncounterByEncounterTypeIds(Patient patient, Date fromDate, Date toDate, List<Integer> encounterTypeIds)
+	        throws APIException;
 }

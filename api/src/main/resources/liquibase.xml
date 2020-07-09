@@ -14,26 +14,27 @@
     -->
  
  	<!-- Uncomment the changeset below if you want to make the Item class persistable, see also Item and NigeriaemrDaoTest -->
- 	<!--
-	<changeSet id="nigeriaemr-2016-08-02-12-21" author="raff">
-		<preConditions onFail="MARK_RAN">
-			<not><tableExists tableName="nigeriaemr_item"/></not>
-		</preConditions>
+
+	<changeSet id="nigeriaemr-2020-07-06" author="wande">
 		<comment>
-			Creating the nigeriaemr_item table
+			Creating the nigeriaemr_ndr export table
 		</comment>
-		<createTable tableName="nigeriaemr_item">
-			<column name="nigeriaemr_item_id" type="int" autoIncrement="true">
+		<createTable tableName="nigeriaemr_ndr_export">
+			<column name="nigeriaemr_ndr_export_id" type="int" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
-			<column name="uuid" type="char(38)">
-				<constraints nullable="false" unique="true"></constraints>
-			</column>
 			<column name="owner" type="int" />
-			<column name="description" type="varchar(255)" />
+            <column name="total_number_of_patients" type="int" />
+            <column name="total_number_of_patients_processed" type="int" defaultValue="0" />
+            <column name="date_started" type="TIMESTAMP" />
+            <column name="date_ended" type="TIMESTAMP" />
+			<column name="path" type="varchar(255)"/>
+			<column name="status" type="varchar(25)"/>
+			<column name="voided" type="BIT(1)"/>
+			<column name="name" type="varchar(255)"/>
+			<column name="report_folder" type="varchar(255)"/>
+			<column name="context_path" type="varchar(255)"/>
 		</createTable>
-        <addForeignKeyConstraint constraintName="nigeriaemr_item_owner_fk" baseTableName="nigeriaemr_item" baseColumnNames="owner"  referencedTableName="users"
-                                 referencedColumnNames="user_id" />
-    </changeSet> -->
+    </changeSet>
  
 </databaseChangeLog>

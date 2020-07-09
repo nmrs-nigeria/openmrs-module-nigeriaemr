@@ -118,12 +118,7 @@ public class LoggerUtils {
 		
 		try {
 			//if it's live
-			if (!level.equals(LogLevel.debug)) {
-				log(className, logText, formater, level);
-			} else {
-				log(className, logText, formater, level);
-				
-			}
+			log(className, logText, formater, level);
 			
 		}
 		catch (Exception ex) {

@@ -301,7 +301,7 @@ public class PharmacyDictionary {
         return "";
     }
 
-    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient, List<Obs> patientsObsList) throws DatatypeConfigurationException {
+    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient) throws DatatypeConfigurationException {
         List<RegimenType> regimenTypeList = new ArrayList<RegimenType>();
 
         RegimenType regimenType = null;
@@ -309,7 +309,7 @@ public class PharmacyDictionary {
 
         for (Encounter enc : allEncounterForPatient) {
             if (enc.getEncounterType().getEncounterTypeId() == Utils.PHARMACY_ENCOUNTER_TYPE) {
-                obsPerVisit = new ArrayList<Obs>(enc.getAllObs());
+                obsPerVisit = new ArrayList<>(enc.getAllObs());
                 Date visitDate = DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE);
                 regimenType = createRegimenType(patient, visitDate, obsPerVisit);
                 regimenTypeList.add(regimenType);

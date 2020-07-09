@@ -14,6 +14,7 @@ import java.util.Arrays;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
@@ -529,7 +530,8 @@ public class PMTCTDictionary {
         try {
             return pmtctDictionary.get(conceptID);
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
             return "";
         }
     }

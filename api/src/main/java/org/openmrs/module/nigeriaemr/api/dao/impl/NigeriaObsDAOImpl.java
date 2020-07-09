@@ -2,8 +2,11 @@ package org.openmrs.module.nigeriaemr.api.dao.impl;
 
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Concept;
 import org.openmrs.Obs;
+import org.openmrs.Person;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
@@ -11,6 +14,7 @@ import org.openmrs.api.db.hibernate.HibernateObsDAO;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaObsDAO;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO {
@@ -34,6 +38,7 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		Criteria criteria = getSession().createCriteria(Obs.class);
 		criteria.add(Restrictions.eq("voided", includeVoided));
 		criteria.add(Restrictions.in("obsId", obsIds));
+		criteria.addOrder(Order.desc("obsDatetime"));
 		return criteria.list();
 	}
 	
@@ -70,6 +75,35 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 	}
 	
 	@Override
+	public Obs getLastObsByConceptId(Person person, Concept concept, Date from, Date to, boolean includeVoided, boolean asc)
+	        throws DAOException {
+		Criteria criteria = getSession().createCriteria(Obs.class);
+		criteria.add(Restrictions.eq("voided", includeVoided));
+		if (from != null) {
+			criteria.add(Restrictions.ge("obsDatetime", from));
+		}
+		if (to != null) {
+			criteria.add(Restrictions.le("obsDatetime", from));
+		}
+		if (person != null) {
+			criteria.add(Restrictions.eq("person", person));
+		}
+		if (concept != null) {
+			criteria.add(Restrictions.eq("concept", concept));
+		}
+		if (asc) {
+			criteria.addOrder(Order.asc("obsDatetime"));
+		} else {
+			criteria.addOrder(Order.desc("obsDatetime"));
+		}
+		
+		criteria.setFetchSize(1);
+		if (criteria.list().size() > 0)
+			return (Obs) criteria.list().get(0);
+		return null;
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Obs> getObsByEncounterType(List<Integer> obsIds, List<Integer> encounterTypeIds, boolean includeVoided)
 	        throws DAOException {
@@ -95,5 +129,34 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		}
 		
 		return obs;
+	}
+	
+	@Override
+	public Obs getHighestObsByConcept(Person person, Concept concept, Date from, Date to, boolean includeVoided, boolean asc)
+	        throws DAOException {
+		Criteria criteria = getSession().createCriteria(Obs.class);
+		criteria.add(Restrictions.eq("voided", includeVoided));
+		if (from != null) {
+			criteria.add(Restrictions.ge("obsDatetime", from));
+		}
+		if (to != null) {
+			criteria.add(Restrictions.le("obsDatetime", from));
+		}
+		if (person != null) {
+			criteria.add(Restrictions.eq("person", person));
+		}
+		if (concept != null) {
+			criteria.add(Restrictions.eq("concept", concept));
+		}
+		if (asc) {
+			criteria.addOrder(Order.asc("valueNumeric"));
+		} else {
+			criteria.addOrder(Order.desc("valueNumeric"));
+		}
+		
+		criteria.setFetchSize(1);
+		if (criteria.list().size() > 0)
+			return (Obs) criteria.list().get(0);
+		return null;
 	}
 }

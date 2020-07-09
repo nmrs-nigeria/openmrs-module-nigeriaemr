@@ -9,13 +9,16 @@
  */
 package org.openmrs.module.nigeriaemr.api.dao;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
-import org.openmrs.module.nigeriaemr.Item;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
+import org.openmrs.module.nigeriaemr.model.BiometricInfo;
+import org.openmrs.module.nigeriaemr.model.NDRExport;
+import java.util.List;
+import java.util.Map;
 
 public class NigeriaemrDao {
 	
@@ -25,13 +28,37 @@ public class NigeriaemrDao {
 		return sessionFactory.getCurrentSession();
 	}
 	
-	public Item getItemByUuid(String uuid) {
-		return (Item) getSession().createCriteria(Item.class).add(Restrictions.eq("uuid", uuid)).uniqueResult();
+	public NDRExport getNDRExportById(int id) {
+		return (NDRExport) getSession().createCriteria(NDRExport.class).add(Restrictions.eq("id", id)).uniqueResult();
 	}
 	
-	public Item saveItem(Item item) {
-		getSession().saveOrUpdate(item);
-		return item;
+	public NDRExport saveNdrExport(NDRExport ndrExport) {
+		getSession().saveOrUpdate(ndrExport);
+		return ndrExport;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<NDRExport> getExports(boolean includeVoided) throws DAOException {
+		Criteria criteria = getSession().createCriteria(NDRExport.class);
+		criteria.add(Restrictions.eq("voided", includeVoided));
+		criteria.addOrder(Order.desc("dateStarted"));
+		return criteria.list();
+	}
+	
+	public List<NDRExport> getExports(Map<String, Object> conditions, boolean includeVoided) throws DAOException {
+		Criteria criteria = getSession().createCriteria(NDRExport.class);
+		criteria.add(Restrictions.eq("voided", includeVoided));
+		for (String key : conditions.keySet()) {
+			criteria.add(Restrictions.eq(key, conditions.get(key)));
+		}
+		criteria.addOrder(Order.desc("dateStarted"));
+		return criteria.list();
+	}
+	
+	public List<BiometricInfo> getBiometricInfoByPatientId(Integer patientId) throws DAOException {
+		Criteria criteria = getSession().createCriteria(BiometricInfo.class);
+		criteria.add(Restrictions.eq("patientId", patientId));
+		return criteria.list();
 	}
 	
 	/**

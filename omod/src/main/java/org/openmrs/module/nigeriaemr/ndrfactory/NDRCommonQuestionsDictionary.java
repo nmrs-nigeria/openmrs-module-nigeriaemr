@@ -23,6 +23,10 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
+import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
+import org.openmrs.module.nigeriaemr.model.BiometricInfo;
 import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.CommonQuestionsType;
 import org.openmrs.module.nigeriaemr.model.ndr.ConditionSpecificQuestionsType;
@@ -49,6 +53,7 @@ public class NDRCommonQuestionsDictionary {
 
     private static Map<Integer, String> map = new HashMap<>();
     private PharmacyDictionary pharmacyDictionary;
+    NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 
     public NDRCommonQuestionsDictionary() {
         loadDictionary();
@@ -136,7 +141,7 @@ public class NDRCommonQuestionsDictionary {
 
     }
 
-    public PatientDemographicsType createPatientDemographicsType(Patient pts, FacilityType facility, List<Obs> allObsListForPatient, List<Encounter> allPatientEncounters, DBConnection openmrsConn) throws DatatypeConfigurationException {
+    public PatientDemographicsType createPatientDemographicsType(Patient pts, FacilityType facility, List<Obs> allObsListForPatient) throws DatatypeConfigurationException {
         /*
             PatientDemographicsType
               -PatientIdentifier
@@ -243,14 +248,14 @@ public class NDRCommonQuestionsDictionary {
 
          
             //check Finger Print if available
-            demo.setFingerPrints(getPatientsFingerPrint(pts.getPatientId(), openmrsConn));
+            demo.setFingerPrints(getPatientsFingerPrint(pts.getPatientId()));
 
 
             String ndrCodedValue;
             Integer[] formEncounterTypeTargets = {Utils.ADULT_INITIAL_ENCOUNTER_TYPE, Utils.PED_INITIAL_ENCOUNTER_TYPE, Utils.INITIAL_ENCOUNTER_TYPE, Utils.HIV_Enrollment_Encounter_Type_Id, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
             List<Obs> obsListForEncounterTypes = Utils.extractObsListForEncounterType(allObsListForPatient, formEncounterTypeTargets);
             Obs obs = null;
-            if (obsListForEncounterTypes != null && !obsListForEncounterTypes.isEmpty()) {
+            if (!obsListForEncounterTypes.isEmpty()) {
                 //check for disease indicator
                 obs = Utils.extractObs(Utils.REASON_FOR_TERMINATION_CONCEPT, obsListForEncounterTypes);
                 if (obs != null && obs.getValueCoded() != null) {
@@ -319,89 +324,64 @@ public class NDRCommonQuestionsDictionary {
         return "";
     }
 
-    public FingerPrintType getPatientsFingerPrint(int id, DBConnection connResult) {
-        Connection connection;
+    public FingerPrintType getPatientsFingerPrint(int id) {
         try {
-
-            //  DBConnection connResult = Utils.getNmrsConnectionDetails();
-            connection = DriverManager.getConnection(connResult.getUrl(), connResult.getUsername(), connResult.getPassword());
-            Statement statement = connection.createStatement();
-            String sqlStatement = ("SELECT template, fingerPosition, date_created,creator FROM biometricinfo WHERE patient_Id = " + id);
-            ResultSet result = statement.executeQuery(sqlStatement);
+            List<BiometricInfo> biometricInfos = nigeriaemrService.getBiometricInfoByPatientId(id);
             FingerPrintType fingerPrintsType = new FingerPrintType();
-            if (result.next()) {
+            if (biometricInfos.size() > 0) {
                 RightHandType rightFingerType = new RightHandType();
                 LeftHandType leftFingerType = new LeftHandType();
                 XMLGregorianCalendar dataCaptured = null;
-                Integer creator = null;
-                while (result.next()) {
-                    String fingerPosition = result.getString("fingerPosition");
-                    creator = result.getInt("creator");
-                    dataCaptured = Utils.getXmlDateTime(result.getDate("date_created"));
+                for (BiometricInfo biometricInfo: biometricInfos) {
+                    String fingerPosition = biometricInfo.getFingerPosition();
+                    dataCaptured = Utils.getXmlDateTime(biometricInfo.getDateCreated());
                     switch (fingerPosition) {
                         case "RightThumb":
-                            rightFingerType.setRightThumb(result.getString("template"));
+                            rightFingerType.setRightThumb(biometricInfo.getTemplate());
                             break;
                         case "RightIndex":
-                            rightFingerType.setRightIndex(result.getString("template"));
+                            rightFingerType.setRightIndex(biometricInfo.getTemplate());
                             break;
                         case "RightMiddle":
-                            rightFingerType.setRightMiddle(result.getString("template"));
+                            rightFingerType.setRightMiddle(biometricInfo.getTemplate());
                             break;
                         case "RightWedding":
-                            rightFingerType.setRightWedding(result.getString("template"));
+                            rightFingerType.setRightWedding(biometricInfo.getTemplate());
                             break;
                         case "RightSmall":
-                            rightFingerType.setRightSmall(result.getString("template"));
+                            rightFingerType.setRightSmall(biometricInfo.getTemplate());
                             break;
                         case "LeftThumb":
-                            leftFingerType.setLeftThumb(result.getString("template"));
+                            leftFingerType.setLeftThumb(biometricInfo.getTemplate());
                             break;
                         case "LeftIndex":
-                            leftFingerType.setLeftIndex(result.getString("template"));
+                            leftFingerType.setLeftIndex(biometricInfo.getTemplate());
                             break;
                         case "LeftMiddle":
-                            leftFingerType.setLeftMiddle(result.getString("template"));
+                            leftFingerType.setLeftMiddle(biometricInfo.getTemplate());
                             break;
                         case "LeftWedding":
-                            leftFingerType.setLeftWedding(result.getString("template"));
+                            leftFingerType.setLeftWedding(biometricInfo.getTemplate());
                             break;
                         case "LeftSmall":
-                            leftFingerType.setLeftSmall(result.getString("template"));
+                            leftFingerType.setLeftSmall(biometricInfo.getTemplate());
                             break;
                     }
                 }
-              
-//                if (creator == 0) {
-//                    fingerPrintsType.setSource("N");
-//                } else if (creator == 1) {
-//                    fingerPrintsType.setSource("M");
-//                } else {
-//                    fingerPrintsType.setSource("UNK");
-//                }
-                fingerPrintsType.setDateCaptured(dataCaptured);
 
-              //  fingerPrintsType.setPresent(true);
-                //fingerPrintsType.setLeftHand(leftHand);
-                //fingerPrintsType.setRightHand(rightHand);
+                fingerPrintsType.setDateCaptured(dataCaptured);
                 fingerPrintsType.setRightHand(rightFingerType);
                 fingerPrintsType.setLeftHand(leftFingerType);
-            } else {
-                connection.close();
-                return null;
+                return fingerPrintsType;
             }
-            connection.close();
-            return fingerPrintsType;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LogFormat.FATAL, LoggerUtils.LogLevel.live.live);
-        } catch (DatatypeConfigurationException e) {
-            e.printStackTrace();
         }
         return null;
     }
 
-    public CommonQuestionsType createCommonQuestionType(Patient pts, List<Encounter> encounters, List<Obs> allObs) throws DatatypeConfigurationException {
+    public CommonQuestionsType createCommonQuestionType(Patient pts, Encounter lastEncounterDate, List<Obs> allObs) throws DatatypeConfigurationException {
         Obs obs = null;
         Date valueDateTime = null;
         int valueCoded = 0;
@@ -426,7 +406,7 @@ public class NDRCommonQuestionsDictionary {
             }
 
             try {
-                Encounter lastEncounterDate = Utils.getLastEncounter(encounters); //(pts);
+//                Encounter lastEncounterDate = Utils.getLastEncounter(encounters); //(pts);
                 if (lastEncounterDate != null) {
                     common.setDateOfLastReport(getXmlDate(lastEncounterDate.getEncounterDatetime()));
                 }
@@ -442,7 +422,8 @@ public class NDRCommonQuestionsDictionary {
                     common.setDiagnosisDate(getXmlDate(valueDateTime));
                 }
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                        LoggerUtils.LogLevel.live);
             }
 
             if (pts.getGender().equalsIgnoreCase("F")) {
@@ -511,11 +492,12 @@ HIVQuestionsType
  -EnrolledInHIVCareDate
  -InitialTBStatus (1659)
      */
-    public HIVQuestionsType createHIVQuestionType(Patient patient, List<Encounter> allEncounterList, List<Obs> allObsList) throws DatatypeConfigurationException {
+    public HIVQuestionsType createHIVQuestionType(Patient patient, List<Obs> allObsList) throws DatatypeConfigurationException {
      //   Integer[] targetEncounterTypes = {Utils.ADULT_INITIAL_ENCOUNTER_TYPE, Utils.PED_INITIAL_ENCOUNTER_TYPE, Utils.HIV_Enrollment_Encounter_Type_Id, Utils.ART_COMMENCEMENT_ENCOUNTER_TYPE, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
         Integer[] targetEncounterTypes = {Utils.HIV_Enrollment_Encounter_Type_Id, Utils.ART_COMMENCEMENT_ENCOUNTER_TYPE, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
         HIVQuestionsType hivQuestionsType = null;
-        List<Obs> obsList = Utils.extractObsListForEncounterType(allObsList, targetEncounterTypes);
+        List<Obs> unsortedObsList = Utils.extractObsListForEncounterType(allObsList, targetEncounterTypes);
+        List<Obs> obsList = Utils.sortObs(unsortedObsList);
         Obs obs = null;
         int valueCoded = 0, valueNumericInt = 0;
 
@@ -523,9 +505,19 @@ HIVQuestionsType
         String ndrCode = "";
         FacilityType facilityType = null;
         CodedSimpleType cst = null;
-        if (obsList != null && !obsList.isEmpty()) {
+        
+        List<Integer> obsCodeList = Arrays.asList(Utils.CARE_ENTRY_POINT_CONCEPT,Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT,
+                Utils.MODE_OF_HIV_TEST,Utils.PRIOR_ART_CONCEPT,Utils.MEDICAL_ELIGIBLE_DATE_CONCEPT,Utils.REASON_MEDICALLY_ELIGIBLE_CONCEPT,
+                Utils.DATE_INITIAL_ADHERENCE_COUNCELING_CONCEPT,Utils.TRANSFERRED_IN_DATE,Utils.TRANSFERRED_IN_FROM,
+                Utils.CURRENT_REGIMEN_LINE_CONCEPT,Utils.WHO_CLINICAL_STAGGING_AT_START_CONCEPT,Utils.WEIGHT_AT_START_CONCEPT,
+                Utils.CHILD_HEIGHT_AT_START, Utils.CHILD_HEIGHT_AT_START,Utils.FUNCTIONAL_STATUS_ART_START,
+                Utils.CD4_AT_START,Utils.TRANSFER_OUT_DATE,Utils.INITIAL_TB_STATUS);
+        
+        Map<Integer,Obs> obsMap = Utils.extractObs(obsCodeList,obsList);
+        
+        if (!obsList.isEmpty()) {
             hivQuestionsType = new HIVQuestionsType();
-            obs = Utils.extractLastObs(Utils.CARE_ENTRY_POINT_CONCEPT, obsList);
+            obs = obsMap.get(Utils.CARE_ENTRY_POINT_CONCEPT);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
@@ -534,12 +526,12 @@ HIVQuestionsType
                 }
 
             }
-            obs = Utils.extractLastObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, obsList);
+            obs = obsMap.get(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT);
             if (obs != null && obs.getValueDate() != null) {
                 valueDateTime = obs.getValueDate();
                 hivQuestionsType.setFirstConfirmedHIVTestDate(getXmlDate(valueDateTime));
             }
-            obs = Utils.extractLastObs(Utils.MODE_OF_HIV_TEST, obsList);
+            obs = obsMap.get(Utils.MODE_OF_HIV_TEST);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
@@ -549,34 +541,34 @@ HIVQuestionsType
             }
             // Where first tested positive missing
 
-            obs = Utils.extractLastObs(Utils.PRIOR_ART_CONCEPT, obsList);
+            obs = obsMap.get(Utils.PRIOR_ART_CONCEPT);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setPriorArt(ndrCode);
             }
-            obs = Utils.extractLastObs(Utils.MEDICAL_ELIGIBLE_DATE_CONCEPT, obsList);
+            obs = obsMap.get(Utils.MEDICAL_ELIGIBLE_DATE_CONCEPT);
             if (obs != null) {
                 valueDateTime = obs.getValueDate();
                 hivQuestionsType.setMedicallyEligibleDate(getXmlDate(valueDateTime));
             }
-            obs = Utils.extractLastObs(Utils.REASON_MEDICALLY_ELIGIBLE_CONCEPT, obsList);
+            obs = obsMap.get(Utils.REASON_MEDICALLY_ELIGIBLE_CONCEPT);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setReasonMedicallyEligible(ndrCode);
             }
-            obs = Utils.extractLastObs(Utils.DATE_INITIAL_ADHERENCE_COUNCELING_CONCEPT, obsList);
+            obs = obsMap.get(Utils.DATE_INITIAL_ADHERENCE_COUNCELING_CONCEPT);
             if (obs != null) {
                 valueDateTime = obs.getValueDate();
                 hivQuestionsType.setInitialAdherenceCounselingCompletedDate(Utils.getXmlDate(valueDateTime));
             }
-            obs = Utils.extractLastObs(Utils.TRANSFERRED_IN_DATE, obsList);
+            obs = obsMap.get(Utils.TRANSFERRED_IN_DATE);
             if (obs != null) {
                 valueDateTime = obs.getValueDate();
                 hivQuestionsType.setTransferredInDate(Utils.getXmlDate(valueDateTime));
             }
-            obs = Utils.extractLastObs(Utils.TRANSFERRED_IN_FROM, obsList);
+            obs = obsMap.get(Utils.TRANSFERRED_IN_FROM);
             if (obs != null) {
                 String transferredInFromFacility = "";
                 transferredInFromFacility = obs.getValueText();
@@ -587,10 +579,10 @@ HIVQuestionsType
                 hivQuestionsType.setTransferredInFrom(facilityType);
             }
             //Need to create a transferred in patient id
-            obs = Utils.extractLastObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsList);
+            obs = obsMap.get(Utils.CURRENT_REGIMEN_LINE_CONCEPT);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
-                obs = Utils.extractLastObs(valueCoded, obsList);
+                obs = Utils.extractLastObsFromSortedList(valueCoded, obsList);
                 if (obs != null && obs.getValueCoded() != null) {
                     valueCoded = obs.getValueCoded().getConceptId();
                     ndrCode = pharmacyDictionary.getRegimenMapValue(valueCoded);
@@ -605,29 +597,29 @@ HIVQuestionsType
                 //valueDateTime=obs.getValueDate();
                 hivQuestionsType.setARTStartDate(Utils.getXmlDate(artStartDate));
             }
-            obs = Utils.extractLastObs(Utils.WHO_CLINICAL_STAGGING_AT_START_CONCEPT, obsList);
+            obs = obsMap.get(Utils.WHO_CLINICAL_STAGGING_AT_START_CONCEPT);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setWHOClinicalStageARTStart(ndrCode);
             }
-            obs = Utils.extractLastObs(Utils.WEIGHT_AT_START_CONCEPT, obsList);
+            obs = obsMap.get(Utils.WEIGHT_AT_START_CONCEPT);
             if (obs != null && obs.getValueNumeric() != null) {
                 valueNumericInt = obs.getValueNumeric().intValue();
                 hivQuestionsType.setWeightAtARTStart(valueNumericInt);
             }
-            obs = Utils.extractLastObs(Utils.CHILD_HEIGHT_AT_START, obsList);
+            obs = obsMap.get(Utils.CHILD_HEIGHT_AT_START);
             if (obs != null && obs.getValueNumeric() != null) {
                 valueNumericInt = obs.getValueNumeric().intValue();
                 hivQuestionsType.setChildHeightAtARTStart(valueNumericInt);
             }
-            obs = Utils.extractLastObs(Utils.FUNCTIONAL_STATUS_ART_START, obsList);
+            obs = obsMap.get(Utils.FUNCTIONAL_STATUS_ART_START);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setFunctionalStatusStartART(ndrCode);
             }
-            obs = Utils.extractLastObs(Utils.CD4_AT_START, obsList);
+            obs = obsMap.get(Utils.CD4_AT_START);
             if (obs != null && obs.getValueNumeric() != null) {
                 valueNumericInt = obs.getValueNumeric().intValue();
                 hivQuestionsType.setCD4AtStartOfART(String.valueOf(valueNumericInt));
@@ -636,7 +628,7 @@ HIVQuestionsType
             if (obs != null) {
                 hivQuestionsType.setPatientTransferredOut(Boolean.TRUE);
             }
-            obs = Utils.extractLastObs(Utils.TRANSFER_OUT_DATE, obsList);
+            obs = obsMap.get(Utils.TRANSFER_OUT_DATE);
             if (obs != null) {
                 valueDateTime = obs.getValueDate();
                 hivQuestionsType.setTransferredOutDate(getXmlDate(valueDateTime));
@@ -653,7 +645,7 @@ HIVQuestionsType
             if (enrollmentDate != null) {
                 hivQuestionsType.setEnrolledInHIVCareDate(Utils.getXmlDate(enrollmentDate)); 
             }
-            obs = Utils.extractLastObs(Utils.INITIAL_TB_STATUS, obsList);
+            obs = obsMap.get(Utils.INITIAL_TB_STATUS);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getMappedValue(valueCoded);
@@ -665,9 +657,9 @@ HIVQuestionsType
 
     }
 
-    public ConditionSpecificQuestionsType createConditionSpecificQuestionType(Patient patient, List<Encounter> allEncounterList, List<Obs> allObsList) throws DatatypeConfigurationException {
+    public ConditionSpecificQuestionsType createConditionSpecificQuestionType(Patient patient, List<Obs> allObsList) throws DatatypeConfigurationException {
         ConditionSpecificQuestionsType conditionSpecificQuestion = new ConditionSpecificQuestionsType();
-        HIVQuestionsType hivQuestionType = createHIVQuestionType(patient, allEncounterList, allObsList);
+        HIVQuestionsType hivQuestionType = createHIVQuestionType(patient, allObsList);
         conditionSpecificQuestion.setHIVQuestions(hivQuestionType);
         return conditionSpecificQuestion;
     }

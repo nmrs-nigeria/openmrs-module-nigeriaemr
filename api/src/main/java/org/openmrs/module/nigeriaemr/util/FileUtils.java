@@ -2,7 +2,6 @@ package org.openmrs.module.nigeriaemr.util;
 
 import java.io.File;
 import java.math.RoundingMode;
-import java.nio.file.Path;
 import java.text.DecimalFormat;
 
 public class FileUtils {
@@ -27,14 +26,18 @@ public class FileUtils {
 	public static boolean deleteFolder(String folder, boolean deleteSource) {
 		boolean success = false;
 		File file = new File(folder);
-		File[] files = file.listFiles();
-		if (files != null && files.length > 0) {
-			for (File subFile : files) {
-				success = subFile.delete();
+		if (file.exists()) {
+			File[] files = file.listFiles();
+			if (files != null && files.length > 0) {
+				for (File subFile : files) {
+					success = subFile.delete();
+				}
 			}
+			if (deleteSource)
+				success = file.delete();
+		} else {
+			success = true;
 		}
-		if (deleteSource)
-			success = file.delete();
 		
 		return success;
 	}
@@ -61,5 +64,19 @@ public class FileUtils {
 			}
 			return getFileSize(length);
 		}
+	}
+	
+	public static int getFileCount(File file) {
+		if (file.exists() && !file.isFile()) {
+			File[] files = file.listFiles();
+			if (files != null) {
+				return files.length;
+			}
+		}
+		return 0;
+	}
+	
+	public static String getFileProgress(File file, int total) {
+		return getFileCount(file) + " of " + total + " patients processed";
 	}
 }

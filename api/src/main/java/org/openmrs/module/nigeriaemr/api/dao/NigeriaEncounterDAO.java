@@ -13,4 +13,9 @@ public interface NigeriaEncounterDAO extends EncounterDAO {
 	List<Encounter> getEncountersByPatient(Patient patient, Date fromDate, Date toDate) throws DAOException;
 	
 	List<Encounter> getEncountersByEncounterDate(Date fromDate, Date toDate) throws DAOException;
+	
+	Encounter getLastEncounterByPatient(Patient patient, Date fromDate, Date toDate) throws DAOException;
+	
+	List<Encounter> getEncountersByEncounterTypeIds(Patient patient, Date fromDate, Date toDate,
+	        List<Integer> encounterTypeIds, boolean asc, int size) throws DAOException;
 }

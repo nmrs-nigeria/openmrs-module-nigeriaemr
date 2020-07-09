@@ -9,6 +9,8 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.HIVEncounterType;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
@@ -49,6 +51,7 @@ public class ClinicalDictionary {
 
     private StringJoiner notedSide_Effects = new StringJoiner(",");
     private StringJoiner otherOI_Effects = new StringJoiner(",");
+    NigeriaEncounterService nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 
     public ClinicalDictionary() {
         loadDictionary();
@@ -263,7 +266,7 @@ public class ClinicalDictionary {
     /*
          Completed
      */
-    public List<HIVEncounterType> createHIVEncounterType(Patient patient, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
+    public List<HIVEncounterType> createHIVEncounterType(Patient patient, Date fromDate, Date toDate, List<Obs> allPatientObsList) throws DatatypeConfigurationException {
 
         List<HIVEncounterType> hivEncounterTypeList = new ArrayList<HIVEncounterType>();
         HIVEncounterType hivEncounterType = null;
@@ -273,20 +276,21 @@ public class ClinicalDictionary {
             Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE,
             Utils.PHARMACY_ENCOUNTER_TYPE,
             Utils.CARE_CARD_ENCOUNTER_TYPE};
-        Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(patient, allPatientEncounterList, encounterTypeArr);
+        List<Encounter> allPatientEncounterList = nigeriaEncounterService.getEncountersByEncounterTypeIds(patient,fromDate, toDate,Arrays.asList(encounterTypeArr));
+        Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(allPatientEncounterList);
         List<Obs> obsPerVisitDate = null;
-        Date artStartDate = Utils.extractARTStartDate(patient, allPatientObsList);//Optimize for performance
+//        Date artStartDate = Utils.extractARTStartDate(patient, allPatientObsList);//Optimize for performance
         for (Date date : visitDateSet) {
             obsPerVisitDate = Utils.extractObsPerVisitDate(date, allPatientObsList);
-            if (obsPerVisitDate != null && !obsPerVisitDate.isEmpty()) {
-                hivEncounterType = createHIVEncounterType(patient, date, obsPerVisitDate, artStartDate);
+            if (!obsPerVisitDate.isEmpty()) {
+                hivEncounterType = createHIVEncounterType(patient, date, obsPerVisitDate);
             }
             hivEncounterTypeList.add(hivEncounterType);
         }
         return hivEncounterTypeList;
     }
 
-    public HIVEncounterType createHIVEncounterType(Patient patient, Date visitDate, List<Obs> obsListForOneVisit, Date artStartDate) throws DatatypeConfigurationException {
+    public HIVEncounterType createHIVEncounterType(Patient patient, Date visitDate, List<Obs> obsListForOneVisit) throws DatatypeConfigurationException {
 
         HIVEncounterType hivEncounterType = null;
         String visitID = "", pepfarID = "", ndrCode = "";
@@ -306,9 +310,20 @@ public class ClinicalDictionary {
         hivEncounterType.setVisitDate(Utils.getXmlDate(visitDate));
         //artStartDate=Utils.extractARTStartDate(patient, allObsForPatient);
 
+        List<Integer> obsCodeList = Arrays.asList(Utils.NEXT_APPOINTMENT_DATE_CONCEPT,Utils.WEIGHT_CONCEPT,Utils.CHILD_HEIGHT_CONCEPT,
+                Utils.BLOOD_PRESSURE_SYSTOLIC_CONCEPT, Utils.BLOOD_PRESSURE_DYSTOLIC_CONCEPT, Utils.PREGNANCY_BREASTFEEDING_CONCEPT,
+                Utils.FAMILY_PLANNING_STATUS_CONCEPT,Utils.FAMILY_PLANNING_METHOD_CONCEPT,Utils.FUNCTIONAL_STATUS_CONCEPT,
+                Utils.WHO_CLINICAL_STAGE_CONCEPT,Utils.TB_STATUS_CONCEPT, Utils.CURRENT_REGIMEN_LINE_CONCEPT,
+                Utils.OI_DRUGS_GROUPING_CONCEPT_SET,Utils.ARV_DRUG_STRENGTH_CONCEPT,
+                Utils.COTRIMOXAZOLE_ADHERENCE_CONCEPT, Utils.INH_ADHERENCE_CONCEPT,Utils.CD4_COUNT_CONCEPT,Utils.VISIT_TYPE_CONCEPT,
+                Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT,Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT,
+                Utils.ARV_ADHERENCE_CONCEPT);
+
+        Map<Integer, Obs> obsMap = Utils.extractObs(obsCodeList,obsListForOneVisit);
+
         DateTime nextAppointmentDate = null;
         //  nextAppointmentDate = Utils.extractMedicationDuration(visitDate, obsListForOneVisit);
-        obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.NEXT_APPOINTMENT_DATE_CONCEPT);
         if (obs != null) {
             nextAppointmentDate = new DateTime(obs.getValueDate());
             hivEncounterType.setNextAppointmentDate(Utils.getXmlDate(nextAppointmentDate.toDate()));
@@ -320,33 +335,33 @@ public class ClinicalDictionary {
             hivEncounterType.setDurationOnArt(daysOnARV);
         }
 
-        obs = Utils.extractObs(Utils.WEIGHT_CONCEPT, obsListForOneVisit); // Weight
+        obs = obsMap.get(Utils.WEIGHT_CONCEPT); // Weight
         if (obs != null && obs.getValueNumeric() != null) {
             hivEncounterType.setWeight(obs.getValueNumeric().intValue());
         }
-        obs = Utils.extractObs(Utils.CHILD_HEIGHT_CONCEPT, obsListForOneVisit); // Height
+        obs = obsMap.get(Utils.CHILD_HEIGHT_CONCEPT); // Height
         if (obs != null && obs.getValueNumeric() != null) {
             hivEncounterType.setChildHeight(obs.getValueNumeric().intValue());
         }
         Obs obsSystolic = null, obsDystolic = null;
         String bloodPressure = "";
         String systolicBP = "", diastolicBP = "";
-        obsSystolic = Utils.extractObs(Utils.BLOOD_PRESSURE_SYSTOLIC_CONCEPT, obsListForOneVisit);
-        obsDystolic = Utils.extractObs(Utils.BLOOD_PRESSURE_DYSTOLIC_CONCEPT, obsListForOneVisit);
+        obsSystolic = obsMap.get(Utils.BLOOD_PRESSURE_SYSTOLIC_CONCEPT);
+        obsDystolic = obsMap.get(Utils.BLOOD_PRESSURE_DYSTOLIC_CONCEPT);
         if (obsSystolic != null && obsSystolic.getValueNumeric() != null && obsDystolic != null && obsDystolic.getValueNumeric() != null) {
             systolicBP = String.valueOf(obsSystolic.getValueNumeric().intValue());
             diastolicBP = String.valueOf(obsDystolic.getValueNumeric().intValue());
             bloodPressure = StringUtils.join(systolicBP, "/", diastolicBP);
             hivEncounterType.setBloodPressure(bloodPressure);
         }
-        obs = Utils.extractObs(Utils.PREGNANCY_BREASTFEEDING_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.PREGNANCY_BREASTFEEDING_CONCEPT);
         //Verify that all value coded concepts has been mapped
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             ndrCode = getMappedValue(valueCoded);
             hivEncounterType.setEDDandPMTCTLink(ndrCode);
         }
-        obs = Utils.extractObs(Utils.FAMILY_PLANNING_STATUS_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.FAMILY_PLANNING_STATUS_CONCEPT);
         //Does False Mean Not on Family Planninng
         if (obs != null && obs.getValueAsBoolean() != null) {
             valueBoolean = obs.getValueAsBoolean();
@@ -357,25 +372,25 @@ public class ClinicalDictionary {
             }
         }
         //Verify that all family planning methods are mapped
-        obs = Utils.extractObs(Utils.FAMILY_PLANNING_METHOD_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.FAMILY_PLANNING_METHOD_CONCEPT);
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             ndrCode = getMappedValue(valueCoded);
             hivEncounterType.setPatientFamilyPlanningMethodCode(ndrCode);
         }
-        obs = Utils.extractObs(Utils.FUNCTIONAL_STATUS_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.FUNCTIONAL_STATUS_CONCEPT);
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             ndrCode = getMappedValue(valueCoded);
             hivEncounterType.setFunctionalStatus(ndrCode);
         }
-        obs = Utils.extractObs(Utils.WHO_CLINICAL_STAGE_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.WHO_CLINICAL_STAGE_CONCEPT);
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             ndrCode = getMappedValue(valueCoded);
             hivEncounterType.setWHOClinicalStage(ndrCode);
         }
-        obs = Utils.extractObs(Utils.TB_STATUS_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.TB_STATUS_CONCEPT);
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             ndrCode = getMappedValue(valueCoded);
@@ -392,7 +407,6 @@ public class ClinicalDictionary {
             }
             hivEncounterType.setOtherOIOtherProblems(otherOI_Effects.toString());
         }
-        //  obs = Utils.extractObs(Utils.NOTED_SIDE_EFFECT_CONCEPT, obsListForOneVisit);
         obsL = Utils.extractObsList(Utils.NOTED_SIDE_EFFECT_CONCEPT, obsListForOneVisit);
         if (!obsL.isEmpty()) {
             for (Obs ob : obsL) {
@@ -405,7 +419,7 @@ public class ClinicalDictionary {
 
             hivEncounterType.setNotedSideEffects(notedSide_Effects.toString());
         }
-        obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.CURRENT_REGIMEN_LINE_CONCEPT);
         String regimenName = "";
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
@@ -422,15 +436,15 @@ public class ClinicalDictionary {
         }
         Obs oiDrugNameObs = null, oiStrengthObs = null;
         //Get the drugs that was entered for the day
-        obs = Utils.extractObs(Utils.OI_DRUGS_GROUPING_CONCEPT_SET, obsListForOneVisit);
+        obs = obsMap.get(Utils.OI_DRUGS_GROUPING_CONCEPT_SET);
         if (obs != null) {
 
             Set<Obs> obsGroupMembersSet = obs.getGroupMembers();
-            List<Obs> obsGroupMembersList = new ArrayList<Obs>(obsGroupMembersSet);
+            List<Obs> obsGroupMembersList = new ArrayList<>(obsGroupMembersSet);
             oiDrugNameObs = Utils.extractObsByValues(Utils.OI_DRUGS_CONCEPT, Utils.COTRIMOXAZOLE_DRUG_CONCEPT, obsGroupMembersList);
             // What to do if they select wrong strength for CTX
             if (oiDrugNameObs != null) {
-                oiStrengthObs = Utils.extractObs(Utils.ARV_DRUG_STRENGTH_CONCEPT, obsGroupMembersList);
+                oiStrengthObs = obsMap.get(Utils.ARV_DRUG_STRENGTH_CONCEPT);
                 if (oiStrengthObs != null && oiStrengthObs.getValueCoded() != null) {
                     valueCoded = oiStrengthObs.getValueCoded().getConceptId();
                     switch (valueCoded) {
@@ -456,19 +470,19 @@ public class ClinicalDictionary {
             }
 
         }
-        obs = Utils.extractObs(Utils.COTRIMOXAZOLE_ADHERENCE_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.COTRIMOXAZOLE_ADHERENCE_CONCEPT);
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             ndrCode = getMappedValue(valueCoded);
             hivEncounterType.setCotrimoxazoleAdherence(ndrCode);
         }
-        obs = Utils.extractObs(Utils.INH_ADHERENCE_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.INH_ADHERENCE_CONCEPT);
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             ndrCode = getMappedValue(valueCoded);
             hivEncounterType.setINHAdherence(ndrCode);
         }
-        obs = Utils.extractObs(Utils.CD4_COUNT_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.CD4_COUNT_CONCEPT);
         int cd4Count = 0;
         if (obs != null && obs.getValueNumeric() != null) {
             cd4Count = obs.getValueNumeric().intValue();
@@ -477,7 +491,7 @@ public class ClinicalDictionary {
         }
 
         //started new data elements
-        obs = Utils.extractObs(Utils.VISIT_TYPE_CONCEPT, obsListForOneVisit);//PrescribedRegimenInitialIndicator
+        obs = obsMap.get(Utils.VISIT_TYPE_CONCEPT);//PrescribedRegimenInitialIndicator
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             if (valueCoded == Utils.VISIT_TYPE_INITIAL_CONCEPT) {
@@ -490,7 +504,7 @@ public class ClinicalDictionary {
         hivEncounterType.setSubstitutionIndicator(retrieveSubstitutionIndicator(obsListForOneVisit));//SubstitutionIndicator
         hivEncounterType.setSwitchIndicator(retrieveSwitchIndicator(obsListForOneVisit));//SwitchIndicator
 
-        obs = Utils.extractObs(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT, obsListForOneVisit);//ReasonForRegimenSwitchSubs
+        obs = obsMap.get(Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT);//ReasonForRegimenSwitchSubs
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             ndrCode = getMappedValue(valueCoded);
@@ -498,14 +512,14 @@ public class ClinicalDictionary {
         }
         
         
-        obs = Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForOneVisit);
+        obs = obsMap.get(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 if (valueCoded == Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT) {
                     hivEncounterType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
                 }
             } else {
-                obs = Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForOneVisit);
+                obs = obsMap.get(Utils.ARV_ADHERENCE_CONCEPT);
                 if (obs != null && obs.getValueCoded() != null) {
                     valueCoded = obs.getValueCoded().getConceptId();
                     if (valueCoded == Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT) {
@@ -529,47 +543,52 @@ public class ClinicalDictionary {
     }
 
     private Boolean retrieveSubstitutionIndicator(List<Obs> obsList) {
-        Obs obs = null;
         int valueCoded = 0;
-        Boolean ans = Boolean.FALSE;
-        obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN, obsList);
+
+        List<Integer> obsCodeList = Arrays.asList(Utils.REGIMEN_MEDICATION_PLAN,
+                Utils.REGIMEN_MEDICATION_PLAN_SUBSTITUTE_REGIMEN_CONCEPT_VALUE);
+
+        Map<Integer, Obs> obsMap = Utils.extractObs(obsCodeList,obsList);
+        Obs obs = obsMap.get(Utils.REGIMEN_MEDICATION_PLAN);
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             if (valueCoded == Utils.REGIMEN_MEDICATION_PLAN_SUBSTITUTE_REGIMEN_CONCEPT_VALUE) {
-                ans = Boolean.TRUE;
+                return Boolean.TRUE;
             }
         } else {
-            obs = Utils.extractObs(Utils.PICKUP_REASON_CONCEPT, obsList);
+            obs = obsMap.get(Utils.PICKUP_REASON_CONCEPT);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SUBSTITUTE_VALUE) {
-                    ans = Boolean.TRUE;
+                    return Boolean.TRUE;
                 }
             }
         }
-        return ans;
+        return Boolean.FALSE;
     }
 
     private Boolean retrieveSwitchIndicator(List<Obs> obsList) {
-        Obs obs = null;
         int valueCoded = 0;
-        Boolean ans = Boolean.FALSE;
-        obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN, obsList);
+        List<Integer> obsCodeList = Arrays.asList(Utils.REGIMEN_MEDICATION_PLAN,
+                Utils.PICKUP_REASON_CONCEPT);
+
+        Map<Integer, Obs> obsMap = Utils.extractObs(obsCodeList,obsList);
+        Obs obs = obsMap.get(Utils.REGIMEN_MEDICATION_PLAN);
         if (obs != null && obs.getValueCoded() != null) {
             valueCoded = obs.getValueCoded().getConceptId();
             if (valueCoded == Utils.REGIMEN_MEDICATION_PLAN_SWITCH_REGIMEN_CONCEPT_VALUE) {
-                ans = Boolean.TRUE;
+                return Boolean.TRUE;
             }
         } else {
-            obs = Utils.extractObs(Utils.PICKUP_REASON_CONCEPT, obsList);
+            obs = obsMap.get(Utils.PICKUP_REASON_CONCEPT);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SWITCH_VALUE) {
-                    ans = Boolean.TRUE;
+                    return Boolean.TRUE;
                 }
             }
         }
-        return ans;
+        return Boolean.FALSE;
     }
 
 }

@@ -3,47 +3,78 @@ package org.openmrs.module.nigeriaemr.ndrfactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
+import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.ndr.Container;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NDRExtractor {
 	
-	private Patient patient;
+	private final String patientUUid;
 	
-	private String DATIMID;
+	private final String DATIMID;
 	
-	private String reportFolder;
+	private final String reportFolder;
 	
-	private FacilityType facility;
+	private final FacilityType facility;
 	
-	private int counter;
+	private final int counter;
 	
-	private UserContext userContext;
+	private final UserContext userContext;
 	
-	private String formattedDate;
+	private final String formattedDate;
 	
-	private Marshaller jaxbMarshaller;
+	private final NDRConverter generator;
 	
-	private NDRConverter generator;
+	private final JAXBContext jaxbContext;
 	
-	public NDRExtractor(Patient patient, String DATIMID, String reportFolder, FacilityType facility, int counter,
-	    UserContext userContext, String formattedDate, Marshaller jaxbMarshaller) {
-		this.patient = patient;
+	private int exportProcessId;
+	
+	NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+	
+	public NDRExtractor(UserContext userContext) {
+		this.patientUUid = null;
+		this.DATIMID = null;
+		this.reportFolder = null;
+		this.facility = null;
+		this.counter = 0;
+		this.userContext = userContext;
+		this.formattedDate = null;
+		this.generator = null;
+		this.jaxbContext = null;
+		this.exportProcessId = 0;
+	}
+	
+	public NDRExtractor(String patientUUid, String DATIMID, String reportFolder, FacilityType facility, int counter,
+	    UserContext userContext, String formattedDate, JAXBContext jaxbContext, Date lastDate, Date currentDate,
+	    int exportProcessId) {
+		this.patientUUid = patientUUid;
 		this.DATIMID = DATIMID;
 		this.reportFolder = reportFolder;
 		this.facility = facility;
 		this.counter = counter;
 		this.userContext = userContext;
 		this.formattedDate = formattedDate;
-		this.generator = new NDRConverter(Utils.getIPFullName(), Utils.getIPShortName(), Utils.getNmrsConnectionDetails());
-		this.jaxbMarshaller = jaxbMarshaller;
+		this.generator = new NDRConverter(Utils.getIPFullName(), Utils.getIPShortName(), Utils.getNmrsConnectionDetails(),
+		        lastDate, currentDate);
+		this.jaxbContext = jaxbContext;
+		this.exportProcessId = exportProcessId;
 		
 	}
 	
@@ -60,7 +91,7 @@ public class NDRExtractor {
 		Context.setUserContext(userContext);
 		Context.openSessionWithCurrentUser();
 		try {
-			
+			Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
 			String pepFarId = Utils.getPatientPEPFARId(patient);
 			
 			if (pepFarId != null) { //remove forward slashes / from file names
@@ -101,7 +132,7 @@ public class NDRExtractor {
 					
 					System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
 					if (cnt.getMessageHeader() != null) {
-						writeFile(cnt, aXMLFile, jaxbMarshaller);
+						writeFile(cnt, aXMLFile);
 					}
 				}
 				catch (Exception ex) {
@@ -117,14 +148,50 @@ public class NDRExtractor {
 		}
 	}
 	
-	public void writeFile(Container container, File file, Marshaller jaxbMarshaller) {
-		
+	public void writeFile(Container container, File file) {
 		try {
+			Marshaller jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext);
 			jaxbMarshaller.marshal(container, file);
 		}
 		catch (Exception ex) {
-			System.out.println("File " + file.getName() + " throw an exception \n" + ex.getMessage());
+			LoggerUtils.write(NdrFragmentController.class.getName(), "File " + file.getName() + " throw an exception \n"
+			        + ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
 		}
 	}
 	
+	public void checkIfExportIsComplete(){
+		Context.setUserContext(this.userContext);
+		Context.openSessionWithCurrentUser();
+		try {
+			Map<String, Object> condition = new HashMap<>();
+			condition.put("status", "Done");
+			List<NDRExport> exports = nigeriaemrService.getExports(condition, false);
+			for (NDRExport ndrExport : exports) {
+				String facilityName = Utils.getFacilityName();
+				String DATIMID = Utils.getFacilityDATIMId();
+				String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExport.getDateStarted());
+				String fileName = Utils.getIPShortName() + "_ " + facilityName + "_" + DATIMID + "_" + formattedDate;
+				Utils.updateLast_NDR_Run_Date(ndrExport.getDateStarted());
+				String zipFileName = fileName + ".zip";
+
+				ndrExport.setStatus("Processing"); // update to Processing so another thread won't pick it up
+				nigeriaemrService.saveNdrExportItem(ndrExport);
+
+				String path = Utils.ZipFolder(ndrExport.getContextPath(), ndrExport.getReportFolder(), zipFileName, "NDR");
+				if(!"no new patient record found".equalsIgnoreCase(path)) {
+					ndrExport.setPath(path);
+					ndrExport.setDateEnded(new Date());
+					ndrExport.setStatus("Completed");
+				}else {
+					ndrExport.setDateEnded(new Date());
+					ndrExport.setStatus("Failed");
+				}
+				nigeriaemrService.saveNdrExportItem(ndrExport);
+			}
+		}catch (Exception e){
+			System.out.println(e.getMessage());
+			//ignore error
+		}
+		Context.closeSession();
+	}
 }

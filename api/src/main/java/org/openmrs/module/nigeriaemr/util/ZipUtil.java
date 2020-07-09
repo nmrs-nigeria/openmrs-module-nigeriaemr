@@ -34,16 +34,10 @@ public class ZipUtil {
 		appZip.generateFileList(new File(SOURCE_FOLDER));
 		appZip.zipIt(OUTPUT_ZIP_FILE);
 	}*/
-	public void zipIt(String output_zipFile, boolean deleteSource) {
+	public void zipIt(String output_zipFile) {
 		File zipFile = new File(output_zipFile);
 		if (zipFile.exists())
 			zipFile.delete();
-		zipIt(output_zipFile);
-		if (deleteSource)
-			FileUtils.deleteFolder(SOURCE_FOLDER, true);
-	}
-	
-	public void zipIt(String output_zipFile) {
 		byte[] buffer = new byte[1024];
 		String source = new File(SOURCE_FOLDER).getName();
 		FileOutputStream fos = null;

@@ -4,6 +4,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.model.nigeriaqualped.pediatricartadherencerecord.PediatricARTAdherenceRecordDataSetType;
 import org.openmrs.module.nigeriaemr.model.nigeriaqualped.pediatricartadherencerecord.PediatricARTAdherenceRecordType;
 import org.openmrs.module.nigeriaemr.model.nigeriaqualped.pediatricartregimensincestartingtreatment.PediatricARTRegimenSinceStartingTreatmentRecordDataSetType;
@@ -46,6 +47,8 @@ public class NigeriaQualPaedGenerator {
 	private Date endDate;
 	
 	private String reportFolder;
+	
+	private NigeriaEncounterService nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 	
 	public NigeriaQualPaedGenerator(String facility, String reportFolder, Date startDate, Date endDate) {
 		this.facilityId = facility;
@@ -232,7 +235,7 @@ public class NigeriaQualPaedGenerator {
 		PediatricPatientDemographicsRecordType record = new PediatricPatientDemographicsRecordType();
 		
 		Date artStartDate = Utils.getARTStartDate(pts);
-		Encounter enc = Utils.getLastEncounter(pts, endDate);
+		Encounter enc = nigeriaEncounterService.getLastEncounterByPatient(pts, null, endDate);
 		
 		record.setPatientID(Utils.getPatientPEPFARId(pts));
 		assert artStartDate != null;
