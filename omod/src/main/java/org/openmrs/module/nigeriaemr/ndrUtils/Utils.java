@@ -1253,7 +1253,7 @@ public class Utils {
 		if (props.get(propertyName) != null) {
 			return (String) props.get(propertyName);
 		} else {
-			return (String) defaultValue;
+			return String.valueOf(defaultValue);
 		}
 	}
 }
