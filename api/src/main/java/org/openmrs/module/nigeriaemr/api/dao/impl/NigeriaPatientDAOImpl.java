@@ -57,9 +57,9 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		List<Patient> patients = new ArrayList<Patient>();
 		List<Integer> patientIds;
 		
-		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE encounter.date_created >= :fromDate";
+		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
 		if (toDate != null)
-			query += " AND encounter.date_created <= :toDate";
+			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		

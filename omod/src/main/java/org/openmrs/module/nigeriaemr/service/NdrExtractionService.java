@@ -31,7 +31,7 @@ public class NdrExtractionService {
 	
 	NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 	
-	int numberOfThreads = Integer.parseInt(Utils.getProperty("number_of_ndr_export_threads", 10));
+	int numberOfThreads = Integer.parseInt(Utils.getProperty("number_of_ndr_export_threads", 5));
 	
 	ExecutorService pool = Executors.newFixedThreadPool(numberOfThreads);
 	

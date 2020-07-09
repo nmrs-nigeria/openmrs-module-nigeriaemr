@@ -8,6 +8,7 @@ import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
+import org.openmrs.module.nigeriaemr.model.ndr.EncountersType;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
@@ -134,6 +135,9 @@ public class Utils {
 	public final static int ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT = 165288; // ARV ADHERENCE From Care Card
 	
 	public final static int ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT = 165289; // ARV ADHERENCE From Care Card
+	
+	public final static List<Integer> encounterTypeIds = Arrays.asList(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE,
+	    Utils.Laboratory_Encounter_Type_Id, Utils.PHARMACY_ENCOUNTER_TYPE, Utils.Partner_register_Encounter_Id);
 	
 	/* End of RegimenType Constant */
 	/*
@@ -348,17 +352,12 @@ public class Utils {
         return response;
     }
 	
-	public static Encounter getLatestEncounter(List<Encounter> encs, Integer encounterType) {
-
-        List<Encounter> filteredEncounters = encs.stream().filter(encounter -> Objects.equals(encounterType, encounter.getEncounterType()
-                .getEncounterTypeId()))
-                .collect(Collectors.toList());
-        if (!filteredEncounters.isEmpty()) {
+	public static Encounter getLatestEncounter(List<Encounter> filteredEncounters) {
+        if (filteredEncounters != null && !filteredEncounters.isEmpty()) {
             filteredEncounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
             return filteredEncounters.get(filteredEncounters.size() - 1);
         }
         return null;
-
     }
 	
 	public static String getFacilityName() {
@@ -500,6 +499,26 @@ public class Utils {
 			artStartDate = obs.getValueDate();
 		}
 		return artStartDate;
+	}
+	
+	public static Map<Integer, List<Encounter>> extractEncountersByEncounterTypesId(List<Encounter> encounters) {
+		Map<Integer, List<Encounter>> grouped = new HashMap<>();
+		if(encounters != null && encounters.size()>0){
+			for (Encounter encounter:encounters){
+				if(encounter.getEncounterType()!= null && encounterTypeIds.contains(encounter.getEncounterType().getEncounterTypeId())){
+					if(grouped.get(encounter.getEncounterType().getEncounterTypeId()) == null){
+						List<Encounter> encs = new ArrayList<>();
+						encs.add(encounter);
+						grouped.put(encounter.getEncounterType().getEncounterTypeId(), encs);
+					}else{
+						List<Encounter> groupedEncounters = grouped.get(encounter.getEncounterType().getEncounterTypeId());
+						groupedEncounters.add(encounter);
+						grouped.put(encounter.getEncounterType().getEncounterTypeId(),groupedEncounters);
+					}
+				}
+			}
+		}
+		return grouped;
 	}
 	
 	public static Date extractEnrollmentDate(List<Obs> allPatientObs) {

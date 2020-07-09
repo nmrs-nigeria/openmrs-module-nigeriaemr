@@ -301,14 +301,14 @@ public class PharmacyDictionary {
         return "";
     }
 
-    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient) throws DatatypeConfigurationException {
+    public List<RegimenType> createRegimenTypeList(Patient patient, Map<Integer,List<Encounter>> groupedEncounters) throws DatatypeConfigurationException {
         List<RegimenType> regimenTypeList = new ArrayList<RegimenType>();
 
         RegimenType regimenType = null;
         List<Obs> obsPerVisit = null;
-
-        for (Encounter enc : allEncounterForPatient) {
-            if (enc.getEncounterType().getEncounterTypeId() == Utils.PHARMACY_ENCOUNTER_TYPE) {
+        List<Encounter> allPharmacyEncounterForPatient = groupedEncounters.get(Utils.PHARMACY_ENCOUNTER_TYPE);
+        if(allPharmacyEncounterForPatient != null) {
+            for (Encounter enc : allPharmacyEncounterForPatient) {
                 obsPerVisit = new ArrayList<>(enc.getAllObs());
                 Date visitDate = DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE);
                 regimenType = createRegimenType(patient, visitDate, obsPerVisit);

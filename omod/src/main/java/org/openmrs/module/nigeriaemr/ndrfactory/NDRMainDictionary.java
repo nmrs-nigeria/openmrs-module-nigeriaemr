@@ -202,10 +202,10 @@ public class NDRMainDictionary {
         return clinicalDictionary.createHIVEncounterType(patient, fromDate,  toDate, allObs);
     }
 
-    public List<RegimenType> createRegimenTypeList(Patient patient, List<Encounter> allEncounterForPatient) throws DatatypeConfigurationException {
+    public List<RegimenType> createRegimenTypeList(Patient patient, Map<Integer,List<Encounter>> groupedEncounters) throws DatatypeConfigurationException {
         List<RegimenType> allRegimenTypeList = new ArrayList<RegimenType>();
         try{
-            allRegimenTypeList.addAll(pharmDictionary.createRegimenTypeList(patient, allEncounterForPatient));
+            allRegimenTypeList.addAll(pharmDictionary.createRegimenTypeList(patient, groupedEncounters));
         }catch(Exception ex){
             LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
@@ -303,18 +303,20 @@ public class NDRMainDictionary {
         return healthFacilityVisitsTypes;
     }
 
-    public List<PartnerDetailsType> createPartnerDetails(Patient pts, List<Obs> obsList) throws DatatypeConfigurationException {
+    public List<PartnerDetailsType> createPartnerDetails(Patient pts, Map<Integer, List<Encounter>> grouped, List<Obs> obsList) {
 
         List<PartnerDetailsType> partnerDetailsTypes = new ArrayList<>();
-       try{
-           PartnerDetailsType p_details = htsDictionary.createPartnerDetails(pts, obsList);
-           if (p_details != null) {
-               partnerDetailsTypes.add(p_details);
-           }
-
-       }catch(Exception ex){
-           LoggerUtils.write(NDRMainDictionary.class.getName(),ex.getMessage(),LogFormat.WARNING,LogLevel.debug);
-       }
+        List<Encounter> partnerRegisterEncounterId = grouped.get(Utils.Partner_register_Encounter_Id);
+        try{
+            if (partnerRegisterEncounterId != null && partnerRegisterEncounterId.size() > 0) {
+                PartnerDetailsType p_details = htsDictionary.createPartnerDetails(pts, obsList);
+                if (p_details != null) {
+                    partnerDetailsTypes.add(p_details);
+                }
+            }
+        }catch(Exception ex){
+            LoggerUtils.write(NDRMainDictionary.class.getName(),ex.getMessage(),LogFormat.WARNING,LogLevel.debug);
+        }
         return partnerDetailsTypes;
     }
 }

@@ -41,6 +41,8 @@ public class NDRConverter {
 	
 	private List<Encounter> encounters;
 	
+	private Map<Integer, List<Encounter>> groupedEncounters;
+	
 	private Encounter lastEncounter;
 	
 	private List<Obs> allobs;
@@ -90,6 +92,7 @@ public class NDRConverter {
             if (this.encounters == null || this.encounters.isEmpty()) {
                 return null;
             }
+            groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
 
             this.allobs = Utils.extractObsfromEncounter(filteredEncs);
 //            this.allobs = nigeriaObsService.getObsByEncounters(encounterIds,false);
@@ -130,7 +133,7 @@ public class NDRConverter {
             individualReport.setPatientDemographics(patientDemography);
 
             //retrieve latest encounter for client intake form
-            Encounter intakeEncounter = Utils.getLatestEncounter(this.encounters, ConstantsUtil.ADMISSION_ENCOUNTER_TYPE);
+            Encounter intakeEncounter = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE));
 
             if (intakeEncounter != null) {
                 List<Obs> intakeObs = new ArrayList<>(intakeEncounter.getAllObs());
@@ -279,8 +282,8 @@ public class NDRConverter {
             }
 
 
-            List<Encounter> tempEncs = encounters.stream().filter(e -> e.getEncounterType().getEncounterTypeId() == Utils.Laboratory_Encounter_Type_Id).collect(Collectors.toList());
-            if (!tempEncs.isEmpty()) {
+             List<Encounter> tempEncs = groupedEncounters.get(Utils.Laboratory_Encounter_Type_Id);
+            if (tempEncs != null && !tempEncs.isEmpty()) {
                 Date artStartdate = Utils.extractARTStartDate(patient, allobs);
                 for (Encounter each : tempEncs) {
                     LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
@@ -294,7 +297,7 @@ public class NDRConverter {
 
             //Partner details
             try {
-                List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.allobs);
+                List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.groupedEncounters, this.allobs);
                 if (!partnerDetailsType.isEmpty()) {
                     condition.getPartnerDetails().addAll(partnerDetailsType);
                 }
@@ -303,7 +306,7 @@ public class NDRConverter {
                         LogLevel.live);
             }
 
-            List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, encounters);
+            List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, groupedEncounters);
             if (arvRegimenTypeList != null && arvRegimenTypeList.size() > 0) {
                 condition.getRegimen().addAll(arvRegimenTypeList);
             }

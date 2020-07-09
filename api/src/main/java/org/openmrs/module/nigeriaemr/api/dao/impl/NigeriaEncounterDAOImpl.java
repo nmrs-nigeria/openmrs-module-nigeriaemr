@@ -39,10 +39,12 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		if (patient != null && patient.getPatientId() != null) {
 			criteria.add(Restrictions.eq("patient", patient));
 		}
-		criteria.add(Restrictions.ge("dateCreated", fromDate));
-		//		criteria.add(Restrictions.ge("dateChanged", fromDate));
+		if (fromDate != null) {
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", toDate)));
+		}
+		
 		if (toDate != null) {
-			criteria.add(Restrictions.le("dateCreated", toDate));
+			criteria.add(Restrictions.or(Restrictions.le("dateCreated", toDate), Restrictions.le("dateChanged", toDate)));
 		}
 		return criteria.list();
 	}
@@ -53,11 +55,11 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		Criteria criteria = getSession().createCriteria(Encounter.class);
 		
 		if (fromDate != null) {
-			criteria.add(Restrictions.ge("dateCreated", fromDate));
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", toDate)));
 		}
 		
 		if (toDate != null) {
-			criteria.add(Restrictions.le("dateCreated", toDate));
+			criteria.add(Restrictions.or(Restrictions.le("dateCreated", toDate), Restrictions.le("dateChanged", toDate)));
 		}
 		return criteria.list();
 	}
@@ -67,11 +69,11 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		Criteria criteria = getSession().createCriteria(Encounter.class);
 		criteria.add(Restrictions.ge("patient", patient));
 		if (fromDate != null) {
-			criteria.add(Restrictions.ge("encounterDatetime", fromDate));
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", toDate)));
 		}
 		
 		if (toDate != null) {
-			criteria.add(Restrictions.le("encounterDatetime", toDate));
+			criteria.add(Restrictions.or(Restrictions.le("dateCreated", toDate), Restrictions.le("dateChanged", toDate)));
 		}
 		criteria.addOrder(Order.desc("encounterDatetime"));
 		criteria.setFetchSize(1);
@@ -91,11 +93,11 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		}
 		
 		if (fromDate != null) {
-			criteria.add(Restrictions.ge("encounterDatetime", fromDate));
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", toDate)));
 		}
 		
 		if (toDate != null) {
-			criteria.add(Restrictions.le("encounterDatetime", toDate));
+			criteria.add(Restrictions.or(Restrictions.le("dateCreated", toDate), Restrictions.le("dateChanged", toDate)));
 		}
 		
 		if (encounterTypeIds.size() > 0) {

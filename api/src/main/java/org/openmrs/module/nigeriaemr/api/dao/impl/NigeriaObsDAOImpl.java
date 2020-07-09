@@ -80,10 +80,10 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		Criteria criteria = getSession().createCriteria(Obs.class);
 		criteria.add(Restrictions.eq("voided", includeVoided));
 		if (from != null) {
-			criteria.add(Restrictions.ge("obsDatetime", from));
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", from), Restrictions.ge("dateChanged", from)));
 		}
 		if (to != null) {
-			criteria.add(Restrictions.le("obsDatetime", from));
+			criteria.add(Restrictions.or(Restrictions.le("dateCreated", to), Restrictions.le("dateChanged", to)));
 		}
 		if (person != null) {
 			criteria.add(Restrictions.eq("person", person));
@@ -137,10 +137,10 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		Criteria criteria = getSession().createCriteria(Obs.class);
 		criteria.add(Restrictions.eq("voided", includeVoided));
 		if (from != null) {
-			criteria.add(Restrictions.ge("obsDatetime", from));
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", from), Restrictions.ge("dateChanged", from)));
 		}
 		if (to != null) {
-			criteria.add(Restrictions.le("obsDatetime", from));
+			criteria.add(Restrictions.or(Restrictions.le("dateCreated", to), Restrictions.le("dateChanged", to)));
 		}
 		if (person != null) {
 			criteria.add(Restrictions.eq("person", person));

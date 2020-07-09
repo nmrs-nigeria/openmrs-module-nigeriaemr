@@ -116,6 +116,7 @@ public class NdrFragmentController {
 		List<NDRExport> exports = nigeriaemrService.getExports(condition, false);
 		if(exports.size() > 0 ) return "You already have an export in process, Kindly wait for it to finish";
 		if(filteredPatients == null || filteredPatients.size() <= 0) return "no new patient record found";
+		filteredPatients = filteredPatients.subList(0,1000);
 		ndrExtractionService.export(request,filteredPatients,facilityName,DATIMID,FacilityType,lastDate,currentDate,jaxbContext);
 
 		return "Export is being processed";
