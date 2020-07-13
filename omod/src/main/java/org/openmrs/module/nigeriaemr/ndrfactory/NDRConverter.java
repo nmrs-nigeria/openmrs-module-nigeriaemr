@@ -82,7 +82,7 @@ public class NDRConverter {
             long startTime = System.currentTimeMillis();
             List<Encounter> filteredEncs = nigeriaEncounterService.getEncountersByPatient(pts,this.fromDate,this.toDate);
             this.encounterIds = filteredEncs.stream().map(Encounter::getId).collect(Collectors.toList());
-//            this.lastEncounter = nigeriaEncounterService.getLastEncounterByPatient(patient, this.fromDate,this.toDate);
+            this.lastEncounter = nigeriaEncounterService.getLastEncounterByPatient(patient, this.fromDate,this.toDate);
 
             long endTime = System.currentTimeMillis();
             if ((endTime - startTime) > 1000) {

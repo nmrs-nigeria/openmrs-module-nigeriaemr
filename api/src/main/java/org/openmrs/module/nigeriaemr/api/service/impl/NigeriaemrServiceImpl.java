@@ -18,6 +18,7 @@ import org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao;
 import org.openmrs.module.nigeriaemr.model.BiometricInfo;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +59,7 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	public void updateNdrExportItemProcessedCount(int id, int count) throws APIException {
 		NDRExport ndrExport = getNDRExportById(id);
 		if (ndrExport != null) {
+			ndrExport.setDateEnded(new Date());
 			ndrExport.setPatientsProcessed(count);
 			dao.saveNdrExport(ndrExport);
 		}
@@ -67,6 +69,7 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	public void updateStatus(int id, String status) throws APIException {
 		NDRExport ndrExport = getNDRExportById(id);
 		if (ndrExport != null) {
+			ndrExport.setDateEnded(new Date());
 			ndrExport.setStatus(status);
 			dao.saveNdrExport(ndrExport);
 		}

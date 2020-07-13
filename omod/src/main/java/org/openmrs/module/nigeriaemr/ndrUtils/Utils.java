@@ -806,6 +806,16 @@ public class Utils {
 		return dayDiff;
 	}
 	
+	public static int getDateDiffInMinutes(Date startDate, Date endDate) {
+		int minuteDiff = 0;
+		DateTime startDateTime = new DateTime(startDate);
+		DateTime endDateTime = new DateTime(endDate);
+		if ((endDateTime.isAfter(startDateTime) || endDateTime.isEqual(startDateTime))) {
+			minuteDiff = Minutes.minutesBetween(startDateTime, endDateTime).getMinutes();
+		}
+		return minuteDiff;
+	}
+	
 	public static String getDayDD(Date date) {
 		String dayString = "";
 		DateTime dateTime = new DateTime(date);

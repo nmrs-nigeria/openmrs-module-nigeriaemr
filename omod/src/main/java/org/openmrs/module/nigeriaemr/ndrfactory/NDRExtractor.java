@@ -3,7 +3,6 @@ package org.openmrs.module.nigeriaemr.ndrfactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
-import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
@@ -22,7 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class NDRExtractor {
 	
@@ -44,7 +42,7 @@ public class NDRExtractor {
 	
 	private final JAXBContext jaxbContext;
 	
-	private int exportProcessId;
+	private final int exportProcessId;
 	
 	NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 	
@@ -191,6 +189,21 @@ public class NDRExtractor {
 		}catch (Exception e){
 			System.out.println(e.getMessage());
 			//ignore error
+		}
+
+
+		//Check if any currently in process has failed
+		Map<String, Object> condition = new HashMap<>();
+		condition.put("status", "Processing");
+		List<NDRExport> processingExports = nigeriaemrService.getExports(condition, false);
+		if(processingExports.size() > 0){
+			for(NDRExport ndrExport: processingExports){
+				if(Utils.getDateDiffInMinutes(ndrExport.getDateEnded(), new Date()) > 20){
+					ndrExport.setDateEnded(new Date());
+					ndrExport.setStatus("Failed");
+					nigeriaemrService.saveNdrExportItem(ndrExport);
+				}
+			}
 		}
 		Context.closeSession();
 	}

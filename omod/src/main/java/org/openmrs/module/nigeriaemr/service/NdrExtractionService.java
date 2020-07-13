@@ -63,49 +63,58 @@ public class NdrExtractionService {
         NDRExport export =  nigeriaemrService.saveNdrExportItem(ndrExport);
         int exportProcessId = export.getId();
         UserContext userContext = Context.getUserContext();
-        Thread thread1 = new Thread(() -> {
-            List<Future<?>> futures = new ArrayList<>();
-            try {
-                int counter = 0;
-                Context.setUserContext(userContext);
-                Context.openSessionWithCurrentUser();
-                for (Patient patient : filteredPatients) {
-                    counter++;
+        try {
+            Thread thread1 = new Thread(() -> {
+                try {
+                    List<Future<?>> futures = new ArrayList<>();
+                    int counter = 0;
+                    Context.setUserContext(userContext);
+                    Context.openSessionWithCurrentUser();
+                    for (Patient patient : filteredPatients) {
+                        counter++;
 
-                    int finalCounter = counter;
-                    Thread thread = new Thread(() -> {
-                        try {
-                            NDRExtractor ndrExtractor = new NDRExtractor(patient.getUuid(), DATIMID, reportFolder, facility,
-                                    finalCounter, userContext, formattedDate, jaxbContext, lastDate, currentDate, exportProcessId);
-                            ndrExtractor.extract();
+                        int finalCounter = counter;
+                        Thread thread = new Thread(() -> {
+                            try {
+                                NDRExtractor ndrExtractor = new NDRExtractor(patient.getUuid(), DATIMID, reportFolder, facility,
+                                        finalCounter, userContext, formattedDate, jaxbContext, lastDate, currentDate, exportProcessId);
+                                ndrExtractor.extract();
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    thread.setName("fileName#" + exportProcessId);
-                    futures.add(pool.submit(thread));
-                }
-                while (futures.size()>0){
-                    futures.removeIf(Future::isDone);
-                    int processed = filteredPatients.size() - futures.size();
-                    if(filteredPatients.size() == processed){
-                        nigeriaemrService.updateStatus(exportProcessId,"Done");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        thread.setName("fileName#" + exportProcessId);
+                        futures.add(pool.submit(thread));
                     }
-                    nigeriaemrService.updateNdrExportItemProcessedCount(exportProcessId, processed);
-                    Thread.sleep(1000);
+                    while (futures.size() > 0) {
+                        futures.removeIf(Future::isDone);
+                        int processed = filteredPatients.size() - futures.size();
+                        if (filteredPatients.size() == processed) {
+                            nigeriaemrService.updateStatus(exportProcessId, "Done");
+                        }
+                        if(processed > 0) {
+                            nigeriaemrService.updateNdrExportItemProcessedCount(exportProcessId, processed);
+                        }
+                        Thread.sleep(1000);
+                    }
+                } catch (InterruptedException ex) {
+                    LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                            LoggerUtils.LogLevel.live);
+                    ndrExport.setDateEnded(new Date());
+                    ndrExport.setStatus("Failed");
+                    nigeriaemrService.saveNdrExportItem(ndrExport);
                 }
                 pool.shutdown();
-
-            } catch (Exception ex) {
-                LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                        LoggerUtils.LogLevel.live);
-                ndrExport.setDateEnded(new Date());
-                ndrExport.setStatus("Failed");
-                nigeriaemrService.saveNdrExportItem(ndrExport);
-            }
-        });
-        thread1.start();
+            });
+            thread1.start();
+        }catch (Exception ex){
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            ndrExport.setDateEnded(new Date());
+            ndrExport.setStatus("Failed");
+            nigeriaemrService.saveNdrExportItem(ndrExport);
+        }
     }
 	
 	public String getFileList() {
