@@ -75,5 +75,27 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		return patients;
 	}
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Patient> getPatientsByEncounterDate(int startIndex, int endIndex, Date lastEncounterDate, boolean includeVoided) throws DAOException {
+		List<Patient> patients = new ArrayList<Patient>();
+		List<Integer> patientIds;
+
+		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE patient_id in :";
+		if (lastEncounterDate != null)
+			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
+
+		SQLQuery sql = getSession().createSQLQuery(query);
+		if (lastEncounterDate != null)
+			sql.setDate("toDate", lastEncounterDate);
+
+		patientIds = sql.list();
+
+		if (patientIds.size() >= 1) {
+			patients = this.getPatients(patientIds, includeVoided);
+		}
+
+		return patients;
+	}
 	
 }

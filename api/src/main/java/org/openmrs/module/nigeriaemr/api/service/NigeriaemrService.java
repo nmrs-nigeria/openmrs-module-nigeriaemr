@@ -17,8 +17,10 @@ import org.openmrs.module.nigeriaemr.NigeriaemrConfig;
 import org.openmrs.module.nigeriaemr.Item;
 import org.openmrs.module.nigeriaemr.model.BiometricInfo;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
+import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +54,7 @@ public interface NigeriaemrService extends OpenmrsService {
 	@Transactional
 	NDRExport saveNdrExportItem(NDRExport ndrExport) throws APIException;
 	
-	//	@Authorized()
+	@Authorized()
 	@Transactional
 	void updateNdrExportItemProcessedCount(int id, int count) throws APIException;
 	
@@ -67,9 +69,21 @@ public interface NigeriaemrService extends OpenmrsService {
 	@Transactional
 	void voidExportEntry(int id) throws APIException;
 	
-	//	@Authorized()
+	@Authorized()
 	@Transactional
 	List<NDRExport> getExports(Map<String, Object> conditions, boolean includeVoided) throws APIException;
+
+	@Authorized()
+	@Transactional
+	NDRExportBatch createExportBatch(int startIndex, int endIndex, Date lastExportDate) throws APIException;
+
+	@Authorized()
+	@Transactional
+	List<NDRExportBatch> getExportBatchByStatus(String status) throws APIException;
+
+	@Authorized()
+	@Transactional
+	NDRExportBatch updateExportBatch(int id, String status) throws APIException;
 	
 	@Authorized
 	@Transactional

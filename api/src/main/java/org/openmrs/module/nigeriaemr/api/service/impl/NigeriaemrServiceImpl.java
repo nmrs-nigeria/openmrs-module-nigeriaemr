@@ -17,6 +17,7 @@ import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao;
 import org.openmrs.module.nigeriaemr.model.BiometricInfo;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
+import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 
 import java.util.Date;
 import java.util.List;
@@ -79,7 +80,31 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	public List<NDRExport> getExports(Map<String, Object> conditions, boolean includeVoided) throws APIException {
 		return dao.getExports(conditions, includeVoided);
 	}
-	
+
+	@Override
+	public NDRExportBatch createExportBatch(int startIndex, int endIndex, Date lastExportDate) throws APIException {
+		NDRExportBatch ndrExportBatch = new NDRExportBatch();
+		ndrExportBatch.setDateCreated(new Date());
+		ndrExportBatch.setDateUpdated(new Date());
+		ndrExportBatch.setStartIndex(startIndex);
+		ndrExportBatch.setEndIndex(endIndex);
+		ndrExportBatch.setLastExportDate(lastExportDate);
+		ndrExportBatch.setStatus("Created");
+		return dao.save(ndrExportBatch);
+	}
+
+	@Override
+	public List<NDRExportBatch> getExportBatchByStatus(String status) throws APIException {
+		return dao.getExportBatchByStatus(status);
+	}
+
+	@Override
+	public NDRExportBatch updateExportBatch(int id, String status) throws APIException {
+		NDRExportBatch ndrExportBatch = dao.getExportBatch(id);
+		ndrExportBatch.setStatus(status);
+		return dao.save(ndrExportBatch);
+	}
+
 	@Override
 	public List<BiometricInfo> getBiometricInfoByPatientId(Integer patientId) throws APIException {
 		return dao.getBiometricInfoByPatientId(patientId);

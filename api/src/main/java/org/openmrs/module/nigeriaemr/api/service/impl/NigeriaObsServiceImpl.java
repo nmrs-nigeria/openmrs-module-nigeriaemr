@@ -23,20 +23,17 @@ public class NigeriaObsServiceImpl extends ObsServiceImpl implements NigeriaObsS
 	}
 	
 	@Override
-	@Cacheable(value = "obs")
 	public List<Obs> getObsByConceptId(Integer personId, Integer conceptId, List<Integer> encounterIds, boolean includeVoided)
 	        throws APIException {
 		return dao.getObsByConceptId(personId, conceptId, encounterIds, includeVoided);
 	}
 	
 	@Override
-	@Cacheable(value = "obs")
 	public List<Obs> getObsByEncounters(List<Integer> encounterIds, boolean includeVoided) throws APIException {
 		return dao.getObsByConceptId(null, null, encounterIds, includeVoided);
 	}
 	
 	@Override
-	@Cacheable(value = "obs")
 	public List<Obs> getObsByEncounterTypes(List<Integer> ObsIds, List<Integer> encounterTypeIds, boolean includeVoided)
 	        throws APIException {
 		return dao.getObsByEncounterType(ObsIds, encounterTypeIds, includeVoided);

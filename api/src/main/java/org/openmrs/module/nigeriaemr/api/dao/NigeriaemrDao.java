@@ -12,11 +12,15 @@ package org.openmrs.module.nigeriaemr.api.dao;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.api.APIException;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.nigeriaemr.model.BiometricInfo;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
+import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
+
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -54,11 +58,30 @@ public class NigeriaemrDao {
 		criteria.addOrder(Order.desc("dateStarted"));
 		return criteria.list();
 	}
-	
+
 	public List<BiometricInfo> getBiometricInfoByPatientId(Integer patientId) throws DAOException {
 		Criteria criteria = getSession().createCriteria(BiometricInfo.class);
 		criteria.add(Restrictions.eq("patientId", patientId));
 		return criteria.list();
+	}
+
+	public NDRExportBatch save(NDRExportBatch ndrExportBatch) throws APIException {
+		getSession().saveOrUpdate(ndrExportBatch);
+		return ndrExportBatch;
+	}
+
+	public List<NDRExportBatch> getExportBatchByStatus(String status) throws APIException {
+		Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
+		criteria.add(Restrictions.eq("status", status));
+		criteria.addOrder(Order.desc("dateCreated"));
+		return criteria.list();
+	}
+
+	public NDRExportBatch getExportBatch(int id) throws APIException {
+		Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
+		criteria.add(Restrictions.eq("id", id));
+		criteria.addOrder(Order.desc("dateCreated"));
+		return (NDRExportBatch) criteria.uniqueResult();
 	}
 	
 	/**

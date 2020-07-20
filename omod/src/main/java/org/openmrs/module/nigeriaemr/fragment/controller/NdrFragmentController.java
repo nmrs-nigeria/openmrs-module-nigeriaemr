@@ -87,17 +87,17 @@ public class NdrFragmentController {
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		LoggerUtils.clearLogFile();
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
-		List<Patient> patients = null;
-		String patientIdLimit = Utils.getPatientIdLimit();
-		//		if (patientIdLimit != null && !"".equals(patientIdLimit)) {
-		//			String[] patientIdArray = patientIdLimit.split(",");
-		//			int startIndex = Integer.parseInt(patientIdArray[0]);
-		//			int endIndex = Integer.parseInt(patientIdArray[1]);
-		//			patients = nigeriaPatientService.getPatientsInIndex(startIndex, endIndex);
-		//		} else {
+		List<Patient> patients;
 		Date lastDate = Utils.getLastNDRDate();
-		patients = nigeriaPatientService.getPatientsByEncounterDate(lastDate, currentDate);
-		//		}
+		String patientIdLimit = Utils.getPatientIdLimit();
+		if (patientIdLimit != null && !"".equals(patientIdLimit)) {
+			String[] patientIdArray = patientIdLimit.split(",");
+			int startIndex = Integer.parseInt(patientIdArray[0]);
+			int endIndex = Integer.parseInt(patientIdArray[1]);
+			patients = nigeriaPatientService.getPatientsInIndex(startIndex, endIndex);
+		} else {
+			patients = nigeriaPatientService.getPatientsByEncounterDate(lastDate, currentDate);
+		}
 		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();

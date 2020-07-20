@@ -22,7 +22,6 @@ public class NigeriaEncounterServiceImpl extends EncounterServiceImpl implements
 	}
 	
 	@Override
-	@Cacheable(value = "encounters")
 	public List<Encounter> getEncountersByPatient(Patient patient, Date from, Date to) throws APIException {
 		List<Encounter> encounters;
 		encounters = dao.getEncountersByPatient(patient, from, to);
@@ -45,7 +44,6 @@ public class NigeriaEncounterServiceImpl extends EncounterServiceImpl implements
 	}
 	
 	@Override
-	@Cacheable(value = "encounters")
 	public List<Encounter> getEncountersByEncounterTypeIds(Patient patient, Date fromDate, Date toDate,
 	        List<Integer> encounterTypeIds) throws APIException {
 		List<Encounter> encounters = null;
