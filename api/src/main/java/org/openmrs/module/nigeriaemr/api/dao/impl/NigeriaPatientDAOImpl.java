@@ -41,7 +41,22 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		criteria.add(Restrictions.le("patientId", endId));
 		return criteria.list();
 	}
-	
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Integer> getPatientIds(Integer startId, Integer endId, boolean includeVoided) throws DAOException {
+
+		String query = "SELECT distinct(patient.patient_id) FROM patient patient " +
+				"WHERE patient.patient_id >= :startId OR patient.patient_id >= :endId";
+
+		SQLQuery sql = getSession().createSQLQuery(query);
+
+		sql.setInteger("startId", startId);
+		sql.setInteger("endId", endId);
+
+		return sql.list();
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Patient> getPatients(List<Integer> patientIds, boolean includeVoided) throws DAOException {
@@ -75,6 +90,22 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		return patients;
 	}
+
+	@Override
+	public List<Integer> getPatientIdsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException {
+		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
+		if (toDate != null)
+			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
+
+		SQLQuery sql = getSession().createSQLQuery(query);
+
+		sql.setDate("fromDate", fromDate);
+		if (toDate != null)
+			sql.setDate("toDate", toDate);
+
+		return  sql.list();
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Patient> getPatientsByEncounterDate(int startIndex, int endIndex, Date lastEncounterDate, boolean includeVoided) throws DAOException {

@@ -14,6 +14,7 @@ import org.openmrs.User;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Please note that a corresponding table schema must be created in liquibase.xml.
@@ -43,6 +44,9 @@ public class NDRExport {
 	
 	@Column(name = "date_started")
 	private Date dateStarted;
+
+	@Column(name = "last_date")
+	private Date lastDate;
 	
 	@Column(name = "date_ended")
 	private Date dateEnded;
@@ -61,6 +65,9 @@ public class NDRExport {
 	
 	@Column(name = "report_folder")
 	private String reportFolder;
+
+	@Column(name = "patients")
+	private String patientsList;
 	
 	public Integer getId() {
 		return id;
@@ -156,5 +163,21 @@ public class NDRExport {
 	
 	public void setReportFolder(String reportFolder) {
 		this.reportFolder = reportFolder;
+	}
+
+	public Date getLastDate() {
+		return lastDate;
+	}
+
+	public void setLastDate(Date lastDate) {
+		this.lastDate = lastDate;
+	}
+
+	public String getPatientsList() {
+		return patientsList;
+	}
+
+	public void setPatientsList(String patientsList) {
+		this.patientsList = patientsList;
 	}
 }

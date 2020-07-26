@@ -28,7 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class NdrFragmentController {
 	
 	NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
-	
+
+
 	NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 	
 	DBConnection openmrsConn;
@@ -58,7 +59,7 @@ public class NdrFragmentController {
 	}
 	
 	public String generateNDRFileByLocation(HttpServletRequest request,
-	        @RequestParam(value = "locationId") Integer locationId) {
+	        @RequestParam(value = "locationId") Integer locationId) throws Exception {
 		// get date that's bounds to the date the export is kicked off
 		Date currentDate = new Date();
 		
@@ -68,16 +69,16 @@ public class NdrFragmentController {
 		//check if global variable for logging exists
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		LoggerUtils.clearLogFile();
-		
-		List<Patient> patients = nigeriaPatientService.getPatients(filteredPatientByLocation);
+
 		
 		String FacilityType = "FAC";
+
+		if(filteredPatientByLocation.size() == 0 ) return "";
 		
-		return startGenerateFile(request, patients, facilityLocation.getFacility_name(), facilityLocation.getDatimCode(),
-		    FacilityType, null, currentDate);
+		return startGenerateFile(request, filteredPatientByLocation, facilityLocation.getFacility_name(), facilityLocation.getDatimCode(), null, currentDate);
 	}
 	
-	public String generateNDRFile(HttpServletRequest request) {
+	public String generateNDRFile(HttpServletRequest request) throws Exception {
 		// get date that's bounds to the date the export is kicked off
 		Date currentDate = new Date();
 		
@@ -87,28 +88,30 @@ public class NdrFragmentController {
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		LoggerUtils.clearLogFile();
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
-		List<Patient> patients;
+		List<Integer> patients;
 		Date lastDate = Utils.getLastNDRDate();
 		String patientIdLimit = Utils.getPatientIdLimit();
 		if (patientIdLimit != null && !"".equals(patientIdLimit)) {
 			String[] patientIdArray = patientIdLimit.split(",");
 			int startIndex = Integer.parseInt(patientIdArray[0]);
 			int endIndex = Integer.parseInt(patientIdArray[1]);
-			patients = nigeriaPatientService.getPatientsInIndex(startIndex, endIndex);
+			patients = nigeriaPatientService.getPatientIdsInIndex(startIndex, endIndex);
 		} else {
-			patients = nigeriaPatientService.getPatientsByEncounterDate(lastDate, currentDate);
+			patients = nigeriaPatientService.getPatientIdsByEncounterDate(lastDate, currentDate);
 		}
 		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
 		String FacilityType = "FAC";
-		
-		return startGenerateFile(request, patients, facilityName, DATIMID, FacilityType, lastDate, currentDate);
+
+		if(patients.size() == 0 ) return "";
+
+		return startGenerateFile(request, patients, facilityName, DATIMID, lastDate, currentDate);
 		
 	}
 	
-	private String startGenerateFile(HttpServletRequest request, List<Patient> filteredPatients,
-									 String facilityName, String DATIMID, String FacilityType,Date lastDate, Date currentDate) {
+	private String startGenerateFile(HttpServletRequest request, List<Integer> filteredPatients,
+									 String facilityName, String DATIMID,Date lastDate, Date currentDate) throws Exception {
 
 		// Check that no export is in progress
 		Map<String, Object> condition = new HashMap<>();
@@ -116,7 +119,7 @@ public class NdrFragmentController {
 		List<NDRExport> exports = nigeriaemrService.getExports(condition, false);
 		if(exports.size() > 0 ) return "You already have an export in process, Kindly wait for it to finish";
 		if(filteredPatients == null || filteredPatients.size() <= 0) return "no new patient record found";
-		ndrExtractionService.export(request,filteredPatients,facilityName,DATIMID,FacilityType,lastDate,currentDate,jaxbContext);
+		ndrExtractionService.saveExport(request,filteredPatients,facilityName,DATIMID,lastDate,currentDate);
 
 		return "Export is being processed";
 	}
