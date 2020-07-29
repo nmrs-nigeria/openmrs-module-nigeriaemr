@@ -240,10 +240,12 @@ public class ClinicalDictionary {
         map.put(76488, "FLUC");
         map.put(1679, "H");
         map.put(80945, "CTX960");
-        
+
         //for regimen switch
-         map.put(102, "1");
-        map.put(165048, "2");
+        map.put(102, "1");
+        map.put(165048, "P");
+        map.put(165049, "NP");
+        map.put(165047, "BF");
         map.put(160559, "3");
         map.put(160567, "4");
         map.put(160561, "5");
@@ -513,7 +515,7 @@ public class ClinicalDictionary {
                     }
                 }
             }
-        
+
 
         // }
         return hivEncounterType;

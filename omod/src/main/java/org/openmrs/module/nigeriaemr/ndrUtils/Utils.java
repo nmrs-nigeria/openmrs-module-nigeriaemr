@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -317,6 +318,14 @@ public class Utils {
 	
 	public final static int ART_COMMENCEMENT_ENCOUNTER_TYPE = 25;
 	
+	public final static int PATIENT_CARE_IN_FACILITY_TERMINATED = 165586;
+	
+	public final static int PATIENT_TERMINATED = 1065;
+	
+	public final static int PATIENT_DATE_TERMINATED = 165469;
+	
+	public final static int REASON_FOR_TERMINATION = 165470;
+	
 	/*
 	       HIVQuestionsType
 	        
@@ -326,7 +335,7 @@ public class Utils {
 		return Context.getAdministrationService().getGlobalProperty(LoggerUtils.PATIENT_LIMIT_PROPERTY);
 	}
 	
-	public static List<Obs> extractObsfromEncounter(List<Encounter> encs) {      
+	public static List<Obs> extractObsfromEncounter(List<Encounter> encs) {
         List<Obs> responseObs = new ArrayList<>();
 
         encs.forEach(a -> {
@@ -389,6 +398,14 @@ public class Utils {
 		return Context.getAdministrationService().getGlobalProperty("partner_short_name");
 	}
 	
+	public static String getIPReportingState() {
+		return Context.getAdministrationService().getGlobalProperty("partner_reporting_state");
+	}
+	
+	public static String getIPReportingLgaCode() {
+		return Context.getAdministrationService().getGlobalProperty("partner_reporting_lga_code");
+	}
+	
 	//date is always saved as yyyy-MM-dd
 	public static Date getLastNDRDate() {
 		String lastRunDateString = Context.getAdministrationService().getGlobalProperty("ndr_last_run_date");
@@ -437,15 +454,15 @@ public class Utils {
 	
 	/*public static List<Encounter> getEncounterByPatientAndEncounterTypeId(Patient patient, int encounterTypeId) {
 
-		EncounterType encounterType = Context.getEncounterService().getEncounterType(encounterTypeId);
-		Collection<EncounterType> encounterTypes = new ArrayList<>();
-		encounterTypes.add(encounterType);
+	    EncounterType encounterType = Context.getEncounterService().getEncounterType(encounterTypeId);
+	    Collection<EncounterType> encounterTypes = new ArrayList<>();
+	    encounterTypes.add(encounterType);
 
-		EncounterSearchCriteriaBuilder encounterSearch = new EncounterSearchCriteriaBuilder()
-				.setPatient(patient).setEncounterTypes(encounterTypes).setIncludeVoided(false);
+	    EncounterSearchCriteriaBuilder encounterSearch = new EncounterSearchCriteriaBuilder()
+	            .setPatient(patient).setEncounterTypes(encounterTypes).setIncludeVoided(false);
 
-		List<Encounter> encounter =	Context.getEncounterService().getEncounters(encounterSearch.createEncounterSearchCriteria());
-		return encounter;
+	    List<Encounter> encounter =	Context.getEncounterService().getEncounters(encounterSearch.createEncounterSearchCriteria());
+	    return encounter;
 	}*/
 	public static void updateLast_NDR_Run_Date(Date date) {
 		String dateString = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
@@ -674,7 +691,7 @@ public class Utils {
     }
 	
 	public static Obs extractLastObs(int conceptID, List<Obs> obsList) {
-        
+
         List<Obs> obs = obsList
                 .stream().filter(ele -> ele.getConcept().getConceptId() == conceptID)
                 .sorted(Comparator.comparing(Obs::getObsDatetime))
@@ -1022,8 +1039,14 @@ public class Utils {
 	}
 	
 	public static String getPatientPEPFARId(Patient patient) {
-		
-		PatientIdentifier patientId = patient.getPatientIdentifier(Patient_PEPFAR_Id);
+		PatientIdentifier patientId = null;
+
+		if(!patient.isVoided()){
+			patientId = patient.getPatientIdentifier(Patient_PEPFAR_Id);
+		}else{
+			Set<PatientIdentifier> allPidentifiers = patient.getIdentifiers();
+			patientId = allPidentifiers.stream().filter(x-> x.isPreferred()).findFirst().get();
+		}
 		
 		if (patientId != null) {
 			return patientId.getIdentifier();
@@ -1080,7 +1103,7 @@ public class Utils {
         List<Encounter> encounters = Context.getEncounterService()
                 .getEncountersByPatient(patient).stream()
                 .filter(x -> x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id
-                || x.getEncounterType().getEncounterTypeId() == Pharmacy_Encounter_Type_Id)
+                        || x.getEncounterType().getEncounterTypeId() == Pharmacy_Encounter_Type_Id)
                 .sorted(Comparator.comparing(Encounter::getEncounterDatetime))
                 .collect(Collectors.toList());
 
@@ -1094,8 +1117,8 @@ public class Utils {
 
             Optional<Obs> adherenceObs = lastEncounter.getAllObs().stream()
                     .filter(x -> x.getConcept().getConceptId() == ClinicalDictionary.ARV_Drug_Adherence_Concept_Id
-                    || x.getConcept().getConceptId() == ClinicalDictionary.Cotrimoxazole_Adherence_Concept_Id
-                    || x.getConcept().getConceptId() == ClinicalDictionary.INH_Adherence_Concept_Id)
+                            || x.getConcept().getConceptId() == ClinicalDictionary.Cotrimoxazole_Adherence_Concept_Id
+                            || x.getConcept().getConceptId() == ClinicalDictionary.INH_Adherence_Concept_Id)
                     .findAny();
 
             if (adherenceObs != null && adherenceObs.isPresent()) {
@@ -1131,7 +1154,7 @@ public class Utils {
         return Context.getEncounterService()
                 .getEncountersByPatient(patient).stream()
                 .filter(x -> x.getEncounterDatetime().before(endDate) && (x.getEncounterType().getEncounterTypeId() == Adult_Ped_Initial_Encounter_Type_Id
-                || x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id))
+                        || x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id))
                 .sorted(Comparator.comparing(Encounter::getEncounterDatetime))
                 .collect(Collectors.toList());
     }
@@ -1271,13 +1294,13 @@ public class Utils {
 	}
 	
 	/*public String ensureTodayDownloadFolderExist(String parentFolder, HttpServletRequest request) {
-		//create today's folder
-		String dateString = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-		String todayFolders = parentFolder + "/" + dateString;
-		File dir = new File(todayFolders);
-		Boolean b = dir.mkdir();
-		System.out.println("creating folder : " + todayFolders + "was successful : " + b);
-		return todayFolders;
+	    //create today's folder
+	    String dateString = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+	    String todayFolders = parentFolder + "/" + dateString;
+	    File dir = new File(todayFolders);
+	    Boolean b = dir.mkdir();
+	    System.out.println("creating folder : " + todayFolders + "was successful : " + b);
+	    return todayFolders;
 	}*/
 	public static void ShowSystemProps() {
 		System.getProperties().list(System.out);

@@ -90,21 +90,23 @@ public class NdrFragmentController {
 		LoggerUtils.clearLogFile();
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
 		
-	//	List<Patient> patients = Context.getPatientService().getAllPatients();
+		List<Patient> patients = Context.getPatientService().getAllPatients(true);
 		
-		                String patientIdLimit = Utils.getPatientIdLimit();
-		               String[] patientIdArray =  patientIdLimit.split(",");
-		                
-		                int startIndex = Integer.parseInt(patientIdArray[0]);
-		                int endIndex = Integer.parseInt(patientIdArray[1]);
-				
-		                List<Patient> patients = Context.getPatientService().getAllPatients().stream()
-		                        .filter(x-> x.getId() >= startIndex && x.getId() <= endIndex).collect(Collectors.toList());
+		/*String patientIdLimit = Utils.getPatientIdLimit();
+		String[] patientIdArray =  patientIdLimit.split(",");
 		
-		//Patient pts = null;
-		//List<Patient> patients = new ArrayList<Patient>();
-		//pts = Context.getPatientService().getPatient(28417);
-		//patients.add(pts);
+		int startIndex = Integer.parseInt(patientIdArray[0]);
+		int endIndex = Integer.parseInt(patientIdArray[1]);
+		
+		List<Patient> patients = Context.getPatientService().getAllPatients().stream()
+		        .filter(x-> x.getId() >= startIndex && x.getId() <= endIndex).collect(Collectors.toList());
+		*/
+		/*Patient pts = null;
+		List<Patient> patients = new ArrayList<Patient>();
+		pts = Context.getPatientService().getPatient(820437);
+		patients.add(pts);*/
+		/*List<Patient> patients = Context.getPatientService().getAllPatients(true).stream()
+					.filter(x-> x.getPatientId().equals(4152)).collect(Collectors.toList());*/
 		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
@@ -124,7 +126,8 @@ public class NdrFragmentController {
 		String reportFolder = util.ensureReportFolderExist(request, reportType);
 		
 		String IPShortName = Utils.getIPShortName();
-		
+		String IPReportingState = Utils.getIPReportingState();
+		String IPReportingLgaCode = Utils.getIPReportingLgaCode();
 		//Create an xml file and save in today's folder
 		NDRConverter generator = new NDRConverter(Utils.getIPFullName(), IPShortName, openmrsConn);
 		JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
@@ -177,8 +180,9 @@ public class NdrFragmentController {
 							pepFarId = "";
 						}
 						
-						String fileName = IPShortName + "_" + DATIMID + "_" + counter + "_" + formattedDate + "_" + pepFarId;
-						
+						//String fileName = IPShortName + "_" + DATIMID + "_" + counter  + "_" + pepFarId + "_" + formattedDate;
+						String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + pepFarId + "_"
+						        + formattedDate;
 						// older implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
 						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
 						
@@ -213,7 +217,8 @@ public class NdrFragmentController {
 			//Update ndr last run date
 			Utils.updateLast_NDR_Run_Date(new Date());
 			
-			String zipFileName = IPShortName + "_ " + facilityName + "_" + DATIMID + "_" + formattedDate + ".zip";
+			//String zipFileName = IPShortName + "_ " + facilityName + "_" + DATIMID + "_" + formattedDate + ".zip";
+			String zipFileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate + ".zip";
 			/*String response = "Files Exported successfully, view uploaded files here: \n"
 			        + util.ZipFolder(request, reportFolder, zipFileName, reportType);*/
 			String response = util.ZipFolder(request, reportFolder, zipFileName, reportType);
@@ -226,7 +231,7 @@ public class NdrFragmentController {
 			//Update ndr last run date
 			Utils.updateLast_NDR_Run_Date(new Date());
 			
-			String zipFileName = IPShortName + "_" + DATIMID + "_" + formattedDate + ".zip";
+			String zipFileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate + ".zip";
 			util.ZipFolder(request, reportFolder, zipFileName, reportType);
 			
 			//throw new Throwable(LoggerUtils.getExportPath());
