@@ -60,25 +60,12 @@
 			<layout>default</layout>
 			<url>http://repo1.maven.org/maven2</url>
 		</repository>
-		<repository>
-			<id>nmrs-repo</id>
-			<name>NigeriaMRS Nexus Repository</name>
-			<url>http://localhost:8081/nexus/content/repositories/nmrs-public</url>
-		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>openmrs-repo</id>
 			<name>OpenMRS Nexus Repository</name>
 			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>nmrs-public</id>
-			<name>NigeriaMRS Nexus Repository</name>
-			<url>http://localhost:8081/nexus/content/repositories/nmrs-public</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
