@@ -9,7 +9,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>nigeriaemr</artifactId>
-	<version>1.4.2</version>
+	<version>1.4.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Nigeriaemr</name>
 	<description>this module is for creating custom reporting for Nigeria specific requirement</description>
@@ -17,10 +17,10 @@
 	<url>https://wiki.openmrs.org/x/FQ4z</url>
 
 	<scm>
-		<connection>scm:git:git@github.com:openmrs/openmrs-module-nigeriaemr.git</connection>
-		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-nigeriaemr.git</developerConnection>
-		<url>https://github.com/openmrs/openmrs-module-nigeriaemr/</url>
-	  <tag>1.4.2</tag>
+		<connection>scm:git:git@github.com:nmrs-nigeria/openmrs-module-nigeriaemr.git</connection>
+		<developerConnection>scm:git:git@github.com:nmrs-nigeria/openmrs-module-nigeriaemr.git</developerConnection>
+		<url>scm:git:git@github.com:nmrs-nigeria/openmrs-module-nigeriaemr.git</url>
+	  <tag>HEAD</tag>
   </scm>
 
 	<modules>
