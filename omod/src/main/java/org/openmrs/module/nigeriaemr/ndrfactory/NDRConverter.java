@@ -62,15 +62,24 @@ public class NDRConverter {
 	public Container createContainer(Patient pts, FacilityType facility) throws DatatypeConfigurationException {
 
         Container container = new Container();
+        Connection connection = null;
+        Statement statement = null;
+        String facilityName = Utils.getFacilityName();
+        String DATIMID = Utils.getFacilityDATIMId();
+        String FacilityType = "FAC";
+        boolean hasUpdate = false;
+
+
         try {
             patient = pts;
             this.facility = facility;
             this.encounters = new ArrayList<>();
             Date lastDate = Utils.getLastNDRDate();
-
             long startTime = System.currentTimeMillis();
             List<Encounter> encs = Context.getEncounterService().getEncountersByPatient(pts);
             List<Encounter> filteredEncs = new ArrayList<>();
+            List<Encounter> filteredEncsBeforeNDRRunDate = new ArrayList<>();
+            List<Encounter> allEncs = new ArrayList<>();
 
             try {
 
@@ -85,7 +94,21 @@ public class NDRConverter {
                     if (dateCreatedComp > -1 || dateModifiedComp > -1) {
                         filteredEncs.add(enc);
                     }
-                });//                if (lastDate != null) {
+                    if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
+                        filteredEncsBeforeNDRRunDate.add(enc);
+                    }
+                });
+
+                if(filteredEncs.size() > 0 && filteredEncsBeforeNDRRunDate.size() >0){
+                    hasUpdate = true;
+                }
+
+                encs.forEach((enc) -> {
+                    allEncs.add(enc);
+                });
+
+
+                //                if (lastDate != null) {
 //                    encs = encs.stream()
 //                            .filter(e -> e.getDateCreated().after(lastDate)
 //                            || e.getDateChanged().after(lastDate) || e.getDateCreated().equals(lastDate) || e.getDateChanged().equals(lastDate)).collect(Collectors.toList());
@@ -94,36 +117,36 @@ public class NDRConverter {
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
+            if(!pts.isVoided()) {
+                if (filteredEncs.isEmpty()) {
+                    return null;
+                }
 
-            if (filteredEncs.isEmpty()) {
-                return null;
+                long endTime = System.currentTimeMillis();
+                if ((endTime - startTime) > 1000) {
+                    System.out.println("took too loooong to get encounters : " + (endTime - startTime) + " milli secs : ");
+                }
+
+                startTime = System.currentTimeMillis();
+                //  this.allobs = Context.getObsService().getObservationsByPerson(pts);
+
+
+                endTime = System.currentTimeMillis();
+                if ((endTime - startTime) > 1000) {
+                    System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
+                }
+
+                this.encounters.addAll(filteredEncs);
+                if (this.encounters == null || this.encounters.isEmpty()) {
+                    return null;
+                }
+
+                this.allobs = Utils.extractObsfromEncounter(filteredEncs);
+                patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
             }
-
-            long endTime = System.currentTimeMillis();
-            if ((endTime - startTime) > 1000) {
-                System.out.println("took too loooong to get encounters : " + (endTime - startTime) + " milli secs : ");
-            }
-
-            startTime = System.currentTimeMillis();
-          //  this.allobs = Context.getObsService().getObservationsByPerson(pts);
-            
-            
-            
-            endTime = System.currentTimeMillis();
-            if ((endTime - startTime) > 1000) {
-                System.out.println("took too loooong to get obs : " + (endTime - startTime) + " milli secs : ");
-            }
-
-            this.encounters.addAll(filteredEncs);
-            if (this.encounters == null || this.encounters.isEmpty()) {
-                return null;
-            }
-            
-            this.allobs = Utils.extractObsfromEncounter(filteredEncs);
-            patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
-
-            MessageHeaderType header = createMessageHeaderType();
-            FacilityType sendingOrganization = Utils.createFacilityType(this.ipName, this.ipCode, "IP");
+            MessageHeaderType header = createMessageHeaderType(pts,hasUpdate);
+            //FacilityType sendingOrganization = Utils.createFacilityType(this.ipName, this.ipCode, "IP");
+            FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
             header.setMessageSendingOrganization(sendingOrganization);
 
             container.setMessageHeader(header);
@@ -418,11 +441,10 @@ public class NDRConverter {
 				while (result.next()) {
 					//String name = result.getString("name");
 					String coded_value = result.getString("user_generated_id");
-					
 					if (result.getString("Location").contains("STATE")) {
-						p.setStateCode(coded_value);
+						p.setStateCode(result.getString("user_generated_id"));
 					} else {
-						p.setLGACode(coded_value);
+						p.setLGACode(result.getString("user_generated_id"));
 					}
 				}
 			}
@@ -452,13 +474,17 @@ public class NDRConverter {
 		return p;
 	}
 	
-	private MessageHeaderType createMessageHeaderType() throws DatatypeConfigurationException {
+	private MessageHeaderType createMessageHeaderType(Patient pts, boolean hasUpdate) throws DatatypeConfigurationException {
 		MessageHeaderType header = new MessageHeaderType();
 		
 		Calendar cal = Calendar.getInstance();
 		
 		header.setMessageCreationDateTime(Utils.getXmlDateTime(cal.getTime()));
-		header.setMessageStatusCode("INITIAL");
+		Boolean isDeleted = pts.getPerson().getVoided();
+		String updatedORInitial = (hasUpdate) ? "UPDATED" : "INITIAL";
+		String messageStatus = (isDeleted) ? "REDACTED" : updatedORInitial;
+		header.setMessageStatusCode(messageStatus);
+		//header.setMessageStatusCode("INITIAL");
 		header.setMessageSchemaVersion(new BigDecimal("1.6"));
 		header.setMessageUniqueID(UUID.randomUUID().toString());
 		return header;

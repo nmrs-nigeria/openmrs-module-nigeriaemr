@@ -10,11 +10,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.codec.language.Soundex;
@@ -72,6 +68,11 @@ public class NDRCommonQuestionsDictionary {
         map.put(1713, "2");
         map.put(1714, "3");
         map.put(160292, "6");
+
+        //PATIENT CARE IN FACILITY_TERMINATED
+        map.put(159492, "1");
+        map.put(165889, "2");
+        map.put(165916, "3");
 
         /* OCCUPATIONAL CODE */
         map.put(123801, "UNE");
@@ -167,8 +168,11 @@ public class NDRCommonQuestionsDictionary {
             PatientIdentifier pepfarid, pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
-            pepfarid = new PatientIdentifier();
+           // pepfarid = new PatientIdentifier();
             // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
+
+            Set<PatientIdentifier> allPidentifiers = pts.getIdentifiers();
+            pepfarid = allPidentifiers.stream().filter(x-> x.isPreferred()).findFirst().get();
 
             pidHospital = pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX);
             pidOthers = pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX);
@@ -176,7 +180,7 @@ public class NDRCommonQuestionsDictionary {
             ancId = pts.getPatientIdentifier(Utils.PMTCT_IDENTIFIER_INDEX);
             exposedInfantId = pts.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
             pepId = pts.getPatientIdentifier(Utils.PEP_IDENTIFIER_INDEX);
-            pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
+           // pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
             recencyId = pts.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX);
 
             IdentifierType idt;
@@ -184,21 +188,23 @@ public class NDRCommonQuestionsDictionary {
             // Use PepfarID as preferred ID if it exist, else use other IDs
             if (pepfarid != null) {
                 idt = new IdentifierType();
-                idt.setIDNumber(pepfarid.getIdentifier());
-                demo.setPatientIdentifier(pepfarid.getIdentifier());
+                idt.setIDNumber(Utils.getPatientPEPFARId(pts));
+                demo.setPatientIdentifier(Utils.getPatientPEPFARId(pts));
+                //idt.setIDNumber(pepfarid.getIdentifier());
+                //demo.setPatientIdentifier(pepfarid.getIdentifier());
             } else {
                 // demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX).getIdentifier() + "_" + pts.getId());
             }
             if (pidHospital != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(pidHospital.getIdentifier());
-                idt.setIDTypeCode("PI");
+                idt.setIDTypeCode("HN"); //EDITED BY APIN TEAM
                 identifiersType.getIdentifier().add(idt);
             }
             if (pidOthers != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(pidOthers.getIdentifier());
-                idt.setIDTypeCode("PE");
+                idt.setIDTypeCode("EID");  //EDITED BY APIN TEAM
                 identifiersType.getIdentifier().add(idt);
             }
             if (htsId != null) {
@@ -351,6 +357,7 @@ public class NDRCommonQuestionsDictionary {
                 LeftHandType leftFingerType = new LeftHandType();
                 XMLGregorianCalendar dataCaptured = null;
                 Integer creator = null;
+                result.beforeFirst();
                 while (result.next()) {
                     String fingerPosition = result.getString("fingerPosition");
                     creator = result.getInt("creator");
@@ -542,6 +549,7 @@ HIVQuestionsType
         List<Obs> obsList = Utils.extractObsListForEncounterType(allObsList, targetEncounterTypes);
         Obs obs = null;
         int valueCoded = 0, valueNumericInt = 0;
+        String ndrCodedValue;
 
         Date valueDateTime = null;
         String ndrCode = "";
@@ -664,12 +672,14 @@ HIVQuestionsType
             if (obs != null) {
                 valueDateTime = obs.getValueDate();
                 hivQuestionsType.setTransferredOutDate(getXmlDate(valueDateTime));
+                
+                if (artStartDate != null) {
+                    hivQuestionsType.setTransferredOutStatus("A");
+                } else {
+                    hivQuestionsType.setTransferredOutStatus("P");
+                }
             }
-            if (artStartDate != null) {
-                hivQuestionsType.setTransferredOutStatus("A");
-            } else {
-                hivQuestionsType.setTransferredOutStatus("P");
-            }
+
             /*
                 Use date confirmed positve or visit date of the HIVEnrollmentForm
              */
@@ -684,6 +694,31 @@ HIVQuestionsType
                 hivQuestionsType.setInitialTBStatus(ndrCode);
             }
 
+            obs = Utils.extractLastObs(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                obs = Utils.extractObsByValues(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, Utils.PATIENT_TERMINATED, obsList);
+                if (obs != null) {
+                    hivQuestionsType.setStoppedTreatment(Boolean.TRUE);
+                } else {
+                    hivQuestionsType.setStoppedTreatment(Boolean.FALSE);
+                }
+
+                obs = Utils.extractLastObs(Utils.PATIENT_DATE_TERMINATED, obsList);
+                if (obs != null && obs.getValueDate() != null) {
+                    valueDateTime = obs.getValueDate();
+                    hivQuestionsType.setDateStoppedTreatment(getXmlDate(valueDateTime));
+                }
+
+                obs = Utils.extractLastObs(Utils.REASON_FOR_TERMINATION, obsList);
+                if (obs != null && obs.getValueCoded() != null) {
+                    ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
+                    hivQuestionsType.setReasonForStoppedTreatment(ndrCodedValue);
+                }
+            }
+
+            //hivQuestionsType.setStoppedTreatment();
+            //hivQuestionsType.setDateStoppedTreatment();
+            //hivQuestionsType.setReasonForStoppedTreatment();
         }
         return hivQuestionsType;
 
