@@ -2289,6 +2289,7 @@
             <xs:enumeration value="PMTCT" />
             <xs:enumeration value="NP" />
             <xs:enumeration value="NK" />
+            <xs:enumeration value="BF" />
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
