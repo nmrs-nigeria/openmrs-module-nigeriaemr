@@ -35,8 +35,8 @@ import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
-import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getXmlDate;
+
+import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.*;
 
 public class LabDictionary {
 
@@ -207,7 +207,10 @@ public class LabDictionary {
             labReportType.setVisitDate(convertedDate);
             labReportType.setCollectionDate(convertedDate);
 
-            if (artStartDate.after(enc.getEncounterDatetime()) || artStartDate.equals(enc.getEncounterDatetime())) {
+            boolean artStatusFlag = isArtStatusFlag(pts, enc);
+            // Date artStartDate = Utils.extractARTStartDate(pts,labObsList);
+            // if (artStartDate.after(enc.getEncounterDatetime()) || artStartDate.equals(enc.getEncounterDatetime())) {
+            if(artStatusFlag){
                 labReportType.setARTStatusCode("A");
             } else {
                 labReportType.setARTStatusCode("N");
@@ -257,21 +260,36 @@ public class LabDictionary {
         return labReportType;
     }
 
+    private boolean isArtStatusFlag(Patient pts, Encounter enc) {
+        boolean artStatusFlag = false;
+        List<Obs> myObs = getObs(pts, 162240);
+
+        for (Obs ObsPs : myObs) {
+            if(ObsPs.getObsDatetime().equals(enc.getEncounterDatetime()) ||
+                    ObsPs.getObsDatetime().before(enc.getEncounterDatetime()) ){
+                artStatusFlag = true;
+            }
+
+        }
+        return artStatusFlag;
+    }
+
+    public List<LaboratoryReportType> createLaboratoryOrderAndResult(Patient pts, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) {
+        List<LaboratoryReportType> labReportTypeList = new ArrayList<>();
+        Integer[] encounterTypeArr = {Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE};
+
+        Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(allPatientEncounterList);
+        List<Obs> obsForVisit = null;
+        LaboratoryReportType labReportType = null;
+        for (Date date : visitDateSet) {
+            obsForVisit = Utils.extractObsPerVisitDate(date, allPatientObsList);
+            labReportType = createLabReportType(pts, date, obsForVisit);
+        }
+        return labReportTypeList;
+    }
+
     public LaboratoryReportType createLabReportType(Patient patient, Date visitDate, List<Obs> labObsForVisit) {
-        /*
-           VisitID
-           VisitDate
-           LaboratoryTestIdentifier
-           CollectionDate
-           BaselineRepeatCode
-           ARTStatusCode
-           LaboratoryOrderAndResult
-           Clinician
-ReportedBy
-CheckedBy
-OrderedTestDate
-OtherLaboratoryInformation
-         */
+
         LaboratoryReportType labReportType = new LaboratoryReportType();
         String visitID = "", pepfarID;
         int conceptID = 0, dataType = 0;
@@ -335,6 +353,8 @@ OtherLaboratoryInformation
 
                     if (orderedDate != null) {
                         labOrderAndResult.setOrderedTestDate(getXmlDate(orderedDate));
+                    }else{
+                        labOrderAndResult.setOrderedTestDate(getXmlDate(enc.getEncounterDatetime()));
                     }
                     labOrderAndResult.setResultedTestDate(getXmlDate(enc.getEncounterDatetime()));
 

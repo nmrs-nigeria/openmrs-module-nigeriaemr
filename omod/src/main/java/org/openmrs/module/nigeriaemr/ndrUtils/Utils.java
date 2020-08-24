@@ -32,7 +32,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
@@ -317,6 +316,14 @@ public class Utils {
 	
 	public final static int ART_COMMENCEMENT_ENCOUNTER_TYPE = 25;
 	
+	public final static int PATIENT_CARE_IN_FACILITY_TERMINATED = 165586;
+	
+	public final static int PATIENT_TERMINATED = 1065;
+	
+	public final static int PATIENT_DATE_TERMINATED = 165469;
+	
+	public final static int REASON_FOR_TERMINATION = 165470;
+	
 	/*
 	       HIVQuestionsType
 	        
@@ -326,7 +333,7 @@ public class Utils {
 		return Context.getAdministrationService().getGlobalProperty(LoggerUtils.PATIENT_LIMIT_PROPERTY);
 	}
 	
-	public static List<Obs> extractObsfromEncounter(List<Encounter> encs) {      
+	public static List<Obs> extractObsfromEncounter(List<Encounter> encs) {
         List<Obs> responseObs = new ArrayList<>();
 
         encs.forEach(a -> {
@@ -384,6 +391,14 @@ public class Utils {
 		return Context.getAdministrationService().getGlobalProperty("partner_short_name");
 	}
 	
+	public static String getIPReportingState() {
+		return Context.getAdministrationService().getGlobalProperty("partner_reporting_state");
+	}
+	
+	public static String getIPReportingLgaCode() {
+		return Context.getAdministrationService().getGlobalProperty("partner_reporting_lga_code");
+	}
+	
 	//date is always saved as yyyy-MM-dd
 	public static Date getLastNDRDate() {
 		String lastRunDateString = Context.getAdministrationService().getGlobalProperty("ndr_last_run_date");
@@ -432,15 +447,15 @@ public class Utils {
 	
 	/*public static List<Encounter> getEncounterByPatientAndEncounterTypeId(Patient patient, int encounterTypeId) {
 
-		EncounterType encounterType = Context.getEncounterService().getEncounterType(encounterTypeId);
-		Collection<EncounterType> encounterTypes = new ArrayList<>();
-		encounterTypes.add(encounterType);
+	    EncounterType encounterType = Context.getEncounterService().getEncounterType(encounterTypeId);
+	    Collection<EncounterType> encounterTypes = new ArrayList<>();
+	    encounterTypes.add(encounterType);
 
-		EncounterSearchCriteriaBuilder encounterSearch = new EncounterSearchCriteriaBuilder()
-				.setPatient(patient).setEncounterTypes(encounterTypes).setIncludeVoided(false);
+	    EncounterSearchCriteriaBuilder encounterSearch = new EncounterSearchCriteriaBuilder()
+	            .setPatient(patient).setEncounterTypes(encounterTypes).setIncludeVoided(false);
 
-		List<Encounter> encounter =	Context.getEncounterService().getEncounters(encounterSearch.createEncounterSearchCriteria());
-		return encounter;
+	    List<Encounter> encounter =	Context.getEncounterService().getEncounters(encounterSearch.createEncounterSearchCriteria());
+	    return encounter;
 	}*/
 	public static void updateLast_NDR_Run_Date(Date date) {
 		String dateString = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
@@ -665,7 +680,6 @@ public class Utils {
     }
 	
 	public static Obs extractLastObs(int conceptID, List<Obs> obsList) {
-        
         Optional<Obs> obs = obsList
 				.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID).min(Comparator.comparing(Obs::getObsDatetime));
         return obs.orElse(null);
@@ -932,8 +946,14 @@ public class Utils {
 	}
 	
 	public static String getPatientPEPFARId(Patient patient) {
-		
-		PatientIdentifier patientId = patient.getPatientIdentifier(Patient_PEPFAR_Id);
+		PatientIdentifier patientId = null;
+
+		if(!patient.isVoided()){
+			patientId = patient.getPatientIdentifier(Patient_PEPFAR_Id);
+		}else{
+			Set<PatientIdentifier> allPidentifiers = patient.getIdentifiers();
+			patientId = allPidentifiers.stream().filter(x-> x.isPreferred()).findFirst().get();
+		}
 		
 		if (patientId != null) {
 			return patientId.getIdentifier();
@@ -990,25 +1010,14 @@ public class Utils {
 	
 	public static Obs getLastAdherenceObs(Patient patient, Date endDate) {
 
-//        List<Encounter> encounters = Context.getEncounterService()
-//                .getEncountersByPatient(patient).stream()
-//                .filter(x -> x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id
-//                || x.getEncounterType().getEncounterTypeId() == Pharmacy_Encounter_Type_Id)
-//                .sorted(Comparator.comparing(Encounter::getEncounterDatetime))
-//                .collect(Collectors.toList());
-//
-//        List<Encounter> filteredList = encounters.stream()
-//                .filter(x -> x.getEncounterDatetime().before(endDate))
-//                .collect(Collectors.toList());
-
 		NigeriaEncounterService nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 		Encounter lastEncounter = nigeriaEncounterService.getLastEncounterByEncounterTypeIds(patient, null, endDate,
 				Arrays.asList(Pharmacy_Encounter_Type_Id,Care_card_Encounter_Type_Id));
 		//TODO: change
             Optional<Obs> adherenceObs = lastEncounter.getAllObs().stream()
                     .filter(x -> x.getConcept().getConceptId() == ClinicalDictionary.ARV_Drug_Adherence_Concept_Id
-                    || x.getConcept().getConceptId() == ClinicalDictionary.Cotrimoxazole_Adherence_Concept_Id
-                    || x.getConcept().getConceptId() == ClinicalDictionary.INH_Adherence_Concept_Id)
+                            || x.getConcept().getConceptId() == ClinicalDictionary.Cotrimoxazole_Adherence_Concept_Id
+                            || x.getConcept().getConceptId() == ClinicalDictionary.INH_Adherence_Concept_Id)
                     .findAny();
 
 		return adherenceObs.orElse(null);
@@ -1035,74 +1044,37 @@ public class Utils {
 	
 	public static List<Encounter> getLastEncounters(Patient patient, Date endDate) {
 		NigeriaEncounterService nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
-		List<Encounter> encounters = nigeriaEncounterService.getEncountersByEncounterTypeIds(patient, null, endDate,
-		    Arrays.asList(Adult_Ped_Initial_Encounter_Type_Id, Care_card_Encounter_Type_Id));
-		
-		return encounters;
-		//        return Context.getEncounterService()
-		//                .getEncountersByPatient(patient).stream()
-		//                .filter(x -> x.getEncounterDatetime().before(endDate) && (x.getEncounterType().getEncounterTypeId() == Adult_Ped_Initial_Encounter_Type_Id
-		//                || x.getEncounterType().getEncounterTypeId() == Care_card_Encounter_Type_Id))
-		//                .sorted(Comparator.comparing(Encounter::getEncounterDatetime))
-		//                .collect(Collectors.toList());
+		return nigeriaEncounterService.getEncountersByEncounterTypeIds(patient, null, endDate,
+				Arrays.asList(Adult_Ped_Initial_Encounter_Type_Id, Care_card_Encounter_Type_Id));
 	}
 	
 	public static Obs getHighestCD4Obs(Patient patient) {
 		
 		Concept CD4Concept = Context.getConceptService().getConcept(LabDictionary.CD4_Count_Concept_Id);
 		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
-		Obs highestCD4Value = nigeriaObsService.getHighestObsByConcept(patient.getPerson(), CD4Concept, null, null, false);
-		//		List<Obs> allCD4Obs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), CD4Concept);
-		//		Double previousValue = 0.0;
-		//		Obs highestCD4Value = null;
-		//
-		//		for (Obs obs : allCD4Obs) {
-		//			if (obs.getValueNumeric() > previousValue) {
-		//				previousValue = obs.getValueNumeric();
-		//				highestCD4Value = obs;
-		//			}
-		//		}
-		return highestCD4Value;
+		return nigeriaObsService.getHighestObsByConcept(patient.getPerson(), CD4Concept, null, null, false);
 	}
 	
 	public static Obs getInitialObs(Patient patient, int Concept_Id) {
 		Concept concept = Context.getConceptService().getConcept(Concept_Id);
 		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getFirstObsByConceptId(patient.getPerson(), concept, null, null, false);
-		//
-		//        Concept concept = Context.getConceptService().getConcept(Concept_Id);
-		//        List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept);
-		//        obs.sort(Comparator.comparing(Obs::getObsDatetime));
-		//
-		//        if (obs.size() > 0) {
-		//            return obs.get(0);
-		//        }
-		//        return null;
 	}
 	
 	public static Obs getLastObs(Patient patient, int Concept_Id, Date endDate) {
 		Concept concept = Context.getConceptService().getConcept(Concept_Id);
 		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getLastObsByConceptId(patient.getPerson(), concept, null, endDate, false);
-		
-		//        List<Obs> obs = Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept)
-		//                .stream().filter(x -> x.getObsDatetime().before(endDate))
-		//                .sorted(Comparator.comparing(Obs::getObsDatetime))
-		//                .collect(Collectors.toList());
-		//
-		//        if (obs.size() > 0) {
-		//            return obs.get(0);
-		//        }
-		//        return null;
 	}
 	
 	public static List<Obs> getObs(Patient patient, int conceptId) {
 		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getObsByConceptId(patient.getPersonId(), conceptId, null, false);
-		//        Concept concept = Context.getConceptService().getConcept(conceptId);
-		//        return Context.getObsService().getObservationsByPersonAndConcept(patient.getPerson(), concept).stream()
-		//                .sorted(Comparator.comparing(Obs::getObsDatetime))
-		//                .collect(Collectors.toList());
+	}
+
+	public static List<Obs> getObs(Patient patient, int conceptId, int encounterId) {
+		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
+		return nigeriaObsService.getObsByConceptId(patient.getPersonId(), conceptId, Arrays.asList(encounterId), false);
 	}
 	
 	/**
@@ -1187,13 +1159,13 @@ public class Utils {
 	}
 	
 	/*public String ensureTodayDownloadFolderExist(String parentFolder, HttpServletRequest request) {
-		//create today's folder
-		String dateString = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-		String todayFolders = parentFolder + "/" + dateString;
-		File dir = new File(todayFolders);
-		Boolean b = dir.mkdir();
-		System.out.println("creating folder : " + todayFolders + "was successful : " + b);
-		return todayFolders;
+	    //create today's folder
+	    String dateString = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+	    String todayFolders = parentFolder + "/" + dateString;
+	    File dir = new File(todayFolders);
+	    Boolean b = dir.mkdir();
+	    System.out.println("creating folder : " + todayFolders + "was successful : " + b);
+	    return todayFolders;
 	}*/
 	public static void ShowSystemProps() {
 		System.getProperties().list(System.out);

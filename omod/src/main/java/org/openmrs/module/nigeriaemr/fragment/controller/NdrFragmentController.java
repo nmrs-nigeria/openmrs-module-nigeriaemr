@@ -109,7 +109,6 @@ public class NdrFragmentController {
 		return startGenerateFile(request, patients, facilityName, DATIMID, lastDate, currentDate);
 		
 	}
-	
 	private String startGenerateFile(HttpServletRequest request, List<Integer> filteredPatients,
 									 String facilityName, String DATIMID,Date lastDate, Date currentDate) throws Exception {
 

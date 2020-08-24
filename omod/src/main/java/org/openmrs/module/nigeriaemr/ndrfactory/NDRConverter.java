@@ -74,6 +74,14 @@ public class NDRConverter {
 	public Container createContainer(Patient pts, FacilityType facility) {
 
         Container container = new Container();
+        Connection connection = null;
+        Statement statement = null;
+        String facilityName = Utils.getFacilityName();
+        String DATIMID = Utils.getFacilityDATIMId();
+        String FacilityType = "FAC";
+        boolean hasUpdate = false;
+
+
         try {
             patient = pts;
             this.facility = facility;
@@ -97,9 +105,14 @@ public class NDRConverter {
             this.allobs = Utils.extractObsfromEncounter(filteredEncs);
 //            this.allobs = nigeriaObsService.getObsByEncounters(encounterIds,false);
             patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
-
-            MessageHeaderType header = createMessageHeaderType();
-            FacilityType sendingOrganization = Utils.createFacilityType(this.ipName, this.ipCode, "IP");
+            if(!pts.isVoided()) {
+                if (filteredEncs.isEmpty()) {
+                    return null;
+                }
+            }
+            MessageHeaderType header = createMessageHeaderType(pts,hasUpdate);
+            //FacilityType sendingOrganization = Utils.createFacilityType(this.ipName, this.ipCode, "IP");
+            FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
             header.setMessageSendingOrganization(sendingOrganization);
 
             container.setMessageHeader(header);
@@ -370,11 +383,10 @@ public class NDRConverter {
 				while (result.next()) {
 					//String name = result.getString("name");
 					String coded_value = result.getString("user_generated_id");
-					
 					if (result.getString("Location").contains("STATE")) {
-						p.setStateCode(coded_value);
+						p.setStateCode(result.getString("user_generated_id"));
 					} else {
-						p.setLGACode(coded_value);
+						p.setLGACode(result.getString("user_generated_id"));
 					}
 				}
 			}
@@ -404,13 +416,17 @@ public class NDRConverter {
 		return p;
 	}
 	
-	private MessageHeaderType createMessageHeaderType() throws DatatypeConfigurationException {
+	private MessageHeaderType createMessageHeaderType(Patient pts, boolean hasUpdate) throws DatatypeConfigurationException {
 		MessageHeaderType header = new MessageHeaderType();
 		
 		Calendar cal = Calendar.getInstance();
 		
 		header.setMessageCreationDateTime(Utils.getXmlDateTime(cal.getTime()));
-		header.setMessageStatusCode("INITIAL");
+		Boolean isDeleted = pts.getPerson().getVoided();
+		String updatedORInitial = (hasUpdate) ? "UPDATED" : "INITIAL";
+		String messageStatus = (isDeleted) ? "REDACTED" : updatedORInitial;
+		header.setMessageStatusCode(messageStatus);
+		//header.setMessageStatusCode("INITIAL");
 		header.setMessageSchemaVersion(new BigDecimal("1.6"));
 		header.setMessageUniqueID(UUID.randomUUID().toString());
 		return header;

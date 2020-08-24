@@ -60,7 +60,6 @@ public class PharmacyDictionary {
     }
     private Map<Integer, String> regimenMap = new HashMap<>();
     private Map<Integer, String> regimenCodeDescTextMap = new HashMap<>();
-
     /*
 		Concept ID for regimen to be gotten from
      */

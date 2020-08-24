@@ -201,7 +201,7 @@ public class HTSDictionary {
         htsDictionary.put(165885, "3");
 
         //refferred from
-        htsDictionary.put(5622, "8");
+     //   htsDictionary.put(5622, "8");
         htsDictionary.put(978, "1");
 
         //marital status
@@ -315,9 +315,7 @@ public class HTSDictionary {
         // obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
         obs = extractObs(HTS_Client_Intake_SETTING_ConceptID, allObs);
         if (obs != null && obs.getValueCoded() != null) {
-
             hivTestingReport.setSetting(getMappedValue(obs.getValueCoded().getConceptId()));
-
         }
 
         //first time visit
@@ -511,16 +509,16 @@ public class HTSDictionary {
         Obs obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT, allObs);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setTestName(getMappedValue(obs.getValueCoded().getConceptId()));
-        } 
+        }
+
 //        else {
 //            //check if the old test name was used
 //            obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT_OLD, allObs);
 //            if (obs != null) {
 //                recencyTestingType.setTestName(obs.getValueText());
 //            }
-//
+//            
 //        }
-
         //test date
         obs = extractObs(HIV_RECENCY_TEST_DATE_CONCEPT, allObs);
         if (obs != null && obs.getValueDate() != null) {
