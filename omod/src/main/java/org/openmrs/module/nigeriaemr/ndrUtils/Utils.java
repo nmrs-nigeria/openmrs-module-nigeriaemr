@@ -395,6 +395,14 @@ public class Utils {
 		return Context.getAdministrationService().getGlobalProperty("partner_reporting_state");
 	}
 	
+	public static int getBatchSize() {
+		String batchSize = Context.getAdministrationService().getGlobalProperty("ndr_export_batch_size");
+		if (batchSize != null && batchSize.isEmpty()) {
+			return Integer.parseInt(batchSize);
+		} else
+			return 10;
+	}
+	
 	public static String getIPReportingLgaCode() {
 		return Context.getAdministrationService().getGlobalProperty("partner_reporting_lga_code");
 	}
@@ -1045,7 +1053,7 @@ public class Utils {
 	public static List<Encounter> getLastEncounters(Patient patient, Date endDate) {
 		NigeriaEncounterService nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 		return nigeriaEncounterService.getEncountersByEncounterTypeIds(patient, null, endDate,
-				Arrays.asList(Adult_Ped_Initial_Encounter_Type_Id, Care_card_Encounter_Type_Id));
+		    Arrays.asList(Adult_Ped_Initial_Encounter_Type_Id, Care_card_Encounter_Type_Id));
 	}
 	
 	public static Obs getHighestCD4Obs(Patient patient) {
@@ -1071,7 +1079,7 @@ public class Utils {
 		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getObsByConceptId(patient.getPersonId(), conceptId, null, false);
 	}
-
+	
 	public static List<Obs> getObs(Patient patient, int conceptId, int encounterId) {
 		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getObsByConceptId(patient.getPersonId(), conceptId, Arrays.asList(encounterId), false);

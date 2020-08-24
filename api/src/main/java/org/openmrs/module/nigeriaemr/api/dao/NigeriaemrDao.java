@@ -58,25 +58,25 @@ public class NigeriaemrDao {
 		criteria.addOrder(Order.desc("dateStarted"));
 		return criteria.list();
 	}
-
+	
 	public List<BiometricInfo> getBiometricInfoByPatientId(Integer patientId) throws DAOException {
 		Criteria criteria = getSession().createCriteria(BiometricInfo.class);
 		criteria.add(Restrictions.eq("patientId", patientId));
 		return criteria.list();
 	}
-
+	
 	public NDRExportBatch save(NDRExportBatch ndrExportBatch) throws APIException {
 		getSession().saveOrUpdate(ndrExportBatch);
 		return ndrExportBatch;
 	}
-
+	
 	public List<NDRExportBatch> getExportBatchByStatus(String status) throws APIException {
 		Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
 		criteria.add(Restrictions.eq("status", status));
 		criteria.addOrder(Order.desc("dateCreated"));
 		return criteria.list();
 	}
-
+	
 	public NDRExportBatch getExportBatch(int id) throws APIException {
 		Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
 		criteria.add(Restrictions.eq("id", id));

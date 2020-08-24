@@ -6,6 +6,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
+import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
 import org.openmrs.module.nigeriaemr.ndrfactory.NDRExtractor;
@@ -28,8 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class NdrFragmentController {
 	
 	NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
-
-
+	
 	NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 	
 	DBConnection openmrsConn;
@@ -49,9 +49,10 @@ public class NdrFragmentController {
 	public NdrFragmentController() throws Exception {
 		openmrsConn = Utils.getNmrsConnectionDetails();
 		facilityLocationService = new FacilityLocationService();
-		ndrExtractionService = new NdrExtractionService();
+		ndrExtractionService = new NdrExtractionService(Context.getUserContext());
 		this.jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
 		executorService.scheduleAtFixedRate(nd::checkIfExportIsComplete, 60, 30, TimeUnit.SECONDS);
+		executorService.scheduleAtFixedRate(ndrExtractionService::process, 60, 30, TimeUnit.SECONDS);
 	}
 	
 	public void controller() {
@@ -69,13 +70,14 @@ public class NdrFragmentController {
 		//check if global variable for logging exists
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		LoggerUtils.clearLogFile();
-
 		
 		String FacilityType = "FAC";
-
-		if(filteredPatientByLocation.size() == 0 ) return "";
 		
-		return startGenerateFile(request, filteredPatientByLocation, facilityLocation.getFacility_name(), facilityLocation.getDatimCode(), null, currentDate);
+		if (filteredPatientByLocation.size() == 0)
+			return "";
+		
+		return startGenerateFile(request, filteredPatientByLocation, facilityLocation.getFacility_name(),
+		    facilityLocation.getDatimCode(), null, currentDate);
 	}
 	
 	public String generateNDRFile(HttpServletRequest request) throws Exception {
@@ -102,13 +104,14 @@ public class NdrFragmentController {
 		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
-		String FacilityType = "FAC";
-
-		if(patients.size() == 0 ) return "";
-
+		FacilityType facility = Utils.createFacilityType(facilityName, DATIMID, "FAC");
+		if (patients.size() == 0)
+			return "";
+		
 		return startGenerateFile(request, patients, facilityName, DATIMID, lastDate, currentDate);
 		
 	}
+	
 	private String startGenerateFile(HttpServletRequest request, List<Integer> filteredPatients,
 									 String facilityName, String DATIMID,Date lastDate, Date currentDate) throws Exception {
 
@@ -118,8 +121,7 @@ public class NdrFragmentController {
 		List<NDRExport> exports = nigeriaemrService.getExports(condition, false);
 		if(exports.size() > 0 ) return "You already have an export in process, Kindly wait for it to finish";
 		if(filteredPatients == null || filteredPatients.size() <= 0) return "no new patient record found";
-		ndrExtractionService.saveExport(request,filteredPatients,facilityName,DATIMID,lastDate,currentDate);
-
+		ndrExtractionService.saveExport(request,filteredPatients,DATIMID,lastDate,currentDate);
 		return "Export is being processed";
 	}
 	

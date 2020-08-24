@@ -31,8 +31,6 @@ public class NDRExtractor {
 	
 	private final String reportFolder;
 	
-	private final FacilityType facility;
-	
 	private final int counter;
 	
 	private final UserContext userContext;
@@ -51,7 +49,6 @@ public class NDRExtractor {
 		this.patientUUid = null;
 		this.DATIMID = null;
 		this.reportFolder = null;
-		this.facility = null;
 		this.counter = 0;
 		this.userContext = userContext;
 		this.formattedDate = null;
@@ -60,13 +57,11 @@ public class NDRExtractor {
 		this.exportProcessId = 0;
 	}
 	
-	public NDRExtractor(String patientUUid, String DATIMID, String reportFolder, FacilityType facility, int counter,
-	    UserContext userContext, String formattedDate, JAXBContext jaxbContext, Date lastDate, Date currentDate,
-	    int exportProcessId) {
+	public NDRExtractor(String patientUUid, String DATIMID, String reportFolder, int counter, UserContext userContext,
+	    String formattedDate, JAXBContext jaxbContext, Date lastDate, Date currentDate, int exportProcessId) {
 		this.patientUUid = patientUUid;
 		this.DATIMID = DATIMID;
 		this.reportFolder = reportFolder;
-		this.facility = facility;
 		this.counter = counter;
 		this.userContext = userContext;
 		this.formattedDate = formattedDate;
@@ -106,7 +101,7 @@ public class NDRExtractor {
 				    "Started Export for patient with id: " + patient.getId(), LoggerUtils.LogFormat.INFO,
 				    LoggerUtils.LogLevel.live);
 				
-				cnt = generator.createContainer(patient, facility);
+				cnt = generator.createContainer(patient);
 				
 			}
 			catch (Exception ex) {
@@ -162,63 +157,15 @@ public class NDRExtractor {
 		Context.setUserContext(this.userContext);
 		Context.openSessionWithCurrentUser();
 		try {
+			String IPReportingState = Utils.getIPReportingState();
+			String IPReportingLgaCode = Utils.getIPReportingLgaCode();
 			Map<String, Object> condition = new HashMap<>();
 			condition.put("status", "Done");
 			List<NDRExport> exports = nigeriaemrService.getExports(condition, false);
 			for (NDRExport ndrExport : exports) {
-				String facilityName = Utils.getFacilityName();
 				String DATIMID = Utils.getFacilityDATIMId();
 				String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExport.getDateStarted());
-				String fileName = Utils.getIPShortName() + "_ " + facilityName + "_" + DATIMID + "_" + formattedDate;
-				Utils.updateLast_NDR_Run_Date(ndrExport.getDateStarted());
-				String zipFileName = fileName + ".zip";
-
-				ndrExport.setStatus("Processing"); // update to Processing so another thread won't pick it up
-				nigeriaemrService.saveNdrExportItem(ndrExport);
-
-				String path = Utils.ZipFolder(ndrExport.getContextPath(), ndrExport.getReportFolder(), zipFileName, "NDR");
-				if(!"no new patient record found".equalsIgnoreCase(path)) {
-					ndrExport.setPath(path);
-					ndrExport.setDateEnded(new Date());
-					ndrExport.setStatus("Completed");
-				}else {
-					ndrExport.setDateEnded(new Date());
-					ndrExport.setStatus("Failed");
-				}
-				nigeriaemrService.saveNdrExportItem(ndrExport);
-			}
-		}catch (Exception e){
-			System.out.println(e.getMessage());
-			//ignore error
-		}
-
-
-		//Check if any currently in process has failed
-		Map<String, Object> condition = new HashMap<>();
-		condition.put("status", "Processing");
-		List<NDRExport> processingExports = nigeriaemrService.getExports(condition, false);
-		if(processingExports.size() > 0){
-			for(NDRExport ndrExport: processingExports){
-				if(Utils.getDateDiffInMinutes(ndrExport.getDateEnded(), new Date()) > 20){
-					ndrExport.setDateEnded(new Date());
-					ndrExport.setStatus("Failed");
-					nigeriaemrService.saveNdrExportItem(ndrExport);
-				}
-			}
-		}
-		Context.closeSession();
-	}
-
-	public void processNewBatch(){
-		Context.setUserContext(this.userContext);
-		Context.openSessionWithCurrentUser();
-		try {
-			List<NDRExportBatch> exports = nigeriaemrService.getExportBatchByStatus("Created");
-			for (NDRExportBatch ndrExport : exports) {
-				String facilityName = Utils.getFacilityName();
-				String DATIMID = Utils.getFacilityDATIMId();
-				String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExport.getDateStarted());
-				String fileName = Utils.getIPShortName() + "_ " + facilityName + "_" + DATIMID + "_" + formattedDate;
+				String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate;
 				Utils.updateLast_NDR_Run_Date(ndrExport.getDateStarted());
 				String zipFileName = fileName + ".zip";
 

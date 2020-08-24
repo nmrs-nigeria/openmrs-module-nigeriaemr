@@ -43,28 +43,51 @@
         </comment>
 
         <insert tableName="global_property">
-            <column name="property" value="partner_reporting_lga_code"></column>
-            <column name="property_value" value="UNKNOWN"></column>
-            <column name="description" value="Facility Lga Code"></column>
-            <column name="uuid" value="24d5d903-bc66-4131-8e85-31067c29f0b5"></column>
-            <column name="datatype" value="NULL"></column>
-            <column name="datatype_config" value="NULL"></column>
-            <column name="preferred_handler" value="NULL"></column>
-            <column name="handler_config" value="NULL"></column>
+            <column name="property" value="partner_reporting_lga_code"/>
+            <column name="property_value" value="UNKNOWN"/>
+            <column name="description" value="Facility Lga Code"/>
+            <column name="uuid" value="24d5d903-bc66-4131-8e85-31067c29f0b5"/>
+            <column name="datatype" value="NULL"/>
+            <column name="datatype_config" value="NULL"/>
+            <column name="preferred_handler" value="NULL"/>
+            <column name="handler_config" value="NULL"/>
         </insert>
         <insert tableName="global_property">
-            <column name="property" value="partner_reporting_state"></column>
-            <column name="property_value" value="UNKNOWN"></column>
-            <column name="description" value="Facility State Name"></column>
-            <column name="uuid" value="83a459f6-8765-4743-97ab-e8920944208b"></column>
-            <column name="datatype" value="NULL"></column>
-            <column name="datatype_config" value="NULL"></column>
-            <column name="preferred_handler" value="NULL"></column>
-            <column name="handler_config" value="NULL"></column>
+            <column name="property" value="partner_reporting_state"/>
+            <column name="property_value" value="UNKNOWN"/>
+            <column name="description" value="Facility State Name"/>
+            <column name="uuid" value="83a459f6-8765-4743-97ab-e8920944208b"/>
+            <column name="datatype" value="NULL"/>
+            <column name="datatype_config" value="NULL"/>
+            <column name="preferred_handler" value="NULL"/>
+            <column name="handler_config" value="NULL"/>
         </insert>
 
         <addForeignKeyConstraint constraintName="nigeriaemr_item_owner_fk" baseTableName="nigeriaemr_item" baseColumnNames="owner"  referencedTableName="users"
                                  referencedColumnNames="user_id" />
+    </changeSet>
+
+
+    <changeSet id="nigeriaemr-202008241353" author="wande">
+        <comment>
+            Creating the nigeriaemr_ndr export table
+        </comment>
+        <createTable tableName="nigeriaemr_ndr_batch_export">
+            <column name="nigeriaemr_ndr_batch_export_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="owner" type="int" />
+            <column name="total_number_of_patients" type="int" />
+            <column name="total_number_of_patients_processed" type="int" defaultValue="0" />
+            <column name="date_started" type="TIMESTAMP" />
+            <column name="date_created" type="TIMESTAMP" />
+            <column name="date_updated" type="TIMESTAMP" />
+            <column name="last_export_date" type="TIMESTAMP" />
+            <column name="status" type="varchar(25)"/>
+        </createTable>
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="batch_id"/>
+        </addColumn>
     </changeSet>
  
 </databaseChangeLog>

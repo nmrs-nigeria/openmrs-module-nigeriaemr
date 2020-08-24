@@ -1,17 +1,11 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
 import java.util.stream.Collectors;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.transform.stream.StreamSource;
 
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
@@ -21,19 +15,14 @@ import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import org.openmrs.module.nigeriaemr.ndrUtils.CustomErrorHandler;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
-import org.xml.sax.SAXException;
 
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 
 public class NDRConverter {
 	
-	//Logger logger = Logger.getLogger(NDRConverter.class);
 	private Patient patient;
-	
-	private FacilityType facility;
 	
 	private String ipName;
 	
@@ -71,11 +60,9 @@ public class NDRConverter {
 		this.toDate = toDate;
 	}
 	
-	public Container createContainer(Patient pts, FacilityType facility) {
+	public Container createContainer(Patient pts) {
 
         Container container = new Container();
-        Connection connection = null;
-        Statement statement = null;
         String facilityName = Utils.getFacilityName();
         String DATIMID = Utils.getFacilityDATIMId();
         String FacilityType = "FAC";
@@ -84,7 +71,6 @@ public class NDRConverter {
 
         try {
             patient = pts;
-            this.facility = facility;
             this.encounters = new ArrayList<>();
 
             long startTime = System.currentTimeMillis();
@@ -111,7 +97,6 @@ public class NDRConverter {
                 }
             }
             MessageHeaderType header = createMessageHeaderType(pts,hasUpdate);
-            //FacilityType sendingOrganization = Utils.createFacilityType(this.ipName, this.ipCode, "IP");
             FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
             header.setMessageSendingOrganization(sendingOrganization);
 
@@ -134,6 +119,9 @@ public class NDRConverter {
 	private IndividualReportType createIndividualReportType() throws DatatypeConfigurationException {
 
         IndividualReportType individualReport = new IndividualReportType();
+        String facilityName = Utils.getFacilityName();
+        String DATIMID = Utils.getFacilityDATIMId();
+        FacilityType facility = Utils.createFacilityType(facilityName,DATIMID,"FAC");
         try {
             PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicType2(patient,facility, allobs);
             if (patientDemography == null) { //return null if no valid patient data exist

@@ -2,21 +2,22 @@ package org.openmrs.module.nigeriaemr.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
-import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
+import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.ndrfactory.NDRExtractor;
 import org.openmrs.module.nigeriaemr.util.FileUtils;
+import org.openmrs.module.nigeriaemr.util.Partition;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -41,39 +42,63 @@ public class NdrExtractionService {
 	
 	static DecimalFormat df = new DecimalFormat("#.##");
 
-	public void saveExport(HttpServletRequest request, List<Integer> filteredPatients,String facilityName,
+    Queue<NDRExport> queue = new LinkedList<>();
+
+	UserContext userContext;
+
+	public NdrExtractionService(UserContext userContext){
+	    this.userContext = userContext;
+    }
+
+	public void saveExport(HttpServletRequest request, List<Integer> filteredPatients,
                            String DATIMID,Date lastDate,Date currentDate) throws Exception {
-        //create report download folder at the server. skip if already exist
-        String reportType = "NDR";
-        String reportFolder = Utils.ensureReportFolderExist(request, reportType);
-        String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(currentDate);
-        String fileName =  Utils.getIPShortName() + "_ " + facilityName + "_" + DATIMID + "_" + formattedDate;
-        // Start export process
-        NDRExport ndrExport = new NDRExport();
-        ndrExport.setDateStarted(currentDate);
-        ndrExport.setPatients(filteredPatients.size());
-        ndrExport.setOwner(Context.getAuthenticatedUser());
-        ndrExport.setName(fileName);
-        ndrExport.setVoided(false);
-        ndrExport.setStatus("Start");
-        ndrExport.setLastDate(lastDate);
-        ndrExport.setContextPath(request.getContextPath());
-        ndrExport.setReportFolder(reportFolder);
-        try {
-            ndrExport.setPatientsList(mapper.writeValueAsString(filteredPatients));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new Exception("Error Processing Export");
+
+        int patientSize  = filteredPatients.size();
+        int batch = Utils.getBatchSize();
+
+        int numm = 1;
+        if (patientSize > batch) {
+            numm += patientSize%batch;
         }
-        nigeriaemrService.saveNdrExportItem(ndrExport);
+
+        List<List<Integer>> partitions = Partition.ofSize(filteredPatients,numm);
+        NDRExportBatch ndrExportBatch = nigeriaemrService.createExportBatch(lastDate);
+
+        for(List<Integer> patients: partitions) {
+            String IPReportingState = Utils.getIPReportingState();
+            String IPReportingLgaCode = Utils.getIPReportingLgaCode();
+            //create report download folder at the server. skip if already exist
+            String reportType = "NDR";
+            String reportFolder = Utils.ensureReportFolderExist(request, reportType);
+            String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(currentDate);
+            String fileName = IPReportingState +"_"+ IPReportingLgaCode + "_" + DATIMID + "_{pepFarId}_" + formattedDate;
+            // Start export process
+            NDRExport ndrExport = new NDRExport();
+            ndrExport.setDateStarted(currentDate);
+            ndrExport.setPatients(patients.size());
+            ndrExport.setOwner(Context.getAuthenticatedUser());
+            ndrExport.setName(fileName);
+            ndrExport.setVoided(false);
+            ndrExport.setStatus("Start");
+            ndrExport.setLastDate(lastDate);
+            ndrExport.setContextPath(request.getContextPath());
+            ndrExport.setReportFolder(reportFolder);
+            ndrExport.setBatchId(ndrExportBatch);
+            try {
+                ndrExport.setPatientsList(mapper.writeValueAsString(patients));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                throw new Exception("Error Processing Export");
+            }
+            nigeriaemrService.saveNdrExportItem(ndrExport);
+        }
     }
 	
-	public void export(JAXBContext jaxbContext) {
-
-	    NDRExport ndrExport = new NDRExport();
-
+	public void export(JAXBContext jaxbContext, NDRExport ndrExport) throws IOException {
+        String DATIMID = Utils.getFacilityDATIMId();
         String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExport.getDateStarted());
-        FacilityType facility = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
+        String patientList = ndrExport.getPatientsList();
+        List<String> patients =  (List<String>)mapper.readValue(patientList,List.class);
 
         UserContext userContext = Context.getUserContext();
         try {
@@ -81,13 +106,13 @@ public class NdrExtractionService {
                 int counter = 0;
                 Context.setUserContext(userContext);
                 Context.openSessionWithCurrentUser();
-                for (Patient patient : filteredPatients) {
+                for (String patientUuid : patients) {
                     counter++;
 
                     int finalCounter = counter;
                     Thread thread = new Thread(() -> {
                         try {
-                            NDRExtractor ndrExtractor = new NDRExtractor(patient.getUuid(), DATIMID, ndrExport.getReportFolder(), facility,
+                            NDRExtractor ndrExtractor = new NDRExtractor(patientUuid, DATIMID, ndrExport.getReportFolder(),
                                     finalCounter, userContext, formattedDate, jaxbContext, ndrExport.getLastDate(), ndrExport.getDateStarted(), ndrExport.getId());
                             ndrExtractor.extract();
 
@@ -100,8 +125,8 @@ public class NdrExtractionService {
                 }
                 while (futures.size() > 0) {
                     futures.removeIf(Future::isDone);
-                    int processed = filteredPatients.size() - futures.size();
-                    if (filteredPatients.size() == processed) {
+                    int processed = patients.size() - futures.size();
+                    if (patients.size() == processed) {
                         nigeriaemrService.updateStatus(ndrExport.getId(), "Done");
                     }
                     if(processed > 0) {
@@ -201,4 +226,23 @@ public class NdrExtractionService {
 			return false;
 		}
 	}
+
+    public void process(){
+        Context.setUserContext(this.userContext);
+        Context.openSessionWithCurrentUser();
+
+        List<NDRExportBatch> ndrExportBatches = nigeriaemrService.getExportBatchByStatus("Processing");
+        if(ndrExportBatches.size() == 0){
+            List<NDRExportBatch> ndrNewExportBatches = nigeriaemrService.getExportBatchByStatus("New");
+            if(ndrNewExportBatches.size()>0) {
+                NDRExportBatch ndrExportBatch = ndrNewExportBatches.get(0);
+                Map<String, Object> condition = new HashMap<>();
+                condition.put("status", "Done");
+                condition.put("batchId", ndrExportBatch.getId());
+                List<NDRExport> exports = nigeriaemrService.getExports(condition, false);
+                nigeriaemrService.updateExportBatch(ndrExportBatch.getId(),"processing");
+                queue.addAll(exports);
+            }
+        }
+    }
 }

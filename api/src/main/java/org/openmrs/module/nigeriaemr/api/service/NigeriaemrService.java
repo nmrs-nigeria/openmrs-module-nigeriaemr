@@ -72,15 +72,15 @@ public interface NigeriaemrService extends OpenmrsService {
 	@Authorized()
 	@Transactional
 	List<NDRExport> getExports(Map<String, Object> conditions, boolean includeVoided) throws APIException;
-
+	
 	@Authorized()
 	@Transactional
-	NDRExportBatch createExportBatch(int startIndex, int endIndex, Date lastExportDate) throws APIException;
-
+	NDRExportBatch createExportBatch(Date lastExportDate) throws APIException;
+	
 	@Authorized()
 	@Transactional
 	List<NDRExportBatch> getExportBatchByStatus(String status) throws APIException;
-
+	
 	@Authorized()
 	@Transactional
 	NDRExportBatch updateExportBatch(int id, String status) throws APIException;

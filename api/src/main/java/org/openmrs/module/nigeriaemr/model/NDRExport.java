@@ -44,7 +44,7 @@ public class NDRExport {
 	
 	@Column(name = "date_started")
 	private Date dateStarted;
-
+	
 	@Column(name = "last_date")
 	private Date lastDate;
 	
@@ -65,9 +65,13 @@ public class NDRExport {
 	
 	@Column(name = "report_folder")
 	private String reportFolder;
-
+	
 	@Column(name = "patients")
 	private String patientsList;
+	
+	@ManyToOne
+	@JoinColumn(name = "batch_id")
+	private NDRExportBatch batchId;
 	
 	public Integer getId() {
 		return id;
@@ -164,20 +168,28 @@ public class NDRExport {
 	public void setReportFolder(String reportFolder) {
 		this.reportFolder = reportFolder;
 	}
-
+	
 	public Date getLastDate() {
 		return lastDate;
 	}
-
+	
 	public void setLastDate(Date lastDate) {
 		this.lastDate = lastDate;
 	}
-
+	
 	public String getPatientsList() {
 		return patientsList;
 	}
-
+	
 	public void setPatientsList(String patientsList) {
 		this.patientsList = patientsList;
+	}
+	
+	public NDRExportBatch getBatchId() {
+		return batchId;
+	}
+	
+	public void setBatchId(NDRExportBatch batchId) {
+		this.batchId = batchId;
 	}
 }
