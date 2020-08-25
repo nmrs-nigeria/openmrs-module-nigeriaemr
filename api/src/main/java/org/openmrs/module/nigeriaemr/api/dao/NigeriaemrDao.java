@@ -9,13 +9,17 @@
  */
 package org.openmrs.module.nigeriaemr.api.dao;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.nigeriaemr.Item;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 public class NigeriaemrDao {
 	
@@ -32,6 +36,16 @@ public class NigeriaemrDao {
 	public Item saveItem(Item item) {
 		getSession().saveOrUpdate(item);
 		return item;
+	}
+	
+	public DatimMap getDatatimMapByDataimId(String datimId) {
+		Criteria criteria = getSession().createCriteria(DatimMap.class);
+		criteria.add(Restrictions.eq("datimCode", datimId));
+		criteria.setFetchSize(1);
+		List<DatimMap> datimMapList = (List<DatimMap>) criteria.list();
+		if (datimMapList.size() > 0)
+			return datimMapList.get(0);
+		return null;
 	}
 	
 	/**

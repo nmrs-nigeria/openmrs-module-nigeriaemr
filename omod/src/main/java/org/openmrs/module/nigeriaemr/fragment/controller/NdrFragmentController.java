@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.NigeriaemrService;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.ndr.Container;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
@@ -23,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -117,8 +120,7 @@ public class NdrFragmentController {
 	}
 	
 	private static String startGenerateFile(HttpServletRequest request, DBConnection openmrsConn,
-	        List<Patient> filteredPatients, String facilityName, String DATIMID, String FacilityType) throws JAXBException,
-	        SAXException {
+	        List<Patient> filteredPatients, String facilityName, String DATIMID, String FacilityType) throws Exception {
 		
 		//create report download folder at the server. skip if already exist
 		Utils util = new Utils();
@@ -126,8 +128,17 @@ public class NdrFragmentController {
 		String reportFolder = util.ensureReportFolderExist(request, reportType);
 		
 		String IPShortName = Utils.getIPShortName();
-		String IPReportingState = Utils.getIPReportingState();
-		String IPReportingLgaCode = Utils.getIPReportingLgaCode();
+		String IPReportingState;
+		String IPReportingLgaCode;
+		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(DATIMID));
+		if (datimMap.isPresent()) {
+			IPReportingState = datimMap.get().getStateCode().toString();
+			IPReportingLgaCode = datimMap.get().getLgaCode().toString();
+		} else {
+			throw new Exception("Invalid datimCode configured");
+		}
+		
 		//Create an xml file and save in today's folder
 		NDRConverter generator = new NDRConverter(Utils.getIPFullName(), IPShortName, openmrsConn);
 		JAXBContext jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
@@ -195,6 +206,7 @@ public class NdrFragmentController {
 						b = aXMLFile.createNewFile();
 						
 						System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
+						
 						generator.writeFile(cnt, aXMLFile, jaxbMarshaller);
 					}
 					catch (Exception ex) {

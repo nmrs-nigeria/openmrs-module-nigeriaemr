@@ -6,44 +6,39 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.*;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.Module;
+import org.openmrs.module.ModuleFactory;
+import org.openmrs.module.nigeriaemr.api.NigeriaemrService;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
+import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
+import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.PharmacyDictionary;
+import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.module.nigeriaemr.util.ZipUtil;
+import org.openmrs.util.OpenmrsUtil;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.security.Key;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-
-import org.codehaus.jackson.map.ObjectMapper;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.Months;
-import org.openmrs.api.ProgramWorkflowService;
-import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
-import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
-import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
-import org.openmrs.module.nigeriaemr.omodmodels.Version;
-import org.openmrs.util.OpenmrsUtil;
 
 public class Utils {
 	
@@ -399,11 +394,17 @@ public class Utils {
 	}
 	
 	public static String getIPReportingState() {
-		return Context.getAdministrationService().getGlobalProperty("partner_reporting_state");
+		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+		String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
+		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
+		return datimMap.map(map -> map.getStateCode().toString()).orElse(null);
 	}
 	
 	public static String getIPReportingLgaCode() {
-		return Context.getAdministrationService().getGlobalProperty("partner_reporting_lga_code");
+		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+		String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
+		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
+		return datimMap.map(map -> map.getLgaCode().toString()).orElse(null);
 	}
 	
 	//date is always saved as yyyy-MM-dd

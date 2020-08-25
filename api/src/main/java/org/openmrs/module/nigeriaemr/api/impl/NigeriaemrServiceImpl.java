@@ -15,6 +15,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.nigeriaemr.Item;
 import org.openmrs.module.nigeriaemr.api.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 
 public class NigeriaemrServiceImpl extends BaseOpenmrsService implements NigeriaemrService {
 	
@@ -48,5 +49,10 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 		}
 		
 		return dao.saveItem(item);
+	}
+	
+	@Override
+	public DatimMap getDatatimMapByDataimId(String datimId) throws APIException {
+		return dao.getDatatimMapByDataimId(datimId);
 	}
 }

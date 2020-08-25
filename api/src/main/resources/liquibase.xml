@@ -62,5 +62,12 @@
             <column name="handler_config" value="NULL"></column>
         </insert>
     </changeSet>
+
+    <changeSet id="nigeriaemr-2020-08-24-172600" author="wande">
+        <sqlFile path="sql/dataim_map.sql"
+                 stripComments="true"
+                 splitStatements="true"
+                 endDelimiter=";"/>
+    </changeSet>
  
 </databaseChangeLog>
