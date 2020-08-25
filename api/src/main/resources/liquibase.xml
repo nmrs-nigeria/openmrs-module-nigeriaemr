@@ -37,7 +37,7 @@
 		</createTable>
     </changeSet>
 
-    <changeSet id="nigeriaemr-2016-07-28-21-201404091129" author="temiye">
+    <changeSet id="nigeriaemr-2016-07-28-21-2014040911290" author="temiye">
         <comment>
             Updating state and lga code
         </comment>
@@ -86,7 +86,7 @@
             <column name="status" type="varchar(25)"/>
         </createTable>
         <addColumn tableName="nigeriaemr_ndr_export">
-            <column name="batch_id"/>
+            <column name="batch_id" type="int"/>
         </addColumn>
     </changeSet>
  
