@@ -88,7 +88,6 @@
         <dependency>
             <groupId>com.umb</groupId>
             <artifactId>NMRS-Signer</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
         
@@ -125,6 +124,8 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
+
+
 
         <pluginManagement>
             <plugins>

@@ -45,6 +45,12 @@
 				<version>3.15</version>
 			</dependency>
 
+			<dependency>
+				<groupId>com.umb</groupId>
+				<artifactId>NMRS-Signer</artifactId>
+				<version>1.0.0</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -60,6 +66,14 @@
 			<layout>default</layout>
 			<url>http://repo1.maven.org/maven2</url>
 		</repository>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-nmrs-maven</id>
+			<name>bintray</name>
+			<url>https://nmrs.bintray.com/maven</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -69,6 +83,14 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-nmrs-maven</id>
+			<name>bintray-plugins</name>
+			<url>https://nmrs.bintray.com/maven</url>
 		</pluginRepository>
 	</pluginRepositories>
 
