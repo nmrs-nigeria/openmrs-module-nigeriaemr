@@ -452,6 +452,17 @@ public class Utils {
 		}
 	}
 	
+	public static String getModules() {
+		Map<String, Module> moduleMap = ModuleFactory.getStartedModulesMap();
+		StringBuilder sb = new StringBuilder();
+		for (String moduleMapKey : moduleMap.keySet()) {
+			Module module = moduleMap.get(moduleMapKey);
+			sb.append(module.getModuleId()).append(":").append(module.getVersion());
+			sb.append(";");
+		}
+		return sb.toString();
+	}
+	
 	/*public static List<Encounter> getEncounterByPatientAndEncounterTypeId(Patient patient, int encounterTypeId) {
 
 	    EncounterType encounterType = Context.getEncounterService().getEncounterType(encounterTypeId);
