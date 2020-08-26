@@ -14,6 +14,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.nigeriaemr.NigeriaemrConfig;
 import org.openmrs.module.nigeriaemr.Item;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -45,4 +46,8 @@ public interface NigeriaemrService extends OpenmrsService {
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
 	Item saveItem(Item item) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	DatimMap getDatatimMapByDataimId(String datimId) throws APIException;
 }
