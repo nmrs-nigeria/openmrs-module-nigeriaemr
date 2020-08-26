@@ -190,7 +190,7 @@ public class NdrFragmentController {
 						} else {
 							pepFarId = "";
 						}
-						
+						cnt.setValidation(generator.getValidation(patient.getUuid()));
 						//String fileName = IPShortName + "_" + DATIMID + "_" + counter  + "_" + pepFarId + "_" + formattedDate;
 						String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + pepFarId + "_"
 						        + formattedDate;

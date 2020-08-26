@@ -453,6 +453,17 @@ public class Utils {
 		}
 	}
 	
+	public static String getModules() {
+		Map<String, Module> moduleMap = ModuleFactory.getStartedModulesMap();
+		StringBuilder sb = new StringBuilder();
+		for (String moduleMapKey : moduleMap.keySet()) {
+			Module module = moduleMap.get(moduleMapKey);
+			sb.append(module.getModuleId()).append(":").append(module.getVersion());
+			sb.append(";");
+		}
+		return sb.toString();
+	}
+	
 	/*public static List<Encounter> getEncounterByPatientAndEncounterTypeId(Patient patient, int encounterTypeId) {
 
 	    EncounterType encounterType = Context.getEncounterService().getEncounterType(encounterTypeId);
@@ -1218,14 +1229,6 @@ public class Utils {
 
         if (encounters != null && encounters.isPresent()) {
             return encounters.get();
-            /*=======
-		if (encounters != null && encounters.isPresent()) {
-			return encounters.get();
->>>>>>> origin/dev
-            /*encounters.sort(Comparator.comparing(Encounter::getEncounterDatetime));
-			int lastIndex = encounters.size() - 1;
-			return encounters.get(lastIndex);*/
-//<<<<<<< HEAD
         }
         return null;
 

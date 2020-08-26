@@ -60,6 +60,14 @@
 			<layout>default</layout>
 			<url>http://repo1.maven.org/maven2</url>
 		</repository>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-nmrs-maven</id>
+			<name>bintray</name>
+			<url>https://nmrs.bintray.com/maven</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -69,6 +77,14 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-nmrs-maven</id>
+			<name>bintray-plugins</name>
+			<url>https://nmrs.bintray.com/maven</url>
 		</pluginRepository>
 	</pluginRepositories>
 

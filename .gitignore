@@ -47,6 +47,7 @@ local.properties
 *.jar
 *.war
 *.ear
+
 ############
 
 ### Netbeans ###
@@ -84,3 +85,9 @@ nb-configuration.xml
 
 !.editorconfig
 
+/.settings
+/.project
+/.classpath
+.DS_Store
+.idea/
+*.iml
