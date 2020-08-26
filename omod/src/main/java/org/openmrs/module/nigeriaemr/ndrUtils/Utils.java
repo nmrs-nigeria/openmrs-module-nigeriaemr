@@ -6,6 +6,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.*;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.Module;
+import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
@@ -450,6 +452,17 @@ public class Utils {
 			    LoggerUtils.LogFormat.FATAL, LogLevel.live);
 			return null;
 		}
+	}
+	
+	public static String getModules() {
+		Map<String, Module> moduleMap = ModuleFactory.getStartedModulesMap();
+		StringBuilder sb = new StringBuilder();
+		for (String moduleMapKey : moduleMap.keySet()) {
+			Module module = moduleMap.get(moduleMapKey);
+			sb.append(module.getModuleId()).append(":").append(module.getVersion());
+			sb.append(";");
+		}
+		return sb.toString();
 	}
 	
 	/*public static List<Encounter> getEncounterByPatientAndEncounterTypeId(Patient patient, int encounterTypeId) {
