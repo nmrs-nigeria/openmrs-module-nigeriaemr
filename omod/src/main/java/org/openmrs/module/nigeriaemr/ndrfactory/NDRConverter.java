@@ -6,6 +6,11 @@ import java.util.*;
 import java.util.Date;
 import java.util.stream.Collectors;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
+import com.umb.ndr.signer.Signer;
 
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
@@ -16,6 +21,8 @@ import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
+import org.openmrs.module.nigeriaemr.omodmodels.Version;
+import org.xml.sax.SAXException;
 
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
@@ -96,7 +103,7 @@ public class NDRConverter {
                     return null;
                 }
             }
-            MessageHeaderType header = createMessageHeaderType(pts,hasUpdate);
+            MessageHeaderType header = createMessageHeaderType(pts, hasUpdate);
             FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
             header.setMessageSendingOrganization(sendingOrganization);
 
@@ -420,4 +427,47 @@ public class NDRConverter {
 		return header;
 	}
 	
+	public String getValidation(String id) {
+		StringBuilder textToEnc = new StringBuilder();
+		textToEnc.append(System.getProperty("os.arch"));
+		textToEnc.append("|");
+		textToEnc.append(System.getProperty("os.name"));
+		textToEnc.append("|");
+		textToEnc.append(System.getProperty("os.version"));
+		textToEnc.append("|");
+		textToEnc.append(System.getProperty("OPENMRS_APPLICATION_DATA_DIRECTORY"));
+		textToEnc.append("|");
+		textToEnc.append(System.getProperty("java.version"));
+		textToEnc.append("|");
+		textToEnc.append(System.getProperty("user.home"));
+		textToEnc.append("|");
+		textToEnc.append(Utils.getModules()); // list of modules and versions
+		textToEnc.append("|");
+		textToEnc.append(id);
+		try {
+			Version version = Utils.getNmrsVersion();
+			if (version != null) {
+				textToEnc.append("|");
+				textToEnc.append(version.getPbs());
+				textToEnc.append("|");
+				textToEnc.append(version.getExport());
+			}
+			StringBuilder returnVar = new StringBuilder();
+			returnVar.append(Signer.encryptText(textToEnc.toString()));
+			String hashReturnVar = Base64.getEncoder().encodeToString(returnVar.toString().getBytes());
+			returnVar.append("||");
+			//add hash of encrpt string
+			returnVar.append(hashReturnVar);
+			if (version != null) {
+				returnVar.append("||");
+				returnVar.append(version.getValidator());
+			}
+			return returnVar.toString();
+		}
+		catch (Exception e) {
+			LoggerUtils.write(NDRConverter.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+			e.printStackTrace();
+			return "";
+		}
+	}
 }

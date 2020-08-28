@@ -8,9 +8,9 @@
   		    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-    <bean id="nigeriaemr.NigeriaemrConfig" class="org.openmrs.module.nigeriaemr.NigeriaemrConfig"/>
+    <bean id="nigeriaemrConfig" class="org.openmrs.module.nigeriaemr.NigeriaemrConfig"/>
 
-    <bean id="nigeriaemr.NigeriaemrDao" class="org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao">
+    <bean id="nigeriaemrDao" class="org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao">
         <property name="sessionFactory">
             <ref bean="dbSessionFactory" />
         </property>
@@ -121,14 +121,14 @@
 
     <!-- Wraps NigeriaemrService methods in DB transactions and OpenMRS interceptors,
     which set audit info like dateCreated, changedBy, etc.-->
-    <bean id="nigeriaemr.NigeriaemrService"
+    <bean id="nigeriaemrService"
             class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
         <property name="transactionManager">
             <ref bean="transactionManager" />
         </property>
         <property name="target">
             <bean class="org.openmrs.module.nigeriaemr.api.service.impl.NigeriaemrServiceImpl">
-                <property name="dao" ref="nigeriaemr.NigeriaemrDao" />
+                <property name="dao" ref="nigeriaemrDao" />
             </bean>
         </property>
         <property name="preInterceptors">
@@ -146,7 +146,7 @@
         <property name="moduleService">
             <list>
                 <value>org.openmrs.module.nigeriaemr.api.service.NigeriaemrService</value>
-                <ref bean="nigeriaemr.NigeriaemrService" />
+                <ref bean="nigeriaemrService" />
             </list>
         </property>
     </bean>

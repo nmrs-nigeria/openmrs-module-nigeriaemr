@@ -8,14 +8,21 @@ import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
-import org.openmrs.module.nigeriaemr.model.ndr.EncountersType;
+import org.openmrs.module.Module;
+import org.openmrs.module.ModuleFactory;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
+import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
+import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.PharmacyDictionary;
+import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.module.nigeriaemr.util.FileUtils;
 import org.openmrs.module.nigeriaemr.util.ZipUtil;
+import org.openmrs.util.OpenmrsUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -35,10 +42,6 @@ import java.util.stream.Collectors;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Months;
-import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
-import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
-import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
-import org.openmrs.util.OpenmrsUtil;
 
 public class Utils {
 	
@@ -137,41 +140,7 @@ public class Utils {
 	
 	public final static List<Integer> encounterTypeIds = Arrays.asList(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE,
 	    Utils.Laboratory_Encounter_Type_Id, Utils.PHARMACY_ENCOUNTER_TYPE, Utils.Partner_register_Encounter_Id);
-	
-	/* End of RegimenType Constant */
-	/*
 
-	
-	
-	-WhereFirstHIVTest
-	
-	-
-	
-	-InitialAdherenceCounselingCompletedDate (165038)
-	-TransferredInDate (160534)
-	-TransferredInFrom (160535)
-	-TransferredInFromPatId
-	-FirstARTRegimen (165708)(164506,164513,165702,164507,164514,165703)
-	-ARTStartDate (159599)
-	-WHOClinicalStageARTStart (5356)
-	-WeightAtARTStart (165582)
-	-ChildHeightAtARTStart (165581)
-	-FunctionalStatusStartART (165039)
-	-CD4AtStartOfART (164429)
-	-PatientTransferredOut (165470)(159492)
-	-TransferredOutStatus(165470)(159492)
-	-TransferredOutDate (165469)
-	-FacilityReferredTo
-	-PatientHasDied (165470)(165889)
-	-StatusAtDeath
-	-DeathDate(165469)
-	-SourceOfDeathInformation (162568)
-	-CauseOfDeathHIVRelated (165889,(165886,165887)) (163534,Yes(1065),No(1066))
-	-DrugAllergies (165419)
-	-EnrolledInHIVCareDate
-	-InitialTBStatus (1659)
-	   
-	    */
 	/* Variables specific to HIVQuestionsType */
 	public final static int DATE_OF_HIV_DIAGNOSIS_CONCEPT = 160554;
 	
@@ -392,7 +361,10 @@ public class Utils {
 	}
 	
 	public static String getIPReportingState() {
-		return Context.getAdministrationService().getGlobalProperty("partner_reporting_state");
+		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+		String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
+		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
+		return datimMap.map(map -> map.getStateCode().toString()).orElse(null);
 	}
 	
 	public static int getBatchSize() {
@@ -404,7 +376,10 @@ public class Utils {
 	}
 	
 	public static String getIPReportingLgaCode() {
-		return Context.getAdministrationService().getGlobalProperty("partner_reporting_lga_code");
+		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+		String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
+		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
+		return datimMap.map(map -> map.getLgaCode().toString()).orElse(null);
 	}
 	
 	//date is always saved as yyyy-MM-dd
@@ -451,6 +426,17 @@ public class Utils {
 			    LoggerUtils.LogFormat.FATAL, LogLevel.live);
 			return null;
 		}
+	}
+	
+	public static String getModules() {
+		Map<String, Module> moduleMap = ModuleFactory.getStartedModulesMap();
+		StringBuilder sb = new StringBuilder();
+		for (String moduleMapKey : moduleMap.keySet()) {
+			Module module = moduleMap.get(moduleMapKey);
+			sb.append(module.getModuleId()).append(":").append(module.getVersion());
+			sb.append(";");
+		}
+		return sb.toString();
 	}
 	
 	/*public static List<Encounter> getEncounterByPatientAndEncounterTypeId(Patient patient, int encounterTypeId) {
@@ -1098,7 +1084,6 @@ public class Utils {
         Optional<Encounter> encounters = Context.getEncounterService().getEncountersByPatient(patient)
                 .stream().filter(x -> x.getEncounterDatetime().before(endDate))
                 .max(Comparator.comparing(Encounter::getEncounterDatetime));
-
 		return encounters.orElse(null);
 
 	}

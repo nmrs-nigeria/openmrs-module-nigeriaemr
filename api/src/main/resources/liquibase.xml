@@ -74,7 +74,6 @@
         </insert>
     </changeSet>
 
-
     <changeSet id="nigeriaemr-202008241353" author="wande">
         <comment>
             Creating the nigeriaemr_ndr export table
@@ -95,6 +94,13 @@
         <addColumn tableName="nigeriaemr_ndr_export">
             <column name="batch_id" type="int"/>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-2020-08-24-172600" author="wande">
+    <sqlFile path="sql/dataim_map.sql"
+             stripComments="true"
+             splitStatements="true"
+             endDelimiter=";"/>
     </changeSet>
  
 </databaseChangeLog>

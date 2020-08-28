@@ -20,9 +20,9 @@ import org.openmrs.module.nigeriaemr.model.BiometricInfo;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 
 public class NigeriaemrDao {
 	
@@ -82,6 +82,16 @@ public class NigeriaemrDao {
 		criteria.add(Restrictions.eq("id", id));
 		criteria.addOrder(Order.desc("dateCreated"));
 		return (NDRExportBatch) criteria.uniqueResult();
+	}
+	
+	public DatimMap getDatatimMapByDataimId(String datimId) {
+		Criteria criteria = getSession().createCriteria(DatimMap.class);
+		criteria.add(Restrictions.eq("datimCode", datimId));
+		criteria.setFetchSize(1);
+		List<DatimMap> datimMapList = (List<DatimMap>) criteria.list();
+		if (datimMapList.size() > 0)
+			return datimMapList.get(0);
+		return null;
 	}
 	
 	/**

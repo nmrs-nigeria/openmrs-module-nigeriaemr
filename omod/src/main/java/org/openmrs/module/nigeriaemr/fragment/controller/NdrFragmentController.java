@@ -2,22 +2,14 @@ package org.openmrs.module.nigeriaemr.fragment.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
-import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
-import org.openmrs.module.nigeriaemr.ndrfactory.NDRExtractor;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.JAXBContext;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
+import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+import org.openmrs.module.nigeriaemr.ndrfactory.NDRExtractor;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.LocationModel;
@@ -25,6 +17,16 @@ import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
 import org.openmrs.module.nigeriaemr.service.NdrExtractionService;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBContext;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NdrFragmentController {
 	
@@ -79,7 +81,7 @@ public class NdrFragmentController {
 		return startGenerateFile(request, filteredPatientByLocation, facilityLocation.getFacility_name(),
 		    facilityLocation.getDatimCode(), null, currentDate);
 	}
-	
+
 	public String generateNDRFile(HttpServletRequest request) throws Exception {
 		// get date that's bounds to the date the export is kicked off
 		Date currentDate = new Date();
@@ -107,7 +109,6 @@ public class NdrFragmentController {
 		FacilityType facility = Utils.createFacilityType(facilityName, DATIMID, "FAC");
 		if (patients.size() == 0)
 			return "";
-		
 		return startGenerateFile(request, patients, facilityName, DATIMID, lastDate, currentDate);
 		
 	}
