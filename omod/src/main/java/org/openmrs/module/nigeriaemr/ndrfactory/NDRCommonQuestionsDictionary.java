@@ -19,6 +19,8 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.NigeriaPatientService;
 import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.CommonQuestionsType;
 import org.openmrs.module.nigeriaemr.model.ndr.ConditionSpecificQuestionsType;
@@ -33,6 +35,8 @@ import org.openmrs.module.nigeriaemr.model.ndr.RightHandType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+
+import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.PEPFAR_IDENTIFIER_INDEX;
 import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getXmlDate;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 
@@ -43,6 +47,7 @@ import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
  */
 public class NDRCommonQuestionsDictionary {
 
+    NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
     private static Map<Integer, String> map = new HashMap<>();
     private PharmacyDictionary pharmacyDictionary;
 
@@ -165,22 +170,21 @@ public class NDRCommonQuestionsDictionary {
         try {
 
             //Identifier 4 is Pepfar ID
-            PatientIdentifier pepfarid, pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId;
+            PatientIdentifier  pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
-           // pepfarid = new PatientIdentifier();
+            // pepfarid = allPidentifiers.stream().filter(x-> x.getIdentifierType().equals(4)).findFirst().get();
+            // pepfarid = new PatientIdentifier();
             // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
 
             Set<PatientIdentifier> allPidentifiers = pts.getIdentifiers();
-            pepfarid = allPidentifiers.stream().filter(x-> x.isPreferred()).findFirst().get();
-
+            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts.getPatientId(), Utils.PEPFAR_IDENTIFIER_INDEX);
             pidHospital = pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX);
             pidOthers = pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX);
             htsId = pts.getPatientIdentifier(Utils.HTS_IDENTIFIER_INDEX);
             ancId = pts.getPatientIdentifier(Utils.PMTCT_IDENTIFIER_INDEX);
             exposedInfantId = pts.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
             pepId = pts.getPatientIdentifier(Utils.PEP_IDENTIFIER_INDEX);
-           // pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
             recencyId = pts.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX);
 
             IdentifierType idt;
@@ -188,8 +192,8 @@ public class NDRCommonQuestionsDictionary {
             // Use PepfarID as preferred ID if it exist, else use other IDs
             if (pepfarid != null) {
                 idt = new IdentifierType();
-                idt.setIDNumber(Utils.getPatientPEPFARId(pts));
-                demo.setPatientIdentifier(Utils.getPatientPEPFARId(pts));
+                idt.setIDNumber(pepfarid);
+                demo.setPatientIdentifier(pepfarid);
                 //idt.setIDNumber(pepfarid.getIdentifier());
                 //demo.setPatientIdentifier(pepfarid.getIdentifier());
             } else {
@@ -432,7 +436,7 @@ public class NDRCommonQuestionsDictionary {
         String ndrCode = "";
         Boolean ndrBooleanCode = null;
         try {
-            PatientIdentifier pepfarIdentifier = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
+            PatientIdentifier pepfarIdentifier = pts.getPatientIdentifier(PEPFAR_IDENTIFIER_INDEX);
 
             CommonQuestionsType common = new CommonQuestionsType();
             //List<Obs> hivEnrollmentObs = Utils.FilterObsByEncounterTypeId(allObs, Utils.HIV_Enrollment_Encounter_Type_Id); // Utils.getHIVEnrollmentObs(pts);

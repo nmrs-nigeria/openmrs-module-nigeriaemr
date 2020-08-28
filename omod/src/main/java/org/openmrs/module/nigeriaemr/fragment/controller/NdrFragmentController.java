@@ -109,7 +109,7 @@ public class NdrFragmentController {
 		pts = Context.getPatientService().getPatient(820437);
 		patients.add(pts);*/
 		/*List<Patient> patients = Context.getPatientService().getAllPatients(true).stream()
-					.filter(x-> x.getPatientId().equals(4152)).collect(Collectors.toList());*/
+					.filter(x-> x.getPatientId().equals(26910)).collect(Collectors.toList());*/
 		
 		String facilityName = Utils.getFacilityName();
 		String DATIMID = Utils.getFacilityDATIMId();
