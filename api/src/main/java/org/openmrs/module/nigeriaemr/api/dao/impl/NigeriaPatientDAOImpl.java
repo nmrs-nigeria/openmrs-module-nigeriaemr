@@ -36,112 +36,14 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Patient> getPatients(Integer startId, Integer endId, boolean includeVoided) throws DAOException {
-		Criteria criteria = getSession().createCriteria(Patient.class);
-		criteria.add(Restrictions.eq("voided", includeVoided));
-		criteria.add(Restrictions.ge("patientId", startId));
-		criteria.add(Restrictions.le("patientId", endId));
-		return criteria.list();
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Integer> getPatientIds(Integer startId, Integer endId, boolean includeVoided) throws DAOException {
-		
-		String query = "SELECT distinct(patient.patient_id) FROM patient patient "
-		        + "WHERE patient.patient_id >= :startId OR patient.patient_id >= :endId";
-		
-		SQLQuery sql = getSession().createSQLQuery(query);
-		
-		sql.setInteger("startId", startId);
-		sql.setInteger("endId", endId);
-		
-		return sql.list();
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public String getPatientIdentifier(Integer patientId, Integer identifierType, boolean includeVoided) throws DAOException {
+	public String getPatientIdentifier(Integer patientId, Integer identifierType) throws DAOException {
 		
 		String query = "SELECT distinct(patient_identifier.identifier) FROM patient_identifier patient_identifier "
-		        + "WHERE patient_identifier.identifier_type = :identifierType AND patient_identifier.patient_id = :patientId ";
+		        + " WHERE patient_identifier.identifier_type = :identifierType AND patient_identifier.patient_id = :patientId ";
 		SQLQuery sql = getSession().createSQLQuery(query);
 		sql.setInteger("identifierType", identifierType);
 		sql.setInteger("patientId", patientId);
 		return sql.uniqueResult().toString();
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Patient> getPatients(List<Integer> patientIds, boolean includeVoided) throws DAOException {
-		Criteria criteria = getSession().createCriteria(Patient.class);
-		criteria.add(Restrictions.eq("voided", includeVoided));
-		criteria.add(Restrictions.in("patientId", patientIds));
-		return criteria.list();
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException {
-		List<Patient> patients = new ArrayList<Patient>();
-		List<Integer> patientIds;
-		
-		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
-		if (toDate != null)
-			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
-		
-		SQLQuery sql = getSession().createSQLQuery(query);
-		
-		sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
-		
-		patientIds = sql.list();
-		
-		if (patientIds.size() >= 1) {
-			patients = this.getPatients(patientIds, includeVoided);
-		}
-		
-		return patients;
-	}
-	
-	@Override
-	public List<Integer> getPatientIdsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException {
-		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
-		if (toDate != null)
-			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
-		
-		SQLQuery sql = getSession().createSQLQuery(query);
-		
-		sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
-		
-		return sql.list();
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientsByEncounterDate(int startIndex, int endIndex, Date lastEncounterDate,
-	        boolean includeVoided) throws DAOException {
-		List<Patient> patients = new ArrayList<Patient>();
-		List<Integer> patientIds;
-		
-		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE patient_id in :";
-		if (lastEncounterDate != null)
-			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
-		
-		SQLQuery sql = getSession().createSQLQuery(query);
-		if (lastEncounterDate != null)
-			sql.setDate("toDate", lastEncounterDate);
-		
-		patientIds = sql.list();
-		
-		if (patientIds.size() >= 1) {
-			patients = this.getPatients(patientIds, includeVoided);
-		}
-		
-		return patients;
 	}
 	
 }

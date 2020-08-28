@@ -173,21 +173,18 @@ public class NDRCommonQuestionsDictionary {
             PatientIdentifier  pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
-           // pepfarid = new PatientIdentifier();
+            // pepfarid = allPidentifiers.stream().filter(x-> x.getIdentifierType().equals(4)).findFirst().get();
+            // pepfarid = new PatientIdentifier();
             // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
 
             Set<PatientIdentifier> allPidentifiers = pts.getIdentifiers();
-            //pepfarid = allPidentifiers.stream().filter(x-> x.isPreferred()).findFirst().get();
-
             String pepfarid = nigeriaPatientService.getPatientIdentifier(pts.getPatientId(), Utils.PEPFAR_IDENTIFIER_INDEX);
-           // pepfarid = allPidentifiers.stream().filter(x-> x.getIdentifierType().equals(4)).findFirst().get();
             pidHospital = pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX);
             pidOthers = pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX);
             htsId = pts.getPatientIdentifier(Utils.HTS_IDENTIFIER_INDEX);
             ancId = pts.getPatientIdentifier(Utils.PMTCT_IDENTIFIER_INDEX);
             exposedInfantId = pts.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
             pepId = pts.getPatientIdentifier(Utils.PEP_IDENTIFIER_INDEX);
-           // pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
             recencyId = pts.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX);
 
             IdentifierType idt;
