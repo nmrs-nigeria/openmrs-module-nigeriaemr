@@ -75,7 +75,7 @@ public interface NigeriaemrService extends OpenmrsService {
 	
 	@Authorized()
 	@Transactional
-	NDRExportBatch createExportBatch(Date lastExportDate) throws APIException;
+	NDRExportBatch createExportBatch(Date lastExportDate, int totalPatients) throws APIException;
 	
 	@Authorized()
 	@Transactional

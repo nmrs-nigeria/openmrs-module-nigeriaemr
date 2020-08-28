@@ -62,7 +62,7 @@ public class NdrExtractionService {
         }
 
         List<List<Integer>> partitions = Partition.ofSize(filteredPatients,numm);
-        NDRExportBatch ndrExportBatch = nigeriaemrService.createExportBatch(lastDate);
+        NDRExportBatch ndrExportBatch = nigeriaemrService.createExportBatch(lastDate, patientSize);
 
         for(List<Integer> patients: partitions) {
             String IPReportingState = Utils.getIPReportingState();
@@ -85,7 +85,7 @@ public class NdrExtractionService {
             ndrExport.setReportFolder(reportFolder);
             ndrExport.setBatchId(ndrExportBatch);
             try {
-                ndrExport.setPatientsList(mapper.writeValueAsString(patients));
+                ndrExport.setPatientsList(new ObjectMapper().writeValueAsString(patients));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
                 throw new Exception("Error Processing Export");
@@ -106,13 +106,13 @@ public class NdrExtractionService {
                 int counter = 0;
                 Context.setUserContext(userContext);
                 Context.openSessionWithCurrentUser();
-                for (String patientUuid : patients) {
+                for (String patientId : patients) {
                     counter++;
 
                     int finalCounter = counter;
                     Thread thread = new Thread(() -> {
                         try {
-                            NDRExtractor ndrExtractor = new NDRExtractor(patientUuid, DATIMID, ndrExport.getReportFolder(),
+                            NDRExtractor ndrExtractor = new NDRExtractor(patientId, DATIMID, ndrExport.getReportFolder(),
                                     finalCounter, userContext, formattedDate, jaxbContext, ndrExport.getLastDate(), ndrExport.getDateStarted(), ndrExport.getId());
                             ndrExtractor.extract();
 

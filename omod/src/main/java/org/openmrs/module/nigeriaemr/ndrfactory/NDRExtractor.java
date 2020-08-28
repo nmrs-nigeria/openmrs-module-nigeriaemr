@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class NDRExtractor {
 	
-	private final String patientUUid;
+	private final Integer patientId;
 	
 	private final String DATIMID;
 	
@@ -46,7 +46,7 @@ public class NDRExtractor {
 	NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 	
 	public NDRExtractor(UserContext userContext) {
-		this.patientUUid = null;
+		this.patientId = null;
 		this.DATIMID = null;
 		this.reportFolder = null;
 		this.counter = 0;
@@ -57,9 +57,9 @@ public class NDRExtractor {
 		this.exportProcessId = 0;
 	}
 	
-	public NDRExtractor(String patientUUid, String DATIMID, String reportFolder, int counter, UserContext userContext,
+	public NDRExtractor(String patientId, String DATIMID, String reportFolder, int counter, UserContext userContext,
 	    String formattedDate, JAXBContext jaxbContext, Date lastDate, Date currentDate, int exportProcessId) {
-		this.patientUUid = patientUUid;
+		this.patientId = Integer.parseInt(patientId);
 		this.DATIMID = DATIMID;
 		this.reportFolder = reportFolder;
 		this.counter = counter;
@@ -85,7 +85,7 @@ public class NDRExtractor {
 		Context.setUserContext(userContext);
 		Context.openSessionWithCurrentUser();
 		try {
-			Patient patient = Context.getPatientService().getPatientByUuid(patientUUid);
+			Patient patient = Context.getPatientService().getPatient(patientId);
 			String pepFarId = Utils.getPatientPEPFARId(patient);
 			
 			if (pepFarId != null) { //remove forward slashes / from file names

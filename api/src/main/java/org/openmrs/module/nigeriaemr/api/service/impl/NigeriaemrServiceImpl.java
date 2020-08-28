@@ -11,6 +11,7 @@ package org.openmrs.module.nigeriaemr.api.service.impl;
 
 import org.openmrs.api.APIException;
 import org.openmrs.api.UserService;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.nigeriaemr.Item;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
@@ -82,12 +83,14 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	}
 	
 	@Override
-	public NDRExportBatch createExportBatch(Date lastExportDate) throws APIException {
+	public NDRExportBatch createExportBatch(Date lastExportDate, int totalPatients) throws APIException {
 		NDRExportBatch ndrExportBatch = new NDRExportBatch();
 		ndrExportBatch.setDateCreated(new Date());
 		ndrExportBatch.setDateUpdated(new Date());
 		ndrExportBatch.setLastExportDate(lastExportDate);
 		ndrExportBatch.setStatus("Created");
+		ndrExportBatch.setPatients(totalPatients);
+		ndrExportBatch.setOwner(Context.getAuthenticatedUser());
 		return dao.save(ndrExportBatch);
 	}
 	

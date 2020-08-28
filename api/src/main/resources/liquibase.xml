@@ -36,6 +36,16 @@
 			<column name="context_path" type="varchar(255)"/>
 		</createTable>
     </changeSet>
+    <changeSet id="nigeriaemr-2020-07-06-01" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="last_date" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="nigeriaemr-2020-07-06-02" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="patients" type="LONGTEXT"/>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="nigeriaemr-2016-07-28-21-2014040911290" author="temiye">
         <comment>
@@ -62,9 +72,6 @@
             <column name="preferred_handler" value="NULL"/>
             <column name="handler_config" value="NULL"/>
         </insert>
-
-        <addForeignKeyConstraint constraintName="nigeriaemr_item_owner_fk" baseTableName="nigeriaemr_item" baseColumnNames="owner"  referencedTableName="users"
-                                 referencedColumnNames="user_id" />
     </changeSet>
 
 
