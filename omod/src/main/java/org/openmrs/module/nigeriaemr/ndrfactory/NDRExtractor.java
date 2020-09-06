@@ -152,7 +152,7 @@ public class NDRExtractor {
 					Map<String, Object> conditions = new HashMap<>();
 					conditions.put("status", "Done");
 					conditions.put("batchId", ndrExportBatch.getId());
-					List<NDRExport> ndrExports = nigeriaemrService.getExports(conditions, 100, false);
+					List<NDRExport> ndrExports = nigeriaemrService.getExports(conditions, null, false);
 					int count = 0;
 					for (NDRExport ndrExport : ndrExports) {
 						String patient = ndrExport.getPatientsList();

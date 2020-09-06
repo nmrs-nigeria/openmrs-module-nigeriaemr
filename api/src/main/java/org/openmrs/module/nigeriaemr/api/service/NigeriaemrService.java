@@ -90,7 +90,7 @@ public interface NigeriaemrService extends OpenmrsService {
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
-	List<NDRExport> getExports(Map<String, Object> conditions, int size, boolean includeVoided) throws APIException;
+	List<NDRExport> getExports(Map<String, Object> conditions, Integer size, boolean includeVoided) throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional

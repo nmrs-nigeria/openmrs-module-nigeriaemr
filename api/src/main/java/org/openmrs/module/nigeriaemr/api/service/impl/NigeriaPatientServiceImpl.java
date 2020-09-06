@@ -47,7 +47,7 @@ public class NigeriaPatientServiceImpl extends PatientServiceImpl implements Nig
 	
 	@Override
 	public List<Integer> getPatientIdsByEncounterDate(Date fromDate, Date toDate) throws APIException {
-		return dao.getPatientIdsByEncounterDate(fromDate, toDate, false);
+		return dao.getPatientIdsByEncounterDate(fromDate, toDate, true);
 	}
 	
 	@Override

@@ -59,7 +59,8 @@ public class NigeriaemrDao {
 		return criteria.list();
 	}
 	
-	public List<NDRExport> getExports(Map<String, Object> conditions, int size, boolean includeVoided) throws DAOException {
+	public List<NDRExport> getExports(Map<String, Object> conditions, Integer size, boolean includeVoided)
+	        throws DAOException {
 		Criteria criteria = getSession().createCriteria(NDRExport.class);
 		criteria.add(Restrictions.eq("voided", includeVoided));
 		for (String key : conditions.keySet()) {
@@ -67,7 +68,8 @@ public class NigeriaemrDao {
 		}
 		criteria.addOrder(Order.desc("dateStarted"));
 		//		criteria.setFetchSize(size);
-		criteria.setMaxResults(size);
+		if (size != null && size > 0)
+			criteria.setMaxResults(size);
 		return criteria.list();
 	}
 	

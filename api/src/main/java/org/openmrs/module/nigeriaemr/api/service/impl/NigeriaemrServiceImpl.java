@@ -105,7 +105,8 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	}
 	
 	@Override
-	public List<NDRExport> getExports(Map<String, Object> conditions, int size, boolean includeVoided) throws APIException {
+	public List<NDRExport> getExports(Map<String, Object> conditions, Integer size, boolean includeVoided)
+	        throws APIException {
 		return dao.getExports(conditions, size, includeVoided);
 	}
 	

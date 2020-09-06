@@ -98,12 +98,9 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 	
 	@Override
 	public List<Integer> getPatientIdsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException {
-		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter,patient patient WHERE (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
+		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
 		if (toDate != null)
 			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
-		query += " AND encounter.voided = false ";
-		query += " AND patient.patient_id = encounter.patient_id ";
-		query += " AND patient.voided = false ";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		

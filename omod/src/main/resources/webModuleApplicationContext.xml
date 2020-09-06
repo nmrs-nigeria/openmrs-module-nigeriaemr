@@ -20,7 +20,7 @@
 
     <!-- Activemq connection factory -->
     <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <constructor-arg index="0" value="vm://localhost?broker.deleteAllMessagesOnStartup=true&amp;broker.persistent=false"/>
+        <constructor-arg index="0" value="vm://localhost?broker.deleteAllMessagesOnStartup=true"/>
     </bean>
 
     <!-- ConnectionFactory Definition -->
