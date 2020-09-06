@@ -3,13 +3,12 @@ package org.openmrs.module.nigeriaemr.fragment.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.Consumer;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
-import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import org.openmrs.module.nigeriaemr.ndrfactory.NDRExtractor;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.LocationModel;
@@ -20,11 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,21 +37,12 @@ public class NdrFragmentController {
 	
 	ObjectMapper mapper = new ObjectMapper();
 	
-	JAXBContext jaxbContext;
-	
-	ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-	
 	NdrExtractionService ndrExtractionService;
 	
-	NDRExtractor nd = new NDRExtractor(Context.getUserContext());
-	
 	public NdrFragmentController() throws Exception {
+		ndrExtractionService = new NdrExtractionService();
 		openmrsConn = Utils.getNmrsConnectionDetails();
 		facilityLocationService = new FacilityLocationService();
-		ndrExtractionService = new NdrExtractionService(Context.getUserContext());
-		this.jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
-		executorService.scheduleAtFixedRate(nd::checkIfExportIsComplete, 60, 30, TimeUnit.SECONDS);
-		executorService.scheduleAtFixedRate(ndrExtractionService::process, 60, 30, TimeUnit.SECONDS);
 	}
 	
 	public void controller() {
@@ -78,10 +66,9 @@ public class NdrFragmentController {
 		if (filteredPatientByLocation.size() == 0)
 			return "";
 		
-		return startGenerateFile(request, filteredPatientByLocation, facilityLocation.getFacility_name(),
-		    facilityLocation.getDatimCode(), null, currentDate);
+		return startGenerateFile(request, filteredPatientByLocation, facilityLocation.getDatimCode(), null, currentDate);
 	}
-
+	
 	public String generateNDRFile(HttpServletRequest request) throws Exception {
 		// get date that's bounds to the date the export is kicked off
 		Date currentDate = new Date();
@@ -94,35 +81,43 @@ public class NdrFragmentController {
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
 		List<Integer> patients;
 		Date lastDate = Utils.getLastNDRDate();
-		String patientIdLimit = Utils.getPatientIdLimit();
-		if (patientIdLimit != null && !"".equals(patientIdLimit)) {
-			String[] patientIdArray = patientIdLimit.split(",");
-			int startIndex = Integer.parseInt(patientIdArray[0]);
-			int endIndex = Integer.parseInt(patientIdArray[1]);
-			patients = nigeriaPatientService.getPatientIdsInIndex(startIndex, endIndex);
-		} else {
-			patients = nigeriaPatientService.getPatientIdsByEncounterDate(lastDate, currentDate);
-		}
-		
-		String facilityName = Utils.getFacilityName();
+		//		String patientIdLimit = Utils.getPatientIdLimit();
+		//		if (patientIdLimit != null && !"".equals(patientIdLimit)) {
+		//			String[] patientIdArray = patientIdLimit.split(",");
+		//			int startIndex = Integer.parseInt(patientIdArray[0]);
+		//			int endIndex = Integer.parseInt(patientIdArray[1]);
+		//			patients = nigeriaPatientService.getPatientIdsInIndex(startIndex, endIndex);
+		//		} else {
+		//			patients = nigeriaPatientService.getPatientIdsByEncounterDate(lastDate, currentDate);
+		//		}
+		patients = nigeriaPatientService.getPatientIdsByEncounterDate(lastDate, currentDate);
 		String DATIMID = Utils.getFacilityDATIMId();
-		FacilityType facility = Utils.createFacilityType(facilityName, DATIMID, "FAC");
-		if (patients.size() == 0)
-			return "";
-		return startGenerateFile(request, patients, facilityName, DATIMID, lastDate, currentDate);
+		return startGenerateFile(request, patients, DATIMID, lastDate, currentDate);
 		
 	}
 	
 	private String startGenerateFile(HttpServletRequest request, List<Integer> filteredPatients,
-									 String facilityName, String DATIMID,Date lastDate, Date currentDate) throws Exception {
+									 String DATIMID,Date lastDate, Date currentDate) throws Exception {
 
 		// Check that no export is in progress
 		Map<String, Object> condition = new HashMap<>();
 		condition.put("status","Processing");
-		List<NDRExport> exports = nigeriaemrService.getExports(condition, false);
+		List<NDRExport> exports = nigeriaemrService.getExports(condition,1, false);
 		if(exports.size() > 0 ) return "You already have an export in process, Kindly wait for it to finish";
 		if(filteredPatients == null || filteredPatients.size() <= 0) return "no new patient record found";
-		ndrExtractionService.saveExport(request,filteredPatients,DATIMID,lastDate,currentDate);
+		String contextPath = request.getContextPath();
+		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		Thread thread = new Thread(() -> {
+			try {
+				Consumer.initialize();
+				ndrExtractionService.saveExport(fullContextPath,contextPath,filteredPatients,DATIMID,lastDate,currentDate);
+			} catch (Exception e) {
+				LoggerUtils.write(NdrFragmentController.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+						LoggerUtils.LogLevel.live);
+			}
+		});
+		thread.start();
+		Utils.updateLast_NDR_Run_Date(new Date());
 		return "Export is being processed";
 	}
 	
@@ -143,7 +138,17 @@ public class NdrFragmentController {
 	}
 	
 	public boolean deleteFile(HttpServletRequest request, @RequestParam(value = "id") String id) {
-		return ndrExtractionService.deleteFile(request, id);
+		String contextPath = request.getContextPath();
+		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		return ndrExtractionService.deleteFile(fullContextPath, id);
+	}
+	
+	public boolean restartFile(HttpServletRequest request, @RequestParam(value = "id") String id) {
+		return ndrExtractionService.restartFile(id);
+	}
+	
+	public void stopFile(HttpServletRequest request, @RequestParam(value = "id") String id) {
+		ndrExtractionService.stopExport(id);
 	}
 	
 	//get host for openmrs instance

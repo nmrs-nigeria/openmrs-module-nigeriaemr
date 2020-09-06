@@ -61,6 +61,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class NigeriaQUALGenerator {
 	
@@ -322,7 +323,7 @@ public class NigeriaQUALGenerator {
 	
 	private PatientDemographicsRecordType patientDemographicsRecordType(Patient pts) {
 		
-		List<Obs> enrollmentObs = Utils.getHIVEnrollmentObs(pts);
+		List<Integer> enrollmentObs = Utils.getHIVEnrollmentObs(pts);
 		Obs enrollmentDateObs = Utils.extractObs(NDRMainDictionary.HIV_Enrollment_Date_Concept_Id, enrollmentObs);
 		Obs occupationObs = Utils.extractObs(NDRMainDictionary.Patient_Occupation_Code_Concept_Id, enrollmentObs);
 		Obs educationalObs = Utils.extractObs(NDRMainDictionary.Patient_Education_Level_Code_Concept_Id, enrollmentObs);
@@ -436,7 +437,8 @@ public class NigeriaQUALGenerator {
 			Obs firstRegimen = Utils.getRegimenFromObs( new ArrayList<>(pharmacyEnc.get(0).getAllObs()));
 
 			if(firstRegimen !=null){
-				Obs durationObs = Utils.extractObs(PharmacyDictionary.Medication_Duration_Concept_Id, new ArrayList<>(pharmacyEnc.get(0).getAllObs()));
+				List<Integer> obsIds = new ArrayList<>(pharmacyEnc.get(0).getAllObs()).stream().map(Obs::getObsId).collect(Collectors.toList());
+				Obs durationObs = Utils.extractObs(PharmacyDictionary.Medication_Duration_Concept_Id,obsIds);
 
 				int drugDuration =0;
 				if(durationObs !=null) {
@@ -454,7 +456,8 @@ public class NigeriaQUALGenerator {
 			if(pharmacyEnc.size() > 1){
 				Obs secondRegimen = Utils.getRegimenFromObs( new ArrayList<>(pharmacyEnc.get(1).getAllObs()));
 				if(secondRegimen !=null){
-					Obs durationObs = Utils.extractObs(PharmacyDictionary.Medication_Duration_Concept_Id, new ArrayList<>(pharmacyEnc.get(1).getAllObs()));
+					List<Integer> obsIds = new ArrayList<>(pharmacyEnc.get(1).getAllObs()).stream().map(Obs::getObsId).collect(Collectors.toList());
+					Obs durationObs = Utils.extractObs(PharmacyDictionary.Medication_Duration_Concept_Id,obsIds);
 
 					int drugDuration = 0;
 					if(durationObs !=null){
@@ -473,7 +476,8 @@ public class NigeriaQUALGenerator {
 			if(pharmacyEnc.size() > 2){
 				Obs thirdRegimen = Utils.getRegimenFromObs( new ArrayList<>(pharmacyEnc.get(2).getAllObs()));
 				if(thirdRegimen !=null){
-					Obs durationObs = Utils.extractObs(PharmacyDictionary.Medication_Duration_Concept_Id, new ArrayList<>(pharmacyEnc.get(1).getAllObs()));
+					List<Integer> obsIds = new ArrayList<>(pharmacyEnc.get(1).getAllObs()).stream().map(Obs::getObsId).collect(Collectors.toList());
+					Obs durationObs = Utils.extractObs(PharmacyDictionary.Medication_Duration_Concept_Id, obsIds);
 					int drugDuration = (int) Math.round(durationObs.getValueNumeric());
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(thirdRegimen.getObsDatetime());
@@ -501,8 +505,8 @@ public class NigeriaQUALGenerator {
 	
 	private TuberculosisRecordType tuberculosisRecordType(Patient pts) {
 		
-		List<Obs> careCardBeforeReviewPeriodObs = Utils.getCareCardObs(pts, startDate);
-		List<Obs> careCardWithinReviewPeriodObs = Utils.getCareCardObs(pts, endDate);
+		List<Integer> careCardBeforeReviewPeriodObs = Utils.getCareCardObs(pts, startDate);
+		List<Integer> careCardWithinReviewPeriodObs = Utils.getCareCardObs(pts, endDate);
 		
 		//TODO: 1659 tb status, 160170 OI infections, 143264 = cough, 140238 = Fever
 		int TB_Status_Concept_Id = 1659;

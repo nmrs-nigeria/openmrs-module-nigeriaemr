@@ -1,68 +1,55 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
-import java.util.stream.Collectors;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
 import com.umb.ndr.signer.Signer;
-
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.PersonAddress;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
-import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
-import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
-import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
-import org.openmrs.module.nigeriaemr.omodmodels.Version;
-import org.xml.sax.SAXException;
-
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
+import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
+import org.openmrs.module.nigeriaemr.omodmodels.Version;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.math.BigDecimal;
+import java.sql.*;
+import java.util.Date;
+import java.util.*;
 
 public class NDRConverter {
 	
 	private Patient patient;
 	
-	private String ipName;
-	
-	private String ipCode;
-	
-	private List<Encounter> encounters;
-	
 	private Map<Integer, List<Encounter>> groupedEncounters;
+	
+	private Map<Object, List<Obs>> groupedObsByConceptIds;
+	
+	private Map<Object, List<Obs>> groupedObsByEncounterTypes;
+	
+	private Map<Object, List<Obs>> groupedObsByVisitDate;
 	
 	private Encounter lastEncounter;
 	
-	private List<Obs> allobs;
+	private final DBConnection openmrsConn;
 	
-	private List<Integer> encounterIds;
+	private Map<Object, List<Obs>> groupedpatientBaselineObsByConcept;
 	
-	private DBConnection openmrsConn;
+	private Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType;
 	
-	private List<Obs> patientBaselineObs;
+	private final NigeriaEncounterService nigeriaEncounterService;
 	
-	private NigeriaEncounterService nigeriaEncounterService;
+	private final Date fromDate;
 	
-	private NigeriaObsService nigeriaObsService;
+	private final Date toDate;
 	
-	private Date fromDate;
-	
-	private Date toDate;
-	
-	public NDRConverter(String _ipName, String _ipCode, DBConnection _openmrsConn, Date fromDate, Date toDate) {
-		this.ipName = _ipName;
-		this.ipCode = _ipCode;
+	public NDRConverter(DBConnection _openmrsConn, Date fromDate, Date toDate) {
 		this.openmrsConn = _openmrsConn;
 		this.nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
-		this.nigeriaObsService = Context.getService(NigeriaObsService.class);
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 	}
@@ -78,31 +65,51 @@ public class NDRConverter {
 
         try {
             patient = pts;
-            this.encounters = new ArrayList<>();
 
-            long startTime = System.currentTimeMillis();
-            List<Encounter> filteredEncs = nigeriaEncounterService.getEncountersByPatient(pts,this.fromDate,this.toDate);
-            this.encounterIds = filteredEncs.stream().map(Encounter::getId).collect(Collectors.toList());
-            this.lastEncounter = nigeriaEncounterService.getLastEncounterByPatient(patient, this.fromDate,this.toDate);
+            List<Encounter> filteredEncounters = nigeriaEncounterService.getEncountersByPatient(pts,this.fromDate,this.toDate);
+            this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
 
-            long endTime = System.currentTimeMillis();
-            if ((endTime - startTime) > 1000) {
-                System.out.println("took too loooong to get encounters : " + (endTime - startTime) + " milli secs : ");
-            }
-            this.encounters.addAll(filteredEncs);
-            if (this.encounters == null || this.encounters.isEmpty()) {
+            List<Encounter> encounters = new ArrayList<>(filteredEncounters);
+            if (encounters.isEmpty()) {
                 return null;
             }
             groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
 
-            this.allobs = Utils.extractObsfromEncounter(filteredEncs);
-//            this.allobs = nigeriaObsService.getObsByEncounters(encounterIds,false);
-            patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
+            List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
+            Map<String,Map<Object, List<Obs>>> grouped = Utils.groupObs(allobs);
+            this.groupedObsByConceptIds = grouped.get("groupedByConceptIds");
+            this.groupedObsByEncounterTypes =grouped.get("groupedByEncounterTypes");
+            this.groupedObsByVisitDate = grouped.get("groupedObsByVisitDate");
             if(!pts.isVoided()) {
-                if (filteredEncs.isEmpty()) {
+                if (filteredEncounters.isEmpty()) {
                     return null;
                 }
             }
+
+            List<Obs> patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
+            Map<String,Map<Object, List<Obs>>> groupedPatientBaseLine = Utils.groupObs(patientBaselineObs);
+            this.groupedpatientBaselineObsByConcept = groupedPatientBaseLine.get("groupedByConceptIds");
+            this.groupedpatientBaselineObsByEncounterType = groupedPatientBaseLine.get("groupedByEncounterTypes");
+            if(!pts.isVoided()) {
+                if (filteredEncounters.isEmpty()) {
+                    return null;
+                }
+            }
+
+
+
+            for(Encounter enc: filteredEncounters){
+                int dateCreatedComp = enc.getDateCreated().compareTo(this.toDate);
+                int dateModifiedComp = -1;
+                if (enc.getDateChanged() != null) {
+                    dateModifiedComp = enc.getDateChanged().compareTo(this.toDate);
+                }
+                if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
+                    hasUpdate = true;
+                    break;
+                }
+            }
+
             MessageHeaderType header = createMessageHeaderType(pts, hasUpdate);
             FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
             header.setMessageSendingOrganization(sendingOrganization);
@@ -123,20 +130,22 @@ public class NDRConverter {
         return container;
     }
 	
-	private IndividualReportType createIndividualReportType() throws DatatypeConfigurationException {
+	private IndividualReportType createIndividualReportType() {
 
         IndividualReportType individualReport = new IndividualReportType();
         String facilityName = Utils.getFacilityName();
         String DATIMID = Utils.getFacilityDATIMId();
         FacilityType facility = Utils.createFacilityType(facilityName,DATIMID,"FAC");
         try {
-            PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicType2(patient,facility, allobs);
-            if (patientDemography == null) { //return null if no valid patient data exist
+            PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicType2(patient,facility, groupedObsByEncounterTypes);
+            if (patientDemography.getPatientIdentifier()== null) { //return null if no valid patient data exist
                 return null;
             }
 
+
             //create hiv condition type with code "86406008"
             ConditionType condition = createHIVCondition();
+
 
             individualReport.setPatientDemographics(patientDemography);
 
@@ -145,22 +154,23 @@ public class NDRConverter {
 
             if (intakeEncounter != null) {
                 List<Obs> intakeObs = new ArrayList<>(intakeEncounter.getAllObs());
-                //  if (htsIdentifier != null) {
+                Map<Object, List<Obs>> groupedintakeObsByConcept = Utils.groupedByConceptIdsOnly(intakeObs);
                 try {
-                    List<HIVTestingReportType> hivReportTypes = createHIVTestingReport(intakeEncounter, intakeObs);
+                    List<HIVTestingReportType> hivReportTypes = createHIVTestingReport(intakeEncounter, groupedintakeObsByConcept);
                     individualReport.getHIVTestingReport().addAll(hivReportTypes);
                 } catch (Exception ex) {
                     LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
                 }
-                //  }
             }
+
+
 
             individualReport.getCondition().add(condition);
 
             return individualReport;
 
         } catch (Exception ex) {
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+            LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
             // throw ex;
         }
@@ -168,7 +178,7 @@ public class NDRConverter {
         return individualReport;
     }
 	
-	private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter, List<Obs> allObs) {
+	private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter,  Map<Object, List<Obs>> groupedObsByConcept) {
 
         //TODO: pull hivtestReport as a list
         NDRMainDictionary mainDictionary = new NDRMainDictionary();
@@ -182,11 +192,11 @@ public class NDRConverter {
             PreTestInformationType preTestInfo = new PreTestInformationType();
             PostTestCounsellingType postTestType = new PostTestCounsellingType();
 
-            hivTestingReport = mainDictionary.createHIVTestIntake(patient, encounter, allObs, hivTestingReport);
+            hivTestingReport = mainDictionary.createHIVTestIntake(patient, encounter, groupedObsByConcept, hivTestingReport);
 
-            HIVTestResultType hIVTestResultType = mainDictionary.createHIVTestResult(patient, encounter, allObs);
+            HIVTestResultType hIVTestResultType = mainDictionary.createHIVTestResult(patient, groupedObsByConcept);
 
-            IndexNotificationServicesType indexNotificationServicesType = mainDictionary.createIndexNotificationServicesTypes(patient, encounter, allObs);
+            IndexNotificationServicesType indexNotificationServicesType = mainDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
 
             if (hIVTestResultType != null) {
                 hivTestingReport.setHIVTestResult(hIVTestResultType);
@@ -198,7 +208,7 @@ public class NDRConverter {
 
             //create TB screening
             List<ClinicalTBScreeningType> clinicalTBScreeningType = mainDictionary.createClinicalTbScreening(patient,
-                    encounter, allObs);
+                    groupedObsByConcept);
 
             if (clinicalTBScreeningType != null && !clinicalTBScreeningType.isEmpty()) {
 
@@ -207,7 +217,7 @@ public class NDRConverter {
 
             //HIV Risk assessment
             List<HIVRiskAssessmentType> hivRiskAssessmentType = mainDictionary.createHivRiskAssessment(patient,
-                    encounter, allObs);
+                    groupedObsByConceptIds);
             if (hivRiskAssessmentType != null && !hivRiskAssessmentType.isEmpty()) {
                 preTestInfo.setHIVRiskAssessment(hivRiskAssessmentType.get(0));
             }
@@ -215,21 +225,21 @@ public class NDRConverter {
             //knowledge assessment
             //Knowledge Assessment Type
             List<KnowledgeAssessmentType> knowledgeAssessmentType = mainDictionary.createKnowledgeAssessmentType(patient,
-                    encounter, allObs);
+                    groupedObsByConceptIds);
             if (knowledgeAssessmentType != null && !knowledgeAssessmentType.isEmpty()) {
                 preTestInfo.setKnowledgeAssessment(knowledgeAssessmentType.get(0));
             }
 
             //Syndromic STI
             List<SyndromicSTIScreeningType> syndromicSTIScreeningType = mainDictionary.createSyndromicsStiType(patient,
-                    encounter, allObs);
+                    groupedObsByConceptIds);
             if (syndromicSTIScreeningType != null && syndromicSTIScreeningType.size() > 0) {
                 preTestInfo.setSyndromicSTIScreening(syndromicSTIScreeningType.get(0));
             }
 
             //Post Test Counselling
             List<PostTestCounsellingType> postTestCounsellingType = mainDictionary.createPostTestCounsellingType(patient,
-                    encounter, allObs);
+                    groupedObsByConceptIds);
             if (postTestCounsellingType != null && postTestCounsellingType.size() > 0) {
                 postTestType = postTestCounsellingType.get(0);
             }
@@ -247,13 +257,11 @@ public class NDRConverter {
 
     }
 	
-	private ConditionType createHIVCondition() throws DatatypeConfigurationException {
+	private ConditionType createHIVCondition() {
 
         ConditionType condition = new ConditionType();
 
         try {
-
-            long startTime = System.currentTimeMillis();
 
             NDRMainDictionary mainDictionary = new NDRMainDictionary();
 
@@ -266,46 +274,44 @@ public class NDRConverter {
             condition.setProgramArea(createProgramArea());
 
             //for baseline data
-             CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.lastEncounter, patientBaselineObs);
+            CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.lastEncounter, groupedpatientBaselineObsByConcept);
             //create common question tags by calling the factory method and passing the encounter, patient and obs list
+
             if(!common.isEmpty()){
-            condition
-                    .setCommonQuestions(common);
+            condition.setCommonQuestions(common);
             }
-            
-            
-          
-           ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(patient, patientBaselineObs);
+
+
+            ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(groupedpatientBaselineObsByConcept,groupedpatientBaselineObsByEncounterType);
+
+
             if(hivSpecs.getHIVQuestions() != null){
             condition.setConditionSpecificQuestions(hivSpecs);
             }
 
             //create hiv encounter
-            List<HIVEncounterType> hivEncounter = mainDictionary.createHIVEncounterType(this.patient, this.fromDate, this.toDate,
-                    this.allobs);
+            List<HIVEncounterType> hivEncounter = mainDictionary.createHIVEncounterType(this.patient, groupedEncounters, groupedObsByVisitDate);
             if (hivEncounter != null && hivEncounter.size() > 0) {
                 EncountersType encType = new EncountersType();
                 encType.getHIVEncounter().addAll(hivEncounter);
                 condition.setEncounters(encType);
             }
 
-
-             List<Encounter> tempEncs = groupedEncounters.get(Utils.Laboratory_Encounter_Type_Id);
+            List<Encounter> tempEncs = groupedEncounters.get(Utils.Laboratory_Encounter_Type_Id);
             if (tempEncs != null && !tempEncs.isEmpty()) {
-                Date artStartdate = Utils.extractARTStartDate(patient, allobs);
                 for (Encounter each : tempEncs) {
+                    List<Obs> obsList = new ArrayList<>(each.getAllObs());
                     LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
-                            each, new ArrayList<>(each.getAllObs()), artStartdate);
+                            each, obsList);
                     if (laboratoryReport != null) {
                         condition.getLaboratoryReport().add(laboratoryReport);
                     }
                 }
 
             }
-
             //Partner details
             try {
-                List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.groupedEncounters, this.allobs);
+                List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.groupedEncounters, this.groupedObsByConceptIds);
                 if (!partnerDetailsType.isEmpty()) {
                     condition.getPartnerDetails().addAll(partnerDetailsType);
                 }
@@ -319,15 +325,10 @@ public class NDRConverter {
                 condition.getRegimen().addAll(arvRegimenTypeList);
             }
 
-            long endTime = System.currentTimeMillis();
-            if ((endTime - startTime) > 1000) {
-                System.out.println("took too long to get obs : " + (endTime - startTime) + " milli secs : ");
-            }
-
             return condition;
 
         } catch (Exception ex) {
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+            LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
             // throw ex;
         }
@@ -377,7 +378,6 @@ public class NDRConverter {
 				ResultSet result = statement.executeQuery(sql);
 				while (result.next()) {
 					//String name = result.getString("name");
-					String coded_value = result.getString("user_generated_id");
 					if (result.getString("Location").contains("STATE")) {
 						p.setStateCode(result.getString("user_generated_id"));
 					} else {

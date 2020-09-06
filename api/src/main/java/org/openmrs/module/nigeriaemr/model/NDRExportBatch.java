@@ -30,14 +30,32 @@ public class NDRExportBatch {
 	@Column(name = "date_created")
 	private Date dateCreated;
 	
+	@Column(name = "date_ended")
+	private Date dateEnded;
+	
 	@Column(name = "date_updated")
 	private Date dateUpdated;
 	
 	@Column(name = "status")
 	private String status;
 	
+	@Column(name = "name")
+	private String name;
+	
+	@Column(name = "path")
+	private String path;
+	
 	@Column(name = "last_export_date")
 	private Date lastExportDate;
+	
+	@Column(name = "context_path")
+	private String contextPath;
+	
+	@Column(name = "report_folder")
+	private String reportFolder;
+	
+	@Column(name = "voided")
+	private boolean voided;
 	
 	public Integer getId() {
 		return id;
@@ -56,6 +74,8 @@ public class NDRExportBatch {
 	}
 	
 	public Integer getPatientsProcessed() {
+		if (patientsProcessed == null)
+			return 0;
 		return patientsProcessed;
 	}
 	
@@ -109,5 +129,53 @@ public class NDRExportBatch {
 	
 	public void setLastExportDate(Date lastExportDate) {
 		this.lastExportDate = lastExportDate;
+	}
+	
+	public String getPath() {
+		return path;
+	}
+	
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getContextPath() {
+		return contextPath;
+	}
+	
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
+	}
+	
+	public String getReportFolder() {
+		return reportFolder;
+	}
+	
+	public void setReportFolder(String reportFolder) {
+		this.reportFolder = reportFolder;
+	}
+	
+	public Date getDateEnded() {
+		return dateEnded;
+	}
+	
+	public void setDateEnded(Date dateEnded) {
+		this.dateEnded = dateEnded;
+	}
+	
+	public boolean isVoided() {
+		return voided;
+	}
+	
+	public void setVoided(boolean voided) {
+		this.voided = voided;
 	}
 }

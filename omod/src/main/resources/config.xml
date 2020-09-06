@@ -41,6 +41,9 @@
         <require_module version="${htmlformentryuiVersion}">
             org.openmrs.module.htmlformentryui
         </require_module>
+		<require_module version="${eventVersion}">
+			org.openmrs.event
+		</require_module>
 	</require_modules>
 	
 	<!-- Extensions -->
@@ -70,17 +73,13 @@
 	 /Required Privileges -->
 
 
-	<!-- Required Global Properties 
 	<globalProperty>
-		<property>@MODULE_ID@.someProperty</property>
-		<defaultValue></defaultValue>
+		<property>ndr_export_batch_size</property>
+		<defaultValue>300</defaultValue>
 		<description>
-			A description of the global property goes here.  The description
-			should explain enough for administrators to understand the purpose
-			and possible values for the global property.
+			the number of patient data in a batch for NDR export
 		</description>
 	</globalProperty>
-	/Required Global Properties -->
 	
 	<!--
 	<dwr>

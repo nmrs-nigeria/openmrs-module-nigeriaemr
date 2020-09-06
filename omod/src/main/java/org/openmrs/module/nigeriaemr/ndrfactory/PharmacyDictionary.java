@@ -5,7 +5,6 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -19,15 +18,15 @@ import java.util.stream.Collectors;
 import javax.xml.datatype.DatatypeConfigurationException;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.RegimenType;
-import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
@@ -308,7 +307,7 @@ public class PharmacyDictionary {
         List<Encounter> allPharmacyEncounterForPatient = groupedEncounters.get(Utils.PHARMACY_ENCOUNTER_TYPE);
         if(allPharmacyEncounterForPatient != null) {
             for (Encounter enc : allPharmacyEncounterForPatient) {
-                obsPerVisit = new ArrayList<>(enc.getAllObs());
+                obsPerVisit =  new ArrayList<>(enc.getAllObs());
                 Date visitDate = DateUtils.truncate(enc.getEncounterDatetime(), Calendar.DATE);
                 regimenType = createRegimenType(patient, visitDate, obsPerVisit);
                 regimenTypeList.add(regimenType);
@@ -330,7 +329,8 @@ public class PharmacyDictionary {
         Obs obs = null;
         int valueCoded = 0, durationInDays = 0;
         CodedSimpleType codedSimpleType = null;
-        if (!obsListForAVisit.isEmpty() && pepfarIdentifier != null && Utils.contains(obsListForAVisit, Utils.CURRENT_REGIMEN_LINE_CONCEPT)) {
+        Map<Object, List<Obs>> map = Utils.groupedByConceptIdsOnly(obsListForAVisit);
+        if (!obsListForAVisit.isEmpty() && pepfarIdentifier != null && map.get(Utils.CURRENT_REGIMEN_LINE_CONCEPT) != null) {
             pepfarID = pepfarIdentifier.getIdentifier();
 
             visitID = Utils.getVisitId(pepfarID, visitDate);
@@ -338,14 +338,18 @@ public class PharmacyDictionary {
             regimenType = new RegimenType();
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(getXmlDate(visitDate));
+
+            List<Integer> obsCodeList = Arrays.asList(Utils.CURRENT_REGIMEN_LINE_CONCEPT);
+
+
             
-            obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, obsListForAVisit); //PrescribedRegimenLineCode
+            obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, map); //PrescribedRegimenLineCode
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
                 ndrCode = getRegimenMapValue(valueCoded);
                 regimenType.setPrescribedRegimenLineCode(ndrCode);
                 regimenType.setPrescribedRegimenTypeCode(Utils.ART_CODE);
-                obs = Utils.extractObs(valueCoded, obsListForAVisit); // PrescribedRegimen
+                obs = Utils.extractObs(valueCoded, map); // PrescribedRegimen
                 if (obs != null) {
                     valueCoded = obs.getValueCoded().getConceptId();
                     ndrCode = getRegimenMapValue(valueCoded);
@@ -355,7 +359,7 @@ public class PharmacyDictionary {
                     regimenType.setPrescribedRegimen(codedSimpleType);
                 }
                 regimenType.setPrescribedRegimenDispensedDate(getXmlDate(visitDate));//PrescribedRegimenDispensedDate
-                stopDateTime = retrieveMedicationDuration(visitDate, obsListForAVisit);
+                stopDateTime = retrieveMedicationDuration(visitDate, map);
                 startDateTime = new DateTime(visitDate);
                 if (stopDateTime != null) {
                     durationInDays = Utils.getDateDiffInDays(startDateTime.toDate(), stopDateTime.toDate());
@@ -377,61 +381,15 @@ public class PharmacyDictionary {
         return regimenType;
     }
 
-    public Boolean retrieveSubstitutionIndicator(List<Obs> obsList) {
-        Obs obs = null;
-        int valueCoded = 0;
-        Boolean ans = Boolean.FALSE;
-        obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN, obsList);
-        if (obs != null && obs.getValueCoded() != null) {
-            valueCoded = obs.getValueCoded().getConceptId();
-            if (valueCoded == Utils.REGIMEN_MEDICATION_PLAN_SUBSTITUTE_REGIMEN_CONCEPT_VALUE) {
-                ans = Boolean.TRUE;
-            }
-        } else {
-            obs = Utils.extractObs(Utils.PICKUP_REASON_CONCEPT, obsList);
-            if (obs != null && obs.getValueCoded() != null) {
-                valueCoded = obs.getValueCoded().getConceptId();
-                if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SUBSTITUTE_VALUE) {
-                    ans = Boolean.TRUE;
-                }
-            }
-        }
-        return ans;
-    }
-
-    public Boolean retrieveSwitchIndicator(List<Obs> obsList) {
-        Obs obs = null;
-        int valueCoded = 0;
-        Boolean ans = Boolean.FALSE;
-        obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN, obsList);
-        if (obs != null && obs.getValueCoded() != null) {
-            valueCoded = obs.getValueCoded().getConceptId();
-            if (valueCoded == Utils.REGIMEN_MEDICATION_PLAN_SWITCH_REGIMEN_CONCEPT_VALUE) {
-                ans = Boolean.TRUE;
-            }
-        } else {
-            obs = Utils.extractObs(Utils.PICKUP_REASON_CONCEPT, obsList);
-            if (obs != null && obs.getValueCoded() != null) {
-                valueCoded = obs.getValueCoded().getConceptId();
-                if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SWITCH_VALUE) {
-                    ans = Boolean.TRUE;
-                }
-            }
-        }
-        return ans;
-    }
-
-    public DateTime retrieveMedicationDuration(Date visitDate, List<Obs> obsList) {
+    public DateTime retrieveMedicationDuration(Date visitDate, Map<Object,List<Obs>> obsList) {
         DateTime stopDateTime = null;
         DateTime startDateTime = null;
         int durationDays = 0;
         Obs obs = null;
-        List<Obs> targetObsList = new ArrayList<Obs>();
 
         Obs obsGroup = Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
         if (obsGroup != null) {
-            targetObsList.addAll(obsGroup.getGroupMembers());
-            obs = Utils.extractObs(Utils.MEDICATION_DURATION_CONCEPT, targetObsList);
+            obs = Utils.extractObsByConceptId(Utils.MEDICATION_DURATION_CONCEPT, new ArrayList<>(obsGroup.getGroupMembers()));
             if (obs != null) {
                 durationDays = (int) obs.getValueNumeric().doubleValue();
                 startDateTime = new DateTime(visitDate);
@@ -448,11 +406,15 @@ public class PharmacyDictionary {
         return stopDateTime;
     }
 
-    private RegimenType createOIType(Patient pts, Encounter enc, List<Obs> OIDrugObsList)
-            throws DatatypeConfigurationException {
+    private RegimenType createOIType(Patient pts, Encounter enc, List<Obs> OIDrugObs) {
         RegimenType regimenType = new RegimenType();
 
         try {
+
+            List<Integer> obsCodeList = Arrays.asList(OI_Drug_Concept_Id,
+                    ANTI_DRUG_Concept_ID, Medication_Duration_Concept_Id);
+
+            Map<Object, List<Obs>> OIDrugObsList = Utils.groupedByConceptIdsOnly(OIDrugObs);
 
             CodedSimpleType cst;
 
@@ -533,8 +495,7 @@ public class PharmacyDictionary {
         return regimenType;
     }
 
-    public List<RegimenType> createOITypes(Patient pts, Encounter enc, List<Obs> pharmacyObsList)
-            throws DatatypeConfigurationException {
+    public List<RegimenType> createOITypes(Patient pts, Encounter enc, List<Obs> pharmacyObsList) {
 
         List<RegimenType> regimenTypeList = new ArrayList<>();
         RegimenType regimenType;
@@ -558,6 +519,7 @@ public class PharmacyDictionary {
         for (Obs ele : groupObsSet) {
             try {
                 drugObsSet = ele.getGroupMembers();
+
                 drugObsList.addAll(drugObsSet);
 
                 regimenType = createOIType(pts, enc, drugObsList);

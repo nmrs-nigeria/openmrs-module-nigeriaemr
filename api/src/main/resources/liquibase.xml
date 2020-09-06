@@ -46,32 +46,10 @@
             <column name="patients" type="LONGTEXT"/>
         </addColumn>
     </changeSet>
-
-    <changeSet id="nigeriaemr-2016-07-28-21-2014040911290" author="temiye">
-        <comment>
-            Updating state and lga code
-        </comment>
-
-        <insert tableName="global_property">
-            <column name="property" value="partner_reporting_lga_code"/>
-            <column name="property_value" value="UNKNOWN"/>
-            <column name="description" value="Facility Lga Code"/>
-            <column name="uuid" value="24d5d903-bc66-4131-8e85-31067c29f0b5"/>
-            <column name="datatype" value="NULL"/>
-            <column name="datatype_config" value="NULL"/>
-            <column name="preferred_handler" value="NULL"/>
-            <column name="handler_config" value="NULL"/>
-        </insert>
-        <insert tableName="global_property">
-            <column name="property" value="partner_reporting_state"/>
-            <column name="property_value" value="UNKNOWN"/>
-            <column name="description" value="Facility State Name"/>
-            <column name="uuid" value="83a459f6-8765-4743-97ab-e8920944208b"/>
-            <column name="datatype" value="NULL"/>
-            <column name="datatype_config" value="NULL"/>
-            <column name="preferred_handler" value="NULL"/>
-            <column name="handler_config" value="NULL"/>
-        </insert>
+    <changeSet id="nigeriaemr-2020-07-06-03" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="date_updated" type="TIMESTAMP"/>
+        </addColumn>
     </changeSet>
 
     <changeSet id="nigeriaemr-202008241353" author="wande">
@@ -93,6 +71,17 @@
         </createTable>
         <addColumn tableName="nigeriaemr_ndr_export">
             <column name="batch_id" type="int"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353-01" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="name" type="varchar(100)"/>
+            <column name="path" type="varchar(250)"/>
+            <column name="report_folder" type="varchar(255)"/>
+            <column name="context_path" type="varchar(255)"/>
+            <column name="date_ended" type="TIMESTAMP" />
+            <column name="voided" type="BIT(1)"/>
         </addColumn>
     </changeSet>
 

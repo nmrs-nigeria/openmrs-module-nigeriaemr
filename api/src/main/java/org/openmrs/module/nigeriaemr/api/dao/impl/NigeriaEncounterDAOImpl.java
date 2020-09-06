@@ -46,6 +46,10 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		if (toDate != null) {
 			criteria.add(Restrictions.or(Restrictions.le("dateCreated", toDate), Restrictions.le("dateChanged", toDate)));
 		}
+		criteria.add(Restrictions.eq("voided", false));
+		
+		criteria.addOrder(Order.asc("encounterDatetime"));
+		criteria.add(Restrictions.eq("voided", false));
 		return criteria.list();
 	}
 	
@@ -61,6 +65,7 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		if (toDate != null) {
 			criteria.add(Restrictions.or(Restrictions.le("dateCreated", toDate), Restrictions.le("dateChanged", toDate)));
 		}
+		criteria.add(Restrictions.eq("voided", false));
 		return criteria.list();
 	}
 	
@@ -69,12 +74,13 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		Criteria criteria = getSession().createCriteria(Encounter.class);
 		criteria.add(Restrictions.ge("patient", patient));
 		if (fromDate != null) {
-			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", toDate)));
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", fromDate)));
 		}
 		
 		if (toDate != null) {
 			criteria.add(Restrictions.or(Restrictions.le("dateCreated", toDate), Restrictions.le("dateChanged", toDate)));
 		}
+		criteria.add(Restrictions.eq("voided", false));
 		criteria.addOrder(Order.desc("encounterDatetime"));
 		criteria.setFetchSize(1);
 		if (criteria.list().size() > 0)

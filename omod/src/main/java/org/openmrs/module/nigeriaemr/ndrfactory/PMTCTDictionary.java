@@ -126,7 +126,7 @@ public class PMTCTDictionary {
         //pmtctDictionary.put(165860, "4");
     }
 
-    public AntenatalRegistrationType createAntenatalRegistrationType(Patient pts, Encounter enc, List<Obs> anthenatalObsList) throws DatatypeConfigurationException {
+    public AntenatalRegistrationType createAntenatalRegistrationType(Patient pts, Encounter enc, List<Integer> anthenatalObsList) throws DatatypeConfigurationException {
         try {
             AntenatalRegistrationType registrationType = new AntenatalRegistrationType();
             PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
@@ -203,7 +203,7 @@ public class PMTCTDictionary {
 
     }
 
-    public DeliveryEncounterType createDeliveryEncounterType(Patient pts, Encounter enc, List<Obs> anthenatalObsList) throws DatatypeConfigurationException {
+    public DeliveryEncounterType createDeliveryEncounterType(Patient pts, Encounter enc, List<Integer> anthenatalObsList) throws DatatypeConfigurationException {
         DeliveryEncounterType deliveryEncounterType = new DeliveryEncounterType();
         
         try {
@@ -303,7 +303,7 @@ public class PMTCTDictionary {
         return deliveryEncounterType;
     }
 
-    public ChildBirthDetailsType createChildBirthDetailsType(Patient pts, Encounter enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+    public ChildBirthDetailsType createChildBirthDetailsType(Patient pts, Encounter enc, List<Integer> antenatalObsList) throws DatatypeConfigurationException {
        
          ChildBirthDetailsType childBirthDetailsType = new ChildBirthDetailsType();
         
@@ -383,7 +383,7 @@ public class PMTCTDictionary {
         return childBirthDetailsType;
     }
 
-    public ChildFollowupType createChildFollowupType(Patient pts, Encounter enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+    public ChildFollowupType createChildFollowupType(Patient pts, Encounter enc, List<Integer> antenatalObsList) throws DatatypeConfigurationException {
        
         ChildFollowupType childFollowupType = new ChildFollowupType();
         try {
@@ -436,7 +436,7 @@ public class PMTCTDictionary {
         return childFollowupType;
     }
 
-    public ImmunizationType createImmunizationType(Patient pts, Encounter enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+    public ImmunizationType createImmunizationType(Patient pts, Encounter enc, List<Integer> antenatalObsList) throws DatatypeConfigurationException {
        
          ImmunizationType immunizationType = new ImmunizationType();
         try {
@@ -470,7 +470,7 @@ public class PMTCTDictionary {
         return immunizationType;
     }
 
-    public InfantPCRTestingType createInfantPcr(Patient pts, Encounter enc, List<Obs> antenatalObsList) throws DatatypeConfigurationException {
+    public InfantPCRTestingType createInfantPcr(Patient pts, Encounter enc, List<Integer> antenatalObsList) throws DatatypeConfigurationException {
         
          InfantPCRTestingType infantPCRTestingType = new InfantPCRTestingType();
          

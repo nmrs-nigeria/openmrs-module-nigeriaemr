@@ -17,6 +17,7 @@ import org.openmrs.module.nigeriaemr.Item;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao;
 import org.openmrs.module.nigeriaemr.model.BiometricInfo;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 
@@ -50,36 +51,72 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	}
 	
 	@Override
+	public NDRExportBatch getNDRExportBatchById(int id) throws APIException {
+		NDRExportBatch ndrExportBatch = null;
+		try {
+			ndrExportBatch = dao.getNDRExportBatchById(id);
+		}
+		catch (Exception e) {
+			//log error
+		}
+		return ndrExportBatch;
+	}
+	
+	@Override
+	public List<NDRExport> getNDRExportByBatchIdByStatus(int batchId, String status) throws APIException {
+		return dao.getNDRExportByBatchIdByStatus(batchId, status);
+	}
+	
+	@Override
 	public NDRExport saveNdrExportItem(NDRExport ndrExport) throws APIException {
 		if (ndrExport.getOwner() == null) {
-			ndrExport.setOwner(userService.getUser(1));
+			ndrExport.setOwner(Context.getUserService().getUser(1));
 		}
 		return dao.saveNdrExport(ndrExport);
 	}
 	
 	@Override
+	public NDRExportBatch saveNdrExportBatchItem(NDRExportBatch ndrExportBatch) throws APIException {
+		return dao.save(ndrExportBatch);
+	}
+	
+	@Override
 	public void updateNdrExportItemProcessedCount(int id, int count) throws APIException {
-		NDRExport ndrExport = getNDRExportById(id);
-		if (ndrExport != null) {
-			ndrExport.setDateEnded(new Date());
-			ndrExport.setPatientsProcessed(count);
-			dao.saveNdrExport(ndrExport);
+		NDRExportBatch ndrExportBatch = getNDRExportBatchById(id);
+		if (ndrExportBatch != null) {
+			if (ndrExportBatch.getPatientsProcessed() != null) {
+				int oldCount = ndrExportBatch.getPatientsProcessed();
+				ndrExportBatch.setPatientsProcessed(oldCount + count);
+			} else {
+				ndrExportBatch.setPatientsProcessed(count);
+			}
+			dao.save(ndrExportBatch);
 		}
 	}
 	
 	@Override
-	public void updateStatus(int id, String status) throws APIException {
-		NDRExport ndrExport = getNDRExportById(id);
-		if (ndrExport != null) {
-			ndrExport.setDateEnded(new Date());
-			ndrExport.setStatus(status);
-			dao.saveNdrExport(ndrExport);
-		}
+	public void updateStatus(int exportId, int batchId, String status, boolean done) throws APIException {
+		dao.updateStatus(exportId, batchId, status, done);
 	}
 	
 	@Override
-	public List<NDRExport> getExports(Map<String, Object> conditions, boolean includeVoided) throws APIException {
-		return dao.getExports(conditions, includeVoided);
+	public void updateAllStatus(String status) throws APIException {
+		dao.updateAllStatus(status);
+	}
+	
+	@Override
+	public List<NDRExport> getExports(Map<String, Object> conditions, int size, boolean includeVoided) throws APIException {
+		return dao.getExports(conditions, size, includeVoided);
+	}
+	
+	@Override
+	public Integer getFinishedExportCount(int batchId) throws APIException {
+		return dao.getFinishedExportCount(batchId, false);
+	}
+	
+	@Override
+	public List<NDRExport> getDelayedProcessingExports(Map<String, Object> conditions) throws APIException {
+		return dao.getDelayedProcessingExports(conditions);
 	}
 	
 	@Override
@@ -95,14 +132,17 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	}
 	
 	@Override
-	public List<NDRExportBatch> getExportBatchByStatus(String status) throws APIException {
-		return dao.getExportBatchByStatus(status);
+	public List<NDRExportBatch> getExportBatchByStatus(String status, boolean includeVoided) throws APIException {
+		return dao.getExportBatchByStatus(status, includeVoided);
 	}
 	
 	@Override
-	public NDRExportBatch updateExportBatch(int id, String status) throws APIException {
+	public NDRExportBatch updateExportBatch(int id, String status, boolean end) throws APIException {
 		NDRExportBatch ndrExportBatch = dao.getExportBatch(id);
 		ndrExportBatch.setStatus(status);
+		ndrExportBatch.setDateUpdated(new Date());
+		if (end)
+			ndrExportBatch.setDateCreated(new Date());
 		return dao.save(ndrExportBatch);
 	}
 	
@@ -123,4 +163,20 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 		dao.saveNdrExport(ndrExport);
 	}
 	
+	@Override
+	public void voidExportBatchEntry(int id) throws APIException {
+		NDRExportBatch ndrExportBatch = getNDRExportBatchById(id);
+		ndrExportBatch.setVoided(true);
+		dao.save(ndrExportBatch);
+	}
+	
+	@Override
+	public DatimMap getDatatimMapByDataimId(String datimId) throws APIException {
+		return dao.getDatatimMapByDataimId(datimId);
+	}
+	
+	@Override
+	public void deleteExports(int batchId) throws APIException {
+		dao.deleteExports(batchId);
+	}
 }

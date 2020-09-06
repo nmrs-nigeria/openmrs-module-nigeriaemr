@@ -9,11 +9,7 @@
  */
 package org.openmrs.module.nigeriaemr.web.controller;
 
-import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.ui.framework.page.PageModel;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class CustomReportController {
 	

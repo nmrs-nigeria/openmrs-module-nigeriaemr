@@ -3,8 +3,10 @@ package org.openmrs.module.nigeriaemr.api.service.impl;
 import org.openmrs.*;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.EncounterServiceImpl;
+import org.openmrs.module.nigeriaemr.NDREvent;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaEncounterDAO;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
+import org.openmrs.module.nigeriaemr.util.LoggerUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +40,8 @@ public class NigeriaEncounterServiceImpl extends EncounterServiceImpl implements
 			encounter = dao.getLastEncounterByPatient(patient, from, to);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			LoggerUtils.write(NigeriaEncounterServiceImpl.class.getName(), e.getMessage(), LoggerUtils.LogFormat.INFO,
+			    LoggerUtils.LogLevel.live);
 		}
 		return encounter;
 	}
@@ -51,7 +54,8 @@ public class NigeriaEncounterServiceImpl extends EncounterServiceImpl implements
 			encounters = dao.getEncountersByEncounterTypeIds(patient, fromDate, toDate, encounterTypeIds, false, 0);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			LoggerUtils.write(NigeriaEncounterServiceImpl.class.getName(), e.getMessage(), LoggerUtils.LogFormat.INFO,
+			    LoggerUtils.LogLevel.live);
 		}
 		return encounters;
 	}
@@ -63,8 +67,9 @@ public class NigeriaEncounterServiceImpl extends EncounterServiceImpl implements
 		try {
 			encounters = dao.getEncountersByEncounterTypeIds(patient, fromDate, toDate, encounterTypeIds, false, 1);
 		}
-		catch (Exception e) {
-			System.out.println(e.getMessage());
+		catch (Exception ex) {
+			LoggerUtils.write(NigeriaEncounterServiceImpl.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
 		}
 		return encounters == null || encounters.size() == 0 ? null : encounters.get(0);
 	}

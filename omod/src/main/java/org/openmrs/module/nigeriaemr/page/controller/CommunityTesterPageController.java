@@ -5,8 +5,6 @@
  */
 package org.openmrs.module.nigeriaemr.page.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.omodmodels.TesterModel;
 import org.openmrs.module.nigeriaemr.service.CommunityTesters;
 import org.openmrs.ui.framework.annotation.SpringBean;

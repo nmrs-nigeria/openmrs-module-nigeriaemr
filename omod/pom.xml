@@ -70,6 +70,11 @@
             <artifactId>htmlformentry-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openmrs</groupId>
+            <artifactId>event-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 		
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -97,7 +102,6 @@
             <version>1.0.0</version>
         </dependency>
 
-        
     </dependencies>
 
     <build>

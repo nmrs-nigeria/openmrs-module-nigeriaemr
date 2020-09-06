@@ -7,6 +7,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.impl.ObsServiceImpl;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaObsDAO;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
+import org.openmrs.module.nigeriaemr.util.LoggerUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +48,8 @@ public class NigeriaObsServiceImpl extends ObsServiceImpl implements NigeriaObsS
 			obs = dao.getLastObsByConceptId(person, concept, from, to, includeVoided, false);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			LoggerUtils.write(NigeriaObsServiceImpl.class.getName(), e.getMessage(), LoggerUtils.LogFormat.INFO,
+			    LoggerUtils.LogLevel.live);
 		}
 		return obs;
 	}
@@ -60,7 +62,8 @@ public class NigeriaObsServiceImpl extends ObsServiceImpl implements NigeriaObsS
 			obs = dao.getLastObsByConceptId(person, concept, from, to, includeVoided, true);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			LoggerUtils.write(NigeriaObsServiceImpl.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
 		}
 		return obs;
 	}
@@ -73,8 +76,72 @@ public class NigeriaObsServiceImpl extends ObsServiceImpl implements NigeriaObsS
 			obs = dao.getHighestObsByConcept(person, concept, from, to, false, false);
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			LoggerUtils.write(NigeriaObsServiceImpl.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
 		}
 		return obs;
 	}
+	
+	@Override
+	public Obs getObsbyValueCoded(Concept concept, Concept valueCoded, List<Integer> obsList) throws APIException {
+		Obs obs = null;
+		try {
+			obs = dao.getObsbyValueCoded(concept, valueCoded, obsList);
+		}
+		catch (Exception e) {
+			LoggerUtils.write(NigeriaObsServiceImpl.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
+		}
+		return obs;
+	}
+	
+	@Override
+	public Obs getLastObsByConcept(Concept concept, List<Integer> obsList) throws APIException {
+		Obs obs = null;
+		try {
+			obs = dao.getObsbyValueCoded(concept, null, obsList);
+		}
+		catch (Exception e) {
+			LoggerUtils.write(NigeriaObsServiceImpl.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
+		}
+		return obs;
+	}
+	
+	@Override
+	public List<Obs> getObsByConcept(Concept concept, List<Integer> obsList) throws APIException {
+		List<Obs> obs = null;
+		try {
+			obs = dao.getObsByConcept(concept, obsList);
+		}
+		catch (Exception e) {
+			LoggerUtils.write(NigeriaObsServiceImpl.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
+		}
+		return obs;
+	}
+	
+	@Override
+	public List<Obs> getObsByConcept(List<Concept> concept, List<Integer> obsList) throws APIException {
+		List<Obs> obs = null;
+		try {
+			obs = dao.getObsByConcept(concept, obsList);
+		}
+		catch (Exception e) {
+			LoggerUtils.write(NigeriaObsServiceImpl.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
+		}
+		return obs;
+	}
+	
+	@Override
+	public List<Obs> getObsByVisitDate(Date visitDate, List<Integer> obsIds, boolean includeVoided) throws APIException {
+		return dao.getObsByVisitDate(visitDate, obsIds, false);
+	}
+	
+	@Override
+	public List<Concept> getConcepts(List<Integer> conceptIds, boolean includeVoided) throws APIException {
+		return dao.getConcepts(conceptIds, includeVoided);
+	}
+	
 }

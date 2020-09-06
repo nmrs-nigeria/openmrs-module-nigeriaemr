@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.openmrs.module.nigeriaemr.ndrUtils;
+package org.openmrs.module.nigeriaemr.util;
+
+import org.openmrs.api.context.Context;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,11 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -25,9 +23,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 
 /**
  * @author MORRISON.I
@@ -161,94 +156,6 @@ public class LoggerUtils {
 	
 	public static String getIPShortName() {
 		return Context.getAdministrationService().getGlobalProperty("nigeriaemr_logger_config");
-	}
-	
-	public static void checkLoggerGlobalProperty(DBConnection openmrsConn) {
-		
-		Connection conn = null;
-		PreparedStatement pStatement = null;
-		try {
-			
-			conn = DriverManager.getConnection(openmrsConn.getUrl(), openmrsConn.getUsername(), openmrsConn.getPassword());
-			pStatement = conn.prepareStatement("select property_value from global_property where property = ? ");
-			pStatement.setString(1, NMRS_LOGGER_PROPERTY);
-			ResultSet result = pStatement.executeQuery();
-			if (!result.next()) {
-				pStatement.close();
-				pStatement = conn.prepareStatement("insert into " + GLOBAL_PROPERTY_TABLENAME
-				        + "(property, property_value, description, uuid) values(?,?,?,?)");
-				pStatement.setString(1, NMRS_LOGGER_PROPERTY);
-				pStatement.setString(2, DEFAULT_LOGGER_GLOBAL_PROP_VALUE);
-				pStatement.setString(3, DEFAULT_LOGGER_GLOBAL_PROP_DESCRIPTION);
-				pStatement.setString(4, UUID.randomUUID().toString());
-				
-				pStatement.executeUpdate();
-				
-			}
-			
-		}
-		catch (SQLException ex) {
-			LoggerUtils.write(LoggerUtils.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-		}
-		finally {
-			try {
-				if (conn != null) {
-					conn.close();
-				}
-				if (pStatement != null) {
-					pStatement.close();
-				}
-				
-			}
-			catch (SQLException ex) {
-				
-			}
-		}
-		
-	}
-	
-	public static void checkPatientLimitGlobalProperty(DBConnection openmrsConn) {
-		
-		Connection conn = null;
-		PreparedStatement pStatement = null;
-		try {
-			
-			conn = DriverManager.getConnection(openmrsConn.getUrl(), openmrsConn.getUsername(), openmrsConn.getPassword());
-			pStatement = conn.prepareStatement("select property_value from global_property where property = ? ");
-			pStatement.setString(1, PATIENT_LIMIT_PROPERTY);
-			ResultSet result = pStatement.executeQuery();
-			if (!result.next()) {
-				pStatement.close();
-				pStatement = conn.prepareStatement("insert into " + GLOBAL_PROPERTY_TABLENAME
-				        + "(property, property_value, description, uuid) values(?,?,?,?)");
-				pStatement.setString(1, PATIENT_LIMIT_PROPERTY);
-				pStatement.setString(2, DEFAULT_PATIENT_LIMIT_VALUE);
-				pStatement.setString(3, DEFAULT_PATIENT_LIMIT_GLOBAL_PROP_DESCRIPTION);
-				pStatement.setString(4, UUID.randomUUID().toString());
-				
-				pStatement.executeUpdate();
-				
-			}
-			
-		}
-		catch (SQLException ex) {
-			LoggerUtils.write(LoggerUtils.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-		}
-		finally {
-			try {
-				if (conn != null) {
-					conn.close();
-				}
-				if (pStatement != null) {
-					pStatement.close();
-				}
-				
-			}
-			catch (SQLException ex) {
-				
-			}
-		}
-		
 	}
 	
 	public static String getCurrentInstanceLogLevel() {

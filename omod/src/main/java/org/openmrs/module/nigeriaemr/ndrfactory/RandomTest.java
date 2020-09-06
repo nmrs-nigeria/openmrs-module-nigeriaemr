@@ -9,6 +9,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.openmrs.Obs;
@@ -19,16 +20,15 @@ import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
  */
 public class RandomTest {
 	
-	public DateTime retrieveMedicationDuration(Date visitDate, List<Obs> obsList) {
+	public DateTime retrieveMedicationDuration(Date visitDate, List<Integer> obsList) {
 		DateTime stopDateTime = null;
 		DateTime startDateTime = null;
 		int durationDays = 0;
 		Obs obs = null;
-		List<Obs> targetObsList = new ArrayList<Obs>();
-		
+
 		Obs obsGroup = Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
 		if (obsGroup != null) {
-			targetObsList.addAll(obsGroup.getGroupMembers());
+			List<Integer> targetObsList = obsGroup.getGroupMembers().stream().map(Obs::getObsId).collect(Collectors.toList());
 			obs = Utils.extractObs(Utils.MEDICATION_DURATION_CONCEPT, targetObsList);
 			if (obs != null) {
 				durationDays = (int) obs.getValueNumeric().doubleValue();

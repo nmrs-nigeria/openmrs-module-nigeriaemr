@@ -57,6 +57,8 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		if (encounterIds != null && encounterIds.size() > 0)
 			query += " AND obs.encounter_id in :encounterIds";
 		
+		query += " AND obs.voided = false";
+		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (personId != null)
 			sql.setInteger("personId", personId);
@@ -78,7 +80,8 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 	public Obs getLastObsByConceptId(Person person, Concept concept, Date from, Date to, boolean includeVoided, boolean asc)
 	        throws DAOException {
 		Criteria criteria = getSession().createCriteria(Obs.class);
-		criteria.add(Restrictions.eq("voided", includeVoided));
+		if (!includeVoided)
+			criteria.add(Restrictions.eq("voided", false));
 		if (from != null) {
 			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", from), Restrictions.ge("dateChanged", from)));
 		}
@@ -116,6 +119,8 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		if (encounterTypeIds != null && encounterTypeIds.size() > 0)
 			query += " AND e.encounter_type in :encounterTypeIds";
 		
+		query += " AND e.voided = false AND o.voided = false";
+		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (obsIds != null && obsIds.size() > 0)
 			sql.setParameterList("obsIds", obsIds);
@@ -135,7 +140,8 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 	public Obs getHighestObsByConcept(Person person, Concept concept, Date from, Date to, boolean includeVoided, boolean asc)
 	        throws DAOException {
 		Criteria criteria = getSession().createCriteria(Obs.class);
-		criteria.add(Restrictions.eq("voided", includeVoided));
+		if (!includeVoided)
+			criteria.add(Restrictions.eq("voided", false));
 		if (from != null) {
 			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", from), Restrictions.ge("dateChanged", from)));
 		}
@@ -158,5 +164,74 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		if (criteria.list().size() > 0)
 			return (Obs) criteria.list().get(0);
 		return null;
+	}
+	
+	@Override
+	public List<Obs> getObsByVisitDate(Date visitDate, List<Integer> obsIds, boolean includeVoided) throws DAOException {
+		Criteria criteria = getSession().createCriteria(Obs.class);
+		if (!includeVoided)
+			criteria.add(Restrictions.eq("voided", false));
+		criteria.add(Restrictions.eq("obsDatetime", visitDate));
+		if (obsIds != null && obsIds.size() > 0) {
+			criteria.add(Restrictions.in("obsId", obsIds));
+		}
+		return criteria.list();
+	}
+	
+	@Override
+	public Obs getObsbyValueCoded(Concept concept, Concept valueCoded, List<Integer> obsList) throws DAOException {
+		Criteria criteria = getSession().createCriteria(Obs.class);
+		if (valueCoded != null) {
+			criteria.add(Restrictions.eq("valueCoded", valueCoded));
+		}
+		if (obsList != null && obsList.size() > 0) {
+			criteria.add(Restrictions.in("obsId", obsList));
+		}
+		if (concept != null) {
+			criteria.add(Restrictions.eq("concept", concept));
+		}
+		criteria.addOrder(Order.desc("obsDatetime"));
+		criteria.add(Restrictions.eq("voided", false));
+		
+		criteria.setFetchSize(1);
+		if (criteria.list().size() > 0)
+			return (Obs) criteria.list().get(0);
+		return null;
+	}
+	
+	@Override
+	public List<Obs> getObsByConcept(Concept concept, List<Integer> obsList) throws DAOException {
+		Criteria criteria = getSession().createCriteria(Obs.class);
+		if (obsList != null && obsList.size() > 0) {
+			criteria.add(Restrictions.in("obsId", obsList));
+		}
+		if (concept != null) {
+			criteria.add(Restrictions.eq("concept", concept));
+		}
+		criteria.addOrder(Order.desc("obsDatetime"));
+		criteria.add(Restrictions.eq("voided", false));
+		return criteria.list();
+	}
+	
+	@Override
+	public List<Obs> getObsByConcept(List<Concept> concepts, List<Integer> obsList) throws DAOException {
+		Criteria criteria = getSession().createCriteria(Obs.class);
+		if (obsList != null && obsList.size() > 0) {
+			criteria.add(Restrictions.in("obsId", obsList));
+		}
+		if (concepts != null && concepts.size() > 0) {
+			criteria.add(Restrictions.in("concept", concepts));
+		}
+		criteria.addOrder(Order.desc("obsDatetime"));
+		criteria.add(Restrictions.eq("voided", false));
+		return criteria.list();
+	}
+	
+	@Override
+	public List<Concept> getConcepts(List<Integer> conceptIds, boolean includeVoided) throws DAOException {
+		Criteria criteria = getSession().createCriteria(Concept.class);
+		criteria.add(Restrictions.eq("voided", includeVoided));
+		criteria.add(Restrictions.in("conceptId", conceptIds));
+		return criteria.list();
 	}
 }

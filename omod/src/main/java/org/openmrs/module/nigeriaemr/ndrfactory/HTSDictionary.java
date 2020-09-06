@@ -6,8 +6,7 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -17,11 +16,8 @@ import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-import org.openmrs.EncounterProvider;
 
 import org.openmrs.PatientIdentifier;
-import org.openmrs.Provider;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
@@ -296,9 +292,17 @@ public class HTSDictionary {
         }
     }
 
-    public HIVTestingReportType createClientIntakeTags(Patient patient, Encounter enc, List<Obs> allObs, HIVTestingReportType hivTestingReport) throws DatatypeConfigurationException {
+    public HIVTestingReportType createClientIntakeTags(Patient patient, Encounter enc, Map<Object, List<Obs>> groupedObsByConcept, HIVTestingReportType hivTestingReport) throws DatatypeConfigurationException {
 
-        Obs obs = null;
+        Obs obs;
+
+        List<Integer> obsCodeList = Arrays.asList(HTS_Client_Intake_SETTING_ConceptID,
+                HTS_CLient_Intake_FIRST_TIME_ConceptID,HTS_Client_Intake_SESSION_TYPE_ConceptID,
+                HTS_Client_Intake_REFFERRED_FROM,HTS_Client_Intake_MARITAL_STATUS_ConceptID,
+                HTS_Client_Intake_LESS_THAN_FIVE_CHILDREN,HTS_Client_Intake_NO_OF_COWIFES_ConceptID,
+                HTS_Client_Intake_Client_IDENTIFIED_INDEX,HTS_Client_Intake_INDEX_TYPE,
+                HTS_Client_Intake_INDEX_CLIENT_ID,HTS_Client_Intake_CLIENT_RETESTING,
+                SYPHILLIS_STATUS_RESULT,HEPATITIS_B_RESULT,HEPATITIS_C_RESULT);
 
         //for client Code
         String htsID = String.valueOf(patient.getPatientIdentifier(Utils.HTS_IDENTIFIER_INDEX));
@@ -313,13 +317,13 @@ public class HTSDictionary {
 
         //setting with others been retrieved
         // obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
-        obs = extractObs(HTS_Client_Intake_SETTING_ConceptID, allObs);
+        obs = extractObs(HTS_Client_Intake_SETTING_ConceptID, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             hivTestingReport.setSetting(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //first time visit
-        obs = extractObs(HTS_CLient_Intake_FIRST_TIME_ConceptID, allObs);
+        obs = extractObs(HTS_CLient_Intake_FIRST_TIME_ConceptID, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             hivTestingReport.setFirstTimeVisit(getMappedValue(obs.getValueCoded().getConceptId()));
         }
@@ -328,76 +332,77 @@ public class HTSDictionary {
         try {
 
             //session
-            obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
+            obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setSessionType(getMappedValue(obs.getValueCoded().getConceptId()));
             }
 
             //refferred from
-            obs = extractObs(HTS_Client_Intake_REFFERRED_FROM, allObs);
+            obs = extractObs(HTS_Client_Intake_REFFERRED_FROM, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setReferredFrom(getMappedValue(obs.getValueCoded().getConceptId()));
             }
 
             //marital status
-            obs = extractObs(HTS_Client_Intake_MARITAL_STATUS_ConceptID, allObs);
+
+            obs = extractObs(HTS_Client_Intake_MARITAL_STATUS_ConceptID, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setMaritalStatus(getMappedValue(obs.getValueCoded().getConceptId()));
             }
 
             //no. of owned children less than five
-            obs = extractObs(HTS_Client_Intake_LESS_THAN_FIVE_CHILDREN, allObs);
+            obs = extractObs(HTS_Client_Intake_LESS_THAN_FIVE_CHILDREN, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setNoOfOwnChildrenLessThan5Years(Integer.parseInt(getMappedValue(obs.getValueCoded().getConceptId())));
             }
 
             //no. of wives/co-wives
-            obs = extractObs(HTS_Client_Intake_NO_OF_COWIFES_ConceptID, allObs);
+            obs = extractObs(HTS_Client_Intake_NO_OF_COWIFES_ConceptID, groupedObsByConcept);
             if (obs != null && obs.getValueText() != null) {
                 hivTestingReport.setNoOfAllWives(Integer.parseInt(obs.getValueText()));
             }
 
             //is index client
-            obs = extractObs(HTS_Client_Intake_Client_IDENTIFIED_INDEX, allObs);
+            obs = extractObs(HTS_Client_Intake_Client_IDENTIFIED_INDEX, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setIsIndexClient(getMappedValue(obs.getValueCoded().getConceptId()));
             }
 
             //index type
             if (hivTestingReport.getIsIndexClient().equals("Y")) {
-                obs = extractObs(HTS_Client_Intake_INDEX_TYPE, allObs);
+                obs = extractObs(HTS_Client_Intake_INDEX_TYPE, groupedObsByConcept);
                 if (obs != null && obs.getValueCoded() != null) {
                     hivTestingReport.setIndexType(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
 
                 //index client id
-                obs = extractObs(HTS_Client_Intake_INDEX_CLIENT_ID, allObs);
+                obs = extractObs(HTS_Client_Intake_INDEX_CLIENT_ID, groupedObsByConcept);
                 if (obs != null && obs.getValueText() != null) {
                     hivTestingReport.setIndexClientId(obs.getValueText());
                 }
             }
 
             //client from retesting
-            obs = extractObs(HTS_Client_Intake_CLIENT_RETESTING, allObs);
+            obs = extractObs(HTS_Client_Intake_CLIENT_RETESTING, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setReTestingForResultVerification(getMappedValue(obs.getValueCoded().getConceptId()));
             }
 
             //syphillis and hepatitis result
             //syphilis test result
-            obs = extractObs(SYPHILLIS_STATUS_RESULT, allObs);
+            obs = extractObs(SYPHILLIS_STATUS_RESULT, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setSyphilisTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
             }
 
             //hepatitis B test result
-            obs = extractObs(HEPATITIS_B_RESULT, allObs);
+            obs = extractObs(HEPATITIS_B_RESULT, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setHBVTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
             }
 
             //hepatiis C test result
-            obs = extractObs(HEPATITIS_C_RESULT, allObs);
+            obs = extractObs(HEPATITIS_C_RESULT, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivTestingReport.setHCVTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
             }
@@ -417,11 +422,11 @@ public class HTSDictionary {
 
     }
 
-    public HIVTestResultType createHIVTestResult(Patient patient, Encounter enc, List<Obs> allObs) {
+    public HIVTestResultType createHIVTestResult(Patient patient,  Map<Object, List<Obs>> groupedObsByConcept) {
         HIVTestResultType hIVTestResultType = new HIVTestResultType();
 
-        RecencyTestingType recencyTestingType = createRecencyType(patient, enc, allObs);
-        TestResultType testResultTypes = createTestResultType(patient, enc, allObs);
+        RecencyTestingType recencyTestingType = createRecencyType(patient, groupedObsByConcept);
+        TestResultType testResultTypes = createTestResultType(groupedObsByConcept);
 
         if (recencyTestingType != null) {
             hIVTestResultType.setRecencyTesting(recencyTestingType);
@@ -438,18 +443,24 @@ public class HTSDictionary {
         return hIVTestResultType;
     }
 
-    public IndexNotificationServicesType createIndexNotificationServicesTypes(Patient patient, Encounter enc, List<Obs> allObs) {
+    public IndexNotificationServicesType createIndexNotificationServicesTypes(Map<Object, List<Obs>> groupedObsByConcept) {
         List<PartnerNotificationType> partnerNotificationTypes = new ArrayList<>();
         IndexNotificationServicesType indexNotificationServicesType = new IndexNotificationServicesType();
 
         try {
-            List<Obs> allIndexGroupObs = Utils.getAllObsGroups(allObs, PARTNER_ELICITATION_GROUPING_CONCEPT);
+            List<Obs> allIndexGroupObs = groupedObsByConcept.get(PARTNER_ELICITATION_GROUPING_CONCEPT);
 
-            allIndexGroupObs.stream().forEach(gObs -> {
+            allIndexGroupObs.forEach(gObs -> {
 
                 PartnerNotificationType partnerNotificationType = new PartnerNotificationType();
 
-                List<Obs> allMembers = new ArrayList(gObs.getGroupMembers());
+                List<Obs> allMembersValue = new ArrayList(gObs.getGroupMembers());
+
+                List<Integer> obsCodeList = Arrays.asList(PARTNER_NAME_CONCEPT,
+                        PARTNER_GENDER_CONCEPT,PARTNER_INDEX_TYPE_CONCEPT,PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT,
+                        PARTNER_INDEX_RELATION_PHONE_CONCEPT);
+
+                Map<Object, List<Obs>> allMembers = Utils.groupedByConceptIdsOnly(allMembersValue);
                 //extract all the members using the concept
 
                 //partner name
@@ -499,28 +510,39 @@ public class HTSDictionary {
     }
 
     //Note returns only one recencyType object
-    public RecencyTestingType createRecencyType(Patient patient, Encounter enc, List<Obs> allObs) {
+    public RecencyTestingType createRecencyType(Patient patient,  Map<Object, List<Obs>> groupedObsByConcept) {
 
         RecencyTestingType recencyTestingType = new RecencyTestingType();
         //for recency Code
         PatientIdentifier recencyId = patient.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX);
 
+        List<Integer> obsCodeList = Arrays.asList(HIV_RECENCY_TEST_NAME_CONCEPT,
+                HIV_RECENCY_TEST_DATE_CONCEPT,
+                OPT_OUT_OF_RTRI,
+                CONTROL_LINE,
+                VERIFICATION_LINE,
+                LONG_TERM_LINE,
+                RECENCY_INTERPRETATION,
+                HIV_RECENCY_ASSAY_CONCEPT,
+                SAMPLE_TEST_DATE_CONCEPT,
+                SAMPLE_TEST_RESULT_CONCEPT,
+                FINAL_HIV_RECENCY_INFECTION_TESTING_ALGORITHM_RESULT_CONCEPT,
+                VIRAL_LOAD_SAMPLE_COLLECTION_DATE,
+                SAMPLE_TYPE,
+                RECEIVING_PCR_LAB,
+                VIRAL_LOAD_SAMPLE_SENT_DATE,
+                VIRALLOAD_REQUEST_MADE,
+                SAMPLE_ID,
+                VIRAL_LOAD_CLASSIFICATION);
+
         //test name
-        Obs obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT, allObs);
+        Obs obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setTestName(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
-//        else {
-//            //check if the old test name was used
-//            obs = extractObs(HIV_RECENCY_TEST_NAME_CONCEPT_OLD, allObs);
-//            if (obs != null) {
-//                recencyTestingType.setTestName(obs.getValueText());
-//            }
-//            
-//        }
         //test date
-        obs = extractObs(HIV_RECENCY_TEST_DATE_CONCEPT, allObs);
+        obs = extractObs(HIV_RECENCY_TEST_DATE_CONCEPT, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
                 recencyTestingType.setTestDate(Utils.getXmlDate(obs.getValueDate()));
@@ -530,7 +552,7 @@ public class HTSDictionary {
         }
 
         //consent
-        obs = extractObs(OPT_OUT_OF_RTRI, allObs);
+        obs = extractObs(OPT_OUT_OF_RTRI, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setConsent(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
@@ -541,37 +563,37 @@ public class HTSDictionary {
         }
 
         //control line
-        obs = extractObs(CONTROL_LINE, allObs);
+        obs = extractObs(CONTROL_LINE, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setControlLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
 
         //verification line
-        obs = extractObs(VERIFICATION_LINE, allObs);
+        obs = extractObs(VERIFICATION_LINE, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setVerificationLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
 
         //long term line
-        obs = extractObs(LONG_TERM_LINE, allObs);
+        obs = extractObs(LONG_TERM_LINE, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setLongTermLine(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
 
         //recency interpretation
-        obs = extractObs(RECENCY_INTERPRETATION, allObs);
+        obs = extractObs(RECENCY_INTERPRETATION, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setRecencyInterpretation(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //rapid recency assay
-        obs = extractObs(HIV_RECENCY_ASSAY_CONCEPT, allObs);
+        obs = extractObs(HIV_RECENCY_ASSAY_CONCEPT, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setRapidRecencyAssay(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //VL Sample test date
-        obs = extractObs(SAMPLE_TEST_DATE_CONCEPT, allObs);
+        obs = extractObs(SAMPLE_TEST_DATE_CONCEPT, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
                 recencyTestingType.setViralLoadConfirmationTestDate(Utils.getXmlDate(obs.getValueDate()));
@@ -581,19 +603,19 @@ public class HTSDictionary {
         }
 
         //result copies
-        obs = extractObs(SAMPLE_TEST_RESULT_CONCEPT, allObs);
+        obs = extractObs(SAMPLE_TEST_RESULT_CONCEPT, groupedObsByConcept);
         if (obs != null && obs.getValueNumeric() != null) {
             recencyTestingType.setViralLoadConfirmationResult(obs.getValueNumeric());
         }
 
         //final HIV Result
-        obs = extractObs(FINAL_HIV_RECENCY_INFECTION_TESTING_ALGORITHM_RESULT_CONCEPT, allObs);
+        obs = extractObs(FINAL_HIV_RECENCY_INFECTION_TESTING_ALGORITHM_RESULT_CONCEPT, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setFinalRecencyTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //sample collection
-        obs = extractObs(VIRAL_LOAD_SAMPLE_COLLECTION_DATE, allObs);
+        obs = extractObs(VIRAL_LOAD_SAMPLE_COLLECTION_DATE, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
                 recencyTestingType.setDateSampleCollected(Utils.getXmlDate(obs.getValueDate()));
@@ -604,19 +626,19 @@ public class HTSDictionary {
         }
 
         //sample type
-        obs = extractObs(SAMPLE_TYPE, allObs);
+        obs = extractObs(SAMPLE_TYPE, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setSampleType(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //receiving PCR LAB
-        obs = extractObs(RECEIVING_PCR_LAB, allObs);
+        obs = extractObs(RECEIVING_PCR_LAB, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setPCRLab(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //date sample sent to PCR Lab
-        obs = extractObs(VIRAL_LOAD_SAMPLE_SENT_DATE, allObs);
+        obs = extractObs(VIRAL_LOAD_SAMPLE_SENT_DATE, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
                 recencyTestingType.setDateSampleSent(Utils.getXmlDate(obs.getValueDate()));
@@ -625,19 +647,19 @@ public class HTSDictionary {
             }
         }
 
-        obs = extractObs(VIRALLOAD_REQUEST_MADE, allObs);
+        obs = extractObs(VIRALLOAD_REQUEST_MADE, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setViralLoadRequest(getYNCodeTypeValue(obs.getValueCoded().getConceptId()));
         }
 
         //sample ID
-        obs = extractObs(SAMPLE_ID, allObs);
+        obs = extractObs(SAMPLE_ID, groupedObsByConcept);
         if (obs != null && obs.getValueText() != null) {
             recencyTestingType.setSampleReferenceNumber(obs.getValueText());
         }
 
         //VL Classification
-        obs = extractObs(VIRAL_LOAD_CLASSIFICATION, allObs);
+        obs = extractObs(VIRAL_LOAD_CLASSIFICATION, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             recencyTestingType.setViralLoadClassification(getMappedValue(obs.getValueCoded().getConceptId()));
         }
@@ -650,30 +672,38 @@ public class HTSDictionary {
 
     }
 
-    public TestResultType createTestResultType(Patient patient, Encounter enc, List<Obs> allObs) {
+    public TestResultType createTestResultType(Map<Object, List<Obs>> groupedObsByConcept) {
 
         TestResultType testResultType = new TestResultType();
 
+        List<Integer> obsCodeList = Arrays.asList(SCREENING_TEST_RESULT,
+                CONFIRMATORY_TEST_RESULT,
+                TIE_BREAKER_RESULT,
+                SCREENING_TEST_RESULT_DATE,
+                CONFIRMATORY_TEST_RESULT_date,
+                TIE_BREAKER_RESULT_DATE,
+                FINAL_RESULT);
+
         //screening test result
-        Obs obs = extractObs(SCREENING_TEST_RESULT, allObs);
+        Obs obs = extractObs(SCREENING_TEST_RESULT, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             testResultType.setScreeningTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //confirmatory test result
-        obs = extractObs(CONFIRMATORY_TEST_RESULT, allObs);
+        obs = extractObs(CONFIRMATORY_TEST_RESULT, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             testResultType.setConfirmatoryTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //tie breaker test
-        obs = extractObs(TIE_BREAKER_RESULT, allObs);
+        obs = extractObs(TIE_BREAKER_RESULT, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             testResultType.setTieBreakerTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
         }
 
         //screening test result date
-        obs = extractObs(SCREENING_TEST_RESULT_DATE, allObs);
+        obs = extractObs(SCREENING_TEST_RESULT_DATE, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
                 testResultType.setScreeningTestResultDate(Utils.getXmlDate(obs.getValueDate()));
@@ -683,7 +713,7 @@ public class HTSDictionary {
         }
 
         //confirmatory test result data
-        obs = extractObs(CONFIRMATORY_TEST_RESULT_date, allObs);
+        obs = extractObs(CONFIRMATORY_TEST_RESULT_date, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
                 testResultType.setConfirmatoryTestResultDate(Utils.getXmlDate(obs.getValueDate()));
@@ -693,7 +723,7 @@ public class HTSDictionary {
         }
 
         //tie test result data
-        obs = extractObs(TIE_BREAKER_RESULT_DATE, allObs);
+        obs = extractObs(TIE_BREAKER_RESULT_DATE, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
                 testResultType.setTieBreakerTestResultDate(Utils.getXmlDate(obs.getValueDate()));
@@ -703,7 +733,7 @@ public class HTSDictionary {
         }
 
         //final result
-        obs = extractObs(FINAL_RESULT, allObs);
+        obs = extractObs(FINAL_RESULT, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             testResultType.setFinalTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
         }
@@ -715,39 +745,47 @@ public class HTSDictionary {
         return testResultType;
     }
 
-    public KnowledgeAssessmentType createKnowledgeAssessmentType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public KnowledgeAssessmentType createKnowledgeAssessmentType(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         KnowledgeAssessmentType knowledgeAssessmentType = null;
+
+        List<Integer> obsCodeList = Arrays.asList(Previously_Tested_Hiv_Negative_Concept_Id,
+                Client_Pregnant_Concept_Id,
+                Client_Informed_About_Transsmission_Concept_Id,
+                Client_Informed_About_Risk_Factors_Concept_Id,
+                Client_Informed_On_Prevention_Concept_Id,
+                Client_Informed_About_Possible_Concept_Id,
+                Informed_Consent_For_Hiv_Testing_Concept_Id);
 
         if (htsIdentifier != null) {
             LoggerUtils.write(HTSDictionary.class.getName(), "htsIdentifier is not null", LogFormat.INFO, LogLevel.live);
             knowledgeAssessmentType = new KnowledgeAssessmentType();
 
-            Obs obs = extractObs(Previously_Tested_Hiv_Negative_Concept_Id, obsList);
+            Obs obs = extractObs(Previously_Tested_Hiv_Negative_Concept_Id, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 knowledgeAssessmentType.setPreviouslyTestedHIVNegative(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Client_Pregnant_Concept_Id, obsList);
+            obs = extractObs(Client_Pregnant_Concept_Id, groupedObsByConcept);
             if (obs != null && obs.getValueAsBoolean() != null) {
                 knowledgeAssessmentType.setClientPregnant(obs.getValueAsBoolean());
             }
-            obs = extractObs(Client_Informed_About_Transsmission_Concept_Id, obsList);
+            obs = extractObs(Client_Informed_About_Transsmission_Concept_Id, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 knowledgeAssessmentType.setClientInformedAboutHIVTransmissionRoutes(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Client_Informed_About_Risk_Factors_Concept_Id, obsList);
+            obs = extractObs(Client_Informed_About_Risk_Factors_Concept_Id, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 knowledgeAssessmentType.setClientInformedOfHIVTransmissionRiskFactors(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Client_Informed_On_Prevention_Concept_Id, obsList);
+            obs = extractObs(Client_Informed_On_Prevention_Concept_Id, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 knowledgeAssessmentType.setClientInformedAboutPreventingHIV(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Client_Informed_About_Possible_Concept_Id, obsList);
+            obs = extractObs(Client_Informed_About_Possible_Concept_Id, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 knowledgeAssessmentType.setClientInformedAboutPossibleTestResults(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Informed_Consent_For_Hiv_Testing_Concept_Id, obsList);
+            obs = extractObs(Informed_Consent_For_Hiv_Testing_Concept_Id, groupedObsByConcept);
             if (obs != null && obs.getValueAsBoolean() != null) {
                 knowledgeAssessmentType.setInformedConsentForHIVTestingGiven(obs.getValueAsBoolean());
             }
@@ -760,32 +798,39 @@ public class HTSDictionary {
         return knowledgeAssessmentType;
     }
 
-    public HIVRiskAssessmentType createHivRiskAssessment(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public HIVRiskAssessmentType createHivRiskAssessment(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         HIVRiskAssessmentType hivRiskAssessmentType = new HIVRiskAssessmentType();
 
+        List<Integer> obsCodeList = Arrays.asList(Ever_Had_Sexual_Intercourse_Concept_Id,
+                Blood_Transfussion_In_Last_3_Months,
+                Unprotected_Sex_With_Casual_Partner_In_Last_3_Months,
+                Unprotected_Sex_With_Regular_Partner_In_Last_3_Months,
+                Sti_In_Last_3_Months,
+                More_Than_1_Sex_Partner);
+
         if (htsIdentifier != null) {
-            Obs obs = extractObs(Ever_Had_Sexual_Intercourse_Concept_Id, obsList);
+            Obs obs = extractObs(Ever_Had_Sexual_Intercourse_Concept_Id, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivRiskAssessmentType.setEverHadSexualIntercourse(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Blood_Transfussion_In_Last_3_Months, obsList);
+            obs = extractObs(Blood_Transfussion_In_Last_3_Months, groupedObsByConcept);
             if (obs != null && obs.getValueAsBoolean() != null) {
                 hivRiskAssessmentType.setBloodTransfussionInLast3Months(obs.getValueAsBoolean());
             }
-            obs = extractObs(Unprotected_Sex_With_Casual_Partner_In_Last_3_Months, obsList);
+            obs = extractObs(Unprotected_Sex_With_Casual_Partner_In_Last_3_Months, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivRiskAssessmentType.setUnprotectedSexWithCasualPartnerinLast3Months(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Unprotected_Sex_With_Regular_Partner_In_Last_3_Months, obsList);
+            obs = extractObs(Unprotected_Sex_With_Regular_Partner_In_Last_3_Months, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivRiskAssessmentType.setUnprotectedSexWithRegularPartnerInLast3Months(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Sti_In_Last_3_Months, obsList);
+            obs = extractObs(Sti_In_Last_3_Months, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivRiskAssessmentType.setSTIInLast3Months(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(More_Than_1_Sex_Partner, obsList);
+            obs = extractObs(More_Than_1_Sex_Partner, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 hivRiskAssessmentType.setMoreThan1SexPartnerDuringLast3Months(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
@@ -797,13 +842,20 @@ public class HTSDictionary {
         return hivRiskAssessmentType;
     }
 
-    public SyndromicSTIScreeningType createSyndromicsStiType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public SyndromicSTIScreeningType createSyndromicsStiType(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         SyndromicSTIScreeningType syndromicSTIScreeningType = null;
 
+        List<Integer> obsCodeList = Arrays.asList(
+                Complaints_of_vaginal_discharge_or_burning_when_urinating,
+                Complaints_of_lower_abdominal_pains_with_or_without_vaginal_discharge,
+                Complaints_of_urethral_discharge_or_burning_when_urinating,
+                Complaints_of_scrotal_swelling_and_pain,
+                Complaints_of_genital_sore);
+
         if (htsIdentifier != null) {
             syndromicSTIScreeningType = new SyndromicSTIScreeningType();
-            Obs obs = extractObs(Complaints_of_vaginal_discharge_or_burning_when_urinating, obsList);
+            Obs obs = extractObs(Complaints_of_vaginal_discharge_or_burning_when_urinating, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
 
                 syndromicSTIScreeningType.setVaginalDischargeOrBurningWhenUrinating(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
@@ -812,7 +864,7 @@ public class HTSDictionary {
                 //handles male
                 syndromicSTIScreeningType.setVaginalDischargeOrBurningWhenUrinating(false);
             }
-            obs = extractObs(Complaints_of_lower_abdominal_pains_with_or_without_vaginal_discharge, obsList);
+            obs = extractObs(Complaints_of_lower_abdominal_pains_with_or_without_vaginal_discharge, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
 
                 syndromicSTIScreeningType.setLowerAbdominalPainsWithOrWithoutVaginalDischarge(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
@@ -820,7 +872,7 @@ public class HTSDictionary {
                 //handles male
                 syndromicSTIScreeningType.setLowerAbdominalPainsWithOrWithoutVaginalDischarge(false);
             }
-            obs = extractObs(Complaints_of_urethral_discharge_or_burning_when_urinating, obsList);
+            obs = extractObs(Complaints_of_urethral_discharge_or_burning_when_urinating, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 syndromicSTIScreeningType.setUrethralDischargeOrBurningWhenUrinating(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             } else {
@@ -828,14 +880,14 @@ public class HTSDictionary {
                 syndromicSTIScreeningType.setUrethralDischargeOrBurningWhenUrinating(false);
 
             }
-            obs = extractObs(Complaints_of_scrotal_swelling_and_pain, obsList);
+            obs = extractObs(Complaints_of_scrotal_swelling_and_pain, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 syndromicSTIScreeningType.setScrotalSwellingAndPain(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             } else {
                 //handles female
                 syndromicSTIScreeningType.setScrotalSwellingAndPain(false);
             }
-            obs = extractObs(Complaints_of_genital_sore, obsList);
+            obs = extractObs(Complaints_of_genital_sore, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 syndromicSTIScreeningType.setGenitalSoreOrSwollenInguinalLymphNodes(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
@@ -844,71 +896,88 @@ public class HTSDictionary {
         return syndromicSTIScreeningType;
     }
 
-    public PostTestCounsellingType createPostTestCouncellingType(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public PostTestCounsellingType createPostTestCouncellingType(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
         PostTestCounsellingType postTestCounsellingType = null;
 
+        List<Integer> obsCodeList = Arrays.asList(
+                Have_you_been_tested_for_HIV_before_within_this_year,
+                HIV_Request_and_Result_form_signed_by_tester,
+                HIV_Request_and_Result_form_filled_with_CT_Intake_Form,
+                Client_received_HIV_test_result,
+                Post_test_counseling_done,
+                Risk_reduction_plan_developed,
+                Post_test_disclosure_plan_developed,
+                Will_bring_partner_for_HIV_testing,
+                Will_bring_own_children_Less_5_years_for_HIV_testing,
+                Provided_with_information_on_FP_and_dual_contraception,
+                Client_Partner_use_FP_methods,
+                Client_Partner_use_condoms_as_FP_method,
+                Correct_condom_use_demonstrated,
+                Condoms_provided_to_client,
+                Client_referred_to_other_services);
+
         if (htsIdentifier != null) {
             postTestCounsellingType = new PostTestCounsellingType();
-            Obs obs = extractObs(Have_you_been_tested_for_HIV_before_within_this_year, obsList);
+            Obs obs = extractObs(Have_you_been_tested_for_HIV_before_within_this_year, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Have_you_been_tested_for_HIV_before_within_this_year", LogFormat.FATAL, LogLevel.debug);
                 postTestCounsellingType.setTestedForHIVBeforeWithinThisYear(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Have_you_been_tested_for_HIV_before_within_this_year", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = extractObs(HIV_Request_and_Result_form_signed_by_tester, obsList);
+            obs = extractObs(HIV_Request_and_Result_form_signed_by_tester, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setHIVRequestAndResultFormSignedByTester(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(HIV_Request_and_Result_form_filled_with_CT_Intake_Form, obsList);
+            obs = extractObs(HIV_Request_and_Result_form_filled_with_CT_Intake_Form, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setHIVRequestAndResultFormFilledWithCTIForm(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Client_received_HIV_test_result, obsList);
+            obs = extractObs(Client_received_HIV_test_result, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setClientRecievedHIVTestResult(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Post_test_counseling_done, obsList);
+            obs = extractObs(Post_test_counseling_done, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setPostTestCounsellingDone(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Risk_reduction_plan_developed, obsList);
+            obs = extractObs(Risk_reduction_plan_developed, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setRiskReductionPlanDeveloped(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Post_test_disclosure_plan_developed, obsList);
+            obs = extractObs(Post_test_disclosure_plan_developed, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setPostTestDisclosurePlanDeveloped(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Will_bring_partner_for_HIV_testing, obsList);
+            obs = extractObs(Will_bring_partner_for_HIV_testing, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setWillBringPartnerForHIVTesting(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Will_bring_own_children_Less_5_years_for_HIV_testing, obsList);
+            obs = extractObs(Will_bring_own_children_Less_5_years_for_HIV_testing, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setWillBringOwnChildrenForHIVTesting(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Provided_with_information_on_FP_and_dual_contraception, obsList);
+            obs = extractObs(Provided_with_information_on_FP_and_dual_contraception, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setProvidedWithInformationOnFPandDualContraception(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Client_Partner_use_FP_methods, obsList);
+            obs = extractObs(Client_Partner_use_FP_methods, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setClientOrPartnerUseFPMethodsOtherThanCondoms(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Client_Partner_use_condoms_as_FP_method, obsList);
+            obs = extractObs(Client_Partner_use_condoms_as_FP_method, groupedObsByConcept);
             if (obs != null && obs.getValueAsBoolean() != null) {
                 postTestCounsellingType.setClientOrPartnerUseCondomsAsOneFPMethods(obs.getValueAsBoolean());
             }
-            obs = extractObs(Correct_condom_use_demonstrated, obsList);
+            obs = extractObs(Correct_condom_use_demonstrated, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setCorrectCondomUseDemonstrated(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Condoms_provided_to_client, obsList);
+            obs = extractObs(Condoms_provided_to_client, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 postTestCounsellingType.setCondomsProvidedToClient(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
             }
-            obs = extractObs(Client_referred_to_other_services, obsList);
+            obs = extractObs(Client_referred_to_other_services, groupedObsByConcept);
             if (obs != null && obs.getValueAsBoolean() != null) {
                 postTestCounsellingType.setClientReferredToOtherServices(obs.getValueAsBoolean());
             }
@@ -917,27 +986,34 @@ public class HTSDictionary {
         return postTestCounsellingType;
     }
 
-    public ClinicalTBScreeningType createClinicalTbScreening(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
+    public ClinicalTBScreeningType createClinicalTbScreening(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
 
         if (htsIdentifier == null) {
             return null;
         }
+        List<Integer> obsCodeList = Arrays.asList(
+                Current_Cough,
+                Weight_loss,
+                Fever,
+                Night_sweats
+        );
+
         ClinicalTBScreeningType clinicalTBScreeningType = new ClinicalTBScreeningType();
 
-        Obs obs = extractObs(Current_Cough, obsList);
+        Obs obs = extractObs(Current_Cough, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             clinicalTBScreeningType.setCurrentlyCough(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
         }
-        obs = extractObs(Weight_loss, obsList);
+        obs = extractObs(Weight_loss, groupedObsByConcept);
         if (obs != null && obs.getValueAsBoolean() != null) {
             clinicalTBScreeningType.setWeightLoss(obs.getValueAsBoolean());
         }
-        obs = extractObs(Fever, obsList);
+        obs = extractObs(Fever, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             clinicalTBScreeningType.setFever(getBooleanMappedValue(obs.getValueCoded().getConceptId()));
         }
-        obs = extractObs(Night_sweats, obsList);
+        obs = extractObs(Night_sweats, groupedObsByConcept);
         if (obs != null && obs.getValueAsBoolean() != null) {
             clinicalTBScreeningType.setNightSweats(obs.getValueAsBoolean());
         }
@@ -945,8 +1021,8 @@ public class HTSDictionary {
         return clinicalTBScreeningType;
     }
 
-    public PartnerDetailsType createPartnerDetails(Patient pts, List<Obs> obsList) {
-        List<Integer> list = Arrays.asList(Partner_Age,Partner_preTest_counselled_,Partner_accepts_HIV_test,
+    public PartnerDetailsType createPartnerDetails(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) {
+        List<Integer> obsCodeList = Arrays.asList(Partner_Age,Partner_preTest_counselled_,Partner_accepts_HIV_test,
                 Partner_HIV_test_result,Partner_postTest_counseled,Partner_HBV_status,Partner_HCV_status,
                 SYPHILLIS_STATUS_RESULT,Partner_referred_to);
         PatientIdentifier htsIdentifier = pts.getPatientIdentifier(ConstantsUtil.HTS_IDENTIFIER_INDEX);
@@ -955,56 +1031,55 @@ public class HTSDictionary {
         int value_numeric;
 
         if (htsIdentifier != null) {
-            Map<Integer, Obs> details = Utils.extractObs(list,obsList);
-            Obs obs = details.get(Partner_Age);
+            Obs obs =  Utils.extractObs(Partner_Age, groupedObsByConcept);
             if (obs != null && obs.getValueNumeric() != null) {
                 value_numeric = (int) Math.round(obs.getValueNumeric());
                 partnerDetailsType.setPartnerAge(value_numeric);
             }
-            obs = details.get(Partner_preTest_counselled_);
+            obs =  Utils.extractObs(Partner_preTest_counselled_, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_preTest_counselled_", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerPreTestCounseled(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_preTest_counselled_", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = details.get(Partner_accepts_HIV_test);
+            obs = Utils.extractObs(Partner_accepts_HIV_test, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_accepts_HIV_test", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerAcceptsHIVTest(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_accepts_HIV_test", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = details.get(Partner_HIV_test_result);
+            obs =  Utils.extractObs(Partner_HIV_test_result, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_HIV_test_result", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerHIVTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HIV_test_result", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = details.get(Partner_postTest_counseled);
+            obs =  Utils.extractObs(Partner_postTest_counseled, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_postTest_counseled", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerPostTestCounseled(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_postTest_counseled", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = details.get(Partner_HBV_status);
+            obs =  Utils.extractObs(Partner_HBV_status, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_HBV_status", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerHBVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HBV_status", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = details.get(Partner_HCV_status);
+            obs =  Utils.extractObs(Partner_HCV_status, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_HCV_status", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerHCVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HCV_status", LogFormat.FATAL, LogLevel.debug);
             }
-            obs = details.get(SYPHILLIS_STATUS_RESULT);
+            obs =  Utils.extractObs(SYPHILLIS_STATUS_RESULT, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerSyphilisStatus(getMappedValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
             }
 
-            obs = details.get(Partner_referred_to);
+            obs =  Utils.extractObs(Partner_referred_to, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_referred_to", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerReferredTo(getMappedValue(obs.getValueCoded().getConceptId()));

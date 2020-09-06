@@ -121,6 +121,7 @@
 		<appuiVersion>1.7</appuiVersion>
 		<formentryappVersion>1.3</formentryappVersion>
 		<uicommonsModuleVersion>2.1</uicommonsModuleVersion>
+		<eventVersion>2.6.0</eventVersion>
 	</properties>
 
 	<distributionManagement>

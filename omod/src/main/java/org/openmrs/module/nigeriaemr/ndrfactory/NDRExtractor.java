@@ -1,14 +1,18 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
+import org.openmrs.module.nigeriaemr.Consumer;
+import org.openmrs.module.nigeriaemr.NigeriaemrConfig;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
+import org.openmrs.module.nigeriaemr.api.service.impl.NigeriaEncounterServiceImpl;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 import org.openmrs.module.nigeriaemr.model.ndr.Container;
-import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
@@ -18,59 +22,11 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class NDRExtractor {
 	
-	private final Integer patientId;
-	
-	private final String DATIMID;
-	
-	private final String reportFolder;
-	
-	private final int counter;
-	
-	private final UserContext userContext;
-	
-	private final String formattedDate;
-	
-	private final NDRConverter generator;
-	
-	private final JAXBContext jaxbContext;
-	
-	private final int exportProcessId;
-	
-	NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
-	
-	public NDRExtractor(UserContext userContext) {
-		this.patientId = null;
-		this.DATIMID = null;
-		this.reportFolder = null;
-		this.counter = 0;
-		this.userContext = userContext;
-		this.formattedDate = null;
-		this.generator = null;
-		this.jaxbContext = null;
-		this.exportProcessId = 0;
-	}
-	
-	public NDRExtractor(String patientId, String DATIMID, String reportFolder, int counter, UserContext userContext,
-	    String formattedDate, JAXBContext jaxbContext, Date lastDate, Date currentDate, int exportProcessId) {
-		this.patientId = Integer.parseInt(patientId);
-		this.DATIMID = DATIMID;
-		this.reportFolder = reportFolder;
-		this.counter = counter;
-		this.userContext = userContext;
-		this.formattedDate = formattedDate;
-		this.generator = new NDRConverter(Utils.getIPFullName(), Utils.getIPShortName(), Utils.getNmrsConnectionDetails(),
-		        lastDate, currentDate);
-		this.jaxbContext = jaxbContext;
-		this.exportProcessId = exportProcessId;
-		
-	}
+	ObjectMapper mapper = new ObjectMapper();
 	
 	/**
 	 * Gets the user context from the thread local. This might be accessed by several threads at the
@@ -80,10 +36,10 @@ public class NDRExtractor {
 	 * @should fail if session hasnt been opened
 	 */
 	
-	public void extract() {
+	public void extract(Integer patientId, String DATIMID, String reportFolder, String formattedDate,
+	        JAXBContext jaxbContext, Date lastDate, Date currentDate) {
+		NDRConverter generator = new NDRConverter(Utils.getNmrsConnectionDetails(), lastDate, currentDate);
 		Container cnt;
-		Context.setUserContext(userContext);
-		Context.openSessionWithCurrentUser();
 		try {
 			Patient patient = Context.getPatientService().getPatient(patientId);
 			String pepFarId = Utils.getPatientPEPFARId(patient);
@@ -100,7 +56,7 @@ public class NDRExtractor {
 				LoggerUtils.write(NdrFragmentController.class.getName(),
 				    "Started Export for patient with id: " + patient.getId(), LoggerUtils.LogFormat.INFO,
 				    LoggerUtils.LogLevel.live);
-				
+
 				cnt = generator.createContainer(patient);
 				
 			}
@@ -116,17 +72,23 @@ public class NDRExtractor {
 				    LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
 				try {
 					
-					String fileName = Utils.getIPShortName() + "_" + DATIMID + "_" + counter + "_" + formattedDate + "_"
+					String fileName = Utils.getIPReportingState() + Utils.getIPReportingLgaCode() + "_" + DATIMID + "_"
 					        + pepFarId;
-					
+					File dir = new File(reportFolder);
+					if (!dir.exists())
+						dir.mkdir();
 					String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
 					
 					File aXMLFile = new File(xmlFile);
+					if (aXMLFile.exists())
+						aXMLFile.delete();
 					boolean b = aXMLFile.createNewFile();
 					
-					System.out.println("creating xml file : " + xmlFile + "was successful : " + b);
+					LoggerUtils.write(NDRExtractor.class.getName(), "creating xml file : " + xmlFile + "was successful : "
+					        + b, LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
 					if (cnt.getMessageHeader() != null) {
-						writeFile(cnt, aXMLFile);
+						cnt.setValidation(generator.getValidation(patientId.toString()));
+						writeFile(cnt, aXMLFile, jaxbContext);
 					}
 				}
 				catch (Exception ex) {
@@ -134,15 +96,15 @@ public class NDRExtractor {
 					    LoggerUtils.LogLevel.live);
 				}
 			}
-			Context.closeSession();
 		}
 		catch (Exception e) {
-			Context.clearSession();
-			Context.closeSession();
+			LoggerUtils.write(NDRExtractor.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
+			throw e;
 		}
 	}
 	
-	public void writeFile(Container container, File file) {
+	public void writeFile(Container container, File file, JAXBContext jaxbContext) {
 		try {
 			Marshaller jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext);
 			jaxbMarshaller.marshal(container, file);
@@ -153,55 +115,68 @@ public class NDRExtractor {
 		}
 	}
 	
-	public void checkIfExportIsComplete(){
-		Context.setUserContext(this.userContext);
-		Context.openSessionWithCurrentUser();
+	public void checkIfExportIsComplete() {
+		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		try {
-			String IPReportingState = Utils.getIPReportingState();
-			String IPReportingLgaCode = Utils.getIPReportingLgaCode();
-			Map<String, Object> condition = new HashMap<>();
-			condition.put("status", "Done");
-			List<NDRExport> exports = nigeriaemrService.getExports(condition, false);
-			for (NDRExport ndrExport : exports) {
+			List<NDRExportBatch> ndrExportBatches = nigeriaemrService.getExportBatchByStatus("Done", false);
+			for (NDRExportBatch ndrExportBatch : ndrExportBatches) {
+				String IPReportingState = Utils.getIPReportingState();
+				String IPReportingLgaCode = Utils.getIPReportingLgaCode();
 				String DATIMID = Utils.getFacilityDATIMId();
-				String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExport.getDateStarted());
+				String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExportBatch.getDateStarted());
 				String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate;
-				Utils.updateLast_NDR_Run_Date(ndrExport.getDateStarted());
 				String zipFileName = fileName + ".zip";
-
-				ndrExport.setStatus("Processing"); // update to Processing so another thread won't pick it up
-				nigeriaemrService.saveNdrExportItem(ndrExport);
-
-				String path = Utils.ZipFolder(ndrExport.getContextPath(), ndrExport.getReportFolder(), zipFileName, "NDR");
-				if(!"no new patient record found".equalsIgnoreCase(path)) {
-					ndrExport.setPath(path);
-					ndrExport.setDateEnded(new Date());
-					ndrExport.setStatus("Completed");
-				}else {
-					ndrExport.setDateEnded(new Date());
-					ndrExport.setStatus("Failed");
+				
+				String path = Utils.ZipFolder(ndrExportBatch.getContextPath(), ndrExportBatch.getReportFolder(),
+				    zipFileName, "NDR");
+				String status;
+				if (!"no new patient record found".equalsIgnoreCase(path)) {
+					ndrExportBatch.setPath(path);
+					status = "Completed";
+				} else {
+					status = "Failed";
 				}
-				nigeriaemrService.saveNdrExportItem(ndrExport);
+				ndrExportBatch.setStatus(status);
+				nigeriaemrService.saveNdrExportBatchItem(ndrExportBatch);
 			}
-		}catch (Exception e){
-			System.out.println(e.getMessage());
+		}
+		catch (Exception e) {
+			LoggerUtils.write(NDRExtractor.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
 			//ignore error
 		}
 
-
-		//Check if any currently in process has failed
-		Map<String, Object> condition = new HashMap<>();
-		condition.put("status", "Processing");
-		List<NDRExport> processingExports = nigeriaemrService.getExports(condition, false);
-		if(processingExports.size() > 0){
-			for(NDRExport ndrExport: processingExports){
-				if(Utils.getDateDiffInMinutes(ndrExport.getDateEnded(), new Date()) > 20){
-					ndrExport.setDateEnded(new Date());
-					ndrExport.setStatus("Failed");
-					nigeriaemrService.saveNdrExportItem(ndrExport);
+		try {
+			List<NDRExportBatch> ndrExportBatchesInProgress = nigeriaemrService.getExportBatchByStatus("Processing", false);
+			if (ndrExportBatchesInProgress != null) {
+				for (NDRExportBatch ndrExportBatch : ndrExportBatchesInProgress) {
+					Map<String, Object> conditions = new HashMap<>();
+					conditions.put("status", "Done");
+					conditions.put("batchId", ndrExportBatch.getId());
+					List<NDRExport> ndrExports = nigeriaemrService.getExports(conditions, 100, false);
+					int count = 0;
+					for (NDRExport ndrExport : ndrExports) {
+						String patient = ndrExport.getPatientsList();
+						List values = mapper.readValue(patient, List.class);
+						count = count + values.size();
+					}
+					if (ndrExportBatch.getPatients().equals(count)) {
+						ndrExportBatch.setPatientsProcessed(count);
+						ndrExportBatch.setStatus("Done");
+						ndrExportBatch.setDateEnded(new Date());
+						ndrExportBatch.setDateUpdated(new Date());
+						nigeriaemrService.saveNdrExportBatchItem(ndrExportBatch);
+					}else{
+						ndrExportBatch.setPatientsProcessed(count);
+						ndrExportBatch.setDateUpdated(new Date());
+						nigeriaemrService.saveNdrExportBatchItem(ndrExportBatch);
+					}
 				}
 			}
+		}catch (Exception e) {
+			LoggerUtils.write(NDRExtractor.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+					LoggerUtils.LogLevel.live);
+			//ignore error
 		}
-		Context.closeSession();
 	}
 }

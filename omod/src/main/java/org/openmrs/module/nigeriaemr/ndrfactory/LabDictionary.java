@@ -5,7 +5,6 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,11 +17,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.AnswerType;
 import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
@@ -30,7 +30,6 @@ import org.openmrs.module.nigeriaemr.model.ndr.CodedType;
 import org.openmrs.module.nigeriaemr.model.ndr.LaboratoryOrderAndResult;
 import org.openmrs.module.nigeriaemr.model.ndr.LaboratoryReportType;
 import org.openmrs.module.nigeriaemr.model.ndr.NumericType;
-import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
@@ -195,10 +194,11 @@ public class LabDictionary {
         return labTestDictionary.keySet().contains(conceptID);
     }
 
-    public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList, Date artStartDate)
-            throws DatatypeConfigurationException {
-        List<Integer> details = Arrays.asList(Visit_Type_Concept_Id,Laboratory_Identifier_Concept_Id,Ordered_By_Concept_Id,
+    public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> obsIdList) {
+        List<Integer> obsCodeList = Arrays.asList(Visit_Type_Concept_Id,Laboratory_Identifier_Concept_Id,Ordered_By_Concept_Id,
                 Checked_By_Concept_Id,REPORTED_BY_CONCEPT_ID);
+
+        Map<Object, List<Obs>> labObsList = Utils.groupedByConceptIdsOnly(obsIdList);
         LaboratoryReportType labReportType = new LaboratoryReportType();
         try {
 
@@ -208,44 +208,41 @@ public class LabDictionary {
             labReportType.setCollectionDate(convertedDate);
 
             boolean artStatusFlag = isArtStatusFlag(pts, enc);
-            // Date artStartDate = Utils.extractARTStartDate(pts,labObsList);
-            // if (artStartDate.after(enc.getEncounterDatetime()) || artStartDate.equals(enc.getEncounterDatetime())) {
             if(artStatusFlag){
                 labReportType.setARTStatusCode("A");
             } else {
                 labReportType.setARTStatusCode("N");
             }
 
-            Map<Integer, Obs> obsMap = Utils.extractObs(details, labObsList);
-            Obs obs = obsMap.get(Visit_Type_Concept_Id);
+            Obs obs =  Utils.extractObs(Visit_Type_Concept_Id, labObsList);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(LabDictionary.class.getName(), "About to pull Visit_Type_Concept_Id", LogFormat.FATAL, LogLevel.debug);
                 labReportType.setBaselineRepeatCode(getMappedAnswerValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(LabDictionary.class.getName(), "Finished pulling Visit_Type_Concept_Id", LogFormat.FATAL, LogLevel.debug);
             }
 
-            obs = obsMap.get(Laboratory_Identifier_Concept_Id);
+            obs = Utils.extractObs(Laboratory_Identifier_Concept_Id, labObsList);
             if (obs != null && obs.getValueText() != null) {
                 labReportType.setLaboratoryTestIdentifier(obs.getValueText());
             }
 
-            obs = obsMap.get(Ordered_By_Concept_Id);
+            obs = Utils.extractObs(Ordered_By_Concept_Id, labObsList);
             if (obs != null && obs.getValueText() != null) {
                 labReportType.setClinician(obs.getValueText());
             }
 
-            obs = obsMap.get(Checked_By_Concept_Id);
+            obs = Utils.extractObs(Checked_By_Concept_Id, labObsList);
             if (obs != null && obs.getValueText() != null) {
                 labReportType.setCheckedBy(obs.getValueText());
             }
 
-            obs = obsMap.get(REPORTED_BY_CONCEPT_ID);
+            obs = Utils.extractObs(REPORTED_BY_CONCEPT_ID, labObsList);
             if (obs != null && obs.getValueText() != null) {
                 labReportType.setReportedBy(obs.getValueText());
             }
 
             //if there is no lab order and result, discard
-            List<LaboratoryOrderAndResult> laboratoryOrderAndResultList = createLaboratoryOrderAndResult(enc, labObsList);
+            List<LaboratoryOrderAndResult> laboratoryOrderAndResultList = createLaboratoryOrderAndResult(enc, obsIdList);
             if (laboratoryOrderAndResultList.size() > 0) {
                 labReportType.getLaboratoryOrderAndResult().addAll(laboratoryOrderAndResultList);
                 return labReportType;
@@ -274,20 +271,6 @@ public class LabDictionary {
         return artStatusFlag;
     }
 
-    public List<LaboratoryReportType> createLaboratoryOrderAndResult(Patient pts, List<Encounter> allPatientEncounterList, List<Obs> allPatientObsList) {
-        List<LaboratoryReportType> labReportTypeList = new ArrayList<>();
-        Integer[] encounterTypeArr = {Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE};
-
-        Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(allPatientEncounterList);
-        List<Obs> obsForVisit = null;
-        LaboratoryReportType labReportType = null;
-        for (Date date : visitDateSet) {
-            obsForVisit = Utils.extractObsPerVisitDate(date, allPatientObsList);
-            labReportType = createLabReportType(pts, date, obsForVisit);
-        }
-        return labReportTypeList;
-    }
-
     public LaboratoryReportType createLabReportType(Patient patient, Date visitDate, List<Obs> labObsForVisit) {
 
         LaboratoryReportType labReportType = new LaboratoryReportType();
@@ -305,7 +288,7 @@ public class LabDictionary {
         return labReportType;
     }
 
-    private List<LaboratoryOrderAndResult> createLaboratoryOrderAndResult(Encounter enc, List<Obs> obsList)
+    private List<LaboratoryOrderAndResult> createLaboratoryOrderAndResult(Encounter enc,  List<Obs>  obsList)
             throws DatatypeConfigurationException {
 
         List<LaboratoryOrderAndResult> labResultList = new ArrayList<>();
@@ -318,12 +301,14 @@ public class LabDictionary {
         NumericType numeric;
         Date orderedDate = null;
 
-        Obs obsEle = extractObs(Ordered_Date_Concept_id, obsList);
+        Obs obsEle = extractObsByConceptId(Ordered_Date_Concept_id, obsList);
         if (obsEle != null) {
             orderedDate = obsEle.getValueDate();
         }
 
         LaboratoryOrderAndResult labOrderAndResult;
+        NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
+
         for (Obs obs : obsList) {
 
             labOrderAndResult = new LaboratoryOrderAndResult();

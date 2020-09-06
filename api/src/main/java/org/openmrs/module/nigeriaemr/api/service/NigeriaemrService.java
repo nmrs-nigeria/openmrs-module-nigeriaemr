@@ -16,6 +16,7 @@ import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.nigeriaemr.NigeriaemrConfig;
 import org.openmrs.module.nigeriaemr.Item;
 import org.openmrs.module.nigeriaemr.model.BiometricInfo;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +39,16 @@ public interface NigeriaemrService extends OpenmrsService {
 	 * @return
 	 * @throws APIException
 	 */
-	@Authorized()
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional(readOnly = true)
 	NDRExport getNDRExportById(int id) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional(readOnly = true)
+	NDRExportBatch getNDRExportBatchById(int id) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	List<NDRExport> getNDRExportByBatchIdByStatus(int batchId, String status) throws APIException;
 	
 	/**
 	 * Saves an item. Sets the owner to superuser, if it is not set. It can be called by users with
@@ -54,12 +62,19 @@ public interface NigeriaemrService extends OpenmrsService {
 	@Transactional
 	NDRExport saveNdrExportItem(NDRExport ndrExport) throws APIException;
 	
-	@Authorized()
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	NDRExportBatch saveNdrExportBatchItem(NDRExportBatch ndrExportBatch) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
 	void updateNdrExportItemProcessedCount(int id, int count) throws APIException;
 	
 	@Transactional
-	void updateStatus(int id, String status) throws APIException;
+	void updateStatus(int exportId, int batchId, String status, boolean done) throws APIException;
+	
+	@Transactional
+	void updateAllStatus(String status) throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
@@ -69,24 +84,43 @@ public interface NigeriaemrService extends OpenmrsService {
 	@Transactional
 	void voidExportEntry(int id) throws APIException;
 	
-	@Authorized()
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
-	List<NDRExport> getExports(Map<String, Object> conditions, boolean includeVoided) throws APIException;
+	void voidExportBatchEntry(int id) throws APIException;
 	
-	@Authorized()
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	List<NDRExport> getExports(Map<String, Object> conditions, int size, boolean includeVoided) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	Integer getFinishedExportCount(int batchId) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	List<NDRExport> getDelayedProcessingExports(Map<String, Object> conditions) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
 	NDRExportBatch createExportBatch(Date lastExportDate, int totalPatients) throws APIException;
 	
-	@Authorized()
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
-	List<NDRExportBatch> getExportBatchByStatus(String status) throws APIException;
+	List<NDRExportBatch> getExportBatchByStatus(String status, boolean includeVoided) throws APIException;
 	
-	@Authorized()
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
-	NDRExportBatch updateExportBatch(int id, String status) throws APIException;
+	NDRExportBatch updateExportBatch(int id, String status, boolean end) throws APIException;
 	
-	@Authorized
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
 	public List<BiometricInfo> getBiometricInfoByPatientId(Integer patientId) throws APIException;
 	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	DatimMap getDatatimMapByDataimId(String datimId) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	void deleteExports(int idInt) throws APIException;
 }

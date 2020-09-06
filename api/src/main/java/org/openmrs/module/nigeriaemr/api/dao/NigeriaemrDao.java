@@ -10,6 +10,7 @@
 package org.openmrs.module.nigeriaemr.api.dao;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.api.APIException;
@@ -17,12 +18,15 @@ import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.nigeriaemr.model.BiometricInfo;
+import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import org.openmrs.module.nigeriaemr.model.DatimMap;
 
 public class NigeriaemrDao {
 	
@@ -36,7 +40,13 @@ public class NigeriaemrDao {
 		return (NDRExport) getSession().createCriteria(NDRExport.class).add(Restrictions.eq("id", id)).uniqueResult();
 	}
 	
+	public NDRExportBatch getNDRExportBatchById(int id) {
+		return (NDRExportBatch) getSession().createCriteria(NDRExportBatch.class).add(Restrictions.eq("id", id))
+		        .uniqueResult();
+	}
+	
 	public NDRExport saveNdrExport(NDRExport ndrExport) {
+		getSession().evict(ndrExport);
 		getSession().saveOrUpdate(ndrExport);
 		return ndrExport;
 	}
@@ -49,13 +59,15 @@ public class NigeriaemrDao {
 		return criteria.list();
 	}
 	
-	public List<NDRExport> getExports(Map<String, Object> conditions, boolean includeVoided) throws DAOException {
+	public List<NDRExport> getExports(Map<String, Object> conditions, int size, boolean includeVoided) throws DAOException {
 		Criteria criteria = getSession().createCriteria(NDRExport.class);
 		criteria.add(Restrictions.eq("voided", includeVoided));
 		for (String key : conditions.keySet()) {
 			criteria.add(Restrictions.eq(key, conditions.get(key)));
 		}
 		criteria.addOrder(Order.desc("dateStarted"));
+		//		criteria.setFetchSize(size);
+		criteria.setMaxResults(size);
 		return criteria.list();
 	}
 	
@@ -70,9 +82,13 @@ public class NigeriaemrDao {
 		return ndrExportBatch;
 	}
 	
-	public List<NDRExportBatch> getExportBatchByStatus(String status) throws APIException {
+	public List<NDRExportBatch> getExportBatchByStatus(String status, boolean includeVoided) throws APIException {
 		Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
-		criteria.add(Restrictions.eq("status", status));
+		if (status != null) {
+			criteria.add(Restrictions.eq("status", status));
+		}
+		if (!includeVoided)
+			criteria.add(Restrictions.eq("voided", false));
 		criteria.addOrder(Order.desc("dateCreated"));
 		return criteria.list();
 	}
@@ -94,10 +110,81 @@ public class NigeriaemrDao {
 		return null;
 	}
 	
+	public void updateStatus(int exportId, int batchId, String status, boolean done) {
+		StringBuilder sb = new StringBuilder(
+		        "update nigeriaemr_ndr_export set status = :status, date_updated = :dateUpdated");
+		
+		if (done)
+			sb.append(", date_ended = :dateEnded");
+		
+		sb.append(" where batch_id = :batchId");
+		sb.append(" and nigeriaemr_ndr_export_id = :exportId");
+		
+		SQLQuery sql = getSession().createSQLQuery(sb.toString());
+		
+		sql.setString("status", status);
+		sql.setInteger("exportId", exportId);
+		sql.setInteger("batchId", batchId);
+		sql.setDate("dateUpdated", new Date());
+		if (done)
+			sql.setDate("dateEnded", new Date());
+		sql.executeUpdate();
+	}
+	
 	/**
 	 * @param sessionFactory the sessionFactory to set
 	 */
 	public void setSessionFactory(DbSessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+	
+	public List<NDRExport> getDelayedProcessingExports(Map<String, Object> conditions) {
+		
+		StringBuilder query = new StringBuilder("SELECT distinct(N.nigeriaemr_ndr_export_id) FROM nigeriaemr_ndr_export N "
+		        + " WHERE TIMESTAMPDIFF(MINUTE,N.date_updated,NOW()) > 15 ");
+		for (String key : conditions.keySet()) {
+			query.append(" AND N.").append(key).append(" = ").append(conditions.get(key));
+		}
+		
+		SQLQuery sql = getSession().createSQLQuery(query.toString());
+		
+		List<Integer> exportId = sql.list();
+
+		if(exportId.size()>0) {
+			Criteria criteria = getSession().createCriteria(NDRExport.class);
+			criteria.add(Restrictions.in("id", exportId));
+
+			return criteria.list();
+		}
+		return new ArrayList<>();
+	}
+	
+	public void deleteExports(int batchId) {
+		SQLQuery sql = getSession().createSQLQuery("delete from nigeriaemr_ndr_export where batch_id = :batchId ");
+		sql.setInteger("batchId", batchId);
+		sql.executeUpdate();
+	}
+	
+	public Integer getFinishedExportCount(Integer batchId, boolean includeVoided) {
+		SQLQuery sql = getSession().createSQLQuery(
+		    "select count(*) from nigeriaemr_ndr_export where batch_id = :batchId and status in ('Failed', 'Done') ");
+		sql.setInteger("batchId", batchId);
+		return ((BigInteger) sql.uniqueResult()).intValue();
+	}
+	
+	public void updateAllStatus(String status) {
+		SQLQuery sql = getSession().createSQLQuery(
+		    "update nigeriaemr_ndr_batch_export set status = :status where status = 'Processing'");
+		sql.setString("status", status);
+		sql.executeUpdate();
+	}
+	
+	public List<NDRExport> getNDRExportByBatchIdByStatus(int batchId, String status) {
+		Criteria criteria = getSession().createCriteria(NDRExport.class);
+		criteria.add(Restrictions.eq("batchId", batchId));
+		criteria.add(Restrictions.eq("status", status));
+		List<NDRExport> ndrExports = criteria.list();
+		if(ndrExports != null && ndrExports.size() > 0) return ndrExports;
+		return new ArrayList<>();
 	}
 }

@@ -29,7 +29,9 @@ public class NigeriaqualFragmentController {
 		
 		Utils util = new Utils();
 		String reportType = "NigeriaQual";
-		String reportFolder = util.ensureReportFolderExist(request, reportType);
+		String contextPath = request.getContextPath();
+		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		String reportFolder = Utils.ensureReportFolderExist(fullContextPath, reportType);
 
 		NigeriaQUALGenerator generator = new NigeriaQUALGenerator(Utils.getNigeriaQualId(),startDate, endDate);
 		List<Patient> patients = Context.getPatientService().getAllPatients()

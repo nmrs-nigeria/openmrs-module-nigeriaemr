@@ -11,17 +11,27 @@ import java.util.List;
 
 public interface NigeriaObsDAO extends ObsDAO {
 	
-	public List<Obs> getObs(List<Integer> obsIds, boolean includeVoided) throws DAOException;
+	List<Obs> getObs(List<Integer> obsIds, boolean includeVoided) throws DAOException;
 	
-	public List<Obs> getObsByConceptId(Integer personId, Integer conceptId, List<Integer> encounterIds, boolean includeVoided)
+	List<Obs> getObsByConceptId(Integer personId, Integer conceptId, List<Integer> encounterIds, boolean includeVoided)
 	        throws DAOException;
 	
-	public Obs getLastObsByConceptId(Person person, Concept concept, Date from, Date to, boolean includeVoided, boolean asc)
+	Obs getLastObsByConceptId(Person person, Concept concept, Date from, Date to, boolean includeVoided, boolean asc)
 	        throws DAOException;
 	
-	public List<Obs> getObsByEncounterType(List<Integer> obsIds, List<Integer> encounterTypeIds, boolean includeVoided)
+	List<Obs> getObsByEncounterType(List<Integer> obsIds, List<Integer> encounterTypeIds, boolean includeVoided)
 	        throws DAOException;
 	
-	public Obs getHighestObsByConcept(Person person, Concept concept, Date from, Date to, boolean includeVoided, boolean asc)
+	Obs getHighestObsByConcept(Person person, Concept concept, Date from, Date to, boolean includeVoided, boolean asc)
 	        throws DAOException;
+	
+	List<Obs> getObsByVisitDate(Date visitDate, List<Integer> obsIds, boolean includeVoided) throws DAOException;
+	
+	Obs getObsbyValueCoded(Concept concept, Concept valueCoded, List<Integer> obsList) throws DAOException;
+	
+	List<Obs> getObsByConcept(Concept concept, List<Integer> obsList) throws DAOException;
+	
+	List<Obs> getObsByConcept(List<Concept> concept, List<Integer> obsList) throws DAOException;
+	
+	List<Concept> getConcepts(List<Integer> conceptIds, boolean includeVoided) throws DAOException;
 }

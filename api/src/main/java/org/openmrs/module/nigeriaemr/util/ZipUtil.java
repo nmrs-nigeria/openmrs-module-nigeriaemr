@@ -9,6 +9,8 @@
  */
 package org.openmrs.module.nigeriaemr.util;
 
+import org.openmrs.module.nigeriaemr.NDREvent;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -46,7 +48,9 @@ public class ZipUtil {
 			fos = new FileOutputStream(output_zipFile);
 			zos = new ZipOutputStream(fos);
 			
-			System.out.println("Output to Zip : " + output_zipFile);
+			LoggerUtils.write(NDREvent.class.getName(), "Output to Zip : " + output_zipFile, LoggerUtils.LogFormat.INFO,
+			    LoggerUtils.LogLevel.live);
+			
 			FileInputStream in = null;
 			
 			for (String file : this.fileList) {

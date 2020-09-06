@@ -5,24 +5,20 @@
  */
 package org.openmrs.module.nigeriaemr.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import java.io.IOException;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.openmrs.module.nigeriaemr.dbmanager.NdrDBManager;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.GeneralMapper;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
-import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.omodmodels.CommunityTestersPayload;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientContactsModel;
 import org.openmrs.module.nigeriaemr.omodmodels.TesterModel;

@@ -4,28 +4,32 @@ import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
+import org.openmrs.module.nigeriaemr.NigeriaemrConfig;
 
 import java.util.Date;
 import java.util.List;
 
 public interface NigeriaPatientService extends PatientService {
 	
-	@Authorized({ "Get All Patient within an index" })
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	List<Patient> getPatientsInIndex(int startIndex, int endIndex) throws APIException;
 	
-	@Authorized()
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	List<Integer> getPatientIdsInIndex(int startIndex, int endIndex) throws APIException;
 	
-	@Authorized({ "Get Patients" })
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	List<Patient> getPatients(List<Integer> patientIds) throws APIException;
 	
-	@Authorized({ "Get Patients By Encounter Date" })
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate) throws APIException;
 	
-	@Authorized({ "Get Patients By Encounter Date" })
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	List<Integer> getPatientIdsByEncounterDate(Date fromDate, Date toDate) throws APIException;
 	
-	@Authorized()
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	List<Patient> getPatientsByEncounterDate(int startIndex, int endIndex, Date lastEncounterDate) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	String getPatientIdentifier(Integer patientId, Integer identifierType) throws APIException;
 	
 }

@@ -11,23 +11,31 @@ package org.openmrs.module.nigeriaemr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.nigeriaemr.service.NdrExtractionService;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class contains the logic that is run every time this module is either started or shutdown
  */
 public class NigeriaemrActivator extends BaseModuleActivator {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private final Log log = LogFactory.getLog(this.getClass());
+	
+	ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+	
+	Consumer consumer = new Consumer();
 	
 	/**
 	 * @see #started()
 	 */
 	public void started() {
-		
-		new HtmlFormsInitializer().started();
-		
-		log.info("Started Nigeriaemr");
+		executorService.scheduleAtFixedRate(consumer::checkIfExportIsComplete, 10, 30, TimeUnit.SECONDS);
+		consumer.stopAllExports();
 	}
 	
 	/**

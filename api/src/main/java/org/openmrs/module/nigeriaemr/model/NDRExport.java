@@ -13,6 +13,7 @@ import org.openmrs.BaseOpenmrsData;
 import org.openmrs.User;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
 //Uncomment 2 lines below if you want to make the Item class persistable, see also NigeriaemrDaoTest and liquibase.xml
 @Entity(name = "nigeriaemr.NDRExport")
 @Table(name = "nigeriaemr_ndr_export")
-public class NDRExport {
+public class NDRExport implements Serializable {
 	
 	@Id
 	@GeneratedValue
@@ -48,6 +49,9 @@ public class NDRExport {
 	@Column(name = "last_date")
 	private Date lastDate;
 	
+	@Column(name = "date_updated")
+	private Date dateUpdated;
+	
 	@Column(name = "date_ended")
 	private Date dateEnded;
 	
@@ -69,9 +73,8 @@ public class NDRExport {
 	@Column(name = "patients")
 	private String patientsList;
 	
-	@ManyToOne
-	@JoinColumn(name = "batch_id")
-	private NDRExportBatch batchId;
+	@Column(name = "batch_id")
+	private Integer batchId;
 	
 	public Integer getId() {
 		return id;
@@ -185,11 +188,19 @@ public class NDRExport {
 		this.patientsList = patientsList;
 	}
 	
-	public NDRExportBatch getBatchId() {
+	public Integer getBatchId() {
 		return batchId;
 	}
 	
-	public void setBatchId(NDRExportBatch batchId) {
+	public void setBatchId(Integer batchId) {
 		this.batchId = batchId;
+	}
+	
+	public Date getDateUpdated() {
+		return dateUpdated;
+	}
+	
+	public void setDateUpdated(Date dateUpdated) {
+		this.dateUpdated = dateUpdated;
 	}
 }
