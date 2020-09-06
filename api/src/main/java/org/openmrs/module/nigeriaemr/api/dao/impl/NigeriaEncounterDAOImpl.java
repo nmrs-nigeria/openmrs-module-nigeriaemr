@@ -40,7 +40,7 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 			criteria.add(Restrictions.eq("patient", patient));
 		}
 		if (fromDate != null) {
-			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", toDate)));
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", fromDate)));
 		}
 		
 		if (toDate != null) {
@@ -59,7 +59,7 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		Criteria criteria = getSession().createCriteria(Encounter.class);
 		
 		if (fromDate != null) {
-			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", toDate)));
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", fromDate)));
 		}
 		
 		if (toDate != null) {
@@ -99,7 +99,7 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		}
 		
 		if (fromDate != null) {
-			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", toDate)));
+			criteria.add(Restrictions.or(Restrictions.ge("dateCreated", fromDate), Restrictions.ge("dateChanged", fromDate)));
 		}
 		
 		if (toDate != null) {

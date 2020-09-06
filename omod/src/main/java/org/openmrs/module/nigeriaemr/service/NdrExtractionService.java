@@ -138,8 +138,10 @@ public class NdrExtractionService {
 			for (Integer patientId : patients) {
 				try {
 					long startTime = System.currentTimeMillis();
+					
 					ndrExtractor.extract(patientId, DATIMID, ndrExport.getReportFolder(), formattedDate, jaxbContext,
 					    ndrExport.getLastDate(), ndrExport.getDateStarted());
+					
 					long endTime = System.currentTimeMillis();
 					LoggerUtils.write(NdrExtractionService.class.getName(), patientId + "  " + (endTime - startTime)
 					        + " milli secs : ", LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);

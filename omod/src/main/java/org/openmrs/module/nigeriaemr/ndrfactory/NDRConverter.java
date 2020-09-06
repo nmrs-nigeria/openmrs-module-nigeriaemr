@@ -67,12 +67,12 @@ public class NDRConverter {
             patient = pts;
 
             List<Encounter> filteredEncounters = nigeriaEncounterService.getEncountersByPatient(pts,this.fromDate,this.toDate);
-            this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
 
-            List<Encounter> encounters = new ArrayList<>(filteredEncounters);
-            if (encounters.isEmpty()) {
+            if (filteredEncounters == null || filteredEncounters.isEmpty()) {
                 return null;
             }
+            List<Encounter> encounters = new ArrayList<>(filteredEncounters);
+            this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
             groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
 
             List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
@@ -138,7 +138,7 @@ public class NDRConverter {
         FacilityType facility = Utils.createFacilityType(facilityName,DATIMID,"FAC");
         try {
             PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicType2(patient,facility, groupedObsByEncounterTypes);
-            if (patientDemography.getPatientIdentifier()== null) { //return null if no valid patient data exist
+            if (patientDemography == null) { //return null if no valid patient data exist
                 return null;
             }
 

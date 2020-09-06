@@ -56,7 +56,7 @@ public class NDRExtractor {
 				LoggerUtils.write(NdrFragmentController.class.getName(),
 				    "Started Export for patient with id: " + patient.getId(), LoggerUtils.LogFormat.INFO,
 				    LoggerUtils.LogLevel.live);
-
+				
 				cnt = generator.createContainer(patient);
 				
 			}
@@ -71,7 +71,6 @@ public class NDRExtractor {
 				LoggerUtils.write(NdrFragmentController.class.getName(), "Got data for patient with ID: " + patient.getId(),
 				    LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
 				try {
-					
 					String fileName = Utils.getIPReportingState() + Utils.getIPReportingLgaCode() + "_" + DATIMID + "_"
 					        + pepFarId;
 					File dir = new File(reportFolder);
@@ -104,7 +103,7 @@ public class NDRExtractor {
 		}
 	}
 	
-	public void writeFile(Container container, File file, JAXBContext jaxbContext) {
+	public synchronized void writeFile(Container container, File file, JAXBContext jaxbContext) {
 		try {
 			Marshaller jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext);
 			jaxbMarshaller.marshal(container, file);
