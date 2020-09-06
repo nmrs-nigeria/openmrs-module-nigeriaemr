@@ -72,7 +72,7 @@ public class NDRExtractor {
 				    LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
 				try {
 					String fileName = Utils.getIPReportingState() + Utils.getIPReportingLgaCode() + "_" + DATIMID + "_"
-					        + pepFarId;
+					        + pepFarId + "_" + formattedDate;
 					File dir = new File(reportFolder);
 					if (!dir.exists())
 						dir.mkdir();

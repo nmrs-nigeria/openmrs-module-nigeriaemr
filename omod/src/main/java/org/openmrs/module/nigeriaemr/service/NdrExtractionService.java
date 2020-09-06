@@ -132,7 +132,7 @@ public class NdrExtractionService {
 		
 		try {
 			String DATIMID = Utils.getFacilityDATIMId();
-			String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExport.getDateStarted());
+			String formattedDate = new SimpleDateFormat("ddMMyy").format(ndrExport.getDateStarted());
 			String patientList = ndrExport.getPatientsList();
 			List<Integer> patients = (List<Integer>) mapper.readValue(patientList, List.class);
 			for (Integer patientId : patients) {
