@@ -125,8 +125,8 @@
 
 	<distributionManagement>
 		<repository>
-			<id>bintray-nmrs-maven</id>
-			<name>nmrs-maven</name>
+			<id>bintray-nmrs-nigeria-maven</id>
+            <name>nmrs-nigeria-maven</name>
 			<url>https://api.bintray.com/maven/nmrs/maven/openmrs-module-nigeriaemr/;publish=1</url>
 		</repository>
 	</distributionManagement>
