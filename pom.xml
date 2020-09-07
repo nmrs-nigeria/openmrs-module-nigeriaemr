@@ -64,9 +64,9 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<id>bintray-nmrs-maven</id>
+			<id>bintray-nmrs-nigeria-maven</id>
 			<name>bintray</name>
-			<url>https://nmrs.bintray.com/maven</url>
+			<url>https://dl.bintray.com/nmrs-nigeria/maven</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -82,9 +82,9 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<id>bintray-nmrs-maven</id>
+			<id>bintray-nmrs-nigeria-maven</id>
 			<name>bintray-plugins</name>
-			<url>https://nmrs.bintray.com/maven</url>
+			<url>https://dl.bintray.com/nmrs-nigeria/maven</url>
 		</pluginRepository>
 	</pluginRepositories>
 
