@@ -274,7 +274,62 @@ public class PharmacyDictionary {
         regimenCodeDescTextMap.put(80945, "Nystatin");//Added By Nelson
         regimenCodeDescTextMap.put(161364, "TDF/3TC"); //Missing NDR Code lamivudine/fenofovir from APINS Instance
         regimenCodeDescTextMap.put(165631, "Dolutegravir");// Missing NDR Code from IHVN Instance
-        regimenCodeDescTextMap.put(1674, "RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS");// Missing NDR Code from IHVN Instance
+
+
+        regimenCodeDescTextMap.put(656, "Isoniazid");
+        regimenCodeDescTextMap.put(767, "Rifampicin");
+        regimenCodeDescTextMap.put(5829, "Pyrazinamide");
+        regimenCodeDescTextMap.put(745, "Ethambutol");
+        regimenCodeDescTextMap.put(438, "Streptomycin");
+        regimenCodeDescTextMap.put(1108, "Isoniazid-Ethambutol");
+        regimenCodeDescTextMap.put(1194, "Isoniazid-Rifampicin");
+        regimenCodeDescTextMap.put(1677, "Isoniazid-Rifampicin-Ethambutol");
+        regimenCodeDescTextMap.put(1131, "Isoniazid-Rifampicin-Pyrazinamide-Ethambutol");
+        regimenCodeDescTextMap.put(1674, "Isoniazid-Rifampicin-Pyrazinamide-Ethambutol-Streptomycin");
+        regimenCodeDescTextMap.put(82912,"Pyridoxine");
+        regimenCodeDescTextMap.put(160020,"Viomycin");
+        regimenCodeDescTextMap.put(84836,"Terizidone");
+        regimenCodeDescTextMap.put(73581,"Clofazimine");
+        regimenCodeDescTextMap.put(73498,"Clarithromycin");
+        regimenCodeDescTextMap.put(450,"Amoxicillin and clavulanic acid");
+        regimenCodeDescTextMap.put(160019,"Thioacetazone");
+        regimenCodeDescTextMap.put(82772,"Prothionamide");
+        regimenCodeDescTextMap.put(81457,"P-aminosalicylic acid");
+        regimenCodeDescTextMap.put(76835,"Gatifloxacin");
+        regimenCodeDescTextMap.put(80133,"Moxifloxacin");
+        regimenCodeDescTextMap.put(78788,"Levofloxacin");
+        regimenCodeDescTextMap.put(81022,"Ofloxacin");
+        regimenCodeDescTextMap.put(73449,"Ciprofloxacin");
+        regimenCodeDescTextMap.put(71060,"Amikacin");
+        regimenCodeDescTextMap.put(78385,"Kanamycin");
+        regimenCodeDescTextMap.put(72794,"Capreomycin");
+        regimenCodeDescTextMap.put(74123,"Cycloserine");
+        regimenCodeDescTextMap.put(84360,"STREPTOMYCIN");
+        regimenCodeDescTextMap.put(82900,"PYRAZINAMIDE");
+        regimenCodeDescTextMap.put(75976,"Ethionamide");
+        regimenCodeDescTextMap.put(80133,"Moxifloxacin");
+        regimenCodeDescTextMap.put(78788,"Levofloxacin");
+        regimenCodeDescTextMap.put(72794,"CAPREOMYCIN");
+        regimenCodeDescTextMap.put(83352,"RIFABUTIN");
+        regimenCodeDescTextMap.put(72794,"CAPREOMYCIN");
+        regimenCodeDescTextMap.put(71060,"AMIKACIN");
+        regimenCodeDescTextMap.put(1675,"Rifampicin-Isoniazid-Pyrazinamide-Ethambutol Prophylaxis");
+
+
+        regimenMap.put(656, "H");
+        regimenMap.put(767, "R");
+        regimenMap.put(5829, "Z");
+        regimenMap.put(745, "E");
+        regimenMap.put(438, "S");
+        regimenMap.put(1108, "HE");
+        regimenMap.put(1194, "HR");
+        regimenMap.put(1677, "HRE");
+        regimenMap.put(1131, "HRZE");
+        regimenMap.put(1674, "HRZES");
+        regimenMap.put(1675,"HRZES");
+        regimenMap.put(83352,"R");
+        regimenMap.put(84360,"S");
+        regimenMap.put(82900,"Z");
 
         //added new regimen
         //  regimenCodeDescTextMap.put(160104, "D")
