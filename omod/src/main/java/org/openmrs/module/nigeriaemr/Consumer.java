@@ -2,6 +2,7 @@ package org.openmrs.module.nigeriaemr;
 
 import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.ndrfactory.NDRExtractor;
 import org.openmrs.module.nigeriaemr.service.NdrExtractionService;
@@ -32,9 +33,13 @@ public class Consumer implements MessageListener {
 		ndrExtractor = new NDRExtractor();
 	}
 	
-	public static void initialize() {
+	public static void initialize(UserContext userContext) {
 		Context.openSession();
-		Context.setUserContext(Context.getUserContext());
+		if (userContext != null) {
+			Context.setUserContext(userContext);
+		} else {
+			Context.setUserContext(Context.getUserContext());
+		}
 		Context.openSessionWithCurrentUser();
 		Context.addProxyPrivilege(NigeriaemrConfig.MODULE_PRIVILEGE);
 		Context.addProxyPrivilege(NigeriaemrConfig.MODULE_PRIVILEGE);
@@ -48,7 +53,7 @@ public class Consumer implements MessageListener {
 	
 	public void checkIfExportIsComplete() {
 		try {
-			initialize();
+			initialize(null);
 			ndrExtractor.checkIfExportIsComplete();
 			Context.closeSession();
 		}
@@ -61,7 +66,7 @@ public class Consumer implements MessageListener {
 	@Override
 	public void onMessage(Message message) {
 		try {
-			initialize();
+			initialize(null);
 			ActiveMQObjectMessage msg = (ActiveMQObjectMessage) message;
 			NDRExport ndrExport = (NDRExport) msg.getObject();
 			LoggerUtils.write(Consumer.class.getName(),
@@ -82,7 +87,7 @@ public class Consumer implements MessageListener {
 	
 	public void stopAllExports() {
 		try {
-			initialize();
+			initialize(null);
 			ndrExtractionService.stopExport(null);
 		}
 		catch (Exception e) {

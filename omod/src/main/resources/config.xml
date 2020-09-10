@@ -75,11 +75,18 @@
 
 	<globalProperty>
 		<property>ndr_export_batch_size</property>
-		<defaultValue>300</defaultValue>
+		<defaultValue>10</defaultValue>
 		<description>
 			the number of patient data in a batch for NDR export
 		</description>
 	</globalProperty>
+
+	<globalProperty>
+		<property>batch_ndr_exports</property>
+		<defaultValue>false</defaultValue>
+		<description></description>
+	</globalProperty>
+
 	
 	<!--
 	<dwr>

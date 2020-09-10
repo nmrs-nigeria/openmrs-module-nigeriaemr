@@ -55,7 +55,7 @@
         <property name="connectionFactory" ref="connectionFactory" />
         <property name="destinationName" value="ndrExportQueue" />
         <property name="messageListener" ref="messageReceiver" />
-        <property name="concurrentConsumers" value="1"/>
+        <property name="concurrentConsumers" value="5"/>
     </bean>
 
 </beans>

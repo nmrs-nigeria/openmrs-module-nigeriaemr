@@ -125,9 +125,9 @@ public class NDRExtractor {
 				String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExportBatch.getDateStarted());
 				String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate;
 				String zipFileName = fileName + ".zip";
-				
-				String path = Utils.ZipFolder(ndrExportBatch.getContextPath(), ndrExportBatch.getReportFolder(),
-				    zipFileName, "NDR");
+				String path = null;
+				path = Utils.ZipFolder(ndrExportBatch.getContextPath(), ndrExportBatch.getReportFolder(),
+						zipFileName, "NDR");
 				String status;
 				if (!"no new patient record found".equalsIgnoreCase(path)) {
 					ndrExportBatch.setPath(path);

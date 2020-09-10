@@ -3,6 +3,7 @@ package org.openmrs.module.nigeriaemr.fragment.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.Consumer;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
@@ -107,9 +108,10 @@ public class NdrFragmentController {
 		if(filteredPatients == null || filteredPatients.size() <= 0) return "no new patient record found";
 		String contextPath = request.getContextPath();
 		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		UserContext userContext =  Context.getUserContext();
 		Thread thread = new Thread(() -> {
 			try {
-				Consumer.initialize();
+				Consumer.initialize(userContext);
 				ndrExtractionService.saveExport(fullContextPath,contextPath,filteredPatients,DATIMID,lastDate,currentDate);
 			} catch (Exception e) {
 				LoggerUtils.write(NdrFragmentController.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,

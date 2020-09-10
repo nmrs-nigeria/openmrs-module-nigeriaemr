@@ -369,6 +369,14 @@ public class Utils {
 			return 10;
 	}
 	
+	public static boolean batchExports() {
+		String batch = Context.getAdministrationService().getGlobalProperty("batch_ndr_exports");
+		if ("true".equalsIgnoreCase(batch)) {
+			return Boolean.parseBoolean(batch);
+		} else
+			return false;
+	}
+	
 	public static String getIPReportingLgaCode() {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
@@ -978,7 +986,11 @@ public class Utils {
 		//Zip today's folder and name it with today's date
 		ZipUtil appZip = new ZipUtil(folderToZip);
 		appZip.generateFileList(toZIP);
-		appZip.zipIt(Paths.get(toZIP.getParent(), zipFileName).toString());
+		if (Utils.batchExports()) {
+			appZip.zipBatch(Paths.get(toZIP.getParent(), zipFileName).toString(), 20);
+		} else {
+			appZip.zipIt(Paths.get(toZIP.getParent(), zipFileName).toString());
+		}
 		
 		return Paths.get(contextPath, "downloads", reportType, zipFileName).toString();
 	}
