@@ -68,45 +68,35 @@ public class NDRConverter {
 
             List<Encounter> filteredEncounters = nigeriaEncounterService.getEncountersByPatient(pts,this.fromDate,this.toDate);
 
-            if (filteredEncounters == null || filteredEncounters.isEmpty()) {
-                return null;
-            }
-            List<Encounter> encounters = new ArrayList<>(filteredEncounters);
-            this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
-            groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
 
-            List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
-            Map<String,Map<Object, List<Obs>>> grouped = Utils.groupObs(allobs);
-            this.groupedObsByConceptIds = grouped.get("groupedByConceptIds");
-            this.groupedObsByEncounterTypes =grouped.get("groupedByEncounterTypes");
-            this.groupedObsByVisitDate = grouped.get("groupedObsByVisitDate");
             if(!pts.isVoided()) {
-                if (filteredEncounters.isEmpty()) {
+                if (filteredEncounters == null || filteredEncounters.isEmpty()) {
                     return null;
                 }
-            }
+                List<Encounter> encounters = new ArrayList<>(filteredEncounters);
+                this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
+                groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
 
-            List<Obs> patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
-            Map<String,Map<Object, List<Obs>>> groupedPatientBaseLine = Utils.groupObs(patientBaselineObs);
-            this.groupedpatientBaselineObsByConcept = groupedPatientBaseLine.get("groupedByConceptIds");
-            this.groupedpatientBaselineObsByEncounterType = groupedPatientBaseLine.get("groupedByEncounterTypes");
-            if(!pts.isVoided()) {
-                if (filteredEncounters.isEmpty()) {
-                    return null;
-                }
-            }
+                List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
+                Map<String,Map<Object, List<Obs>>> grouped = Utils.groupObs(allobs);
+                this.groupedObsByConceptIds = grouped.get("groupedByConceptIds");
+                this.groupedObsByEncounterTypes =grouped.get("groupedByEncounterTypes");
+                this.groupedObsByVisitDate = grouped.get("groupedObsByVisitDate");
+                List<Obs> patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
+                Map<String,Map<Object, List<Obs>>> groupedPatientBaseLine = Utils.groupObs(patientBaselineObs);
+                this.groupedpatientBaselineObsByConcept = groupedPatientBaseLine.get("groupedByConceptIds");
+                this.groupedpatientBaselineObsByEncounterType = groupedPatientBaseLine.get("groupedByEncounterTypes");
 
-
-
-            for(Encounter enc: filteredEncounters){
-                int dateCreatedComp = enc.getDateCreated().compareTo(this.toDate);
-                int dateModifiedComp = -1;
-                if (enc.getDateChanged() != null) {
-                    dateModifiedComp = enc.getDateChanged().compareTo(this.toDate);
-                }
-                if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
-                    hasUpdate = true;
-                    break;
+                for(Encounter enc: filteredEncounters){
+                    int dateCreatedComp = enc.getDateCreated().compareTo(this.toDate);
+                    int dateModifiedComp = -1;
+                    if (enc.getDateChanged() != null) {
+                        dateModifiedComp = enc.getDateChanged().compareTo(this.toDate);
+                    }
+                    if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
+                        hasUpdate = true;
+                        break;
+                    }
                 }
             }
 
@@ -162,8 +152,6 @@ public class NDRConverter {
                     LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
                 }
             }
-
-
 
             individualReport.getCondition().add(condition);
 
