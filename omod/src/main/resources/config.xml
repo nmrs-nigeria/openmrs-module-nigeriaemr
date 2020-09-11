@@ -84,7 +84,7 @@
 	<globalProperty>
 		<property>batch_ndr_exports</property>
 		<defaultValue>false</defaultValue>
-		<description></description>
+		<description/>
 	</globalProperty>
 
 	
