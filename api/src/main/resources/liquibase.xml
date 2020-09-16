@@ -85,6 +85,33 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="nigeriaemr-2016-07-28-21-201404091129" author="temiye">
+        <comment>
+            Updating state and lga code
+        </comment>
+
+        <insert tableName="global_property">
+            <column name="property" value="partner_reporting_lga_code"></column>
+            <column name="property_value" value="UNKNOWN"></column>
+            <column name="description" value="Facility Lga Code"></column>
+            <column name="uuid" value="24d5d903-bc66-4131-8e85-31067c29f0b5"></column>
+            <column name="datatype" value="NULL"></column>
+            <column name="datatype_config" value="NULL"></column>
+            <column name="preferred_handler" value="NULL"></column>
+            <column name="handler_config" value="NULL"></column>
+        </insert>
+        <insert tableName="global_property">
+            <column name="property" value="partner_reporting_state"></column>
+            <column name="property_value" value="UNKNOWN"></column>
+            <column name="description" value="Facility State Name"></column>
+            <column name="uuid" value="83a459f6-8765-4743-97ab-e8920944208b"></column>
+            <column name="datatype" value="NULL"></column>
+            <column name="datatype_config" value="NULL"></column>
+            <column name="preferred_handler" value="NULL"></column>
+            <column name="handler_config" value="NULL"></column>
+        </insert>
+    </changeSet>
+
     <changeSet id="nigeriaemr-2020-08-24-172600" author="wande">
     <sqlFile path="sql/dataim_map.sql"
              stripComments="true"
