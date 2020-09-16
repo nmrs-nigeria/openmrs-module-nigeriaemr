@@ -63,10 +63,10 @@
             <column name="owner" type="int" />
             <column name="total_number_of_patients" type="int" />
             <column name="total_number_of_patients_processed" type="int" defaultValue="0" />
-            <column name="date_started" type="TIMESTAMP" />
-            <column name="date_created" type="TIMESTAMP" />
-            <column name="date_updated" type="TIMESTAMP" />
-            <column name="last_export_date" type="TIMESTAMP" />
+            <column name="date_started" type="TIMESTAMP" defaultValueDate="now()"/>
+            <column name="date_created" type="TIMESTAMP" defaultValueDate="now()"/>
+            <column name="date_updated" type="TIMESTAMP" defaultValueDate="now()"/>
+            <column name="last_export_date" type="TIMESTAMP" defaultValueDate="now()"/>
             <column name="status" type="varchar(25)"/>
         </createTable>
         <addColumn tableName="nigeriaemr_ndr_export">
