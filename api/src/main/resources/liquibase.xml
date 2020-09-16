@@ -27,7 +27,7 @@
             <column name="total_number_of_patients" type="int" />
             <column name="total_number_of_patients_processed" type="int" defaultValue="0" />
             <column name="date_started" type="TIMESTAMP" />
-            <column name="date_ended" type="TIMESTAMP"/>
+            <column name="date_ended" type="TIMESTAMP"  defaultValueDate="now()"/>
 			<column name="path" type="varchar(255)"/>
 			<column name="status" type="varchar(25)"/>
 			<column name="voided" type="BIT(1)"/>
