@@ -136,7 +136,8 @@ public class NdrFragmentController {
 			IPReportingState = datimMap.get().getStateCode().toString();
 			IPReportingLgaCode = datimMap.get().getLgaCode().toString();
 		} else {
-			throw new Exception("Invalid datimCode configured");
+			IPReportingState = Utils.getIPReportingState();
+			IPReportingLgaCode = Utils.getIPReportingLgaCode();
 		}
 		
 		//Create an xml file and save in today's folder

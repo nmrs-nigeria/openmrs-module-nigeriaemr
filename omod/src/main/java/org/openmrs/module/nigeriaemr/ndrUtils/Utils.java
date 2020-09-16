@@ -397,14 +397,22 @@ public class Utils {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
 		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
-		return datimMap.map(map -> map.getStateCode().toString()).orElse(null);
+		if (datimMap.isPresent()) {
+			return datimMap.map(map -> map.getStateCode().toString()).orElse(null);
+		}else{
+			return Context.getAdministrationService().getGlobalProperty("partner_reporting_state");
+		}
 	}
 	
 	public static String getIPReportingLgaCode() {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
 		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
-		return datimMap.map(map -> map.getLgaCode().toString()).orElse(null);
+		if (datimMap.isPresent()) {
+			return datimMap.map(map -> map.getLgaCode().toString()).orElse(null);
+		}else{
+			return Context.getAdministrationService().getGlobalProperty("partner_reporting_lga_code");
+		}
 	}
 	
 	//date is always saved as yyyy-MM-dd
