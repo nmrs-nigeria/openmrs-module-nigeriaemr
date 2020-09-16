@@ -27,7 +27,7 @@
             <column name="total_number_of_patients" type="int" />
             <column name="total_number_of_patients_processed" type="int" defaultValue="0" />
             <column name="date_started" type="TIMESTAMP" />
-            <column name="date_ended" type="TIMESTAMP"  defaultValueDate="now()"/>
+            <column name="date_ended" type="TIMESTAMP"/>
 			<column name="path" type="varchar(255)"/>
 			<column name="status" type="varchar(25)"/>
 			<column name="voided" type="BIT(1)"/>
@@ -38,7 +38,7 @@
     </changeSet>
     <changeSet id="nigeriaemr-2020-07-06-01" author="wande">
         <addColumn tableName="nigeriaemr_ndr_export">
-            <column name="last_date" type="TIMESTAMP"/>
+            <column name="last_date" type="TIMESTAMP" defaultValueDate="now()"/>
         </addColumn>
     </changeSet>
     <changeSet id="nigeriaemr-2020-07-06-02" author="wande">
@@ -48,7 +48,7 @@
     </changeSet>
     <changeSet id="nigeriaemr-2020-07-06-03" author="wande">
         <addColumn tableName="nigeriaemr_ndr_export">
-            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP" defaultValueDate="now()"/>
         </addColumn>
     </changeSet>
 
