@@ -1,6 +1,7 @@
 package org.openmrs.module.nigeriaemr.api.service;
 
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.PatientService;
@@ -30,6 +31,6 @@ public interface NigeriaPatientService extends PatientService {
 	List<Patient> getPatientsByEncounterDate(int startIndex, int endIndex, Date lastEncounterDate) throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	String getPatientIdentifier(Integer patientId, Integer identifierType) throws APIException;
+	String getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType) throws APIException;
 	
 }

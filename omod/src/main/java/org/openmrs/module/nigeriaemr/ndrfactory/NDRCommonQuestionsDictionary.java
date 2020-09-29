@@ -170,7 +170,10 @@ public class NDRCommonQuestionsDictionary {
            // pepfarid = new PatientIdentifier();
             // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
 
-            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts.getPatientId(), Utils.PEPFAR_IDENTIFIER_INDEX);
+            PatientIdentifierType pepfaridPatientIdentifierType =
+                    Context.getPatientService().getPatientIdentifierType(Utils.PEPFAR_IDENTIFIER_INDEX);
+
+            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts,pepfaridPatientIdentifierType);
 
             pidHospital = pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX);
             pidOthers = pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX);
@@ -189,12 +192,6 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDNumber(pepfarid);
                 demo.setPatientIdentifier(pepfarid);
             }
-            if (pidHospital != null) {
-                idt = new IdentifierType();
-                idt.setIDNumber(pidHospital.getIdentifier());
-                idt.setIDTypeCode("HN"); //EDITED BY APIN TEAM
-                identifiersType.getIdentifier().add(idt);
-            }
             if (pidOthers != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(pidOthers.getIdentifier());
@@ -206,6 +203,18 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDNumber(htsId.getIdentifier());
                 idt.setIDTypeCode("HTS");
                 identifiersType.getIdentifier().add(idt);
+                if(demo.getPatientIdentifier() == null){
+                    demo.setPatientIdentifier(htsId.getIdentifier());
+                }
+            }
+            if (pidHospital != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(pidHospital.getIdentifier());
+                idt.setIDTypeCode("HN"); //EDITED BY APIN TEAM
+                identifiersType.getIdentifier().add(idt);
+                if(demo.getPatientIdentifier() == null){
+                    demo.setPatientIdentifier(pidHospital.getIdentifier());
+                }
             }
             if (ancId != null) {
                 idt = new IdentifierType();
@@ -232,7 +241,9 @@ public class NDRCommonQuestionsDictionary {
                 identifiersType.getIdentifier().add(idt);
             }
 
-            demo.setOtherPatientIdentifiers(identifiersType);
+            if(identifiersType.getIdentifier().size() > 0) {
+                demo.setOtherPatientIdentifiers(identifiersType);
+            }
             demo.setTreatmentFacility(facility);
 
             String gender = pts.getGender();
@@ -420,6 +431,8 @@ public class NDRCommonQuestionsDictionary {
                 if (EnrollmentDate != null) {
                     common.setDateOfFirstReport(getXmlDate(EnrollmentDate));
                     common.setDiagnosisDate(getXmlDate(EnrollmentDate));
+                }else {
+                    return null; //Patient was never enrolled in the HIV program
                 }
                 obs = Utils.extractLastObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, groupedObsByConcept);
                 if (obs != null) {

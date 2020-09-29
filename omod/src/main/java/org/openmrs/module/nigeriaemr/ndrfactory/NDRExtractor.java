@@ -1,6 +1,10 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.CSVStrategy;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
@@ -17,9 +21,12 @@ import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -87,7 +94,7 @@ public class NDRExtractor {
 					        + b, LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
 					if (cnt.getMessageHeader() != null) {
 						cnt.setValidation(generator.getValidation(patientId.toString()));
-						writeFile(cnt, aXMLFile, jaxbContext);
+						writeFile(patient, DATIMID, formattedDate, reportFolder, cnt, aXMLFile, jaxbContext);
 					}
 				}
 				catch (Exception ex) {
@@ -103,14 +110,65 @@ public class NDRExtractor {
 		}
 	}
 	
-	public synchronized void writeFile(Container container, File file, JAXBContext jaxbContext) {
+	public synchronized void writeFile(Patient patient, String DATIMID, String formattedDate, String reportFolder,
+	        Container container, File file, JAXBContext jaxbContext) {
 		try {
-			Marshaller jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext);
+			Marshaller jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext, false);
 			jaxbMarshaller.marshal(container, file);
 		}
 		catch (Exception ex) {
+			if (ex instanceof JAXBException && ((JAXBException) ex).getLinkedException() != null) {
+				writeErrorCsv(patient, DATIMID, formattedDate, reportFolder, ((JAXBException) ex).getLinkedException()
+				        .getMessage(), container, file, jaxbContext);
+			}
 			LoggerUtils.write(NdrFragmentController.class.getName(), "File " + file.getName() + " throw an exception \n"
 			        + ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+		}
+	}
+	
+	private synchronized void writeErrorCsv(Patient patient, String DATIMID, String formattedDate, String reportFolder,
+	        String message, Container container, File file, JAXBContext jaxbContext) {
+		String newReportFolder = reportFolder + File.separator+ "error";
+		File dir2 = new File(reportFolder);
+		File dir = new File(newReportFolder);
+		try {
+			if (!dir.exists())
+				dir.mkdir();
+			String xmlFile = Paths.get(newReportFolder, file.getName()).toString();
+			File aXMLFile = new File(xmlFile);
+			if (aXMLFile.exists())
+				aXMLFile.delete();
+			boolean b = aXMLFile.createNewFile();
+			file.delete();
+			Marshaller jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext, true);
+			jaxbMarshaller.marshal(container, aXMLFile);
+		}catch (Exception ex){
+			LoggerUtils.write(NdrFragmentController.class.getName(), "File " + file.getName() + " throw an exception \n"
+					+ ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+		}
+
+		String csvFile = Paths.get(dir2.getParent(), formattedDate+"_error_list.csv").toString();
+
+		BufferedWriter writer = null;
+		try {
+			writer = Files.newBufferedWriter(Paths.get(csvFile), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+			try (final CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+				printer.printRecord(file.getName(),patient.getId(), patient.getPersonName(), message);
+			}
+			writer.close();
+		}
+		catch (Exception ex) {
+			LoggerUtils.write(NdrFragmentController.class.getName(),
+			    "File error_list.csv throw an exception \n" + ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+			    LoggerUtils.LogLevel.live);
+		}finally {
+			if(writer != null){
+				try {
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -123,15 +181,29 @@ public class NDRExtractor {
 				String IPReportingLgaCode = Utils.getIPReportingLgaCode();
 				String DATIMID = Utils.getFacilityDATIMId();
 				String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExportBatch.getDateStarted());
+				String formattedDate2 = new SimpleDateFormat("ddMMyy").format(ndrExportBatch.getDateStarted());
 				String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate;
 				String zipFileName = fileName + ".zip";
-				String path = null;
-				path = Utils.ZipFolder(ndrExportBatch.getContextPath(), ndrExportBatch.getReportFolder(),
+				String errorZipFileName = fileName + "_error" + ".zip";
+				String path = Utils.ZipFolder(ndrExportBatch.getContextPath(), ndrExportBatch.getReportFolder(),
 						zipFileName, "NDR");
+				File dir = new File(ndrExportBatch.getReportFolder());
+				String errorReportFolder = ndrExportBatch.getReportFolder() + File.separator+ "error";
+				String errorPath = Utils.ZipFolder(ndrExportBatch.getContextPath(),dir.getParent(), errorReportFolder,
+						errorZipFileName, "NDR");
+				String csvFile = Paths.get(dir.getParent(), formattedDate2+"_error_list.csv").toString();
+				String errorList = Paths.get(ndrExportBatch.getContextPath(), "downloads", "NDR", formattedDate2+"_error_list.csv").toString();
+				int numError = getNumberOfPatientsWithError(csvFile);
 				String status;
 				if (!"no new patient record found".equalsIgnoreCase(path)) {
 					ndrExportBatch.setPath(path);
-					status = "Completed";
+					if(numError > 0){
+						ndrExportBatch.setErrorPath(errorPath);
+						ndrExportBatch.setErrorList(errorList);
+						status = "Completed with "+numError+" Errors";
+					}else {
+						status = "Completed";
+					}
 				} else {
 					status = "Failed";
 				}
@@ -177,5 +249,18 @@ public class NDRExtractor {
 					LoggerUtils.LogLevel.live);
 			//ignore error
 		}
+	}
+	
+	private int getNumberOfPatientsWithError(String errorList) throws IOException {
+		File csvFile = new File(errorList);
+		int num = 0;
+		if (csvFile.exists()) {
+			Reader in = new FileReader(errorList);
+			Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
+			for (CSVRecord ignored : records) {
+				num += 1;
+			}
+		}
+		return num;
 	}
 }

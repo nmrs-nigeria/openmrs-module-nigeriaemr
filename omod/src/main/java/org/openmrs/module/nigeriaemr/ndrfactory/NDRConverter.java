@@ -24,22 +24,22 @@ import java.util.*;
 public class NDRConverter {
 	
 	private Patient patient;
+
+	private Map<Integer, List<Encounter>> groupedEncounters = new HashMap<>();
+
+	private Map<Object, List<Obs>> groupedObsByConceptIds = new HashMap<>();
 	
-	private Map<Integer, List<Encounter>> groupedEncounters;
+	private Map<Object, List<Obs>> groupedObsByEncounterTypes = new HashMap<>();
 	
-	private Map<Object, List<Obs>> groupedObsByConceptIds;
-	
-	private Map<Object, List<Obs>> groupedObsByEncounterTypes;
-	
-	private Map<Object, List<Obs>> groupedObsByVisitDate;
+	private Map<Object, List<Obs>> groupedObsByVisitDate = new HashMap<>();
 	
 	private Encounter lastEncounter;
 	
 	private final DBConnection openmrsConn;
 	
-	private Map<Object, List<Obs>> groupedpatientBaselineObsByConcept;
+	private Map<Object, List<Obs>> groupedpatientBaselineObsByConcept = new HashMap<>();
 	
-	private Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType;
+	private Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType = new HashMap<>();
 	
 	private final NigeriaEncounterService nigeriaEncounterService;
 	
@@ -75,12 +75,12 @@ public class NDRConverter {
                 }
                 List<Encounter> encounters = new ArrayList<>(filteredEncounters);
                 this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
-                groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
+                this.groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
 
                 List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
                 Map<String,Map<Object, List<Obs>>> grouped = Utils.groupObs(allobs);
                 this.groupedObsByConceptIds = grouped.get("groupedByConceptIds");
-                this.groupedObsByEncounterTypes =grouped.get("groupedByEncounterTypes");
+                this.groupedObsByEncounterTypes = grouped.get("groupedByEncounterTypes");
                 this.groupedObsByVisitDate = grouped.get("groupedObsByVisitDate");
                 List<Obs> patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
                 Map<String,Map<Object, List<Obs>>> groupedPatientBaseLine = Utils.groupObs(patientBaselineObs);
@@ -127,7 +127,7 @@ public class NDRConverter {
         String DATIMID = Utils.getFacilityDATIMId();
         FacilityType facility = Utils.createFacilityType(facilityName,DATIMID,"FAC");
         try {
-            PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicType2(patient,facility, groupedObsByEncounterTypes);
+            PatientDemographicsType patientDemography = new NDRMainDictionary().createPatientDemographicType2(patient,facility, this.groupedObsByEncounterTypes);
             if (patientDemography == null) { //return null if no valid patient data exist
                 return null;
             }
@@ -205,7 +205,7 @@ public class NDRConverter {
 
             //HIV Risk assessment
             List<HIVRiskAssessmentType> hivRiskAssessmentType = mainDictionary.createHivRiskAssessment(patient,
-                    groupedObsByConceptIds);
+                    this.groupedObsByConceptIds);
             if (hivRiskAssessmentType != null && !hivRiskAssessmentType.isEmpty()) {
                 preTestInfo.setHIVRiskAssessment(hivRiskAssessmentType.get(0));
             }
@@ -213,21 +213,21 @@ public class NDRConverter {
             //knowledge assessment
             //Knowledge Assessment Type
             List<KnowledgeAssessmentType> knowledgeAssessmentType = mainDictionary.createKnowledgeAssessmentType(patient,
-                    groupedObsByConceptIds);
+                    this.groupedObsByConceptIds);
             if (knowledgeAssessmentType != null && !knowledgeAssessmentType.isEmpty()) {
                 preTestInfo.setKnowledgeAssessment(knowledgeAssessmentType.get(0));
             }
 
             //Syndromic STI
             List<SyndromicSTIScreeningType> syndromicSTIScreeningType = mainDictionary.createSyndromicsStiType(patient,
-                    groupedObsByConceptIds);
+                    this.groupedObsByConceptIds);
             if (syndromicSTIScreeningType != null && syndromicSTIScreeningType.size() > 0) {
                 preTestInfo.setSyndromicSTIScreening(syndromicSTIScreeningType.get(0));
             }
 
             //Post Test Counselling
             List<PostTestCounsellingType> postTestCounsellingType = mainDictionary.createPostTestCounsellingType(patient,
-                    groupedObsByConceptIds);
+                    this.groupedObsByConceptIds);
             if (postTestCounsellingType != null && postTestCounsellingType.size() > 0) {
                 postTestType = postTestCounsellingType.get(0);
             }
@@ -262,15 +262,15 @@ public class NDRConverter {
             condition.setProgramArea(createProgramArea());
 
             //for baseline data
-            CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.lastEncounter, groupedpatientBaselineObsByConcept);
+            CommonQuestionsType common = mainDictionary.createCommonQuestionType2(this.patient, this.lastEncounter, this.groupedpatientBaselineObsByConcept);
             //create common question tags by calling the factory method and passing the encounter, patient and obs list
 
-            if(!common.isEmpty()){
-            condition.setCommonQuestions(common);
+            if(common != null && !common.isEmpty() && !patient.isVoided()){
+                condition.setCommonQuestions(common);
             }
 
 
-            ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(groupedpatientBaselineObsByConcept,groupedpatientBaselineObsByEncounterType);
+            ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(this.groupedpatientBaselineObsByConcept,this.groupedpatientBaselineObsByEncounterType);
 
 
             if(hivSpecs.getHIVQuestions() != null){
@@ -278,14 +278,14 @@ public class NDRConverter {
             }
 
             //create hiv encounter
-            List<HIVEncounterType> hivEncounter = mainDictionary.createHIVEncounterType(this.patient, groupedEncounters, groupedObsByVisitDate);
+            List<HIVEncounterType> hivEncounter = mainDictionary.createHIVEncounterType(this.patient, this.groupedEncounters, this.groupedObsByVisitDate);
             if (hivEncounter != null && hivEncounter.size() > 0) {
                 EncountersType encType = new EncountersType();
                 encType.getHIVEncounter().addAll(hivEncounter);
                 condition.setEncounters(encType);
             }
 
-            List<Encounter> tempEncs = groupedEncounters.get(Utils.Laboratory_Encounter_Type_Id);
+            List<Encounter> tempEncs = this.groupedEncounters.get(Utils.Laboratory_Encounter_Type_Id);
             if (tempEncs != null && !tempEncs.isEmpty()) {
                 for (Encounter each : tempEncs) {
                     List<Obs> obsList = new ArrayList<>(each.getAllObs());
@@ -308,7 +308,7 @@ public class NDRConverter {
                         LogLevel.live);
             }
 
-            List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, groupedEncounters);
+            List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, this.groupedEncounters);
             if (arvRegimenTypeList != null && arvRegimenTypeList.size() > 0) {
                 condition.getRegimen().addAll(arvRegimenTypeList);
             }

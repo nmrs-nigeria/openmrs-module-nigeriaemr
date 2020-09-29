@@ -45,6 +45,12 @@ public class NDRExportBatch {
 	@Column(name = "path")
 	private String path;
 	
+	@Column(name = "error_path")
+	private String errorPath;
+	
+	@Column(name = "error_list")
+	private String errorList;
+	
 	@Column(name = "last_export_date")
 	private Date lastExportDate;
 	
@@ -177,5 +183,21 @@ public class NDRExportBatch {
 	
 	public void setVoided(boolean voided) {
 		this.voided = voided;
+	}
+	
+	public String getErrorPath() {
+		return errorPath;
+	}
+	
+	public void setErrorPath(String errorPath) {
+		this.errorPath = errorPath;
+	}
+	
+	public String getErrorList() {
+		return errorList;
+	}
+	
+	public void setErrorList(String errorList) {
+		this.errorList = errorList;
 	}
 }

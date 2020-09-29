@@ -181,16 +181,16 @@ public class ZipUtil {
 	
 	public void generateFileList(File node) {
 		// add file only
-		if (node.isFile()) {
+		if (node.isFile() && node.getName().endsWith("xml")) {
 			fileList.add(generateZipEntry(node.toString()));
 		}
 		
-		if (node.isDirectory()) {
-			String[] subNote = node.list();
-			for (String filename : subNote) {
-				generateFileList(new File(node, filename));
-			}
-		}
+		//		if (node.isDirectory()) {
+		//			String[] subNote = node.list();
+		//			for (String filename : subNote) {
+		//				generateFileList(new File(node, filename));
+		//			}
+		//		}
 	}
 	
 	private String generateZipEntry(String file) {

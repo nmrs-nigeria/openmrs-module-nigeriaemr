@@ -5,6 +5,8 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
@@ -141,15 +143,22 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public String getPatientIdentifier(Integer patientId, Integer identifierType) throws DAOException {
-		
-		String query = "SELECT distinct(patient_identifier.identifier) FROM patient_identifier patient_identifier "
-		        + " WHERE patient_identifier.identifier_type = :identifierType AND patient_identifier.patient_id = :patientId ";
-		query += " AND patient_identifier.voided = false";
-		SQLQuery sql = getSession().createSQLQuery(query);
-		sql.setInteger("identifierType", identifierType);
-		sql.setInteger("patientId", patientId);
-		return sql.uniqueResult().toString();
+	public String getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType) throws DAOException {
+		Criteria criteria = getSession().createCriteria(PatientIdentifier.class);
+		criteria.add(Restrictions.eq("identifierType", patientIdentifierType));
+		criteria.add(Restrictions.eq("patient", patient));
+		List<PatientIdentifier> result = criteria.list();
+		if (result != null && result.size() > 0) {
+			if (result.size() > 1) {
+				for (PatientIdentifier patientIdentifier : result) {
+					if (patientIdentifier.isPreferred())
+						return patientIdentifier.getIdentifier();
+				}
+			} else {
+				return result.get(0).getIdentifier();
+			}
+		}
+		return null;
 	}
 	
 }

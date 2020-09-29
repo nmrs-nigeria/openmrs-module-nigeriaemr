@@ -717,7 +717,8 @@
     	<xs:element name="PatientNotes" type="NoteType" minOccurs="0" />
     	<xs:element name="FingerPrints" type="FingerPrintType"
     		minOccurs="0" maxOccurs="1">
-    	</xs:element>
+    	</xs:element>
+
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="TelephoneType">
@@ -838,7 +839,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="LGACode" type="CodeType" minOccurs="1" maxOccurs="1">
+      <xs:element name="LGACode" type="CodeType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The code representing
@@ -846,7 +847,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="StateCode" type="CodeType" minOccurs="1" maxOccurs="1">
+      <xs:element name="StateCode" type="CodeType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The code representing
@@ -3187,7 +3188,8 @@
   		</xs:element>
   		<xs:element name="leftHand" type="leftHandType" minOccurs="1"
   			maxOccurs="1">
-  		</xs:element>
+  		</xs:element>
+
   	</xs:sequence>
   </xs:complexType>
   <xs:complexType name="rightHandType">
@@ -3602,7 +3604,7 @@
           </xs:documentation>
         </xs:annotation>
     		</xs:element>
-    		    		<xs:element name="TieBreakerTestResult">
+			<xs:element name="TieBreakerTestResult">
     			<xs:annotation>
     				<xs:documentation xml:lang="en">
     					TieBreaker Test Result
@@ -3616,13 +3618,13 @@
     			</xs:simpleType>
     		</xs:element>
     		<xs:element name="TieBreakerTestResultDate" type="xs:date">
-    		<xs:annotation>
-          <xs:documentation xml:lang="en">
-            TieBreaker Test Result Date
-          </xs:documentation>
-        </xs:annotation>
+				<xs:annotation>
+			  		<xs:documentation xml:lang="en">
+						TieBreaker Test Result Date
+			  		</xs:documentation>
+				</xs:annotation>
     		</xs:element>
-    		    		<xs:element name="FinalTestResult">
+			<xs:element name="FinalTestResult">
     			<xs:annotation>
     				<xs:documentation xml:lang="en">
     					Final Test Result

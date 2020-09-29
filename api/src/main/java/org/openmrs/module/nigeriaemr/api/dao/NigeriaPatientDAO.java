@@ -1,6 +1,7 @@
 package org.openmrs.module.nigeriaemr.api.dao;
 
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.PatientDAO;
 
@@ -22,5 +23,5 @@ public interface NigeriaPatientDAO extends PatientDAO {
 	public List<Patient> getPatientsByEncounterDate(int startIndex, int endIndex, Date lastEncounterDate,
 	        boolean includeVoided) throws DAOException;
 	
-	public String getPatientIdentifier(Integer patientId, Integer identifierType) throws DAOException;
+	public String getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType) throws DAOException;
 }

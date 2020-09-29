@@ -120,12 +120,14 @@ public class NigeriaemrDao {
 			sb.append(", date_ended = :dateEnded");
 		
 		sb.append(" where batch_id = :batchId");
-		sb.append(" and nigeriaemr_ndr_export_id = :exportId");
+		if (exportId > 0)
+			sb.append(" and nigeriaemr_ndr_export_id = :exportId");
 		
 		SQLQuery sql = getSession().createSQLQuery(sb.toString());
 		
 		sql.setString("status", status);
-		sql.setInteger("exportId", exportId);
+		if (exportId > 0)
+			sql.setInteger("exportId", exportId);
 		sql.setInteger("batchId", batchId);
 		sql.setDate("dateUpdated", new Date());
 		if (done)

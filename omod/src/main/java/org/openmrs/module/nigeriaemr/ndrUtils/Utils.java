@@ -516,7 +516,7 @@ public class Utils {
 	}
 	
 	public static Map<String,Map<Object, List<Obs>>> groupObs(List<Obs> obsList) {
-		Map<String,Map<Object, List<Obs>>> grouped = new HashMap<>();
+		Map<String, Map<Object, List<Obs>>> grouped = new HashMap<>();
 		Map<Object, List<Obs>> groupedByConceptIds = new HashMap<>();
 		Map<Object, List<Obs>> groupedObsByVisitDate = new HashMap<>();
 		Map<Object, List<Obs>> groupedByEncounterTypes = new HashMap<>();
@@ -983,9 +983,11 @@ public class Utils {
 		return todayFolders;
 	}
 	
-	public static String ZipFolder(String contextPath, String folderToZip, String zipFileName, String reportType) {
-		
+	public static String ZipFolder(String contextPath, String folderToZipTo, String folderToZip, String zipFileName,
+	        String reportType) {
 		File toZIP = new File(folderToZip);
+		if (folderToZipTo == null)
+			folderToZipTo = toZIP.getParent();
 		if (!toZIP.exists() || toZIP.listFiles() == null || Objects.requireNonNull(toZIP.listFiles()).length == 0) {
 			FileUtils.deleteFolder(folderToZip, true);
 			return "no new patient record found";
@@ -995,12 +997,16 @@ public class Utils {
 		ZipUtil appZip = new ZipUtil(folderToZip);
 		appZip.generateFileList(toZIP);
 		if (Utils.batchExports()) {
-			appZip.zipBatch(Paths.get(toZIP.getParent(), zipFileName).toString(), 20);
+			appZip.zipBatch(Paths.get(folderToZipTo, zipFileName).toString(), 20);
 		} else {
-			appZip.zipIt(Paths.get(toZIP.getParent(), zipFileName).toString());
+			appZip.zipIt(Paths.get(folderToZipTo, zipFileName).toString());
 		}
 		
 		return Paths.get(contextPath, "downloads", reportType, zipFileName).toString();
+	}
+	
+	public static String ZipFolder(String contextPath, String folderToZip, String zipFileName, String reportType) {
+		return ZipFolder(contextPath, null, folderToZip, zipFileName, reportType);
 	}
 	
 	public static String formatDate(Date date) {
@@ -1033,9 +1039,14 @@ public class Utils {
 		if (patientId != null) {
 			return patientId.getIdentifier();
 		} else {
-			patientId = patient.getPatientIdentifier(5); //hospital number
-			if (patientId != null) {
-				return patientId.getIdentifier();
+			PatientIdentifier clientCode = patient.getPatientIdentifier(8);
+			if (clientCode != null) {
+				return clientCode.getIdentifier();
+			}else {
+				patientId = patient.getPatientIdentifier(5); //hospital number
+				if (patientId != null) {
+					return patientId.getIdentifier();
+				}
 			}
 			return "";
 		}

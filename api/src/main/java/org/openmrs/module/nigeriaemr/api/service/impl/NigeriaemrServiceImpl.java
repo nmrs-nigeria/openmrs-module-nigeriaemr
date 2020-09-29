@@ -143,8 +143,18 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 		ndrExportBatch.setStatus(status);
 		ndrExportBatch.setDateUpdated(new Date());
 		if (end)
-			ndrExportBatch.setDateCreated(new Date());
+			ndrExportBatch.setDateEnded(new Date());
 		return dao.save(ndrExportBatch);
+	}
+	
+	@Override
+	public void resetExportBatch(int id) throws APIException {
+		NDRExportBatch ndrExportBatch = dao.getExportBatch(id);
+		ndrExportBatch.setStatus("Processing");
+		ndrExportBatch.setDateUpdated(new Date());
+		ndrExportBatch.setDateCreated(new Date());
+		ndrExportBatch.setPatientsProcessed(0);
+		dao.save(ndrExportBatch);
 	}
 	
 	@Override

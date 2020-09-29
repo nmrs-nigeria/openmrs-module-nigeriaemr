@@ -49,6 +49,7 @@ public class Consumer implements MessageListener {
 		Context.addProxyPrivilege("Get Encounters");
 		Context.addProxyPrivilege("Get Concepts");
 		Context.addProxyPrivilege("Get Users");
+		Context.addProxyPrivilege("Get Identifier Types");
 	}
 	
 	public void checkIfExportIsComplete() {
@@ -88,7 +89,7 @@ public class Consumer implements MessageListener {
 	public void stopAllExports() {
 		try {
 			initialize(null);
-			ndrExtractionService.stopExport(null);
+			ndrExtractionService.pauseFile(null);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

@@ -192,6 +192,14 @@ public class NdrExtractionService {
                         if(ndrExportBatch.getPath() != null) {
                             fileMap.put("path", ndrExportBatch.getPath().replace("\\", "\\\\"));
                         }
+						fileMap.put("hasError",false);
+						if(ndrExportBatch.getErrorPath() != null) {
+							fileMap.put("hasError",true);
+							fileMap.put("errorPath", ndrExportBatch.getErrorPath().replace("\\", "\\\\"));
+							if(ndrExportBatch.getErrorList() != null) {
+								fileMap.put("errorList", ndrExportBatch.getErrorList().replace("\\", "\\\\"));
+							}
+						}
                         fileMap.put("dateEnded", sdf.format(ndrExportBatch.getDateEnded()));
                         fileMap.put("active", true);
                     }else {
@@ -221,25 +229,11 @@ public class NdrExtractionService {
 		try {
 			int idInt = Integer.parseInt(id);
 			NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(idInt);
-			if (ndrExportBatch.getPath() != null) {
-				String path = ndrExportBatch.getPath();
-				if (path != null) {
-					String[] paths = path.split("\\\\");
-					if (path.length() > 0) {
-						String fileName = paths[4];
-						String folder = Paths.get(new File(fullContextPath).getParentFile().toString(), "downloads", "NDR",
-						    fileName).toString();
-						File fileToDelete = new File(folder);
-						if (fileToDelete.exists()) {
-							fileToDelete.delete();
-						}
-					}
-				}
-				String reportFolder = ndrExportBatch.getReportFolder();
-				if (reportFolder != null) {
-					FileUtils.deleteFolder(reportFolder, true);
-				}
-			}
+			deletePath(fullContextPath, ndrExportBatch.getPath());
+			deletePath(fullContextPath, ndrExportBatch.getErrorPath());
+			deletePath(fullContextPath, ndrExportBatch.getErrorList());
+			deleteFolder(ndrExportBatch.getReportFolder());
+			deleteFolder(ndrExportBatch.getReportFolder() + File.separator + "error");
 			nigeriaemrService.voidExportBatchEntry(idInt);
 			nigeriaemrService.deleteExports(idInt);
 			return true;
@@ -251,24 +245,65 @@ public class NdrExtractionService {
 		}
 	}
 	
-	public void stopExport(String id) {
-		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
-		if (id != null) {
-			int idInt = Integer.parseInt(id);
-			nigeriaemrService.updateExportBatch(idInt, "Stopped", false);
-		} else {
-			nigeriaemrService.updateAllStatus("Stopped");
+	private void deleteFolder(String reportFolder) {
+		if (reportFolder != null) {
+			FileUtils.deleteFolder(reportFolder, true);
 		}
 	}
 	
-	public boolean restartFile(String id) {
+	private void deletePath(String fullContextPath, String path) {
+		if (path != null) {
+			String[] paths = path.split("\\\\");
+			if (path.length() > 0) {
+				String fileName = paths[4];
+				String folder = Paths
+				        .get(new File(fullContextPath).getParentFile().toString(), "downloads", "NDR", fileName).toString();
+				File fileToDelete = new File(folder);
+				if (fileToDelete.exists()) {
+					fileToDelete.delete();
+				}
+			}
+		}
+	}
+	
+	public void pauseFile(String id) {
+		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+		if (id != null) {
+			int idInt = Integer.parseInt(id);
+			nigeriaemrService.updateExportBatch(idInt, "Paused", false);
+		} else {
+			nigeriaemrService.updateAllStatus("Paused");
+		}
+	}
+	
+	public boolean restartFile(String fullContextPath,String id, String action) {
 		try {
 			int idInt = Integer.parseInt(id);
 			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 			NDREvent ndrEvent = (NDREvent) ServiceContext.getInstance().getApplicationContext().getBean("ndrEvent");
 			nigeriaemrService.updateExportBatch(idInt, "Processing", false);
-			List<NDRExport> ndrExports = nigeriaemrService.getNDRExportByBatchIdByStatus(idInt, "Processing");
+			List<NDRExport> ndrExports;
+			if("resume".equalsIgnoreCase(action)) {
+				 ndrExports = nigeriaemrService.getNDRExportByBatchIdByStatus(idInt, "Processing");
+			}else {
+				nigeriaemrService.resetExportBatch(idInt);
+				Map<String, Object> conditions = new HashMap<>();
+				conditions.put("batchId", idInt);
+				nigeriaemrService.updateStatus(0,idInt,"Processing", false);
+				ndrExports = nigeriaemrService.getExports(conditions, null, false);
+
+			}
+			boolean deleted = false;
 			for (NDRExport ndrExport : ndrExports) {
+				if(!deleted && !"resume".equalsIgnoreCase(action)) {
+					NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(idInt);
+					deletePath(fullContextPath, ndrExportBatch.getPath());
+					deletePath(fullContextPath, ndrExportBatch.getErrorPath());
+					deletePath(fullContextPath, ndrExportBatch.getErrorList());
+					deleteFolder(ndrExportBatch.getReportFolder());
+					deleteFolder(ndrExportBatch.getReportFolder() + File.separator + "error");
+					deleted = true;
+				}
 				ndrEvent.send(ndrExport);
 			}
 			return true;

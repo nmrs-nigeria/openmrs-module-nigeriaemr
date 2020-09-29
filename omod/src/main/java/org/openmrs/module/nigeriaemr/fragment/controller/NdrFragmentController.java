@@ -146,11 +146,19 @@ public class NdrFragmentController {
 	}
 	
 	public boolean restartFile(HttpServletRequest request, @RequestParam(value = "id") String id) {
-		return ndrExtractionService.restartFile(id);
+		String contextPath = request.getContextPath();
+		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		return ndrExtractionService.restartFile(fullContextPath, id, "restart");
 	}
 	
-	public void stopFile(HttpServletRequest request, @RequestParam(value = "id") String id) {
-		ndrExtractionService.stopExport(id);
+	public boolean resumeFile(HttpServletRequest request, @RequestParam(value = "id") String id) {
+		String contextPath = request.getContextPath();
+		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		return ndrExtractionService.restartFile(fullContextPath, id, "resume");
+	}
+	
+	public void pauseFile(HttpServletRequest request, @RequestParam(value = "id") String id) {
+		ndrExtractionService.pauseFile(id);
 	}
 	
 	//get host for openmrs instance

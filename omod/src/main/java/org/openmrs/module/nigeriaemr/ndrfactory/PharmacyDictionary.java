@@ -393,10 +393,6 @@ public class PharmacyDictionary {
             regimenType = new RegimenType();
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(getXmlDate(visitDate));
-
-            List<Integer> obsCodeList = Arrays.asList(Utils.CURRENT_REGIMEN_LINE_CONCEPT);
-
-
             
             obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, map); //PrescribedRegimenLineCode
             if (obs != null && obs.getValueCoded() != null) {
@@ -404,13 +400,13 @@ public class PharmacyDictionary {
                 ndrCode = getRegimenMapValue(valueCoded);
                 regimenType.setPrescribedRegimenLineCode(ndrCode);
                 regimenType.setPrescribedRegimenTypeCode(Utils.ART_CODE);
-                obs = Utils.extractObs(valueCoded, map); // PrescribedRegimen
-                if (obs != null) {
-                    valueCoded = obs.getValueCoded().getConceptId();
+                Obs valueObs = Utils.extractObs(valueCoded, map); // PrescribedRegimen
+                if (valueObs != null) {
+                    valueCoded = valueObs.getValueCoded().getConceptId();
                     ndrCode = getRegimenMapValue(valueCoded);
                     codedSimpleType = new CodedSimpleType();
                     codedSimpleType.setCode(ndrCode);
-                    codedSimpleType.setCodeDescTxt(obs.getValueCoded().getName().getName());
+                    codedSimpleType.setCodeDescTxt(valueObs.getValueCoded().getName().getName());
                     regimenType.setPrescribedRegimen(codedSimpleType);
                 }
                 regimenType.setPrescribedRegimenDispensedDate(getXmlDate(visitDate));//PrescribedRegimenDispensedDate
@@ -444,7 +440,18 @@ public class PharmacyDictionary {
 
         Obs obsGroup = Utils.extractObs(Utils.ARV_DRUGS_GROUPING_CONCEPT_SET, obsList);
         if (obsGroup != null) {
-            obs = Utils.extractObsByConceptId(Utils.MEDICATION_DURATION_CONCEPT, new ArrayList<>(obsGroup.getGroupMembers()));
+            Set<Obs> obsGroupSet = null;
+            try {
+                Obs obsNew = Context.getObsService().getObs(obsGroup.getId());
+                if(obsNew != null){
+                    obsGroupSet = obsNew.getGroupMembers();
+                }
+            }catch (Exception ex){
+                System.out.println(ex.getMessage());
+            }
+            if(obsGroupSet != null && obsGroupSet.size() > 0) {
+                obs = Utils.extractObsByConceptId(Utils.MEDICATION_DURATION_CONCEPT, new ArrayList<>(obsGroupSet));
+            }
             if (obs != null) {
                 durationDays = (int) obs.getValueNumeric().doubleValue();
                 startDateTime = new DateTime(visitDate);

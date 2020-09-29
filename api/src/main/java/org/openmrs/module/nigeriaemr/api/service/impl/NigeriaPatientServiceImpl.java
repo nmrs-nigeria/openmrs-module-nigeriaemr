@@ -1,6 +1,7 @@
 package org.openmrs.module.nigeriaemr.api.service.impl;
 
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.PatientServiceImpl;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaPatientDAO;
@@ -51,7 +52,7 @@ public class NigeriaPatientServiceImpl extends PatientServiceImpl implements Nig
 	}
 	
 	@Override
-	public String getPatientIdentifier(Integer patientId, Integer identifierType) throws APIException {
-		return dao.getPatientIdentifier(patientId, identifierType);
+	public String getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType) throws APIException {
+		return dao.getPatientIdentifier(patient, patientIdentifierType);
 	}
 }

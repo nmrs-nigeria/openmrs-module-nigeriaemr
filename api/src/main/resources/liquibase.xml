@@ -85,6 +85,18 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="nigeriaemr-202008241353-02" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="error_path" type="varchar(250)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353-03" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="error_list" type="varchar(250)"/>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="nigeriaemr-2016-07-28-21-201404091129" author="temiye">
         <comment>
             Updating state and lga code

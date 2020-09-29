@@ -57,23 +57,11 @@
             jq("#TableBody").empty();
             const fileListObj = jq.parseJSON(fileList);
             for (let i = 0; i < fileListObj.length; i++) {
-                var success = (fileListObj[i].status) === 'Completed'
-                var stopped = (fileListObj[i].status) === 'Stopped'
+                var success = (fileListObj[i].status).includes('Completed')
+                var Paused = (fileListObj[i].status) === 'Paused'
                 if(fileListObj[i].active) {
                     if(success) {
-                        jq('#TableBody')
-                            .append("<tr>" +
-                                "<td>" + fileListObj[i].owner + "</td>" +
-                                "<td>" + fileListObj[i].name + "</td>" +
-                                "<td>" + fileListObj[i].dateStarted + "</td>" +
-                                "<td>" + fileListObj[i].dateEnded + "</td>" +
-                                "<td>" + fileListObj[i].total + "</td>" +
-                                "<td>" + fileListObj[i].status + "</td>" +
-                                "<td><a title='download file' onclick=\"downloadFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-download\"></i></a> <p/>" +
-                                "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
-                                "</tr>");
-                    }else{
-                        if(stopped) {
+                        if(fileListObj[i].hasError){
                             jq('#TableBody')
                                 .append("<tr>" +
                                     "<td>" + fileListObj[i].owner + "</td>" +
@@ -82,7 +70,36 @@
                                     "<td>" + fileListObj[i].dateEnded + "</td>" +
                                     "<td>" + fileListObj[i].total + "</td>" +
                                     "<td>" + fileListObj[i].status + "</td>" +
-                                    "<td><a title='restart' onclick=\"restartFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-refresh\"></i></a> <p/>" +
+                                    "<td><a title='download valid files' onclick=\"downloadFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-download\"></i></a> <p/>" +
+                                    "<a title='download error files' onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\" class=\"button\"><i class=\"icon-download-alt\"></i></a>" +
+                                    "<a title='download error list' onclick=\"downloadFile('" + fileListObj[i].errorList + "')\" class=\"button\"><i class=\"fa-file-download\"></i></a>" +
+                                    "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a>" +
+                                    "<a title='restart' onclick=\"restartFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-refresh \"></i></a></td></td>" +
+                                    "</tr>");
+                        }else {
+                            jq('#TableBody')
+                                .append("<tr>" +
+                                    "<td>" + fileListObj[i].owner + "</td>" +
+                                    "<td>" + fileListObj[i].name + "</td>" +
+                                    "<td>" + fileListObj[i].dateStarted + "</td>" +
+                                    "<td>" + fileListObj[i].dateEnded + "</td>" +
+                                    "<td>" + fileListObj[i].total + "</td>" +
+                                    "<td>" + fileListObj[i].status + "</td>" +
+                                    "<td><a title='download file' onclick=\"downloadFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-download\"></i></a> <p/>" +
+                                    "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
+                                    "</tr>");
+                        }
+                    }else{
+                        if(Paused) {
+                            jq('#TableBody')
+                                .append("<tr>" +
+                                    "<td>" + fileListObj[i].owner + "</td>" +
+                                    "<td>" + fileListObj[i].name + "</td>" +
+                                    "<td>" + fileListObj[i].dateStarted + "</td>" +
+                                    "<td>" + fileListObj[i].dateEnded + "</td>" +
+                                    "<td>" + fileListObj[i].total + "</td>" +
+                                    "<td>" + fileListObj[i].status + "</td>" +
+                                    "<td><a title='resume' onclick=\"resumeFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-play\"></i></a> <p/>" +
                                     "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
                                     "</tr>");
                         }else {
@@ -94,7 +111,8 @@
                                     "<td>" + fileListObj[i].dateEnded + "</td>" +
                                     "<td>" + fileListObj[i].total + "</td>" +
                                     "<td>" + fileListObj[i].status + "</td>" +
-                                    "<td><a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
+                                    "<td><a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a>" +
+                                    "<a title='restart' onclick=\"restartFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-refresh \"></i></a></td>" +
                                     "</tr>");
                         }
                     }
@@ -111,7 +129,7 @@
                             "<td>" + fileListObj[i].status + "</td>" +
                             "<td><img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p>"+fileListObj[i].progress+"</p>" +
                             "<a title='refresh' onclick=\"refreshList()\" class=\"button\"><i class=\"icon-refresh \"></i></a>" +
-                            "<a title='stop' onclick=\"stopp('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove \"></i></a></td>" +
+                            "<a title='pause' onclick=\"pauseFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-pause \"></i></a></td>" +
                             "</tr>");
                 }
             }
@@ -131,7 +149,7 @@
     }, 10000);
 
     function restartFile(id){
-        if (confirm("Are you sure you want to restart ?") === true) {
+        if (confirm("Are you sure you want to restart ? this will restart the export from the begining") === true) {
             jq('#gen-wait').show();
             if(id)
             {
@@ -147,6 +165,39 @@
                     jq('#gen-wait').hide();
                     if(data){
                         alert('restart');
+                        loadFileList()
+                    }else{
+                        alert('There was an error restarting');
+                        loadFileList()
+                    }
+
+                })
+                    .error(function(xhr, status, err) {
+                        jq('#gen-wait').hide();
+                        alert('There was an error restarting');
+                        loadFileList()
+                    });
+            }
+        }
+    }
+
+    function resumeFile(id){
+        if (confirm("Are you sure you want to resume ?") === true) {
+            jq('#gen-wait').show();
+            if(id)
+            {
+                console.log(id);
+                jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "resumeFile") }",
+                    dataType: "json",
+                    data: {
+                        'id' : id
+                    }
+
+                }).success(function(data) {
+                    jq('#gen-wait').hide();
+                    if(data){
+                        alert('resumed');
                         loadFileList()
                     }else{
                         alert('There was an error restarting');
@@ -196,14 +247,14 @@
         }
     }
 
-    function stopp(id){
-        if (confirm("Are you sure you want to stop the process ?") === true) {
+    function pauseFile(id){
+        if (confirm("Are you sure you want to pause the process ?") === true) {
             jq('#gen-wait').show();
             if(id)
             {
                 console.log(id);
                 jq.ajax({
-                    url: "${ ui.actionLink("nigeriaemr", "ndr", "stopFile") }",
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "pauseFile") }",
                     dataType: "json",
                     data: {
                         'id' : id
@@ -212,10 +263,10 @@
                 }).success(function(data) {
                     jq('#gen-wait').hide();
                     if(data){
-                        alert('stopped');
+                        alert('paused');
                         loadFileList()
                     }else{
-                        alert('There was an error stopping the process');
+                        alert('There was an error pausing the process');
                         loadFileList()
                     }
 

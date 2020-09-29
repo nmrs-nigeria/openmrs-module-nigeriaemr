@@ -12,7 +12,7 @@ import javax.xml.validation.SchemaFactory;
 
 public class NDRUtils {
 	
-	public static Marshaller createMarshaller(JAXBContext jaxbContext) throws JAXBException, SAXException {
+	public static Marshaller createMarshaller(JAXBContext jaxbContext, boolean skipError) throws JAXBException, SAXException {
 		
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 		
@@ -30,7 +30,7 @@ public class NDRUtils {
 		jaxbMarshaller.setSchema(schema);
 		
 		//Call Validator class to perform the validation
-		jaxbMarshaller.setEventHandler(new Validator());
+		jaxbMarshaller.setEventHandler(new Validator(skipError));
 		return jaxbMarshaller;
 	}
 }
