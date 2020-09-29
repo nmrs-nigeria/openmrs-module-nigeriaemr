@@ -117,6 +117,11 @@ public class NdrFragmentController {
 	private static String startGenerateFile(HttpServletRequest request, DBConnection openmrsConn,
 	        List<Patient> filteredPatients, String facilityName, String DATIMID, String FacilityType) throws JAXBException,
 	        SAXException {
+
+		List<Patient> ps = new ArrayList<>();
+		String id = Context.getAdministrationService().getGlobalProperty("testId");
+		Patient patientt = Context.getPatientService().getPatient(Integer.parseInt(id));
+		ps.add(patientt);
 		
 		//create report download folder at the server. skip if already exist
 		Utils util = new Utils();
@@ -140,7 +145,7 @@ public class NdrFragmentController {
 			int counter = 0;
 			Container cnt = null;
 			
-			for (Patient patient : filteredPatients) {
+			for (Patient patient : ps) {
 				
 				long startTime = System.currentTimeMillis();
 				counter++;
