@@ -70,11 +70,13 @@
                                     "<td>" + fileListObj[i].dateEnded + "</td>" +
                                     "<td>" + fileListObj[i].total + "</td>" +
                                     "<td>" + fileListObj[i].status + "</td>" +
-                                    "<td><a title='download valid files' onclick=\"downloadFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-download\"></i></a> <p/>" +
-                                    "<a title='download error files' onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\" class=\"button\"><i class=\"icon-download-alt\"></i></a>" +
-                                    "<a title='download error list' onclick=\"downloadFile('" + fileListObj[i].errorList + "')\" class=\"button\"><i class=\"fa-file-download\"></i></a>" +
-                                    "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a>" +
-                                    "<a title='restart' onclick=\"restartFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-refresh \"></i></a></td></td>" +
+                                    "<td>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "</td>" +
                                     "</tr>");
                         }else {
                             jq('#TableBody')
@@ -87,7 +89,7 @@
                                     "<td>" + fileListObj[i].status + "</td>" +
                                     "<td>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
-                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"downloadFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
                                     "</td>" +
                                     "</tr>");
                         }
@@ -101,8 +103,10 @@
                                     "<td>" + fileListObj[i].dateEnded + "</td>" +
                                     "<td>" + fileListObj[i].total + "</td>" +
                                     "<td>" + fileListObj[i].status + "</td>" +
-                                    "<td><a title='resume' onclick=\"resumeFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-play\"></i></a> <p/>" +
-                                    "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
+                                    "<td>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-play edit-action\" title=\"resume\" onclick=\"resumeFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "</td>" +
                                     "</tr>");
                         }else {
                             jq('#TableBody')
@@ -113,8 +117,10 @@
                                     "<td>" + fileListObj[i].dateEnded + "</td>" +
                                     "<td>" + fileListObj[i].total + "</td>" +
                                     "<td>" + fileListObj[i].status + "</td>" +
-                                    "<td><a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a>" +
-                                    "<a title='restart' onclick=\"restartFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-refresh \"></i></a></td>" +
+                                    "<td>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "</td>" +
                                     "</tr>");
                         }
                     }
@@ -129,9 +135,11 @@
                             "<td>" + fileListObj[i].dateEnded + "</td>" +
                             "<td>" + fileListObj[i].total + "</td>" +
                             "<td>" + fileListObj[i].status + "</td>" +
-                            "<td><img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p>"+fileListObj[i].progress+"</p>" +
-                            "<a title='refresh' onclick=\"refreshList()\" class=\"button\"><i class=\"icon-refresh \"></i></a>" +
-                            "<a title='pause' onclick=\"pauseFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-pause \"></i></a></td>" +
+                            "<td>" +
+                            "<img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p>"+fileListObj[i].progress+"</p>" +
+                            "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"refreshList()\"></i>" +
+                            "<i style=\"font-size: 20px;\" class=\"icon-pause edit-action\" title=\"pause\" onclick=\"pauseFile('" + fileListObj[i].number + "')\"></i>" +
+                            "</td>" +
                             "</tr>");
                 }
             }
