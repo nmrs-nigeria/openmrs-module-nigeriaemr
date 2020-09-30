@@ -85,8 +85,10 @@
                                     "<td>" + fileListObj[i].dateEnded + "</td>" +
                                     "<td>" + fileListObj[i].total + "</td>" +
                                     "<td>" + fileListObj[i].status + "</td>" +
-                                    "<td><a title='download file' onclick=\"downloadFile('" + fileListObj[i].path + "')\" class=\"button\"><i class=\"icon-download\"></i></a> <p/>" +
-                                    "<a title='delete file' onclick=\"deleteFile('" + fileListObj[i].number + "')\" class=\"button\"><i class=\"icon-remove\"></i></a></td>" +
+                                    "<td>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"downloadFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "</td>" +
                                     "</tr>");
                         }
                     }else{
