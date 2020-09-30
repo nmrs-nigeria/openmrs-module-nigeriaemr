@@ -90,16 +90,16 @@ public class NdrFragmentController {
 		LoggerUtils.clearLogFile();
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
 		
-	//	List<Patient> patients = Context.getPatientService().getAllPatients();
+		List<Patient> patients = Context.getPatientService().getAllPatients();
 		
-		                String patientIdLimit = Utils.getPatientIdLimit();
-		               String[] patientIdArray =  patientIdLimit.split(",");
-		                
-		                int startIndex = Integer.parseInt(patientIdArray[0]);
-		                int endIndex = Integer.parseInt(patientIdArray[1]);
-				
-		                List<Patient> patients = Context.getPatientService().getAllPatients().stream()
-		                        .filter(x-> x.getId() >= startIndex && x.getId() <= endIndex).collect(Collectors.toList());
+		//		String patientIdLimit = Utils.getPatientIdLimit();
+		//	    String[] patientIdArray =  patientIdLimit.split(",");
+		//
+		//		int startIndex = Integer.parseInt(patientIdArray[0]);
+		//		int endIndex = Integer.parseInt(patientIdArray[1]);
+		//
+		//		List<Patient> patients = Context.getPatientService().getAllPatients().stream()
+		//				.filter(x-> x.getId() >= startIndex && x.getId() <= endIndex).collect(Collectors.toList());
 		
 		//Patient pts = null;
 		//List<Patient> patients = new ArrayList<Patient>();
@@ -117,11 +117,6 @@ public class NdrFragmentController {
 	private static String startGenerateFile(HttpServletRequest request, DBConnection openmrsConn,
 	        List<Patient> filteredPatients, String facilityName, String DATIMID, String FacilityType) throws JAXBException,
 	        SAXException {
-
-		List<Patient> ps = new ArrayList<>();
-		String id = Context.getAdministrationService().getGlobalProperty("testId");
-		Patient patientt = Context.getPatientService().getPatient(Integer.parseInt(id));
-		ps.add(patientt);
 		
 		//create report download folder at the server. skip if already exist
 		Utils util = new Utils();
@@ -145,7 +140,7 @@ public class NdrFragmentController {
 			int counter = 0;
 			Container cnt = null;
 			
-			for (Patient patient : ps) {
+			for (Patient patient : filteredPatients) {
 				
 				long startTime = System.currentTimeMillis();
 				counter++;

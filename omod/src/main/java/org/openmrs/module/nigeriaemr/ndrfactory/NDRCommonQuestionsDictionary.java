@@ -684,6 +684,27 @@ HIVQuestionsType
                 hivQuestionsType.setInitialTBStatus(ndrCode);
             }
 
+            obs = Utils.extractLastObs(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                obs = Utils.extractObsByValues(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, Utils.PATIENT_TERMINATED, obsList);
+                if (obs != null) {
+                    hivQuestionsType.setStoppedTreatment(Boolean.TRUE);
+                } else {
+                    hivQuestionsType.setStoppedTreatment(Boolean.FALSE);
+                }
+
+                obs = Utils.extractLastObs(Utils.PATIENT_DATE_TERMINATED, obsList);
+                if (obs != null && obs.getValueDate() != null) {
+                    valueDateTime = obs.getValueDate();
+                    hivQuestionsType.setDateStoppedTreatment(getXmlDate(valueDateTime));
+                }
+
+                obs = Utils.extractLastObs(Utils.REASON_FOR_TERMINATION, obsList);
+                if (obs != null && obs.getValueCoded() != null) {
+                    String ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
+                    hivQuestionsType.setReasonForStoppedTreatment(ndrCodedValue);
+                }
+            }
         }
         return hivQuestionsType;
 

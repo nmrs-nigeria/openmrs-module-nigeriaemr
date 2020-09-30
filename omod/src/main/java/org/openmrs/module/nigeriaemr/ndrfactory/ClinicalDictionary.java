@@ -243,7 +243,7 @@ public class ClinicalDictionary {
         
         //for regimen switch
          map.put(102, "1");
-        map.put(165048, "2");
+//        map.put(165048, "2");
         map.put(160559, "3");
         map.put(160567, "4");
         map.put(160561, "5");
@@ -251,6 +251,11 @@ public class ClinicalDictionary {
         map.put(163523, "7");
         map.put(160566, "8");
         map.put(160569, "9");
+
+        //EDD
+        map.put(165048, "P");
+        map.put(165049, "NP");
+        map.put(165047, "BF");
     }
 
     private String getMappedValue(int conceptID) {
