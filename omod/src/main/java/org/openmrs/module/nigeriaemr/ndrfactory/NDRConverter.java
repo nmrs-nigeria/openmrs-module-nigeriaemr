@@ -459,7 +459,7 @@ public class NDRConverter {
 		
 		header.setMessageCreationDateTime(Utils.getXmlDateTime(cal.getTime()));
 		header.setMessageStatusCode("INITIAL");
-		header.setMessageSchemaVersion(new BigDecimal("1.6"));
+		header.setMessageSchemaVersion(new BigDecimal("1.5"));
 		header.setMessageUniqueID(UUID.randomUUID().toString());
 		return header;
 	}
@@ -469,7 +469,7 @@ public class NDRConverter {
 		
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		
-		java.net.URL xsdFilePath = Thread.currentThread().getContextClassLoader().getResource("NDR 1.6.xsd");
+		java.net.URL xsdFilePath = Thread.currentThread().getContextClassLoader().getResource("NDR 1.5.5.xsd");
 		
 		assert xsdFilePath != null;
 		

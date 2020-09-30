@@ -317,6 +317,14 @@ public class Utils {
 	
 	public final static int ART_COMMENCEMENT_ENCOUNTER_TYPE = 25;
 	
+	public final static int PATIENT_CARE_IN_FACILITY_TERMINATED = 165586;
+	
+	public final static int PATIENT_TERMINATED = 1065;
+	
+	public final static int PATIENT_DATE_TERMINATED = 165469;
+	
+	public final static int REASON_FOR_TERMINATION = 165470;
+	
 	/*
 	       HIVQuestionsType
 	        
