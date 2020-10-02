@@ -71,11 +71,11 @@
                                     "<td>" + fileListObj[i].total + "</td>" +
                                     "<td>" + fileListObj[i].status + "</td>" +
                                     "<td>" +
-                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
-                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\"></i>" +
-                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download valid files\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download-alt edit-action\" title=\"download error files\" onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-cloud-download edit-action\" title=\"download error file list\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
-                                    "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Failed Files\" onclick=\"restartErrorFile('" + fileListObj[i].number + "')\"></i>" +
                                     "</td>" +
                                     "</tr>");
                         }else {
@@ -158,6 +158,40 @@
         loadFileListDefault(false);
     }, 10000);
 
+    function restartErrorFile(id){
+        if (confirm("Are you sure you want to restart ? this will rerun failed files?") === true) {
+            jq('#gen-wait').show();
+            if(id)
+            {
+                console.log(id);
+                jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "restartFile") }",
+                    dataType: "json",
+                    data: {
+                        'id' : id,
+                        'action' : 'failed'
+                    }
+
+                }).success(function(data) {
+                    jq('#gen-wait').hide();
+                    if(data){
+                        alert('restart');
+                        loadFileList()
+                    }else{
+                        alert('There was an error restarting');
+                        loadFileList()
+                    }
+
+                })
+                    .error(function(xhr, status, err) {
+                        jq('#gen-wait').hide();
+                        alert('There was an error restarting');
+                        loadFileList()
+                    });
+            }
+        }
+    }
+
     function restartFile(id){
         if (confirm("Are you sure you want to restart ? this will restart the export from the begining") === true) {
             jq('#gen-wait').show();
@@ -168,7 +202,8 @@
                     url: "${ ui.actionLink("nigeriaemr", "ndr", "restartFile") }",
                     dataType: "json",
                     data: {
-                        'id' : id
+                        'id' : id,
+                        'action' : 'none'
                     }
 
                 }).success(function(data) {

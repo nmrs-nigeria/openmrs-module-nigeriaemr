@@ -12,6 +12,10 @@
     <description>Omod submodule for Nigeriaemr</description>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>org.openmrs.api</groupId>-->
+<!--            <artifactId>openmrs-api</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>nigeriaemr-api</artifactId>

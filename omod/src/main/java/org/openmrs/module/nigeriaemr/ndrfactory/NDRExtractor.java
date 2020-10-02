@@ -1,19 +1,16 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.CSVStrategy;
 import org.openmrs.Patient;
+import org.openmrs.Person;
+import org.openmrs.User;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.UserContext;
-import org.openmrs.module.nigeriaemr.Consumer;
-import org.openmrs.module.nigeriaemr.NigeriaemrConfig;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
-import org.openmrs.module.nigeriaemr.api.service.impl.NigeriaEncounterServiceImpl;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
-import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 import org.openmrs.module.nigeriaemr.model.ndr.Container;
@@ -44,7 +41,7 @@ public class NDRExtractor {
 	 */
 	
 	public void extract(Integer patientId, String DATIMID, String reportFolder, String formattedDate,
-	        JAXBContext jaxbContext, Date lastDate, Date currentDate) {
+	        JAXBContext jaxbContext, Date lastDate, Date currentDate, int batchId) throws Exception {
 		NDRConverter generator = new NDRConverter(Utils.getNmrsConnectionDetails(), lastDate, currentDate);
 		Container cnt;
 		try {
@@ -94,12 +91,13 @@ public class NDRExtractor {
 					        + b, LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
 					if (cnt.getMessageHeader() != null) {
 						cnt.setValidation(generator.getValidation(patientId.toString()));
-						writeFile(patient, DATIMID, formattedDate, reportFolder, cnt, aXMLFile, jaxbContext);
+						writeFile(patient, formattedDate, reportFolder, cnt, aXMLFile, jaxbContext, batchId);
 					}
 				}
 				catch (Exception ex) {
 					LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
 					    LoggerUtils.LogLevel.live);
+					throw ex;
 				}
 			}
 		}
@@ -110,36 +108,40 @@ public class NDRExtractor {
 		}
 	}
 	
-	public synchronized void writeFile(Patient patient, String DATIMID, String formattedDate, String reportFolder,
-	        Container container, File file, JAXBContext jaxbContext) {
+	public synchronized void writeFile(Patient patient, String formattedDate, String reportFolder, Container container,
+	        File file, JAXBContext jaxbContext, int batchId) throws Exception {
+		Marshaller jaxbMarshaller = null;
 		try {
-			Marshaller jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext, false);
+			if (patient.isVoided()) {
+				jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext, true);
+			} else {
+				jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext, false);
+			}
 			jaxbMarshaller.marshal(container, file);
 		}
 		catch (Exception ex) {
 			if (ex instanceof JAXBException && ((JAXBException) ex).getLinkedException() != null) {
-				writeErrorCsv(patient, DATIMID, formattedDate, reportFolder, ((JAXBException) ex).getLinkedException()
-				        .getMessage(), container, file, jaxbContext);
+				writeErrorCsv(patient, formattedDate, reportFolder, ((JAXBException) ex).getLinkedException().getMessage(),
+				    container, file, jaxbContext, batchId);
 			}
 			LoggerUtils.write(NdrFragmentController.class.getName(), "File " + file.getName() + " throw an exception \n"
 			        + ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+			throw ex;
 		}
 	}
 	
-	private synchronized void writeErrorCsv(Patient patient, String DATIMID, String formattedDate, String reportFolder,
-	        String message, Container container, File file, JAXBContext jaxbContext) {
+	private synchronized void writeErrorCsv(Patient patient, String formattedDate, String reportFolder,
+											String message, Container container, File file, JAXBContext jaxbContext, int batchId) {
+		file.delete();
 		String newReportFolder = reportFolder + File.separator+ "error";
 		File dir2 = new File(reportFolder);
 		File dir = new File(newReportFolder);
 		try {
-			if (!dir.exists())
-				dir.mkdir();
+			if (!dir.exists()) dir.mkdir();
 			String xmlFile = Paths.get(newReportFolder, file.getName()).toString();
 			File aXMLFile = new File(xmlFile);
-			if (aXMLFile.exists())
-				aXMLFile.delete();
+			if (aXMLFile.exists()) aXMLFile.delete();
 			boolean b = aXMLFile.createNewFile();
-			file.delete();
 			Marshaller jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext, true);
 			jaxbMarshaller.marshal(container, aXMLFile);
 		}catch (Exception ex){
@@ -147,7 +149,7 @@ public class NDRExtractor {
 					+ ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
 		}
 
-		String csvFile = Paths.get(dir2.getParent(), formattedDate+"_error_list.csv").toString();
+		String csvFile = Paths.get(dir2.getParent(), batchId+"_error_list.csv").toString();
 
 		BufferedWriter writer = null;
 		try {
@@ -181,7 +183,7 @@ public class NDRExtractor {
 				String IPReportingLgaCode = Utils.getIPReportingLgaCode();
 				String DATIMID = Utils.getFacilityDATIMId();
 				String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExportBatch.getDateStarted());
-				String formattedDate2 = new SimpleDateFormat("ddMMyy").format(ndrExportBatch.getDateStarted());
+				String formattedDate2 = new SimpleDateFormat("ddMMyy").format(ndrExportBatch.getId());
 				String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate;
 				String zipFileName = fileName + ".zip";
 				String errorZipFileName = fileName + "_error" + ".zip";
@@ -191,8 +193,8 @@ public class NDRExtractor {
 				String errorReportFolder = ndrExportBatch.getReportFolder() + File.separator+ "error";
 				String errorPath = Utils.ZipFolder(ndrExportBatch.getContextPath(),dir.getParent(), errorReportFolder,
 						errorZipFileName, "NDR");
-				String csvFile = Paths.get(dir.getParent(), formattedDate2+"_error_list.csv").toString();
-				String errorList = Paths.get(ndrExportBatch.getContextPath(), "downloads", "NDR", formattedDate2+"_error_list.csv").toString();
+				String csvFile = Paths.get(dir.getParent(), ndrExportBatch.getId()+"_error_list.csv").toString();
+				String errorList = Paths.get(ndrExportBatch.getContextPath(), "downloads", "NDR", ndrExportBatch.getId()+"_error_list.csv").toString();
 				int numError = getNumberOfPatientsWithError(csvFile);
 				String status;
 				if (!"no new patient record found".equalsIgnoreCase(path)) {
@@ -224,9 +226,18 @@ public class NDRExtractor {
 					Map<String, Object> conditions = new HashMap<>();
 					conditions.put("status", "Done");
 					conditions.put("batchId", ndrExportBatch.getId());
-					List<NDRExport> ndrExports = nigeriaemrService.getExports(conditions, null, false);
+					List<NDRExport> doneNdrExports = nigeriaemrService.getExports(conditions, null, false);
+
+					conditions.put("status", "Failed");
+					conditions.put("batchId", ndrExportBatch.getId());
+					List<NDRExport> FailedNdrExports = nigeriaemrService.getExports(conditions, null, false);
 					int count = 0;
-					for (NDRExport ndrExport : ndrExports) {
+					for (NDRExport ndrExport : doneNdrExports) {
+						String patient = ndrExport.getPatientsList();
+						List values = mapper.readValue(patient, List.class);
+						count = count + values.size();
+					}
+					for (NDRExport ndrExport : FailedNdrExports) {
 						String patient = ndrExport.getPatientsList();
 						List values = mapper.readValue(patient, List.class);
 						count = count + values.size();
@@ -256,11 +267,26 @@ public class NDRExtractor {
 		int num = 0;
 		if (csvFile.exists()) {
 			Reader in = new FileReader(errorList);
-			Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
+			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
 			for (CSVRecord ignored : records) {
 				num += 1;
 			}
 		}
 		return num;
 	}
+	
+	//	public static void main(String[] args) throws JsonProcessingException {
+	//		User user = new User();
+	//		user.setName("test");
+	//		User user2 = new User();
+	//		user2.setName("test2");
+	//		Person person = new Person();
+	//		Person person2 = new Person();
+	//		user2.setPerson(person2);
+	//		person.setPersonChangedBy(user);
+	//		user.setPerson(person);
+	//
+	//		ObjectMapper objectMapper = new ObjectMapper();
+	//		System.out.println(objectMapper.writeValueAsString(user));
+	//	}
 }

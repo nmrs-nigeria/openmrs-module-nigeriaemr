@@ -145,10 +145,12 @@ public class NdrFragmentController {
 		return ndrExtractionService.deleteFile(fullContextPath, id);
 	}
 	
-	public boolean restartFile(HttpServletRequest request, @RequestParam(value = "id") String id) {
+	public boolean restartFile(HttpServletRequest request, @RequestParam(value = "id") String id,
+	        @RequestParam(value = "action") String action) {
 		String contextPath = request.getContextPath();
 		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
-		return ndrExtractionService.restartFile(fullContextPath, id, "restart");
+		String finalAction = action == null || action.isEmpty() ? "restart" : action;
+		return ndrExtractionService.restartFile(fullContextPath, id, finalAction);
 	}
 	
 	public boolean resumeFile(HttpServletRequest request, @RequestParam(value = "id") String id) {

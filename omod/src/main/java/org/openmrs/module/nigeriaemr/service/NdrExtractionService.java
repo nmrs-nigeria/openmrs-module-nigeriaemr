@@ -137,20 +137,15 @@ public class NdrExtractionService {
 			String patientList = ndrExport.getPatientsList();
 			List<Integer> patients = (List<Integer>) mapper.readValue(patientList, List.class);
 			for (Integer patientId : patients) {
-				try {
-					long startTime = System.currentTimeMillis();
-					
-					ndrExtractor.extract(patientId, DATIMID, ndrExport.getReportFolder(), formattedDate, jaxbContext,
-					    ndrExport.getLastDate(), ndrExport.getDateStarted());
-					
-					long endTime = System.currentTimeMillis();
-					LoggerUtils.write(NdrExtractionService.class.getName(), patientId + "  " + (endTime - startTime)
-					        + " milli secs : ", LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
-					
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
+				long startTime = System.currentTimeMillis();
+				
+				ndrExtractor.extract(patientId, DATIMID, ndrExport.getReportFolder(), formattedDate, jaxbContext,
+				    ndrExport.getLastDate(), ndrExport.getDateStarted(), ndrExportBatch.getId());
+				
+				long endTime = System.currentTimeMillis();
+				LoggerUtils.write(NdrExtractionService.class.getName(), patientId + "  " + (endTime - startTime)
+				        + " milli secs : ", LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+				
 			}
 			nigeriaemrService.updateStatus(ndrExport.getId(), ndrExport.getBatchId(), "Done", true);
 		}
@@ -285,6 +280,11 @@ public class NdrExtractionService {
 			List<NDRExport> ndrExports;
 			if("resume".equalsIgnoreCase(action)) {
 				 ndrExports = nigeriaemrService.getNDRExportByBatchIdByStatus(idInt, "Processing");
+			}else if("failed".equalsIgnoreCase(action)) {
+				Map<String, Object> conditions = new HashMap<>();
+				conditions.put("batchId", idInt);
+				conditions.put("status", "Failed");
+				ndrExports = nigeriaemrService.getExports(conditions, null, false);
 			}else {
 				nigeriaemrService.resetExportBatch(idInt);
 				Map<String, Object> conditions = new HashMap<>();
@@ -295,12 +295,17 @@ public class NdrExtractionService {
 			}
 			boolean deleted = false;
 			for (NDRExport ndrExport : ndrExports) {
+				if("failed".equalsIgnoreCase(action)){
+					nigeriaemrService.updateStatus(ndrExport.getId(),idInt,"Processing", false);
+				}
 				if(!deleted && !"resume".equalsIgnoreCase(action)) {
 					NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(idInt);
-					deletePath(fullContextPath, ndrExportBatch.getPath());
+					if (!"failed".equalsIgnoreCase(action)) {
+						deleteFolder(ndrExportBatch.getReportFolder());
+						deletePath(fullContextPath, ndrExportBatch.getPath());
+					}
 					deletePath(fullContextPath, ndrExportBatch.getErrorPath());
 					deletePath(fullContextPath, ndrExportBatch.getErrorList());
-					deleteFolder(ndrExportBatch.getReportFolder());
 					deleteFolder(ndrExportBatch.getReportFolder() + File.separator + "error");
 					deleted = true;
 				}
