@@ -254,8 +254,8 @@ public class ClinicalDictionary {
 
         //EDD
         map.put(165048, "P");
-        map.put(165049, "NP");
-        map.put(165047, "BF");
+        map.put(165047, "NP");
+        map.put(165049, "BF");
     }
 
     private String getMappedValue(int conceptID) {
