@@ -276,7 +276,6 @@ public class NdrExtractionService {
 			int idInt = Integer.parseInt(id);
 			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 			NDREvent ndrEvent = (NDREvent) ServiceContext.getInstance().getApplicationContext().getBean("ndrEvent");
-			nigeriaemrService.updateExportBatch(idInt, "Processing", false);
 			List<NDRExport> ndrExports;
 			if("resume".equalsIgnoreCase(action)) {
 				 ndrExports = nigeriaemrService.getNDRExportByBatchIdByStatus(idInt, "Processing");
@@ -311,6 +310,7 @@ public class NdrExtractionService {
 				}
 				ndrEvent.send(ndrExport);
 			}
+			nigeriaemrService.updateExportBatch(idInt, "Processing", false);
 			return true;
 		}
 		catch (Exception e) {
