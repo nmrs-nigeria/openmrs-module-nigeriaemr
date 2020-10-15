@@ -69,13 +69,6 @@
                  splitStatements="true"
                  endDelimiter=";"/>
     </changeSet>
-    
-    <changeSet id="sql-app" author="toyeeb">
-        <sqlFile path="sql/app.sql"
-                 stripComments="true"
-                 splitStatements="true"
-                 endDelimiter=";"/>
-    </changeSet>
 
     <changeSet id="nigeriaemr-app-15102020202" author="Toyeeb" >
         <comment>
