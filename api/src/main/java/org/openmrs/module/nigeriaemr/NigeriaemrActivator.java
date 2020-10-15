@@ -24,9 +24,6 @@ public class NigeriaemrActivator extends BaseModuleActivator {
 	 * @see #started()
 	 */
 	public void started() {
-		
-		new HtmlFormsInitializer().started();
-		
 		log.info("Started Nigeriaemr");
 	}
 	

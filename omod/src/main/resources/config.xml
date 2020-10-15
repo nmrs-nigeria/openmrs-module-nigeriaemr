@@ -62,12 +62,13 @@
 	 /AOP -->
 	
 	
-	<!-- Required Privileges 
+	<!-- Required Privileges -->
 	<privilege>
-		<name>Form Entry</name>
-		<description>Allows user to access Form Entry pages/functions</description>
+		<name>Apps: nigeriaemrNMRSExport</name>
+		<description>Allows user to access NMRS Export Module</description>
 	</privilege>
-	 /Required Privileges -->
+	
+	 <!--/Required Privileges -->
 
 
 	<!-- Required Global Properties 
