@@ -69,5 +69,12 @@
                  splitStatements="true"
                  endDelimiter=";"/>
     </changeSet>
+    
+    <changeSet id="sql-app" author="toyeeb">
+        <sqlFile path="sql/app.sql"
+                 stripComments="true"
+                 splitStatements="true"
+                 endDelimiter=";"/>
+    </changeSet>
  
 </databaseChangeLog>
