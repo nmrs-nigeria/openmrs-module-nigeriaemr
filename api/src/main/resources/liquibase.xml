@@ -81,16 +81,10 @@
         <comment>
             insert menu link for the app
         </comment>
-        <sql><![CDATA[
-               INSERT INTO `appframework_user_app`
-(`app_id`,
-`json`)
-VALUES
-('nigeriaemrModuleReport',
-'{\r\n    \"id\": \"nigeriaemrModuleReport\",\r\n    \"description\": \"Nigeriaemr Report Expoort module\",\r\n    \"order\": 0,\r\n    \"extensions\": [\r\n        {\r\n            \"id\": \"nigeriaemrModuleReport\",\r\n            \"extensionPointId\": \"org.openmrs.referenceapplication.homepageLink\",\r\n            \"type\": \"link\",\r\n            \"label\": \"NMRS Export\",\r\n            \"url\": \"nigeriaemr/customreport.page\",\r\n            \"icon\": \"icon-upload-alt \",\r\n            \"requiredPrivilege\": \"Nigeriaemr Privilege\"\r\n        }\r\n    ]\r\n}'
-);
-		]]></sql>
-
+        <insert tableName="appframework_user_app">
+            <column name="app_id" value="nigeriaemrModuleReport"></column>
+            <column name="json" value='{\r\n    \"id\": \"nigeriaemrModuleReport\",\r\n    \"description\": \"Nigeriaemr Report Expoort module\",\r\n    \"order\": 0,\r\n    \"extensions\": [\r\n        {\r\n            \"id\": \"nigeriaemrModuleReport\",\r\n            \"extensionPointId\": \"org.openmrs.referenceapplication.homepageLink\",\r\n            \"type\": \"link\",\r\n            \"label\": \"NMRS Export\",\r\n            \"url\": \"nigeriaemr/customreport.page\",\r\n            \"icon\": \"icon-upload-alt \",\r\n            \"requiredPrivilege\": \"Nigeriaemr Privilege\"\r\n        }\r\n    ]\r\n}'></column>
+        </insert>
     </changeSet>
 
 
