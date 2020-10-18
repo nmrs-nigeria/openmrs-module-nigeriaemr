@@ -435,6 +435,10 @@ public class Utils {
 		return Context.getAdministrationService().getGlobalProperty("biometric_server");
 	}
 	
+	public static String getBiometricServerBaseURL() {
+		return Context.getAdministrationService().getGlobalProperty("biometric_server_URL");
+	}
+	
 	public static Version getVersionInfo() throws URISyntaxException, IOException {
 		
 		File f = new File(Utils.class.getClassLoader().getResource("version.json").getFile());

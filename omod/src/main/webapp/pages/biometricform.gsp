@@ -117,7 +117,8 @@
     let capturedPrint = [];
     let	fingerPosition = ["","LEFT_THUMB", "LEFT_INDEX", "LEFT_MIDDLE", "LEFT_RING", "LEFT_LITTLE",
     "RIGHT_THUMB", "RIGHT_INDEX", "RIGHT_MIDDLE", "RIGHT_RING", "RIGHT_LITTLE" ];
-    let url = 'http://localhost:2018/api/FingerPrint';
+    let url =  '${ biometricUrl }'
+    console.log(url)
 
     let PreviousCaptureURL =url + '/CheckForPreviousCapture?PatientUUID='+patientId;
 
