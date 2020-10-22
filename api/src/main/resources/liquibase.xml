@@ -79,6 +79,17 @@
             <column name="json" value='{\r\n    \"id\": \"nigeriaemrModuleReport\",\r\n    \"description\": \"Nigeriaemr Report Expoort module\",\r\n    \"order\": 0,\r\n    \"extensions\": [\r\n        {\r\n            \"id\": \"nigeriaemrModuleReport\",\r\n            \"extensionPointId\": \"org.openmrs.referenceapplication.homepageLink\",\r\n            \"type\": \"link\",\r\n            \"label\": \"NMRS Export\",\r\n            \"url\": \"nigeriaemr/customreport.page\",\r\n            \"icon\": \"icon-upload-alt \",\r\n            \"requiredPrivilege\": \"Nigeriaemr Privilege\"\r\n        }\r\n    ]\r\n}'></column>
         </insert>
     </changeSet>
-
-
+    
+    <changeSet id="update_biometric_table_20201022350" author="wande">
+        <dropNotNullConstraint tableName="biometricinfo" columnName="template" columnDataType="text"/>
+        <addColumn tableName="biometricinfo">
+            <column name="new_template" type="blob"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="update_biometric_table_longblob_20201022350" author="wande">
+        <sql>
+            ALTER TABLE biometricinfo
+            CHANGE COLUMN new_template new_template LONGBLOB NULL DEFAULT NULL ;
+        </sql>
+    </changeSet>
 </databaseChangeLog>

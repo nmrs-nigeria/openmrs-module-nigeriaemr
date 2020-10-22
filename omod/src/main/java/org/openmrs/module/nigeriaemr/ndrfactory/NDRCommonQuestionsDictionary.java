@@ -353,7 +353,7 @@ public class NDRCommonQuestionsDictionary {
             //  DBConnection connResult = Utils.getNmrsConnectionDetails();
             connection = DriverManager.getConnection(connResult.getUrl(), connResult.getUsername(), connResult.getPassword());
             Statement statement = connection.createStatement();
-            String sqlStatement = ("SELECT template, fingerPosition, date_created,creator FROM biometricinfo WHERE patient_Id = " + id);
+            String sqlStatement = ("SELECT  COALESCE(template, CONVERT(new_template USING utf8)) as template, fingerPosition, date_created,creator FROM biometricinfo WHERE patient_Id = " + id);
             ResultSet result = statement.executeQuery(sqlStatement);
             FingerPrintType fingerPrintsType = new FingerPrintType();
             if (result.next()) {
@@ -399,21 +399,12 @@ public class NDRCommonQuestionsDictionary {
                             break;
                     }
                 }
-              
-//                if (creator == 0) {
-//                    fingerPrintsType.setSource("N");
-//                } else if (creator == 1) {
-//                    fingerPrintsType.setSource("M");
-//                } else {
-//                    fingerPrintsType.setSource("UNK");
-//                }
+
                 fingerPrintsType.setDateCaptured(dataCaptured);
 
-              //  fingerPrintsType.setPresent(true);
-                //fingerPrintsType.setLeftHand(leftHand);
-                //fingerPrintsType.setRightHand(rightHand);
                 fingerPrintsType.setRightHand(rightFingerType);
                 fingerPrintsType.setLeftHand(leftFingerType);
+                fingerPrintsType.setCaptureQuality(result.getInt("imageQuality"));
             } else {
                 connection.close();
                 return null;

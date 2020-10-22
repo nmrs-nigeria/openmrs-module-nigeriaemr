@@ -47,6 +47,9 @@ public class FingerPrintType {
 	@XmlElement(required = true)
 	protected LeftHandType leftHand;
 	
+	@XmlElement
+	protected Integer captureQuality;
+	
 	/**
 	 * Gets the value of the dateCaptured property.
 	 * 
@@ -101,4 +104,11 @@ public class FingerPrintType {
 		this.leftHand = value;
 	}
 	
+	public Integer getCaptureQuality() {
+		return captureQuality;
+	}
+	
+	public void setCaptureQuality(Integer captureQuality) {
+		this.captureQuality = captureQuality;
+	}
 }

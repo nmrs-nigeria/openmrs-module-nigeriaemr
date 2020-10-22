@@ -3182,6 +3182,7 @@
   		<xs:element name="leftHand" type="leftHandType" minOccurs="1"
   			maxOccurs="1">
   		</xs:element>
+        <xs:element name="captureQuality" type="xs:int" maxOccurs="1" minOccurs="0"/>
   		<xs:element name="source" minOccurs="0" maxOccurs="1">
   		<xs:annotation>
     				<xs:documentation xml:lang="en">
