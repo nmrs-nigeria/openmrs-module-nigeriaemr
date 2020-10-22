@@ -15,6 +15,7 @@ package org.openmrs.module.nigeriaemr.page.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.stereotype.Controller;
@@ -37,6 +38,8 @@ public class BiometricformPageController {
 		if (url == null || url.isEmpty())
 			url = "http://localhost:2018/api/FingerPrint";
 		model.addAttribute("biometricUrl", url);
+		model.addAttribute("authenticatedUser", Context.getAuthenticatedUser());
+		model.addAttribute("authenticatedUserId", Context.getAuthenticatedUser().getId());
 		return null;
 	}
 	
