@@ -361,8 +361,11 @@ public class NDRCommonQuestionsDictionary {
                 LeftHandType leftFingerType = new LeftHandType();
                 XMLGregorianCalendar dataCaptured = null;
                 Integer creator = null;
+                Integer captureQuality = Integer.MAX_VALUE;
                 result.beforeFirst();
                 while (result.next()) {
+                    int quality = result.getInt("imageQuality");
+                    if(captureQuality > quality) captureQuality = quality;
                     String fingerPosition = result.getString("fingerPosition");
                     creator = result.getInt("creator");
                     dataCaptured = Utils.getXmlDateTime(result.getDate("date_created"));
@@ -404,7 +407,7 @@ public class NDRCommonQuestionsDictionary {
 
                 fingerPrintsType.setRightHand(rightFingerType);
                 fingerPrintsType.setLeftHand(leftFingerType);
-                fingerPrintsType.setCaptureQuality(result.getInt("imageQuality"));
+                fingerPrintsType.setCaptureQuality(captureQuality);
             } else {
                 connection.close();
                 return null;
