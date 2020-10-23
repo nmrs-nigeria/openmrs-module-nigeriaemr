@@ -35,7 +35,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FingerPrintType", propOrder = { "dateCaptured", "rightHand", "leftHand" })
+@XmlType(name = "FingerPrintType", propOrder = { "dateCaptured", "rightHand", "leftHand", "captureQuality" })
 public class FingerPrintType {
 	
 	@XmlSchemaType(name = "date")
@@ -46,6 +46,9 @@ public class FingerPrintType {
 	
 	@XmlElement(required = true)
 	protected LeftHandType leftHand;
+	
+	@XmlElement
+	protected Integer captureQuality;
 	
 	/**
 	 * Gets the value of the dateCaptured property.
@@ -99,6 +102,14 @@ public class FingerPrintType {
 	 */
 	public void setLeftHand(LeftHandType value) {
 		this.leftHand = value;
+	}
+	
+	public Integer getCaptureQuality() {
+		return captureQuality;
+	}
+	
+	public void setCaptureQuality(Integer captureQuality) {
+		this.captureQuality = captureQuality;
 	}
 	
 }

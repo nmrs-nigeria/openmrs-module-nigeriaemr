@@ -947,6 +947,10 @@ public class Utils {
 		return obs;
 	}
 	
+	public static String getBiometricServerBaseURL() {
+		return Context.getAdministrationService().getGlobalProperty("biometric_server_URL");
+	}
+	
 	public void dothings() {
 		
 	}
