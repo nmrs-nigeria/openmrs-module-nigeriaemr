@@ -23,6 +23,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.logic.op.In;
 import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.CommonQuestionsType;
 import org.openmrs.module.nigeriaemr.model.ndr.ConditionSpecificQuestionsType;
@@ -343,7 +344,7 @@ public class NDRCommonQuestionsDictionary {
             //  DBConnection connResult = Utils.getNmrsConnectionDetails();
             connection = DriverManager.getConnection(connResult.getUrl(), connResult.getUsername(), connResult.getPassword());
             Statement statement = connection.createStatement();
-            String sqlStatement = ("SELECT template, fingerPosition, date_created,creator FROM biometricinfo WHERE patient_Id = " + id);
+            String sqlStatement = ("SELECT COALESCE(template, CONVERT(new_template USING utf8)) as template, fingerPosition, date_created,creator, imageQuality FROM biometricinfo WHERE patient_Id = " + id);
             ResultSet result = statement.executeQuery(sqlStatement);
             FingerPrintType fingerPrintsType = new FingerPrintType();
             if (result.next()) {
@@ -351,7 +352,10 @@ public class NDRCommonQuestionsDictionary {
                 LeftHandType leftFingerType = new LeftHandType();
                 XMLGregorianCalendar dataCaptured = null;
                 Integer creator = null;
+                Integer captureQuality = Integer.MAX_VALUE;
                 while (result.next()) {
+                    int quality = result.getInt("imageQuality");
+                    if(captureQuality > quality) captureQuality = quality;
                     String fingerPosition = result.getString("fingerPosition");
                     creator = result.getInt("creator");
                     dataCaptured = Utils.getXmlDateTime(result.getDate("date_created"));
@@ -403,6 +407,7 @@ public class NDRCommonQuestionsDictionary {
                 //fingerPrintsType.setRightHand(rightHand);
                 fingerPrintsType.setRightHand(rightFingerType);
                 fingerPrintsType.setLeftHand(leftFingerType);
+                fingerPrintsType.setCaptureQuality(captureQuality);
             } else {
                 connection.close();
                 return null;
