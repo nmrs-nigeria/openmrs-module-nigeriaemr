@@ -35,23 +35,39 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "leftHandType", propOrder = { "leftThumb", "leftIndex", "leftMiddle", "leftWedding", "leftSmall" })
+@XmlType(name = "leftHandType", propOrder = { "leftThumb", "leftThumbQuality", "leftIndex", "leftIndexQuality",
+        "leftMiddle", "leftMiddleQuality", "leftWedding", "leftWeddingQuality", "leftSmall", "leftSmallQuality" })
 public class LeftHandType {
 	
 	@XmlElement(name = "LeftThumb")
 	protected String leftThumb;
 	
+	@XmlElement(name = "LeftThumbQuality")
+	protected Integer leftThumbQuality;
+	
 	@XmlElement(name = "LeftIndex")
 	protected String leftIndex;
+	
+	@XmlElement(name = "LeftIndexQuality")
+	protected Integer leftIndexQuality;
 	
 	@XmlElement(name = "LeftMiddle")
 	protected String leftMiddle;
 	
+	@XmlElement(name = "LeftMiddleQuality")
+	protected Integer leftMiddleQuality;
+	
 	@XmlElement(name = "LeftWedding")
 	protected String leftWedding;
 	
+	@XmlElement(name = "LeftWeddingQuality")
+	protected Integer leftWeddingQuality;
+	
 	@XmlElement(name = "LeftSmall")
 	protected String leftSmall;
+	
+	@XmlElement(name = "LeftSmallQuality")
+	protected Integer leftSmallQuality;
 	
 	/**
 	 * Gets the value of the leftThumb property.
@@ -143,4 +159,43 @@ public class LeftHandType {
 		this.leftSmall = value;
 	}
 	
+	public Integer getLeftThumbQuality() {
+		return leftThumbQuality;
+	}
+	
+	public void setLeftThumbQuality(Integer leftThumbQuality) {
+		this.leftThumbQuality = leftThumbQuality;
+	}
+	
+	public Integer getLeftIndexQuality() {
+		return leftIndexQuality;
+	}
+	
+	public void setLeftIndexQuality(Integer leftIndexQuality) {
+		this.leftIndexQuality = leftIndexQuality;
+	}
+	
+	public Integer getLeftMiddleQuality() {
+		return leftMiddleQuality;
+	}
+	
+	public void setLeftMiddleQuality(Integer leftMiddleQuality) {
+		this.leftMiddleQuality = leftMiddleQuality;
+	}
+	
+	public Integer getLeftWeddingQuality() {
+		return leftWeddingQuality;
+	}
+	
+	public void setLeftWeddingQuality(Integer leftWeddingQuality) {
+		this.leftWeddingQuality = leftWeddingQuality;
+	}
+	
+	public Integer getLeftSmallQuality() {
+		return leftSmallQuality;
+	}
+	
+	public void setLeftSmallQuality(Integer leftSmallQuality) {
+		this.leftSmallQuality = leftSmallQuality;
+	}
 }

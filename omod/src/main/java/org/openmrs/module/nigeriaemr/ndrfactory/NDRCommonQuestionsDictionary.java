@@ -350,44 +350,49 @@ public class NDRCommonQuestionsDictionary {
             RightHandType rightFingerType = new RightHandType();
             LeftHandType leftFingerType = new LeftHandType();
             XMLGregorianCalendar dataCaptured = null;
-            Integer creator = null;
-            Integer captureQuality = Integer.MAX_VALUE;
             while (result.next()) {
-                int quality = result.getInt("imageQuality");
-                if(captureQuality > quality) captureQuality = quality;
                 String fingerPosition = result.getString("fingerPosition");
-                creator = result.getInt("creator");
                 dataCaptured = Utils.getXmlDateTime(result.getDate("date_created"));
                 switch (fingerPosition) {
                     case "RightThumb":
                         rightFingerType.setRightThumb(result.getString("template"));
+                        rightFingerType.setRightThumbQuality(result.getInt("imageQuality"));
                         break;
                     case "RightIndex":
                         rightFingerType.setRightIndex(result.getString("template"));
+                        rightFingerType.setRightIndexQuality(result.getInt("imageQuality"));
                         break;
                     case "RightMiddle":
                         rightFingerType.setRightMiddle(result.getString("template"));
+                        rightFingerType.setRightMiddleQuality(result.getInt("imageQuality"));
                         break;
                     case "RightWedding":
                         rightFingerType.setRightWedding(result.getString("template"));
+                        rightFingerType.setRightWeddingQuality(result.getInt("imageQuality"));
                         break;
                     case "RightSmall":
                         rightFingerType.setRightSmall(result.getString("template"));
+                        rightFingerType.setRightSmallQuality(result.getInt("imageQuality"));
                         break;
                     case "LeftThumb":
                         leftFingerType.setLeftThumb(result.getString("template"));
+                        leftFingerType.setLeftThumbQuality(result.getInt("imageQuality"));
                         break;
                     case "LeftIndex":
                         leftFingerType.setLeftIndex(result.getString("template"));
+                        leftFingerType.setLeftIndexQuality(result.getInt("imageQuality"));
                         break;
                     case "LeftMiddle":
                         leftFingerType.setLeftMiddle(result.getString("template"));
+                        leftFingerType.setLeftMiddleQuality(result.getInt("imageQuality"));
                         break;
                     case "LeftWedding":
                         leftFingerType.setLeftWedding(result.getString("template"));
+                        leftFingerType.setLeftWeddingQuality(result.getInt("imageQuality"));
                         break;
                     case "LeftSmall":
                         leftFingerType.setLeftSmall(result.getString("template"));
+                        leftFingerType.setLeftSmallQuality(result.getInt("imageQuality"));
                         break;
                 }
             }
@@ -406,7 +411,6 @@ public class NDRCommonQuestionsDictionary {
             //fingerPrintsType.setRightHand(rightHand);
             fingerPrintsType.setRightHand(rightFingerType);
             fingerPrintsType.setLeftHand(leftFingerType);
-            fingerPrintsType.setCaptureQuality(captureQuality);
 
             connection.close();
             return fingerPrintsType;
