@@ -353,7 +353,7 @@ public class NDRCommonQuestionsDictionary {
             //  DBConnection connResult = Utils.getNmrsConnectionDetails();
             connection = DriverManager.getConnection(connResult.getUrl(), connResult.getUsername(), connResult.getPassword());
             Statement statement = connection.createStatement();
-            String sqlStatement = ("SELECT  COALESCE(template, CONVERT(new_template USING utf8)) as template, fingerPosition, date_created,creator FROM biometricinfo WHERE patient_Id = " + id);
+            String sqlStatement = ("SELECT  COALESCE(template, CONVERT(new_template USING utf8)) as template, fingerPosition, date_created,creator, imageQuality FROM biometricinfo WHERE patient_Id = " + id);
             ResultSet result = statement.executeQuery(sqlStatement);
             FingerPrintType fingerPrintsType = new FingerPrintType();
             if (result.next()) {
