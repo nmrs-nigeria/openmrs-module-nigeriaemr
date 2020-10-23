@@ -347,52 +347,51 @@ public class NDRCommonQuestionsDictionary {
             String sqlStatement = ("SELECT COALESCE(template, CONVERT(new_template USING utf8)) as template, fingerPosition, date_created,creator, imageQuality FROM biometricinfo WHERE patient_Id = " + id);
             ResultSet result = statement.executeQuery(sqlStatement);
             FingerPrintType fingerPrintsType = new FingerPrintType();
-            if (result.next()) {
-                RightHandType rightFingerType = new RightHandType();
-                LeftHandType leftFingerType = new LeftHandType();
-                XMLGregorianCalendar dataCaptured = null;
-                Integer creator = null;
-                Integer captureQuality = Integer.MAX_VALUE;
-                while (result.next()) {
-                    int quality = result.getInt("imageQuality");
-                    if(captureQuality > quality) captureQuality = quality;
-                    String fingerPosition = result.getString("fingerPosition");
-                    creator = result.getInt("creator");
-                    dataCaptured = Utils.getXmlDateTime(result.getDate("date_created"));
-                    switch (fingerPosition) {
-                        case "RightThumb":
-                            rightFingerType.setRightThumb(result.getString("template"));
-                            break;
-                        case "RightIndex":
-                            rightFingerType.setRightIndex(result.getString("template"));
-                            break;
-                        case "RightMiddle":
-                            rightFingerType.setRightMiddle(result.getString("template"));
-                            break;
-                        case "RightWedding":
-                            rightFingerType.setRightWedding(result.getString("template"));
-                            break;
-                        case "RightSmall":
-                            rightFingerType.setRightSmall(result.getString("template"));
-                            break;
-                        case "LeftThumb":
-                            leftFingerType.setLeftThumb(result.getString("template"));
-                            break;
-                        case "LeftIndex":
-                            leftFingerType.setLeftIndex(result.getString("template"));
-                            break;
-                        case "LeftMiddle":
-                            leftFingerType.setLeftMiddle(result.getString("template"));
-                            break;
-                        case "LeftWedding":
-                            leftFingerType.setLeftWedding(result.getString("template"));
-                            break;
-                        case "LeftSmall":
-                            leftFingerType.setLeftSmall(result.getString("template"));
-                            break;
-                    }
+            RightHandType rightFingerType = new RightHandType();
+            LeftHandType leftFingerType = new LeftHandType();
+            XMLGregorianCalendar dataCaptured = null;
+            Integer creator = null;
+            Integer captureQuality = Integer.MAX_VALUE;
+            while (result.next()) {
+                int quality = result.getInt("imageQuality");
+                if(captureQuality > quality) captureQuality = quality;
+                String fingerPosition = result.getString("fingerPosition");
+                creator = result.getInt("creator");
+                dataCaptured = Utils.getXmlDateTime(result.getDate("date_created"));
+                switch (fingerPosition) {
+                    case "RightThumb":
+                        rightFingerType.setRightThumb(result.getString("template"));
+                        break;
+                    case "RightIndex":
+                        rightFingerType.setRightIndex(result.getString("template"));
+                        break;
+                    case "RightMiddle":
+                        rightFingerType.setRightMiddle(result.getString("template"));
+                        break;
+                    case "RightWedding":
+                        rightFingerType.setRightWedding(result.getString("template"));
+                        break;
+                    case "RightSmall":
+                        rightFingerType.setRightSmall(result.getString("template"));
+                        break;
+                    case "LeftThumb":
+                        leftFingerType.setLeftThumb(result.getString("template"));
+                        break;
+                    case "LeftIndex":
+                        leftFingerType.setLeftIndex(result.getString("template"));
+                        break;
+                    case "LeftMiddle":
+                        leftFingerType.setLeftMiddle(result.getString("template"));
+                        break;
+                    case "LeftWedding":
+                        leftFingerType.setLeftWedding(result.getString("template"));
+                        break;
+                    case "LeftSmall":
+                        leftFingerType.setLeftSmall(result.getString("template"));
+                        break;
                 }
-              
+            }
+
 //                if (creator == 0) {
 //                    fingerPrintsType.setSource("N");
 //                } else if (creator == 1) {
@@ -400,18 +399,15 @@ public class NDRCommonQuestionsDictionary {
 //                } else {
 //                    fingerPrintsType.setSource("UNK");
 //                }
-                fingerPrintsType.setDateCaptured(dataCaptured);
+            fingerPrintsType.setDateCaptured(dataCaptured);
 
-              //  fingerPrintsType.setPresent(true);
-                //fingerPrintsType.setLeftHand(leftHand);
-                //fingerPrintsType.setRightHand(rightHand);
-                fingerPrintsType.setRightHand(rightFingerType);
-                fingerPrintsType.setLeftHand(leftFingerType);
-                fingerPrintsType.setCaptureQuality(captureQuality);
-            } else {
-                connection.close();
-                return null;
-            }
+          //  fingerPrintsType.setPresent(true);
+            //fingerPrintsType.setLeftHand(leftHand);
+            //fingerPrintsType.setRightHand(rightHand);
+            fingerPrintsType.setRightHand(rightFingerType);
+            fingerPrintsType.setLeftHand(leftFingerType);
+            fingerPrintsType.setCaptureQuality(captureQuality);
+
             connection.close();
             return fingerPrintsType;
         } catch (SQLException e) {
