@@ -354,33 +354,43 @@ public class NDRCommonQuestionsDictionary {
                     switch (fingerPosition) {
                         case "RightThumb":
                             rightFingerType.setRightThumb(biometricInfo.getTemplate());
+                            rightFingerType.setRightThumbQuality(biometricInfo.getImageQuality());
                             break;
                         case "RightIndex":
                             rightFingerType.setRightIndex(biometricInfo.getTemplate());
+                            rightFingerType.setRightIndexQuality(biometricInfo.getImageQuality());
                             break;
                         case "RightMiddle":
                             rightFingerType.setRightMiddle(biometricInfo.getTemplate());
+                            rightFingerType.setRightMiddleQuality(biometricInfo.getImageQuality());
                             break;
                         case "RightWedding":
                             rightFingerType.setRightWedding(biometricInfo.getTemplate());
+                            rightFingerType.setRightWeddingQuality(biometricInfo.getImageQuality());
                             break;
                         case "RightSmall":
                             rightFingerType.setRightSmall(biometricInfo.getTemplate());
+                            rightFingerType.setRightSmallQuality(biometricInfo.getImageQuality());
                             break;
                         case "LeftThumb":
                             leftFingerType.setLeftThumb(biometricInfo.getTemplate());
+                            leftFingerType.setLeftThumbQuality(biometricInfo.getImageQuality());
                             break;
                         case "LeftIndex":
                             leftFingerType.setLeftIndex(biometricInfo.getTemplate());
+                            leftFingerType.setLeftIndexQuality(biometricInfo.getImageQuality());
                             break;
                         case "LeftMiddle":
                             leftFingerType.setLeftMiddle(biometricInfo.getTemplate());
+                            leftFingerType.setLeftMiddleQuality(biometricInfo.getImageQuality());
                             break;
                         case "LeftWedding":
                             leftFingerType.setLeftWedding(biometricInfo.getTemplate());
+                            leftFingerType.setLeftWeddingQuality(biometricInfo.getImageQuality());
                             break;
                         case "LeftSmall":
                             leftFingerType.setLeftSmall(biometricInfo.getTemplate());
+                            leftFingerType.setLeftSmallQuality(biometricInfo.getImageQuality());
                             break;
                     }
                 }

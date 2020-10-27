@@ -974,6 +974,18 @@ public class Utils {
 				b = f.delete();
 				System.out.println("deleted previous xml successfully ? " + b);
 			}
+			//check for error folder
+			String errorFolders = Paths.get(todayFolders, "error").toString();
+			File errorDir = new File(errorFolders);
+			if (errorDir.exists()) {
+				File[] errorFiles = errorDir.listFiles();
+				if (errorFiles != null) {
+					for (File f : errorFiles) {
+						b = f.delete();
+						System.out.println("deleted previous error xml successfully ? " + b);
+					}
+				}
+			}
 			b = dir.delete();
 			System.out.println("deleted previous folder successfully ? " + b);
 		}
@@ -1207,6 +1219,10 @@ public class Utils {
 			count++;
 		}
 		return ele;
+	}
+	
+	public static String getBiometricServerBaseURL() {
+		return Context.getAdministrationService().getGlobalProperty("biometric_server_URL");
 	}
 	
 	public void writeToFile(String filePath, String content) {

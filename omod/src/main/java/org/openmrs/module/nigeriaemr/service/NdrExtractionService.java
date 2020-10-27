@@ -120,10 +120,12 @@ public class NdrExtractionService {
 		}
 	}
 	
+	NDRExportBatch ndrExportBatch;
+	
 	public void export(NDRExport ndrExport) {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		//check if batch is still valid
-		NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(ndrExport.getBatchId());
+		ndrExportBatch = nigeriaemrService.getNDRExportBatchById(ndrExport.getBatchId());
 		if (ndrExportBatch == null || !ndrExportBatch.getStatus().equalsIgnoreCase("Processing")) {
 			LoggerUtils.write(NdrExtractionService.class.getName(), "skipping", LoggerUtils.LogFormat.FATAL,
 			    LoggerUtils.LogLevel.live);
@@ -293,10 +295,11 @@ public class NdrExtractionService {
 
 			}
 			boolean deleted = false;
+			nigeriaemrService.updateExportBatch(idInt, "Processing", false);
 			for (NDRExport ndrExport : ndrExports) {
-				if("failed".equalsIgnoreCase(action)){
-					nigeriaemrService.updateStatus(ndrExport.getId(),idInt,"Processing", false);
-				}
+//				if("failed".equalsIgnoreCase(action)){
+//					nigeriaemrService.updateStatus(ndrExport.getId(),idInt,"Processing", false);
+//				}
 				if(!deleted && !"resume".equalsIgnoreCase(action)) {
 					NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(idInt);
 					if (!"failed".equalsIgnoreCase(action)) {
@@ -310,7 +313,7 @@ public class NdrExtractionService {
 				}
 				ndrEvent.send(ndrExport);
 			}
-			nigeriaemrService.updateExportBatch(idInt, "Processing", false);
+//			nigeriaemrService.updateExportBatch(idInt, "Processing", false);
 			return true;
 		}
 		catch (Exception e) {

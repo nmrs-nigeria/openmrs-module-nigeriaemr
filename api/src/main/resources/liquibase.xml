@@ -130,5 +130,42 @@
              splitStatements="true"
              endDelimiter=";"/>
     </changeSet>
+
+    <changeSet id="update_biometric_table_20201022350" author="wande">
+        <dropNotNullConstraint tableName="biometricinfo" columnName="template" columnDataType="text"/>
+        <addColumn tableName="biometricinfo">
+            <column name="new_template" type="blob"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="update_biometric_table_longblob_20201022350" author="wande">
+        <sql>
+            ALTER TABLE biometricinfo
+            CHANGE COLUMN new_template new_template LONGBLOB NULL DEFAULT NULL ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="biometric_flag_231020201243" author="wande">
+        <insert tableName="patientflags_flag">
+            <column name="name" value="Has low quality fingerprints"/>
+            <column name="criteria" value="select distinct b.patient_id from biometricinfo b where b.imageQuality &lt; 60 "/>
+            <column name="message" value="Patient biometrics needs to be recaptured because of low quality data"/>
+            <column name="enabled" valueNumeric="1"/>
+            <column name="evaluator" value="org.openmrs.module.patientflags.evaluator.SQLFlagEvaluator"/>
+            <column name="creator" valueNumeric="1"/>
+            <column name="changed_by" valueNumeric="1"/>
+            <column name="retired" valueNumeric="0"/>
+            <column name="uuid" value="3c1da44a-1f23-4ea2-823a-083a40817b37"/>
+            <column name="priority_id" valueNumeric="1"/>
+            <column name="date_created" valueDate="now()"/>
+            <column name="date_changed" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="biometric_flag_231020201243_2" author="wande">
+        <sql>
+            select  @var_name := flag_id from patientflags_flag where uuid = '3c1da44a-1f23-4ea2-823a-083a40817b37';
+            INSERT INTO patientflags_flag_tag (`flag_id`,`tag_id`) VALUES (@var_name,1);
+        </sql>
+    </changeSet>
  
 </databaseChangeLog>

@@ -46,8 +46,8 @@ public class NDRConverter {
 	private final Date fromDate;
 	
 	private final Date toDate;
-	
-	public NDRConverter(DBConnection _openmrsConn, Date fromDate, Date toDate) {
+
+    public NDRConverter(DBConnection _openmrsConn, Date fromDate, Date toDate) {
 		this.openmrsConn = _openmrsConn;
 		this.nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 		this.fromDate = fromDate;
@@ -66,7 +66,7 @@ public class NDRConverter {
         try {
             patient = pts;
 
-            List<Encounter> filteredEncounters = nigeriaEncounterService.getEncountersByPatient(pts,this.fromDate,this.toDate);
+            List<Encounter> filteredEncounters = nigeriaEncounterService.getEncountersByPatient(pts, this.fromDate, this.toDate);
 
 
             if(!pts.isVoided()) {
@@ -87,17 +87,18 @@ public class NDRConverter {
                 this.groupedpatientBaselineObsByConcept = groupedPatientBaseLine.get("groupedByConceptIds");
                 this.groupedpatientBaselineObsByEncounterType = groupedPatientBaseLine.get("groupedByEncounterTypes");
 
-                for(Encounter enc: filteredEncounters){
-                    int dateCreatedComp = enc.getDateCreated().compareTo(this.toDate);
-                    int dateModifiedComp = -1;
-                    if (enc.getDateChanged() != null) {
-                        dateModifiedComp = enc.getDateChanged().compareTo(this.toDate);
-                    }
-                    if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
-                        hasUpdate = true;
-                        break;
-                    }
-                }
+                if(filteredEncounters.size() > 0)  hasUpdate = true;
+//                for(Encounter enc: filteredEncounters){
+//                    int dateCreatedComp = enc.getDateCreated().compareTo(this.toDate);
+//                    int dateModifiedComp = -1;
+//                    if (enc.getDateChanged() != null) {
+//                        dateModifiedComp = enc.getDateChanged().compareTo(this.toDate);
+//                    }
+//                    if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
+//
+//                        break;
+//                    }
+//                }
             }
 
             MessageHeaderType header = createMessageHeaderType(pts, hasUpdate);
@@ -113,6 +114,15 @@ public class NDRConverter {
             }
 
             container.setIndividualReport(individualReportType);
+
+            this.lastEncounter = null;
+            this.groupedEncounters = null;
+            this.groupedObsByConceptIds = null;
+            this.groupedObsByEncounterTypes = null;
+            this.groupedObsByVisitDate = null;
+            this.groupedpatientBaselineObsByConcept =null;
+            this.groupedpatientBaselineObsByEncounterType = null;
+
             return container;
         } catch (Exception ex) {
             LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
