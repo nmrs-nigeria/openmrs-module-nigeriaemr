@@ -35,23 +35,39 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "rightHandType", propOrder = { "rightThumb", "rightIndex", "rightMiddle", "rightWedding", "rightSmall" })
+@XmlType(name = "rightHandType", propOrder = { "rightThumb", "rightThumbQuality", "rightIndex", "rightIndexQuality",
+        "rightMiddle", "rightMiddleQuality", "rightWedding", "rightWeddingQuality", "rightSmall", "rightSmallQuality" })
 public class RightHandType {
 	
 	@XmlElement(name = "RightThumb")
 	protected String rightThumb;
 	
+	@XmlElement(name = "RightThumbQuality")
+	protected Integer rightThumbQuality;
+	
 	@XmlElement(name = "RightIndex")
 	protected String rightIndex;
+	
+	@XmlElement(name = "RightIndexQuality")
+	protected Integer rightIndexQuality;
 	
 	@XmlElement(name = "RightMiddle")
 	protected String rightMiddle;
 	
+	@XmlElement(name = "RightMiddleQuality")
+	protected Integer rightMiddleQuality;
+	
 	@XmlElement(name = "RightWedding")
 	protected String rightWedding;
 	
+	@XmlElement(name = "RightWeddingQuality")
+	protected Integer rightWeddingQuality;
+	
 	@XmlElement(name = "RightSmall")
 	protected String rightSmall;
+	
+	@XmlElement(name = "RightSmallQuality")
+	protected Integer rightSmallQuality;
 	
 	/**
 	 * Gets the value of the rightThumb property.
@@ -143,4 +159,43 @@ public class RightHandType {
 		this.rightSmall = value;
 	}
 	
+	public Integer getRightThumbQuality() {
+		return rightThumbQuality;
+	}
+	
+	public void setRightThumbQuality(Integer rightThumbQuality) {
+		this.rightThumbQuality = rightThumbQuality;
+	}
+	
+	public Integer getRightIndexQuality() {
+		return rightIndexQuality;
+	}
+	
+	public void setRightIndexQuality(Integer rightIndexQuality) {
+		this.rightIndexQuality = rightIndexQuality;
+	}
+	
+	public Integer getRightMiddleQuality() {
+		return rightMiddleQuality;
+	}
+	
+	public void setRightMiddleQuality(Integer rightMiddleQuality) {
+		this.rightMiddleQuality = rightMiddleQuality;
+	}
+	
+	public Integer getRightWeddingQuality() {
+		return rightWeddingQuality;
+	}
+	
+	public void setRightWeddingQuality(Integer rightWeddingQuality) {
+		this.rightWeddingQuality = rightWeddingQuality;
+	}
+	
+	public Integer getRightSmallQuality() {
+		return rightSmallQuality;
+	}
+	
+	public void setRightSmallQuality(Integer rightSmallQuality) {
+		this.rightSmallQuality = rightSmallQuality;
+	}
 }

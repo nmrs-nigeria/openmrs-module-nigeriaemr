@@ -100,5 +100,4 @@ public class FingerPrintType {
 	public void setLeftHand(LeftHandType value) {
 		this.leftHand = value;
 	}
-	
 }
