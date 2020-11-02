@@ -48,14 +48,15 @@
     </bean>
 
     <!-- Message Receiver Definition -->
-    <bean id="messageReceiver" class="org.openmrs.module.nigeriaemr.Consumer">
+    <bean id="consumer" class="org.openmrs.module.nigeriaemr.Consumer">
     </bean>
 
     <bean class="org.springframework.jms.listener.SimpleMessageListenerContainer">
         <property name="connectionFactory" ref="connectionFactory" />
         <property name="destinationName" value="ndrExportQueue" />
-        <property name="messageListener" ref="messageReceiver" />
-        <property name="concurrentConsumers" value="5"/>
+        <property name="messageListener" ref="consumer" />
+        <property name="concurrentConsumers" value="2"/>
+        <property name="sessionAcknowledgeMode" value="1" />
     </bean>
 
 </beans>

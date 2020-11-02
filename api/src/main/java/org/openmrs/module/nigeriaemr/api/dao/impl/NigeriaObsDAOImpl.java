@@ -46,7 +46,7 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 	@SuppressWarnings("unchecked")
 	public List<Obs> getObsByConceptId(Integer personId, Integer conceptId, List<Integer> encounterIds, boolean includeVoided)
 	        throws DAOException {
-		List<Obs> obs = new ArrayList<Obs>();
+		List<Obs> obs = new ArrayList<>();
 		List<Integer> obsIds;
 		
 		String query = "SELECT distinct(obs.obs_id) FROM obs WHERE TRUE";
@@ -192,6 +192,7 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		}
 		criteria.addOrder(Order.desc("obsDatetime"));
 		criteria.add(Restrictions.eq("voided", false));
+		criteria.setFetchSize(1);
 		
 		criteria.setFetchSize(1);
 		if (criteria.list().size() > 0)

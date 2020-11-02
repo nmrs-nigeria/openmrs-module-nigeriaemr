@@ -16,6 +16,7 @@ import org.openmrs.module.nigeriaemr.model.ndr.HIVEncounterType;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
 public class ClinicalDictionary {
+    Utils utils = new Utils();
 
     public final static int Weight_Concept_Id = 5089,
             Child_Height_Concept_Id = 5090,
@@ -316,7 +317,7 @@ public class ClinicalDictionary {
         visitID = Utils.getVisitId(pepfarID, visitDate);
         hivEncounterType = new HIVEncounterType();
         hivEncounterType.setVisitID(visitID);
-        hivEncounterType.setVisitDate(Utils.getXmlDate(visitDate));
+        hivEncounterType.setVisitDate(utils.getXmlDate(visitDate));
         //artStartDate=Utils.extractARTStartDate(patient, allObsForPatient);
 
         DateTime nextAppointmentDate = null;
@@ -324,7 +325,7 @@ public class ClinicalDictionary {
         obs = Utils.extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, obsListForOneVisit);
         if (obs != null) {
             nextAppointmentDate = new DateTime(obs.getValueDate());
-            hivEncounterType.setNextAppointmentDate(Utils.getXmlDate(nextAppointmentDate.toDate()));
+            hivEncounterType.setNextAppointmentDate(utils.getXmlDate(nextAppointmentDate.toDate()));
 
         }
 
@@ -440,8 +441,8 @@ public class ClinicalDictionary {
 
             Set<Obs> obsGroupMembersSet = obs.getGroupMembers();
             List<Obs> obsGroupMembersList = new ArrayList<>(obsGroupMembersSet);
-            List<Integer> obsGroupMembersListId = obsGroupMembersList.stream().map(Obs::getObsId).collect(Collectors.toList());
-            oiDrugNameObs = Utils.extractObsByValues(Utils.OI_DRUGS_CONCEPT, Utils.COTRIMOXAZOLE_DRUG_CONCEPT, obsGroupMembersListId);
+//            List<Integer> obsGroupMembersListId = obsGroupMembersList.stream().map(Obs::getObsId).collect(Collectors.toList());
+            oiDrugNameObs = Utils.extractObsByValues(Utils.OI_DRUGS_CONCEPT, Utils.COTRIMOXAZOLE_DRUG_CONCEPT, obsGroupMembersList);
             // What to do if they select wrong strength for CTX
             if (oiDrugNameObs != null) {
                 oiStrengthObs =Utils.extractObs(Utils.ARV_DRUG_STRENGTH_CONCEPT, obsListForOneVisit);
@@ -487,7 +488,7 @@ public class ClinicalDictionary {
         if (obs != null && obs.getValueNumeric() != null) {
             cd4Count = obs.getValueNumeric().intValue();
             hivEncounterType.setCD4(cd4Count);
-            hivEncounterType.setCD4TestDate(Utils.getXmlDate(obs.getObsDatetime()));
+            hivEncounterType.setCD4TestDate(utils.getXmlDate(obs.getObsDatetime()));
         }
 
         //started new data elements

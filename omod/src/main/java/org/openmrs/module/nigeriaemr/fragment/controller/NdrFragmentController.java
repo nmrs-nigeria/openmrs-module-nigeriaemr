@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
@@ -40,8 +39,11 @@ public class NdrFragmentController {
 	
 	NdrExtractionService ndrExtractionService;
 	
+	JAXBContext jaxbContext;
+	
 	public NdrFragmentController() throws Exception {
-		ndrExtractionService = new NdrExtractionService();
+		jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
+		ndrExtractionService = new NdrExtractionService(jaxbContext, false);
 		openmrsConn = Utils.getNmrsConnectionDetails();
 		facilityLocationService = new FacilityLocationService();
 	}

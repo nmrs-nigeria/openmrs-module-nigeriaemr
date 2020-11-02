@@ -33,6 +33,7 @@ import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
 
 public class PMTCTDictionary {
+    Utils utils = new Utils();
 
     // Logger logger = Logger.getLogger(PMTCTDictionary.class);
     //Antenatal registration concepts
@@ -134,7 +135,7 @@ public class PMTCTDictionary {
             int value_numeric;
 
             //if (pmtctIdentifier != null) {
-            XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
+            XMLGregorianCalendar convertedDate = utils.getXmlDate(enc.getEncounterDatetime());
             registrationType.setVisitDate(convertedDate);
             if (enc != null) {
                 registrationType.setVisitID(String.valueOf(enc.getEncounterDatetime().getTime()));
@@ -145,7 +146,7 @@ public class PMTCTDictionary {
                 return null;
             }
             if (obs != null && obs.getObsDatetime() != null) {
-                registrationType.setLastMenstralPeriod(Utils.getXmlDate(obs.getObsDatetime()));
+                registrationType.setLastMenstralPeriod(utils.getXmlDate(obs.getObsDatetime()));
             }
             obs = extractObs(Gestational_Age_At_ANC_Registration_Concept_Id, anthenatalObsList);
             if (obs != null && obs.getValueNumeric() != null) {
@@ -169,7 +170,7 @@ public class PMTCTDictionary {
             }
             obs = extractObs(EDD_Concept_Id, anthenatalObsList);
             if (obs != null && obs.getObsDatetime() != null) {
-                registrationType.setExpectedDateOfDelivery(Utils.getXmlDate(obs.getObsDatetime()));
+                registrationType.setExpectedDateOfDelivery(utils.getXmlDate(obs.getObsDatetime()));
             }
 
             //get data for Syphilis and add to antenatal reg type
@@ -215,7 +216,7 @@ public class PMTCTDictionary {
             int value_numeric;
 
             //if (pmtctIdentifier != null) {
-            XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
+            XMLGregorianCalendar convertedDate = utils.getXmlDate(enc.getEncounterDatetime());
             deliveryEncounterType.setVisitDate(convertedDate);
             if(enc != null){
                 deliveryEncounterType.setVisitID(String.valueOf(enc.getEncounterDatetime().getTime()));
@@ -223,7 +224,7 @@ public class PMTCTDictionary {
 
             Obs obs = extractObs(Time_Of_Hiv_Diagnosis_Concept_Id, anthenatalObsList);
             if (obs != null && obs.getValueDatetime() != null) {
-                deliveryEncounterType.setTimeOfHIVDiagnosis(Utils.getXmlDateTime(obs.getValueDatetime()).toString());
+                deliveryEncounterType.setTimeOfHIVDiagnosis(utils.getXmlDateTime(obs.getValueDatetime()).toString());
             }
             obs = extractObs(Gestation_Age_At_Delivery_Concept_Id, anthenatalObsList);
             if (obs != null && obs.getValueNumeric() != null) {
@@ -326,7 +327,7 @@ public class PMTCTDictionary {
             LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
             obs = extractObs(Date_of_Birth_Concept_Id, antenatalObsList);
             if (obs != null && obs.getValueDatetime() != null) {
-                childBirthDetailsType.setChildDateOfBirth(Utils.getXmlDate(obs.getValueDate()));
+                childBirthDetailsType.setChildDateOfBirth(utils.getXmlDate(obs.getValueDate()));
             }
             obs = extractObs(Child_Sex_Concept_Id, antenatalObsList);
             if (obs != null && obs.getValueText() != null) {
@@ -419,7 +420,7 @@ public class PMTCTDictionary {
             }
             obs = extractObs(Date_Linked_to_Art_Clinic_Concept_Id, antenatalObsList);
             if (obs != null && obs.getValueDatetime() != null) {
-                childFollowupType.setDateLinkedToARTClinic(Utils.getXmlDate(obs.getValueDatetime()));
+                childFollowupType.setDateLinkedToARTClinic(utils.getXmlDate(obs.getValueDatetime()));
             }
             obs = extractObs(Art_Enrollment_No_Concept_Id, antenatalObsList);
             if (obs != null && obs.getValueText() != null) {
@@ -444,7 +445,7 @@ public class PMTCTDictionary {
            // PatientIdentifier pmtctIdentifier = pts.getPatientIdentifier(ConstantsUtil.PMTCT_IDENTIFIER_INDEX);
 
             //if (pmtctIdentifier != null) {
-            XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
+            XMLGregorianCalendar convertedDate = utils.getXmlDate(enc.getEncounterDatetime());
             immunizationType.setVisitDate(convertedDate);
 
             Obs obs = extractObs(Immunization_Date, antenatalObsList);
@@ -452,7 +453,7 @@ public class PMTCTDictionary {
                 return null;
             }
             if (obs != null && obs.getValueDatetime() != null) {
-                immunizationType.setImmunizationDate(Utils.getXmlDate(obs.getValueDate()));
+                immunizationType.setImmunizationDate(utils.getXmlDate(obs.getValueDate()));
             }
             obs = extractObs(Lot_Number, antenatalObsList);
             if (obs != null && obs.getValueText() != null) {
@@ -485,20 +486,20 @@ public class PMTCTDictionary {
                 return null;
             }
             if (obs != null && obs.getValueDatetime() != null) {
-                infantPCRTestingType.setDateSampleCollected(Utils.getXmlDate(obs.getValueDatetime()));
+                infantPCRTestingType.setDateSampleCollected(utils.getXmlDate(obs.getValueDatetime()));
 
             }
             obs = extractObs(Date_Sample_Sent, antenatalObsList);
             if (obs != null && obs.getValueDatetime() != null) {
-                infantPCRTestingType.setDateSampleSent(Utils.getXmlDate(obs.getValueDatetime()));
+                infantPCRTestingType.setDateSampleSent(utils.getXmlDate(obs.getValueDatetime()));
             }
             obs = extractObs(Date_Result_Received, antenatalObsList);
             if (obs != null && obs.getValueDatetime() != null) {
-                infantPCRTestingType.setDateResultReceivedAtFacility(Utils.getXmlDate(obs.getValueDatetime()));
+                infantPCRTestingType.setDateResultReceivedAtFacility(utils.getXmlDate(obs.getValueDatetime()));
             }
             obs = extractObs(Date_Caregiver_Given_Result, antenatalObsList);
             if (obs != null && obs.getValueDatetime() != null) {
-                infantPCRTestingType.setDateCaregiverGivenResult(Utils.getXmlDate(obs.getValueDatetime()));
+                infantPCRTestingType.setDateCaregiverGivenResult(utils.getXmlDate(obs.getValueDatetime()));
             }
             obs = extractObs(Test_Result, antenatalObsList);
             if (obs != null && obs.getValueCoded() != null) {

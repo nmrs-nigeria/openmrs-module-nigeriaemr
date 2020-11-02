@@ -78,17 +78,17 @@ public class TestResultType {
 	@XmlSchemaType(name = "date")
 	protected XMLGregorianCalendar screeningTestResultDate;
 	
-	@XmlElement(name = "ConfirmatoryTestResult", required = true)
+	@XmlElement(name = "ConfirmatoryTestResult")
 	protected String confirmatoryTestResult;
 	
-	@XmlElement(name = "ConfirmatoryTestResultDate", required = true)
+	@XmlElement(name = "ConfirmatoryTestResultDate")
 	@XmlSchemaType(name = "date")
 	protected XMLGregorianCalendar confirmatoryTestResultDate;
 	
-	@XmlElement(name = "TieBreakerTestResult", required = true)
+	@XmlElement(name = "TieBreakerTestResult")
 	protected String tieBreakerTestResult;
 	
-	@XmlElement(name = "TieBreakerTestResultDate", required = true)
+	@XmlElement(name = "TieBreakerTestResultDate")
 	@XmlSchemaType(name = "date")
 	protected XMLGregorianCalendar tieBreakerTestResultDate;
 	

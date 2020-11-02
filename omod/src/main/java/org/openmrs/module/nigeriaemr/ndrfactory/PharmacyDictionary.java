@@ -24,16 +24,15 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.RegimenType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getXmlDate;
 
 public class PharmacyDictionary {
+    Utils utils = new Utils();
 
     //  Logger logger = Logger.getLogger(PharmacyDictionary.class);
     public final static int Medication_Duration_Concept_Id = 159368;
@@ -392,7 +391,7 @@ public class PharmacyDictionary {
 
             regimenType = new RegimenType();
             regimenType.setVisitID(visitID);
-            regimenType.setVisitDate(getXmlDate(visitDate));
+            regimenType.setVisitDate(utils.getXmlDate(visitDate));
             
             obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, map); //PrescribedRegimenLineCode
             if (obs != null && obs.getValueCoded() != null) {
@@ -409,21 +408,21 @@ public class PharmacyDictionary {
                     codedSimpleType.setCodeDescTxt(valueObs.getValueCoded().getName().getName());
                     regimenType.setPrescribedRegimen(codedSimpleType);
                 }
-                regimenType.setPrescribedRegimenDispensedDate(getXmlDate(visitDate));//PrescribedRegimenDispensedDate
+                regimenType.setPrescribedRegimenDispensedDate(utils.getXmlDate(visitDate));//PrescribedRegimenDispensedDate
                 stopDateTime = retrieveMedicationDuration(visitDate, map);
                 startDateTime = new DateTime(visitDate);
                 if (stopDateTime != null) {
                     durationInDays = Utils.getDateDiffInDays(startDateTime.toDate(), stopDateTime.toDate());
                     regimenType.setPrescribedRegimenDuration(String.valueOf(durationInDays));//PrescribedRegimenDuration
                     stopDate = stopDateTime.toDate();
-                    regimenType.setDateRegimenEnded(getXmlDate(stopDate));
+                    regimenType.setDateRegimenEnded(utils.getXmlDate(stopDate));
                     regimenType.setDateRegimenEndedDD(Utils.getDayDD(stopDate));
                     regimenType.setDateRegimenEndedMM(Utils.getMonthMM(stopDate));
                     regimenType.setDateRegimenEndedYYYY(Utils.getYearYYYY(stopDate));
 
                 }
             }
-            regimenType.setDateRegimenStarted(getXmlDate(visitDate));
+            regimenType.setDateRegimenStarted(utils.getXmlDate(visitDate));
             regimenType.setDateRegimenStartedDD(Utils.getDayDD(visitDate));
             regimenType.setDateRegimenStartedMM(Utils.getMonthMM(visitDate));
             regimenType.setDateRegimenStartedYYYY(Utils.getYearYYYY(visitDate));
@@ -481,7 +480,7 @@ public class PharmacyDictionary {
             CodedSimpleType cst;
 
             regimenType.setVisitID(Utils.getVisitId(pts, enc));
-            regimenType.setVisitDate(Utils.getXmlDate(enc.getEncounterDatetime()));
+            regimenType.setVisitDate(utils.getXmlDate(enc.getEncounterDatetime()));
 
             //set regimen
             Obs obs = Utils.extractObs(OI_Drug_Concept_Id, OIDrugObsList);
@@ -531,12 +530,12 @@ public class PharmacyDictionary {
             }
 
             //set dispensed date
-            regimenType.setPrescribedRegimenDispensedDate(Utils.getXmlDate(enc.getEncounterDatetime()));
+            regimenType.setPrescribedRegimenDispensedDate(utils.getXmlDate(enc.getEncounterDatetime()));
 
             //set regimen start date
             Calendar cal = Calendar.getInstance();
             cal.setTime(enc.getEncounterDatetime());
-            regimenType.setDateRegimenStarted(getXmlDate(enc.getEncounterDatetime()));
+            regimenType.setDateRegimenStarted(utils.getXmlDate(enc.getEncounterDatetime()));
             regimenType.setDateRegimenStartedDD(StringUtils.leftPad(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)), 2, "0"));
             regimenType.setDateRegimenStartedMM(StringUtils.leftPad(String.valueOf(cal.get(Calendar.MONTH) + 1), 2, "0"));
             regimenType.setDateRegimenStartedYYYY(String.valueOf(cal.get(Calendar.YEAR)));

@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.*;
 
 public class NDRConverter {
+
+    Utils utils = new Utils();
 	
 	private Patient patient;
 
@@ -414,7 +416,7 @@ public class NDRConverter {
 		
 		Calendar cal = Calendar.getInstance();
 		
-		header.setMessageCreationDateTime(Utils.getXmlDateTime(cal.getTime()));
+		header.setMessageCreationDateTime(utils.getXmlDateTime(cal.getTime()));
 		Boolean isDeleted = pts.getPerson().getVoided();
 		String updatedORInitial = (hasUpdate) ? "UPDATED" : "INITIAL";
 		String messageStatus = (isDeleted) ? "REDACTED" : updatedORInitial;

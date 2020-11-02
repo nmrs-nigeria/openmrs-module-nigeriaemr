@@ -39,6 +39,7 @@ import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.*;
 
 public class LabDictionary {
 
+    Utils utils = new Utils();
     public LabDictionary() {
         loadLabTestDictionary();
         loadLabTestUnitDictionary();
@@ -202,7 +203,7 @@ public class LabDictionary {
         LaboratoryReportType labReportType = new LaboratoryReportType();
         try {
 
-            XMLGregorianCalendar convertedDate = Utils.getXmlDate(enc.getEncounterDatetime());
+            XMLGregorianCalendar convertedDate = utils.getXmlDate(enc.getEncounterDatetime());
             labReportType.setVisitID(Utils.getVisitId(pts, enc));
             labReportType.setVisitDate(convertedDate);
             labReportType.setCollectionDate(convertedDate);
@@ -337,11 +338,11 @@ public class LabDictionary {
                     }
 
                     if (orderedDate != null) {
-                        labOrderAndResult.setOrderedTestDate(getXmlDate(orderedDate));
+                        labOrderAndResult.setOrderedTestDate(utils.getXmlDate(orderedDate));
                     }else{
-                        labOrderAndResult.setOrderedTestDate(getXmlDate(enc.getEncounterDatetime()));
+                        labOrderAndResult.setOrderedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
                     }
-                    labOrderAndResult.setResultedTestDate(getXmlDate(enc.getEncounterDatetime()));
+                    labOrderAndResult.setResultedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
 
                     //TODO:revisit this implementation
                     if (labTestUnits.containsKey(conceptID)) {
@@ -390,9 +391,9 @@ public class LabDictionary {
                     labOrderAndResult.setLaboratoryResult(answer);
 
                     if (orderedDate != null) {
-                        labOrderAndResult.setOrderedTestDate(getXmlDate(orderedDate));
+                        labOrderAndResult.setOrderedTestDate(utils.getXmlDate(orderedDate));
                     }
-                    labOrderAndResult.setResultedTestDate(getXmlDate(enc.getEncounterDatetime()));
+                    labOrderAndResult.setResultedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
                     labResultList.add(labOrderAndResult);
                 } catch (Exception ex) {
                     LoggerUtils.write(LabDictionary.class.getName(), "Error in Coded_DataType_ConceptId: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);

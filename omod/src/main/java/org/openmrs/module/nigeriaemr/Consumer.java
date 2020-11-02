@@ -22,12 +22,6 @@ public class Consumer implements MessageListener {
 	
 	NDRExtractor ndrExtractor;
 	
-	NdrExtractionService ndrExtractionService;
-	
-	ActiveMQObjectMessage msg;
-	
-	NDRExport ndrExport;
-	
 	public Consumer() {
 		try {
 			jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
@@ -36,8 +30,6 @@ public class Consumer implements MessageListener {
 			LoggerUtils.write(Consumer.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
 			    LoggerUtils.LogLevel.live);
 		}
-		ndrExtractor = new NDRExtractor();
-		ndrExtractionService = new NdrExtractionService(jaxbContext);
 	}
 	
 	public static void initialize(UserContext userContext) {
@@ -57,13 +49,16 @@ public class Consumer implements MessageListener {
 		Context.addProxyPrivilege("Get Concepts");
 		Context.addProxyPrivilege("Get Users");
 		Context.addProxyPrivilege("Get Identifier Types");
+		Context.addProxyPrivilege("Manage Global Properties");
 	}
 	
 	public void checkIfExportIsComplete() {
 		try {
+			ndrExtractor = new NDRExtractor();
 			initialize(null);
 			ndrExtractor.checkIfExportIsComplete();
 			Context.closeSession();
+			ndrExtractor = null;
 		}
 		catch (Exception e) {
 			LoggerUtils.write(Consumer.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
@@ -71,46 +66,23 @@ public class Consumer implements MessageListener {
 		}
 	}
 	
-	//	@Override
-	//	public void onMessage(Message message) {
-	//		try {
-	//			ActiveMQObjectMessage msg = (ActiveMQObjectMessage) message;
-	//			NDRExport ndrExport = (NDRExport) msg.getObject();
-	//			Thread thread = new Thread(() -> {
-	//				try {
-	//					NdrExtractionService ndrExtractionService = new NdrExtractionService(jaxbContext);
-	//					initialize(null);
-	//					LoggerUtils.write(Consumer.class.getName(),
-	//							"processing " + ndrExport.getId() + "with batchID " + ndrExport.getPatientsList(),
-	//							LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
-	//					System.out.println("executing export"+ ndrExport.getId());
-	//					message.acknowledge();
-	//					ndrExtractionService.export(ndrExport);
-	//
-	//				} catch (Exception e) {
-	//					e.printStackTrace();
-	//				}
-	//			});
-	//			thread.setName("Thread" + ndrExport.getId());
-	//			executor.submit(thread);
-	//		}
-	//		catch (JMSException e) {
-	//			e.printStackTrace();
-	//		}
-	//	}
-	
 	@Override
 	public void onMessage(Message message) {
 		try {
-			msg = (ActiveMQObjectMessage) message;
-			ndrExport = (NDRExport) msg.getObject();
+			message.acknowledge();
+			NdrExtractionService ndrExtractionService = new NdrExtractionService(jaxbContext);
+			ActiveMQObjectMessage msg = (ActiveMQObjectMessage) message;
+			NDRExport ndrExport = (NDRExport) msg.getObject();
 			initialize(null);
 			LoggerUtils.write(Consumer.class.getName(),
 			    "processing " + ndrExport.getId() + "with batchID " + ndrExport.getPatientsList(),
 			    LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
 			System.out.println("executing export" + ndrExport.getId());
-			message.acknowledge();
 			ndrExtractionService.export(ndrExport);
+			Context.clearSession();
+			Context.closeSession();
+			
+			//			System.gc();
 		}
 		catch (JMSException e) {
 			e.printStackTrace();
@@ -119,6 +91,7 @@ public class Consumer implements MessageListener {
 	
 	public void stopAllExports() {
 		try {
+			NdrExtractionService ndrExtractionService = new NdrExtractionService(jaxbContext);
 			initialize(null);
 			ndrExtractionService.pauseFile(null);
 		}

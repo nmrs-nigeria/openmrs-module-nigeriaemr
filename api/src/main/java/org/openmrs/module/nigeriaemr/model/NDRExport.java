@@ -73,6 +73,9 @@ public class NDRExport implements Serializable {
 	@Column(name = "patients")
 	private String patientsList;
 	
+	@Column(name = "error_patients")
+	private String errorPatientsList;
+	
 	@Column(name = "batch_id")
 	private Integer batchId;
 	
@@ -202,5 +205,13 @@ public class NDRExport implements Serializable {
 	
 	public void setDateUpdated(Date dateUpdated) {
 		this.dateUpdated = dateUpdated;
+	}
+	
+	public String getErrorPatientsList() {
+		return errorPatientsList;
+	}
+	
+	public void setErrorPatientsList(String errorPatientsList) {
+		this.errorPatientsList = errorPatientsList;
 	}
 }

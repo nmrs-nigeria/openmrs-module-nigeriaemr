@@ -1,13 +1,10 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.openmrs.Patient;
-import org.openmrs.Person;
-import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
@@ -121,8 +118,8 @@ public class NDRExtractor {
 		}
 		catch (Exception ex) {
 			if (ex instanceof JAXBException && ((JAXBException) ex).getLinkedException() != null) {
-				writeErrorCsv(patient, formattedDate, reportFolder, ((JAXBException) ex).getLinkedException().getMessage(),
-				    container, file, jaxbContext, batchId);
+				writeErrorCsv(patient, reportFolder, ((JAXBException) ex).getLinkedException().getMessage(), container,
+				    file, jaxbContext, batchId);
 			}
 			LoggerUtils.write(NdrFragmentController.class.getName(), "File " + file.getName() + " throw an exception \n"
 			        + ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
@@ -130,7 +127,7 @@ public class NDRExtractor {
 		}
 	}
 	
-	private synchronized void writeErrorCsv(Patient patient, String formattedDate, String reportFolder,
+	private synchronized void writeErrorCsv(Patient patient, String reportFolder,
 											String message, Container container, File file, JAXBContext jaxbContext, int batchId) {
 		file.delete();
 		String newReportFolder = reportFolder + File.separator+ "error";

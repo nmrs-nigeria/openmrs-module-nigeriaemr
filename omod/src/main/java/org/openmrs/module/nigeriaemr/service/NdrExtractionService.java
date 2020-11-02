@@ -2,6 +2,8 @@ package org.openmrs.module.nigeriaemr.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ServiceContext;
 import org.openmrs.module.nigeriaemr.NDREvent;
@@ -19,12 +21,15 @@ import org.openmrs.module.nigeriaemr.util.Partition;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class NdrExtractionService {
 	
@@ -54,8 +59,8 @@ public class NdrExtractionService {
 		
 	}
 	
-	public NdrExtractionService() throws Exception {
-		this.jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
+	public NdrExtractionService(JAXBContext jaxbContext, boolean b) throws Exception {
+		this.jaxbContext = jaxbContext;
 		this.ndrExtractor = new NDRExtractor();
 	}
 	
@@ -98,7 +103,7 @@ public class NdrExtractionService {
 			// Start export process
 			NDRExport ndrExport = new NDRExport();
 			ndrExport.setDateStarted(currentDate);
-			ndrExport.setPatients(patients.size());
+			ndrExport.setPatients(1);
 			ndrExport.setOwner(Context.getAuthenticatedUser());
 			ndrExport.setName(fileName);
 			ndrExport.setVoided(false);
@@ -136,20 +141,35 @@ public class NdrExtractionService {
 		try {
 			String DATIMID = Utils.getFacilityDATIMId();
 			String formattedDate = new SimpleDateFormat("ddMMyy").format(ndrExport.getDateStarted());
-			String patientList = ndrExport.getPatientsList();
-			List<Integer> patients = (List<Integer>) mapper.readValue(patientList, List.class);
+			
+			List<Integer> patients;
+			if (ndrExport.getErrorPatientsList() != null && !ndrExport.getErrorPatientsList().isEmpty()) {
+				String patientList = ndrExport.getErrorPatientsList();
+				patients = (List<Integer>) mapper.readValue(patientList, List.class);
+			} else {
+				String patientList = ndrExport.getPatientsList();
+				patients = (List<Integer>) mapper.readValue(patientList, List.class);
+			}
+			
+			String status = "Done";
 			for (Integer patientId : patients) {
-				long startTime = System.currentTimeMillis();
-				
-				ndrExtractor.extract(patientId, DATIMID, ndrExport.getReportFolder(), formattedDate, jaxbContext,
-				    ndrExport.getLastDate(), ndrExport.getDateStarted(), ndrExportBatch.getId());
-				
-				long endTime = System.currentTimeMillis();
-				LoggerUtils.write(NdrExtractionService.class.getName(), patientId + "  " + (endTime - startTime)
-				        + " milli secs : ", LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+				try {
+					long startTime = System.currentTimeMillis();
+					
+					ndrExtractor.extract(patientId, DATIMID, ndrExport.getReportFolder(), formattedDate, jaxbContext,
+					    ndrExport.getLastDate(), ndrExport.getDateStarted(), ndrExportBatch.getId());
+					
+					long endTime = System.currentTimeMillis();
+					LoggerUtils.write(NdrExtractionService.class.getName(), patientId + "  " + (endTime - startTime)
+					        + " milli secs : ", LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+				}
+				catch (Exception ex) {
+					//					nigeriaemrService.updateStatus(ndrExport.getId(), ndrExport.getBatchId(), "Failed", true);
+					status = "Failed";
+				}
 				
 			}
-			nigeriaemrService.updateStatus(ndrExport.getId(), ndrExport.getBatchId(), "Done", true);
+			nigeriaemrService.updateStatus(ndrExport.getId(), ndrExport.getBatchId(), status, true);
 		}
 		catch (Exception ex) {
 			LoggerUtils.write(NdrExtractionService.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
@@ -251,13 +271,15 @@ public class NdrExtractionService {
 	private void deletePath(String fullContextPath, String path) {
 		if (path != null) {
 			String[] paths = path.split("\\\\");
-			if (path.length() > 0) {
+			if (paths.length > 3) {
 				String fileName = paths[4];
 				String folder = Paths
 				        .get(new File(fullContextPath).getParentFile().toString(), "downloads", "NDR", fileName).toString();
 				File fileToDelete = new File(folder);
 				if (fileToDelete.exists()) {
-					fileToDelete.delete();
+					boolean d = fileToDelete.delete();
+					if (!d)
+						fileToDelete.delete();
 				}
 			}
 		}
@@ -296,24 +318,53 @@ public class NdrExtractionService {
 			}
 			boolean deleted = false;
 			nigeriaemrService.updateExportBatch(idInt, "Processing", false);
+			NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(idInt);
+			//read failed file
+			List<Integer> failedIds = new ArrayList<>();
+			File dir = new File(ndrExportBatch.getReportFolder());
+			String errorList = Paths.get(dir.getParent(), ndrExportBatch.getId()+"_error_list.csv").toString();
+			File csvFile = new File(errorList);
+			if (csvFile.exists()) {
+				try {
+					Reader in = new FileReader(errorList);
+					Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+					for (CSVRecord csvRecord : records) {
+						failedIds.add(Integer.parseInt(csvRecord.get(1)));
+					}
+					in.close();
+				}catch (Exception ignored){}
+			}
 			for (NDRExport ndrExport : ndrExports) {
+				Context.evictFromSession(ndrExport);
 //				if("failed".equalsIgnoreCase(action)){
 //					nigeriaemrService.updateStatus(ndrExport.getId(),idInt,"Processing", false);
 //				}
 				if(!deleted && !"resume".equalsIgnoreCase(action)) {
-					NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(idInt);
 					if (!"failed".equalsIgnoreCase(action)) {
 						deleteFolder(ndrExportBatch.getReportFolder());
 						deletePath(fullContextPath, ndrExportBatch.getPath());
+						deleteFolder(ndrExportBatch.getReportFolder() + File.separator + "error");
 					}
 					deletePath(fullContextPath, ndrExportBatch.getErrorPath());
 					deletePath(fullContextPath, ndrExportBatch.getErrorList());
 					deleteFolder(ndrExportBatch.getReportFolder() + File.separator + "error");
 					deleted = true;
 				}
+
+				List<Integer> ids = (List<Integer>) mapper.readValue(ndrExport.getPatientsList(), List.class);
+				List<Integer> result = failedIds.stream().distinct().filter(ids::contains).collect(Collectors.toList());
+				try {
+					ndrExport.setErrorPatientsList(new ObjectMapper().writeValueAsString(result));
+				}
+				catch (JsonProcessingException e) {
+					e.printStackTrace();
+					throw new Exception("Error Processing Export");
+				}
+
+				nigeriaemrService.updateStatus(ndrExport.getId(), ndrExport.getBatchId(), "Processing", false);
 				ndrEvent.send(ndrExport);
 			}
-//			nigeriaemrService.updateExportBatch(idInt, "Processing", false);
+			if (ndrExports.size() > 0) nigeriaemrService.updateExportBatch(idInt, "Processing", false);
 			return true;
 		}
 		catch (Exception e) {

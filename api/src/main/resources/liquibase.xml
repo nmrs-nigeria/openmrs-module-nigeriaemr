@@ -74,6 +74,18 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="nigeriaemr-202008241353-012" author="wande">
+        <modifyColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="status" type="varchar(250)"/>
+        </modifyColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353-014" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="error_patients" type="LONGTEXT"/>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="nigeriaemr-202008241353-01" author="wande">
         <addColumn tableName="nigeriaemr_ndr_batch_export">
             <column name="name" type="varchar(100)"/>

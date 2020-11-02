@@ -27,6 +27,7 @@ import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
 
 public class HTSDictionary {
 
+    Utils utils = new Utils();
     //Knowledge assessment
     //private static int Previously_Tested_Hiv_Negative_Concept_Id = 165816;
     // private static int Client_Pregnant_Concept_Id = 166046;
@@ -313,7 +314,7 @@ public class HTSDictionary {
 
         //visit date and ID
         hivTestingReport.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
-        hivTestingReport.setVisitDate(Utils.getXmlDate(enc.getEncounterDatetime()));
+        hivTestingReport.setVisitDate(utils.getXmlDate(enc.getEncounterDatetime()));
 
         //setting with others been retrieved
         // obs = extractObs(HTS_Client_Intake_SESSION_TYPE_ConceptID, allObs);
@@ -544,11 +545,7 @@ public class HTSDictionary {
         //test date
         obs = extractObs(HIV_RECENCY_TEST_DATE_CONCEPT, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
-            try {
-                recencyTestingType.setTestDate(Utils.getXmlDate(obs.getValueDate()));
-            } catch (DatatypeConfigurationException ex) {
-                LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            }
+            recencyTestingType.setTestDate(utils.getXmlDate(obs.getValueDate()));
         }
 
         //consent
@@ -595,11 +592,7 @@ public class HTSDictionary {
         //VL Sample test date
         obs = extractObs(SAMPLE_TEST_DATE_CONCEPT, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
-            try {
-                recencyTestingType.setViralLoadConfirmationTestDate(Utils.getXmlDate(obs.getValueDate()));
-            } catch (DatatypeConfigurationException ex) {
-                LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            }
+            recencyTestingType.setViralLoadConfirmationTestDate(utils.getXmlDate(obs.getValueDate()));
         }
 
         //result copies
@@ -618,7 +611,7 @@ public class HTSDictionary {
         obs = extractObs(VIRAL_LOAD_SAMPLE_COLLECTION_DATE, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
-                recencyTestingType.setDateSampleCollected(Utils.getXmlDate(obs.getValueDate()));
+                recencyTestingType.setDateSampleCollected(utils.getXmlDate(obs.getValueDate()));
             } catch (Exception ex) {
                 LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
             }
@@ -641,7 +634,7 @@ public class HTSDictionary {
         obs = extractObs(VIRAL_LOAD_SAMPLE_SENT_DATE, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
-                recencyTestingType.setDateSampleSent(Utils.getXmlDate(obs.getValueDate()));
+                recencyTestingType.setDateSampleSent(utils.getXmlDate(obs.getValueDate()));
             } catch (Exception ex) {
                 LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
             }
@@ -705,31 +698,19 @@ public class HTSDictionary {
         //screening test result date
         obs = extractObs(SCREENING_TEST_RESULT_DATE, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
-            try {
-                testResultType.setScreeningTestResultDate(Utils.getXmlDate(obs.getValueDate()));
-            } catch (DatatypeConfigurationException ex) {
-                LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            }
+            testResultType.setScreeningTestResultDate(utils.getXmlDate(obs.getValueDate()));
         }
 
         //confirmatory test result data
         obs = extractObs(CONFIRMATORY_TEST_RESULT_date, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
-            try {
-                testResultType.setConfirmatoryTestResultDate(Utils.getXmlDate(obs.getValueDate()));
-            } catch (DatatypeConfigurationException ex) {
-                LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            }
+            testResultType.setConfirmatoryTestResultDate(utils.getXmlDate(obs.getValueDate()));
         }
 
         //tie test result data
         obs = extractObs(TIE_BREAKER_RESULT_DATE, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
-            try {
-                testResultType.setTieBreakerTestResultDate(Utils.getXmlDate(obs.getValueDate()));
-            } catch (DatatypeConfigurationException ex) {
-                LoggerUtils.write(HTSDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
-            }
+            testResultType.setTieBreakerTestResultDate(utils.getXmlDate(obs.getValueDate()));
         }
 
         //final result

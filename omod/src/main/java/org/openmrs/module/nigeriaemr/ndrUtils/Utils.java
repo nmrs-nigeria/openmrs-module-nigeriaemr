@@ -5,12 +5,14 @@ import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.*;
 import org.openmrs.*;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.Module;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
+import org.openmrs.module.nigeriaemr.api.service.impl.NigeriaObsServiceImpl;
 import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
@@ -40,6 +42,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Utils {
+	
+	private static final NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
+	
+	private static final ConceptService conceptService = Context.getConceptService();
+	
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
+	DatatypeFactory datatypeFactory;
+	
+	public Utils() {
+		try {
+			this.datatypeFactory = DatatypeFactory.newInstance();
+		}
+		catch (Exception ignored) {}
+	}
 	
 	public final static int HIV_Enrollment_Encounter_Type_Id = 14;
 	
@@ -355,22 +372,30 @@ public class Utils {
 	}
 	
 	public static String getIPReportingState() {
-		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
-		String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
-		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
-		if (datimMap.isPresent()) {
-			return datimMap.map(map -> map.getStateCode().toString()).orElse(null);
-		}else{
-			return Context.getAdministrationService().getGlobalProperty("partner_reporting_state");
+		String stateCode =  Context.getAdministrationService().getGlobalProperty("partner_reporting_state");
+		if(stateCode == null || "UNKNOWN".equalsIgnoreCase(stateCode) || stateCode.isEmpty() ||
+				"null".equalsIgnoreCase(stateCode)){
+			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+			String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
+			Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
+			if (datimMap.isPresent()) {
+				Context.getAdministrationService().setGlobalProperty("partner_reporting_state",
+						datimMap.map(map -> map.getStateCode().toString()).orElse(null));
+				return datimMap.map(map -> map.getStateCode().toString()).orElse(null);
+			}
 		}
+		return Context.getAdministrationService().getGlobalProperty("partner_reporting_state");
 	}
 	
 	public static int getBatchSize() {
 		String batchSize = Context.getAdministrationService().getGlobalProperty("ndr_export_batch_size");
-		if (batchSize != null && batchSize.isEmpty()) {
-			return Integer.parseInt(batchSize);
-		} else
-			return 10;
+		if (batchSize != null && !batchSize.isEmpty()) {
+			try {
+				return Integer.parseInt(batchSize);
+			}
+			catch (Exception ignored) {}
+		}
+		return 10;
 	}
 	
 	public static boolean batchExports() {
@@ -382,14 +407,18 @@ public class Utils {
 	}
 	
 	public static String getIPReportingLgaCode() {
-		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
-		String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
-		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
-		if (datimMap.isPresent()) {
-			return datimMap.map(map -> map.getLgaCode().toString()).orElse(null);
-		}else{
-			return Context.getAdministrationService().getGlobalProperty("partner_reporting_lga_code");
+		String lgaCode =  Context.getAdministrationService().getGlobalProperty("partner_reporting_lga_code");
+		if(lgaCode == null || "UNKNOWN".equalsIgnoreCase(lgaCode) || lgaCode.isEmpty() || "null".equalsIgnoreCase(lgaCode)){
+			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+			String datimCode = Context.getAdministrationService().getGlobalProperty("facility_datim_code");
+			Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(datimCode));
+			if (datimMap.isPresent()) {
+				Context.getAdministrationService().setGlobalProperty("partner_reporting_lga_code",
+						datimMap.map(map -> map.getLgaCode().toString()).orElse(null));
+				return datimMap.map(map -> map.getLgaCode().toString()).orElse(null);
+			}
 		}
+		return Context.getAdministrationService().getGlobalProperty("partner_reporting_lga_code");
 	}
 	
 	//date is always saved as yyyy-MM-dd
@@ -654,7 +683,6 @@ public class Utils {
 	
 	public static List<Obs> extractObsList(List<Integer> allPatientObsList, Integer[] encounterTypeArr) {
 		List<Integer> encounterTypeList = new ArrayList<Integer>(Arrays.asList(encounterTypeArr));
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getObsByEncounterTypes(allPatientObsList, encounterTypeList, false);
 	}
 	
@@ -707,12 +735,10 @@ public class Utils {
 	}
 	
 	public static List<Obs> extractObsPerVisitDate(Date visitDate, List<Integer> obsList) {
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getObsByVisitDate(visitDate, obsList, false);
 	}
 	
 	public static Obs extractObs(int conceptID, List<Integer> obsList) {
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		Concept concept = Context.getConceptService().getConcept(conceptID);
 		return nigeriaObsService.getLastObsByConcept(concept, obsList);
 	}
@@ -734,14 +760,12 @@ public class Utils {
 	}
 	
 	public static List<Obs> extractObsList(int conceptID, List<Integer> obsList) {
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		Concept concept = Context.getConceptService().getConcept(conceptID);
 		return nigeriaObsService.getObsByConcept(concept, obsList);
 	}
 	
 	public static Obs extractLastObs(int conceptID, List<Integer> obsList) {
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
-		Concept concept = Context.getConceptService().getConcept(conceptID);
+		Concept concept = conceptService.getConcept(conceptID);
 		return nigeriaObsService.getLastObsByConcept(concept, obsList);
 	}
 	
@@ -763,11 +787,19 @@ public class Utils {
 		return null;
 	}
 	
-	public static Obs extractObsByValues(int conceptID, int valueCoded, List<Integer> obsList) {
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
-		Concept concept = Context.getConceptService().getConcept(conceptID);
-		Concept valueCodedConcept = Context.getConceptService().getConcept(valueCoded);
-		return nigeriaObsService.getObsbyValueCoded(concept, valueCodedConcept, obsList);
+	//	public static Obs extractObsByValues(int conceptID, int valueCoded, List<Integer> obsList) {
+	//		Concept concept = conceptService.getConcept(conceptID);
+	//		Concept valueCodedConcept = conceptService.getConcept(valueCoded);
+	//		return nigeriaObsService.getObsbyValueCoded(concept, valueCodedConcept, obsList);
+	//	}
+	
+	public static Obs extractObsByValues(int conceptID, int valueCoded, List<Obs> obsList) {
+
+		if (obsList == null) {
+			return null;
+		}
+		return obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID &&
+				ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
 	}
 	
 	public static List<Integer> getCareCardObs(Patient patient, Date endDate) {
@@ -822,19 +854,18 @@ public class Utils {
 		return null;
 	}
 	
-	public static XMLGregorianCalendar getXmlDate(Date date) throws DatatypeConfigurationException {
+	public XMLGregorianCalendar getXmlDate(Date date) {
 		XMLGregorianCalendar cal = null;
 		if (date != null) {
-			cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(new SimpleDateFormat("yyyy-MM-dd").format(date));
+			cal = datatypeFactory.newXMLGregorianCalendar(sdf.format(date));
 		}
 		return cal;
 	}
 	
-	public static XMLGregorianCalendar getXmlDateTime(Date date) throws DatatypeConfigurationException {
+	public XMLGregorianCalendar getXmlDateTime(Date date) {
 		XMLGregorianCalendar cal = null;
 		if (date != null) {
-			cal = DatatypeFactory.newInstance().newXMLGregorianCalendar(
-			    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(date));
+			cal = datatypeFactory.newXMLGregorianCalendar(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(date));
 		}
 		return cal;
 	}
@@ -903,7 +934,6 @@ public class Utils {
 	
 	public static Map<Integer, Obs> groupObsByConceptId(List<Integer> obsCodeList, List<Integer> obsPerVisitDateIds) {
 		Map<Integer, Obs> integerObsMap = new HashMap<>();
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		List<Concept> concepts = nigeriaObsService.getConcepts(obsCodeList, false);
 		List<Obs> obsList = nigeriaObsService.getObsByConcept(concepts, obsPerVisitDateIds);
 		if(obsList != null){
@@ -978,6 +1008,7 @@ public class Utils {
 			String errorFolders = Paths.get(todayFolders, "error").toString();
 			File errorDir = new File(errorFolders);
 			if (errorDir.exists()) {
+				
 				File[] errorFiles = errorDir.listFiles();
 				if (errorFiles != null) {
 					for (File f : errorFiles) {
@@ -1149,29 +1180,24 @@ public class Utils {
 	public static Obs getHighestCD4Obs(Patient patient) {
 		
 		Concept CD4Concept = Context.getConceptService().getConcept(LabDictionary.CD4_Count_Concept_Id);
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getHighestObsByConcept(patient.getPerson(), CD4Concept, null, null, false);
 	}
 	
 	public static Obs getInitialObs(Patient patient, int Concept_Id) {
 		Concept concept = Context.getConceptService().getConcept(Concept_Id);
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getFirstObsByConceptId(patient.getPerson(), concept, null, null, false);
 	}
 	
 	public static Obs getLastObs(Patient patient, int Concept_Id, Date endDate) {
 		Concept concept = Context.getConceptService().getConcept(Concept_Id);
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getLastObsByConceptId(patient.getPerson(), concept, null, endDate, false);
 	}
 	
 	public static List<Obs> getObs(Patient patient, int conceptId) {
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getObsByConceptId(patient.getPersonId(), conceptId, null, false);
 	}
 	
 	public static List<Obs> getObs(Patient patient, int conceptId, int encounterId) {
-		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 		return nigeriaObsService.getObsByConceptId(patient.getPersonId(), conceptId, Arrays.asList(encounterId), false);
 	}
 	

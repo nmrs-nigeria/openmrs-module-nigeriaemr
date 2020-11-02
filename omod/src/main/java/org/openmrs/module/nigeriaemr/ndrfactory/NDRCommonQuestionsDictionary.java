@@ -31,7 +31,6 @@ import org.openmrs.module.nigeriaemr.model.ndr.RightHandType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getXmlDate;
 
 /**
  *
@@ -49,6 +48,7 @@ public class NDRCommonQuestionsDictionary {
         loadDictionary();
         pharmacyDictionary = new PharmacyDictionary();
     }
+    Utils utils = new Utils();
 
     private void loadDictionary() {
         //map.put(123, "PatientDeceasedIndicator");
@@ -252,7 +252,7 @@ public class NDRCommonQuestionsDictionary {
             } else if (gender.equals("F") || gender.equalsIgnoreCase("Female")) {
                 demo.setPatientSexCode("F");
             }
-            demo.setPatientDateOfBirth(getXmlDate(pts.getBirthdate()));
+            demo.setPatientDateOfBirth(utils.getXmlDate(pts.getBirthdate()));
 
          
             //check Finger Print if available
@@ -281,7 +281,7 @@ public class NDRCommonQuestionsDictionary {
                         obs = Utils.extractObs(Utils.DATE_OF_TERMINATION_CONCEPT, obsListForEncounterTypes);
                         //set date
                         if (obs != null) {
-                            demo.setPatientDeceasedDate(getXmlDate(obs.getObsDatetime()));
+                            demo.setPatientDeceasedDate(utils.getXmlDate(obs.getObsDatetime()));
                         }
                     } else {
                         demo.setPatientDeceasedIndicator(false);
@@ -350,7 +350,7 @@ public class NDRCommonQuestionsDictionary {
                 XMLGregorianCalendar dataCaptured = null;
                 for (BiometricInfo biometricInfo: biometricInfos) {
                     String fingerPosition = biometricInfo.getFingerPosition();
-                    dataCaptured = Utils.getXmlDateTime(biometricInfo.getDateCreated());
+                    dataCaptured = utils.getXmlDateTime(biometricInfo.getDateCreated());
                     switch (fingerPosition) {
                         case "RightThumb":
                             rightFingerType.setRightThumb(biometricInfo.getTemplate());
@@ -432,22 +432,22 @@ public class NDRCommonQuestionsDictionary {
             try {
 //                Encounter lastEncounterDate = Utils.getLastEncounter(encounters); //(pts);
                 if (lastEncounterDate != null) {
-                    common.setDateOfLastReport(getXmlDate(lastEncounterDate.getEncounterDatetime()));
+                    common.setDateOfLastReport(utils.getXmlDate(lastEncounterDate.getEncounterDatetime()));
                 }
 
                 Date EnrollmentDate = Utils.extractEnrollmentDate(groupedObsByConcept);
 
 
                 if (EnrollmentDate != null) {
-                    common.setDateOfFirstReport(getXmlDate(EnrollmentDate));
-                    common.setDiagnosisDate(getXmlDate(EnrollmentDate));
+                    common.setDateOfFirstReport(utils.getXmlDate(EnrollmentDate));
+                    common.setDiagnosisDate(utils.getXmlDate(EnrollmentDate));
                 }else {
                     return null; //Patient was never enrolled in the HIV program
                 }
                 obs = Utils.extractLastObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT, groupedObsByConcept);
                 if (obs != null) {
                     valueDateTime = obs.getValueDate();
-                    common.setDiagnosisDate(getXmlDate(valueDateTime));
+                    common.setDiagnosisDate(utils.getXmlDate(valueDateTime));
                 }
             } catch (Exception ex) {
                 LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
@@ -562,7 +562,7 @@ HIVQuestionsType
             obs =  Utils.extractObs(Utils.DATE_OF_HIV_DIAGNOSIS_CONCEPT,obsListId);
             if (obs != null && obs.getValueDate() != null) {
                 valueDateTime = obs.getValueDate();
-                hivQuestionsType.setFirstConfirmedHIVTestDate(getXmlDate(valueDateTime));
+                hivQuestionsType.setFirstConfirmedHIVTestDate(utils.getXmlDate(valueDateTime));
             }
             obs =  Utils.extractObs(Utils.MODE_OF_HIV_TEST,obsListId);
             if (obs != null && obs.getValueCoded() != null) {
@@ -583,7 +583,7 @@ HIVQuestionsType
             obs =  Utils.extractObs(Utils.MEDICAL_ELIGIBLE_DATE_CONCEPT,obsListId);
             if (obs != null) {
                 valueDateTime = obs.getValueDate();
-                hivQuestionsType.setMedicallyEligibleDate(getXmlDate(valueDateTime));
+                hivQuestionsType.setMedicallyEligibleDate(utils.getXmlDate(valueDateTime));
             }
             obs =  Utils.extractObs(Utils.REASON_MEDICALLY_ELIGIBLE_CONCEPT,obsListId);
             if (obs != null && obs.getValueCoded() != null) {
@@ -594,12 +594,12 @@ HIVQuestionsType
             obs =  Utils.extractObs(Utils.DATE_INITIAL_ADHERENCE_COUNCELING_CONCEPT,obsListId);
             if (obs != null) {
                 valueDateTime = obs.getValueDate();
-                hivQuestionsType.setInitialAdherenceCounselingCompletedDate(Utils.getXmlDate(valueDateTime));
+                hivQuestionsType.setInitialAdherenceCounselingCompletedDate(utils.getXmlDate(valueDateTime));
             }
             obs =  Utils.extractObs(Utils.TRANSFERRED_IN_DATE,obsListId);
             if (obs != null) {
                 valueDateTime = obs.getValueDate();
-                hivQuestionsType.setTransferredInDate(Utils.getXmlDate(valueDateTime));
+                hivQuestionsType.setTransferredInDate(utils.getXmlDate(valueDateTime));
             }
             obs =  Utils.extractObs(Utils.TRANSFERRED_IN_FROM,obsListId);
             if (obs != null) {
@@ -628,7 +628,7 @@ HIVQuestionsType
             Date artStartDate = Utils.extractARTStartDate(groupedpatientBaselineObsByConcept);//Obs(Utils.ART_START_DATE_CONCEPT, obsList);
             if (artStartDate != null) {
                 //valueDateTime=obs.getValueDate();
-                hivQuestionsType.setARTStartDate(Utils.getXmlDate(artStartDate));
+                hivQuestionsType.setARTStartDate(utils.getXmlDate(artStartDate));
             }
             obs =  Utils.extractObs(Utils.WHO_CLINICAL_STAGGING_AT_START_CONCEPT,obsListId);
             if (obs != null && obs.getValueCoded() != null) {
@@ -657,14 +657,14 @@ HIVQuestionsType
                 valueNumericInt = obs.getValueNumeric().intValue();
                 hivQuestionsType.setCD4AtStartOfART(String.valueOf(valueNumericInt));
             }
-            obs = Utils.extractObsByValues(Utils.REASON_FOR_TERMINATION_CONCEPT, Utils.TRANSFERRED_OUT_CONCEPT, obsNewList);
+            obs = Utils.extractObsByValues(Utils.REASON_FOR_TERMINATION_CONCEPT, Utils.TRANSFERRED_OUT_CONCEPT, obsList);
             if (obs != null) {
                 hivQuestionsType.setPatientTransferredOut(Boolean.TRUE);
             }
             obs =  Utils.extractObs(Utils.TRANSFER_OUT_DATE,obsListId);
             if (obs != null) {
                 valueDateTime = obs.getValueDate();
-                hivQuestionsType.setTransferredOutDate(getXmlDate(valueDateTime));
+                hivQuestionsType.setTransferredOutDate(utils.getXmlDate(valueDateTime));
                 
                 if (artStartDate != null) {
                     hivQuestionsType.setTransferredOutStatus("A");
@@ -678,7 +678,7 @@ HIVQuestionsType
              */
             Date enrollmentDate = Utils.extractEnrollmentDate(groupedpatientBaselineObsByConcept);
             if (enrollmentDate != null) {
-                hivQuestionsType.setEnrolledInHIVCareDate(Utils.getXmlDate(enrollmentDate)); 
+                hivQuestionsType.setEnrolledInHIVCareDate(utils.getXmlDate(enrollmentDate));
             }
             obs =  Utils.extractObs(Utils.INITIAL_TB_STATUS, obsListId);
             if (obs != null && obs.getValueCoded() != null) {
@@ -689,7 +689,7 @@ HIVQuestionsType
 
             obs = Utils.extractLastObs(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, obsNewList);
             if (obs != null && obs.getValueCoded() != null) {
-                obs = Utils.extractObsByValues(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, Utils.PATIENT_TERMINATED, obsNewList);
+                obs = Utils.extractObsByValues(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, Utils.PATIENT_TERMINATED, obsList);
                 if (obs != null) {
                     hivQuestionsType.setStoppedTreatment(Boolean.TRUE);
                 } else {
@@ -699,7 +699,7 @@ HIVQuestionsType
                 obs = Utils.extractLastObs(Utils.PATIENT_DATE_TERMINATED, obsNewList);
                 if (obs != null && obs.getValueDate() != null) {
                     valueDateTime = obs.getValueDate();
-                    hivQuestionsType.setDateStoppedTreatment(getXmlDate(valueDateTime));
+                    hivQuestionsType.setDateStoppedTreatment(utils.getXmlDate(valueDateTime));
                 }
 
                 obs = Utils.extractLastObs(Utils.REASON_FOR_TERMINATION, obsNewList);
