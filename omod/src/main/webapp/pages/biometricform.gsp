@@ -192,7 +192,7 @@
                 if(lowQuality && invalid){
                     alert('Fingerprints of this patient contains invalid and low quality data and will need to be recaptured');
                 }
-                else if (lowQualiy) {
+                else if (lowQuality) {
                     alert('Some fingerprints for this patient are of low quality and will need to be recaptured');
                 }else if(invalid){
                     alert('Some fingerprints for this patient are invalid and will need to be recaptured');
