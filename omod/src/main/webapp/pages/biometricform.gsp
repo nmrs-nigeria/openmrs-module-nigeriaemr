@@ -6,9 +6,32 @@
     <button onclick="deletePrints()" id="deleteBtn" hidden="true" class="btn">Delete FingerPrints</button>
     <br>
 </div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:100px">
+                Loading...please wait
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModalCapture" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:100px">
+                Validating...please wait
+            </div>
+        </div>
+    </div>
+</div>
 <table>
     <tr>
         <td>
+            <h6 id="H_LEFT_THUMB" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_THUMB" border="1" onclick="captureFP(0)" alt="LEFT THUMB"
                  style="margin-left:30px;" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_THUMB.png">
@@ -16,22 +39,26 @@
             <input type="button" value="Scan" id="BTN_LEFT_THUMB" onclick="captureFP(6)">
         </td>
         <td>
+            <h6 id="H_LEFT_INDEX" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_INDEX" border="1" alt="LEFT INDEX" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_INDEX.png">
             <br>
             <input type="button" value="Scan" id="BTN_LEFT_INDEX" onclick="captureFP(7)">
         </td>
         <td>
+            <h6 id="H_LEFT_MIDDLE" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_MIDDLE" border="1" alt="LEFT MIDDLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_MIDDLE.png"> <br>
             <input type="button" value="Scan" id="BTN_LEFT_MIDDLE" onclick="captureFP(8)">
         </td>
         <td>
+            <h6 id="H_LEFT_RING" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_RING" border="1" alt="LEFT RING" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_RING.png"> <br>
             <input type="button" value="Scan" id="BTN_LEFT_RING" onclick="captureFP(9)">
         </td>
         <td>
+            <h6 id="H_LEFT_LITTLE" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_LITTLE" border="1" alt="LEFT LITTLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_LITTLE.png"> <br>
             <input type="button" value="Scan" id="BTN_LEFT_LITTLE" onclick="captureFP(10)">
@@ -56,26 +83,31 @@
     </tr>
     <tr>
         <td>
+            <h6 id="H_RIGHT_THUMB" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_THUMB" border="1" alt="RIGHT THUMB" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_THUMB.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_THUMB" onclick="captureFP(1)">
         </td>
         <td>
+            <h6 id="H_RIGHT_INDEX" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_INDEX" border="1" alt="RIGHT INDEX" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_INDEX.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_INDEX" onclick="captureFP(2)">
         </td>
         <td>
+            <h6 id="H_RIGHT_MIDDLE" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_MIDDLE" border="1" alt="RIGHT MIDDLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_MIDDLE.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_MIDDLE" onclick="captureFP(3)">
         </td>
         <td>
+            <h6 id="H_RIGHT_RING" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_RING" border="1" alt="RIGHT RING" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_RING.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_RING" onclick="captureFP(4)">
         </td>
         <td>
+            <h6 id="H_RIGHT_LITTLE" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_LITTLE" border="1" alt="RIGHT LITTLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_LITTLE.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_LITTLE" onclick="captureFP(5)">
@@ -109,9 +141,6 @@
 
 <script type="text/javascript">
 
-    //src="../../resources/images/LEFT_INDEX.png"
-
-
     let patientId;
     patientId = getUrlVars()["patientId"];
     let newPrint;
@@ -134,24 +163,39 @@
     console.log(url)
 
     let PreviousCaptureURL = url + '/CheckForPreviousCapture?PatientUUID=' + patientId;
-
     jQuery.getJSON(PreviousCaptureURL)
         .success(function (data) {
+            jQuery('#myModal').modal('hide');
             if (data !== undefined && data !== null && data.length > 0) {
                 let lowQuality = false;
+                let invalid = false;
                 for (let i = 0; i < data.length; i++) {
                     if ("low" === data[i].qualityFlag.toLowerCase()) {
                         let position = apiFingerPosition[data[i].fingerPositions];
                         lowQuality = true
                         document.getElementById('BTN_'+fingerPosition[position]).setAttribute( "onClick", "recaptureFP("+position+")" );
+                        document.getElementById('H_'+fingerPosition[position]).innerHTML = "low Quality";
+                        document.getElementById('H_'+fingerPosition[position]).style.display = 'inherit';
+                    }else if ("invalid" === data[i].qualityFlag.toLowerCase()){
+                        let position = apiFingerPosition[data[i].fingerPositions];
+                        invalid = true
+                        document.getElementById('BTN_'+fingerPosition[position]).setAttribute( "onClick", "recaptureFP("+position+")" );
+                        document.getElementById('H_'+fingerPosition[position]).innerHTML = "Invalid Data";
+                        document.getElementById('H_'+fingerPosition[position]).style.display = 'inherit';
                     }else{
                         let inputId = apiFingerPosition[data[i].fingerPositions];
                         document.getElementById('BTN_'+fingerPosition[inputId]).disabled = true;
                     }
                 }
+                jQuery('#myModal').modal('hide');
                 jQuery('#deleteBtn').attr('hidden', false);
-                if (lowQuality) {
+                if(lowQuality && invalid){
+                    alert('Fingerprints of this patient contains invalid and low quality data and will need to be recaptured');
+                }
+                else if (lowQuality) {
                     alert('Some fingerprints for this patient are of low quality and will need to be recaptured');
+                }else if(invalid){
+                    alert('Some fingerprints for this patient are invalid and will need to be recaptured');
                 } else {
                     alert('Finger Print already captured for this patient');
                 }
@@ -163,7 +207,7 @@
 
 
     function captureFP(position) {
-
+        jQuery('#myModalCapture').modal('show');
         // if(patientId === undefined){
         //     alert('Select a patient first');
         //     return;
@@ -174,8 +218,10 @@
 
         jQuery.getJSON(captureURL)
             .success(function (data) {
+                jQuery('#myModalCapture').modal('hide');
                 if (data.ErrorMessage === '' || data.ErrorMessage === null) {
                     let imgId = fingerPosition[position];
+                    document.getElementById('H_'+imgId).style.display = 'none';
                     document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
                     newPrint = data;
                     newPrint.Image = '';
@@ -190,20 +236,25 @@
                 }
             })
             .error(function (xhr, status, err) {
+                jQuery('#myModal').modal('hide');
+                jQuery('#myModalCapture').modal('hide');
                 alert('System error. Please check that the Biometric service is running');
             });
     }
 
     function recaptureFP(position) {
+        jQuery('#myModalCapture').modal('show');
         let captureURL = url + '/reCapturePrint?fingerPosition=' + position + '&patientId='+ patientId;
 
         jQuery.getJSON(captureURL)
             .success(function (data) {
+                jQuery('#myModalCapture').modal('hide');
                 if (data.ErrorMessage === '' || data.ErrorMessage === null) {
                     let imgId = fingerPosition[position];
                     document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
                     document.getElementById('saveBiometric').setAttribute( "onClick", "reSave()");
                     document.getElementById('saveBiometric').disabled = false;
+                    document.getElementById('H_'+imgId).style.display = 'none';
                     newPrint = data;
                     newPrint.Image = '';
                     pushPrints(newPrint);
@@ -214,6 +265,7 @@
                 }
             })
             .error(function (xhr, status, err) {
+                jQuery('#myModalCapture').modal('hide');
                 alert('System error. Please check that the Biometric service is running');
             });
     }
