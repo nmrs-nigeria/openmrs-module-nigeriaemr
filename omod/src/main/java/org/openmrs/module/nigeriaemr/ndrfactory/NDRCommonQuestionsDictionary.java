@@ -164,7 +164,7 @@ public class NDRCommonQuestionsDictionary {
         try {
 
             //Identifier 4 is Pepfar ID
-            PatientIdentifier pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId;
+            PatientIdentifier pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId, pepfarid;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
            // pepfarid = new PatientIdentifier();
@@ -173,8 +173,9 @@ public class NDRCommonQuestionsDictionary {
             PatientIdentifierType pepfaridPatientIdentifierType =
                     Context.getPatientService().getPatientIdentifierType(Utils.PEPFAR_IDENTIFIER_INDEX);
 
-            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts,pepfaridPatientIdentifierType);
+//            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts,pepfaridPatientIdentifierType);
 
+            pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
             pidHospital = pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX);
             pidOthers = pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX);
             htsId = pts.getPatientIdentifier(Utils.HTS_IDENTIFIER_INDEX);
@@ -189,8 +190,8 @@ public class NDRCommonQuestionsDictionary {
             // Use PepfarID as preferred ID if it exist, else use other IDs
             if (pepfarid != null) {
                 idt = new IdentifierType();
-                idt.setIDNumber(pepfarid);
-                demo.setPatientIdentifier(pepfarid);
+                idt.setIDNumber(pepfarid.getIdentifier());
+                demo.setPatientIdentifier(pepfarid.getIdentifier());
             }
             if (pidOthers != null) {
                 idt = new IdentifierType();
