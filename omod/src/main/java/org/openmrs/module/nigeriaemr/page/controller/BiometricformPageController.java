@@ -26,7 +26,9 @@ public class BiometricformPageController {
 			url = "http://localhost:2018/api/FingerPrint";
 		model.addAttribute("biometricUrl", url);
 		model.addAttribute("authenticatedUser", Context.getAuthenticatedUser());
-		model.addAttribute("authenticatedUserId", Context.getAuthenticatedUser().getId());
+		if (Context.getAuthenticatedUser() != null) {
+			model.addAttribute("authenticatedUserId", Context.getAuthenticatedUser().getId());
+		}
 		return null;
 	}
 	
