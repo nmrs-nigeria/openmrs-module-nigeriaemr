@@ -72,5 +72,29 @@
             INSERT INTO patientflags_flag_tag (`flag_id`,`tag_id`) VALUES (@var_name,1);
         </sql>
     </changeSet>
+
+    <changeSet id="biometric_flag_231020201243_3" author="wande">
+        <insert tableName="patientflags_flag">
+            <column name="name" value="Has Invalid fingerprints"/>
+            <column name="criteria" value="select distinct b.patient_id from biometricinfo b where template not like 'RK1SA%' "/>
+            <column name="message" value="Patient biometrics needs to be recaptured because it contains invalid data"/>
+            <column name="enabled" valueNumeric="1"/>
+            <column name="evaluator" value="org.openmrs.module.patientflags.evaluator.SQLFlagEvaluator"/>
+            <column name="creator" valueNumeric="1"/>
+            <column name="changed_by" valueNumeric="1"/>
+            <column name="retired" valueNumeric="0"/>
+            <column name="uuid" value="c09ba9bd-6c2e-415b-83d5-6ec9a2571c17"/>
+            <column name="priority_id" valueNumeric="1"/>
+            <column name="date_created" valueDate="now()"/>
+            <column name="date_changed" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="biometric_flag_231020201243_4" author="wande">
+        <sql>
+            select  @var_name := flag_id from patientflags_flag where uuid = 'c09ba9bd-6c2e-415b-83d5-6ec9a2571c17';
+            INSERT INTO patientflags_flag_tag (`flag_id`,`tag_id`) VALUES (@var_name,1);
+        </sql>
+    </changeSet>
  
 </databaseChangeLog>
