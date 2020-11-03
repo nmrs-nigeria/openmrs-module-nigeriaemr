@@ -170,15 +170,15 @@ public class NDRCommonQuestionsDictionary {
         try {
 
             //Identifier 4 is Pepfar ID
-            PatientIdentifier  pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId;
+            PatientIdentifier  pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId , pepfarid;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
             // pepfarid = allPidentifiers.stream().filter(x-> x.getIdentifierType().equals(4)).findFirst().get();
             // pepfarid = new PatientIdentifier();
             // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
 
-            Set<PatientIdentifier> allPidentifiers = pts.getIdentifiers();
-            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts.getPatientId(), Utils.PEPFAR_IDENTIFIER_INDEX);
+//            Set<PatientIdentifier> allPidentifiers = pts.getIdentifiers();
+            pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
             pidHospital = pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX);
             pidOthers = pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX);
             htsId = pts.getPatientIdentifier(Utils.HTS_IDENTIFIER_INDEX);
@@ -192,12 +192,10 @@ public class NDRCommonQuestionsDictionary {
             // Use PepfarID as preferred ID if it exist, else use other IDs
             if (pepfarid != null) {
                 idt = new IdentifierType();
-                idt.setIDNumber(pepfarid);
-                demo.setPatientIdentifier(pepfarid);
+                idt.setIDNumber(pepfarid.getIdentifier());
+                demo.setPatientIdentifier(pepfarid.getIdentifier());
                 //idt.setIDNumber(pepfarid.getIdentifier());
                 //demo.setPatientIdentifier(pepfarid.getIdentifier());
-            } else {
-                // demo.setPatientIdentifier(facility.getFacilityID() + "_" + pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX).getIdentifier() + "_" + pts.getId());
             }
             if (pidHospital != null) {
                 idt = new IdentifierType();
@@ -242,7 +240,9 @@ public class NDRCommonQuestionsDictionary {
                 identifiersType.getIdentifier().add(idt);
             }
 
-            demo.setOtherPatientIdentifiers(identifiersType);
+            if(identifiersType.getIdentifier().size()>0) {
+                demo.setOtherPatientIdentifiers(identifiersType);
+            }
             demo.setTreatmentFacility(facility);
 
             String gender = pts.getGender();
