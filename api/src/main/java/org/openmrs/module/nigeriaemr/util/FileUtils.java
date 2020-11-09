@@ -16,7 +16,7 @@ public class FileUtils {
 			for (File subFile : files) {
 				if (subFile.getName().toLowerCase().endsWith(".zip"))
 					if (subFile.isDirectory()) {
-						success = deleteFolder(subFile.getPath().toString(), true);
+						success = deleteFolder(subFile.getPath(), true);
 					}
 			}
 		}

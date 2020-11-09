@@ -181,7 +181,7 @@ public class NdrDBManager {
 	
 	public List<FacilityLocation> getFacilityLocationById(int location_id) throws SQLException {
 		String sql_txt = "select uuid,location_id,location_name,datimCode,facility_name,date_created,creator,date_modified,modified_by from "
-		        + ConstantsUtil.FACILITY_LOCATION_TABLE + "where location_id = " + location_id;
+		        + ConstantsUtil.FACILITY_LOCATION_TABLE + " where location_id = " + location_id;
 		pStatement = conn.prepareStatement(sql_txt);
 		resultSet = pStatement.executeQuery();
 		

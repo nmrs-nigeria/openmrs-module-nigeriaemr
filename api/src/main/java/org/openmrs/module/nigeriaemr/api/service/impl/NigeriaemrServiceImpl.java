@@ -76,8 +76,18 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	}
 	
 	@Override
-	public NDRExportBatch saveNdrExportBatchItem(NDRExportBatch ndrExportBatch) throws APIException {
-		return dao.save(ndrExportBatch);
+	public synchronized NDRExportBatch saveNdrExportBatchItem(NDRExportBatch ndrExportBatch, boolean override)
+	        throws APIException {
+		NDRExportBatch old = null;
+		if (ndrExportBatch.getId() != null)
+			old = dao.getNDRExportBatchById(ndrExportBatch.getId());
+		if (old == null
+		        || !("Restarted".equalsIgnoreCase(old.getStatus()) && "Done".equalsIgnoreCase(ndrExportBatch.getStatus()))) {
+			return dao.save(ndrExportBatch);
+		} else if (override) {
+			return dao.save(ndrExportBatch);
+		}
+		return ndrExportBatch;
 	}
 	
 	@Override
@@ -135,6 +145,11 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	@Override
 	public List<NDRExportBatch> getExportBatchByStatus(String status, boolean includeVoided) throws APIException {
 		return dao.getExportBatchByStatus(status, includeVoided);
+	}
+	
+	@Override
+	public List<NDRExportBatch> getExportBatchByStartMode(boolean startMode, boolean includeVoided) throws APIException {
+		return dao.getExportBatchByStartMode(startMode, includeVoided);
 	}
 	
 	@Override

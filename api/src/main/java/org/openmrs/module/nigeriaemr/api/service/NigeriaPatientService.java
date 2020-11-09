@@ -22,6 +22,9 @@ public interface NigeriaPatientService extends PatientService {
 	List<Patient> getPatients(List<Integer> patientIds) throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	List<Integer> getPatientsFromStringIds(List<String> patientIds, Date fromDate, Date toDate) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate) throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
@@ -32,5 +35,8 @@ public interface NigeriaPatientService extends PatientService {
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	String getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	List<Integer> getPatientIdsByIdentifiers(List<String> identifiers, Date fromDate, Date toDate) throws APIException;
 	
 }

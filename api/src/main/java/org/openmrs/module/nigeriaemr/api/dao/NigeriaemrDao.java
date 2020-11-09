@@ -191,4 +191,13 @@ public class NigeriaemrDao {
 		if(ndrExports != null && ndrExports.size() > 0) return ndrExports;
 		return new ArrayList<>();
 	}
+	
+	public List<NDRExportBatch> getExportBatchByStartMode(boolean startMode, boolean includeVoided) {
+		Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
+		criteria.add(Restrictions.eq("automatic", startMode));
+		if (!includeVoided)
+			criteria.add(Restrictions.eq("voided", false));
+		criteria.addOrder(Order.desc("dateCreated"));
+		return criteria.list();
+	}
 }

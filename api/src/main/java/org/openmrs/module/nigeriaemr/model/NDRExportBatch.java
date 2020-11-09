@@ -63,6 +63,9 @@ public class NDRExportBatch {
 	@Column(name = "voided")
 	private boolean voided;
 	
+	@Column(name = "automatic")
+	private boolean automatic;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -199,5 +202,13 @@ public class NDRExportBatch {
 	
 	public void setErrorList(String errorList) {
 		this.errorList = errorList;
+	}
+	
+	public boolean isAutomatic() {
+		return automatic;
+	}
+	
+	public void setAutomatic(boolean automatic) {
+		this.automatic = automatic;
 	}
 }

@@ -86,6 +86,11 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="nigeriaemr-202008241353-015" author="wande">
+        <sql> ALTER TABLE nigeriaemr_ndr_export CHANGE COLUMN last_date last_date TIMESTAMP NULL ; </sql>
+        <sql> ALTER TABLE nigeriaemr_ndr_export CHANGE COLUMN date_started date_started TIMESTAMP NULL ;</sql>
+    </changeSet>
+
     <changeSet id="nigeriaemr-202008241353-01" author="wande">
         <addColumn tableName="nigeriaemr_ndr_batch_export">
             <column name="name" type="varchar(100)"/>
@@ -107,6 +112,13 @@
         <addColumn tableName="nigeriaemr_ndr_batch_export">
             <column name="error_list" type="varchar(250)"/>
         </addColumn>
+    </changeSet>
+    <changeSet id="nigeriaemr-202008241353-04" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="automatic" type="BIT(1)"/>
+        </addColumn>
+        <sql> ALTER TABLE nigeriaemr_ndr_export CHANGE COLUMN last_date last_date TIMESTAMP NULL ; </sql>
+        <sql> ALTER TABLE nigeriaemr_ndr_export CHANGE COLUMN date_started date_started TIMESTAMP NULL ;</sql>
     </changeSet>
 
     <changeSet id="nigeriaemr-2016-07-28-21-201404091129" author="temiye">

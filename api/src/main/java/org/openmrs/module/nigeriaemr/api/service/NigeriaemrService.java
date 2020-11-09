@@ -64,7 +64,7 @@ public interface NigeriaemrService extends OpenmrsService {
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
-	NDRExportBatch saveNdrExportBatchItem(NDRExportBatch ndrExportBatch) throws APIException;
+	NDRExportBatch saveNdrExportBatchItem(NDRExportBatch ndrExportBatch, boolean override) throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
@@ -107,6 +107,10 @@ public interface NigeriaemrService extends OpenmrsService {
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
 	List<NDRExportBatch> getExportBatchByStatus(String status, boolean includeVoided) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	List<NDRExportBatch> getExportBatchByStartMode(boolean startMode, boolean includeVoided) throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional

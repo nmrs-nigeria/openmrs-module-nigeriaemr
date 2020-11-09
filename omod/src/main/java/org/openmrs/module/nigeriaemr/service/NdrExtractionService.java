@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -65,7 +66,7 @@ public class NdrExtractionService {
 	}
 	
 	public void saveExport(String fullContextPath, String contextPath, List<Integer> filteredPatients, String DATIMID,
-	        Date lastDate, Date currentDate) throws Exception {
+	        Date lastDate, Date currentDate, boolean automatic) throws Exception {
 		
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		int patientSize = filteredPatients.size();
@@ -74,7 +75,12 @@ public class NdrExtractionService {
 		List<List<Integer>> partitions = Partition.ofSize(filteredPatients, batch);
 		String reportType = "NDR";
 		String reportFolder = Utils.ensureReportFolderExist(fullContextPath, reportType);
-		String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(currentDate);
+		String formattedDate;
+		if (currentDate == null) {
+			formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(new Date());
+		} else {
+			formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(currentDate);
+		}
 		String IPReportingState;
 		String IPReportingLgaCode;
 		Optional<DatimMap> datimMap = Optional.ofNullable(nigeriaemrService.getDatatimMapByDataimId(DATIMID));
@@ -90,19 +96,24 @@ public class NdrExtractionService {
 		ndrExportBatch.setDateCreated(new Date());
 		ndrExportBatch.setDateUpdated(new Date());
 		ndrExportBatch.setLastExportDate(lastDate);
+		if (lastDate == null)
+			ndrExportBatch.setLastExportDate(new Date());
 		ndrExportBatch.setStatus("Processing");
 		ndrExportBatch.setPatients(patientSize);
 		ndrExportBatch.setOwner(Context.getAuthenticatedUser());
 		ndrExportBatch.setReportFolder(reportFolder);
 		ndrExportBatch.setContextPath(contextPath);
+		ndrExportBatch.setAutomatic(automatic);
+		
 		String name = IPReportingState + "_" + IPReportingLgaCode + "_" + DATIMID + formattedDate;
 		ndrExportBatch.setName(name);
-		nigeriaemrService.saveNdrExportBatchItem(ndrExportBatch);
+		nigeriaemrService.saveNdrExportBatchItem(ndrExportBatch, false);
 		for (List<Integer> patients : partitions) {
 			String fileName = IPReportingState + "_" + IPReportingLgaCode + "_" + DATIMID + "_{pepFarId}_" + formattedDate;
 			// Start export process
 			NDRExport ndrExport = new NDRExport();
 			ndrExport.setDateStarted(currentDate);
+			//			if (currentDate == null) ndrExport.setDateStarted(new Date());
 			ndrExport.setPatients(1);
 			ndrExport.setOwner(Context.getAuthenticatedUser());
 			ndrExport.setName(fileName);
@@ -125,22 +136,26 @@ public class NdrExtractionService {
 		}
 	}
 	
-	NDRExportBatch ndrExportBatch;
-	
 	public void export(NDRExport ndrExport) {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		//check if batch is still valid
-		ndrExportBatch = nigeriaemrService.getNDRExportBatchById(ndrExport.getBatchId());
-		if (ndrExportBatch == null || !ndrExportBatch.getStatus().equalsIgnoreCase("Processing")) {
+		NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(ndrExport.getBatchId());
+		if (ndrExportBatch == null
+		        || (!ndrExportBatch.getStatus().equalsIgnoreCase("Processing") && !ndrExportBatch.getStatus()
+		                .equalsIgnoreCase("Restarted"))) {
 			LoggerUtils.write(NdrExtractionService.class.getName(), "skipping", LoggerUtils.LogFormat.FATAL,
 			    LoggerUtils.LogLevel.live);
+			Context.evictFromSession(ndrExportBatch);
 			return;
 		}
 		Context.evictFromSession(ndrExportBatch);
 		
 		try {
+			String formattedDate = null;
 			String DATIMID = Utils.getFacilityDATIMId();
-			String formattedDate = new SimpleDateFormat("ddMMyy").format(ndrExport.getDateStarted());
+			if (ndrExport.getDateStarted() != null) {
+				formattedDate = new SimpleDateFormat("ddMMyy").format(ndrExport.getDateStarted());
+			}
 			
 			List<Integer> patients;
 			if (ndrExport.getErrorPatientsList() != null && !ndrExport.getErrorPatientsList().isEmpty()) {
@@ -178,16 +193,16 @@ public class NdrExtractionService {
 		}
 	}
 	
-	public String getFileList() {
+	public String getFileList(boolean auto) {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
         List<Map<String, Object>> fileMaps = new ArrayList<>();
         String response = "";
 
         try {
-            List<NDRExportBatch> ndrExportBatches  = nigeriaemrService.getExportBatchByStatus(null, false);
+            List<NDRExportBatch> ndrExportBatches  = nigeriaemrService.getExportBatchByStartMode(auto, false);
             if (ndrExportBatches != null && ndrExportBatches.size() > 0) {
                 for (NDRExportBatch ndrExportBatch : ndrExportBatches) {
-                    if ("Done".equalsIgnoreCase(ndrExportBatch.getStatus())){
+                    if ("Done".equalsIgnoreCase(ndrExportBatch.getStatus()) || "Restarted".equalsIgnoreCase(ndrExportBatch.getStatus())){
 						ndrExportBatch.setStatus("Processing");
                     }
                     boolean active = !ndrExportBatch.getStatus().equalsIgnoreCase("Processing");
@@ -279,7 +294,9 @@ public class NdrExtractionService {
 				if (fileToDelete.exists()) {
 					boolean d = fileToDelete.delete();
 					if (!d)
-						fileToDelete.delete();
+						if (fileToDelete.exists()) {
+							fileToDelete.deleteOnExit();
+						}
 				}
 			}
 		}
@@ -296,6 +313,7 @@ public class NdrExtractionService {
 	}
 	
 	public boolean restartFile(String fullContextPath,String id, String action) {
+		Context.getAdministrationService().updateGlobalProperty("check_batch","false");
 		try {
 			int idInt = Integer.parseInt(id);
 			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
@@ -314,10 +332,9 @@ public class NdrExtractionService {
 				conditions.put("batchId", idInt);
 				nigeriaemrService.updateStatus(0,idInt,"Processing", false);
 				ndrExports = nigeriaemrService.getExports(conditions, null, false);
-
 			}
 			boolean deleted = false;
-			nigeriaemrService.updateExportBatch(idInt, "Processing", false);
+			boolean updateBatch = false;
 			NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(idInt);
 			//read failed file
 			List<Integer> failedIds = new ArrayList<>();
@@ -336,23 +353,26 @@ public class NdrExtractionService {
 			}
 			for (NDRExport ndrExport : ndrExports) {
 				Context.evictFromSession(ndrExport);
-//				if("failed".equalsIgnoreCase(action)){
-//					nigeriaemrService.updateStatus(ndrExport.getId(),idInt,"Processing", false);
-//				}
 				if(!deleted && !"resume".equalsIgnoreCase(action)) {
 					if (!"failed".equalsIgnoreCase(action)) {
 						deleteFolder(ndrExportBatch.getReportFolder());
 						deletePath(fullContextPath, ndrExportBatch.getPath());
-						deleteFolder(ndrExportBatch.getReportFolder() + File.separator + "error");
+						deleteFolder(ndrExportBatch.getReportFolder() +"-error");
 					}
 					deletePath(fullContextPath, ndrExportBatch.getErrorPath());
 					deletePath(fullContextPath, ndrExportBatch.getErrorList());
-					deleteFolder(ndrExportBatch.getReportFolder() + File.separator + "error");
+					deleteFolder(ndrExportBatch.getReportFolder() + "-error");
 					deleted = true;
 				}
 
 				List<Integer> ids = (List<Integer>) mapper.readValue(ndrExport.getPatientsList(), List.class);
-				List<Integer> result = failedIds.stream().distinct().filter(ids::contains).collect(Collectors.toList());
+				List<Integer> result;
+				if(failedIds.size() > 0) {
+					result = failedIds.stream().distinct().filter(ids::contains).collect(Collectors.toList());
+				}else {
+					result = ids;
+				}
+
 				try {
 					ndrExport.setErrorPatientsList(new ObjectMapper().writeValueAsString(result));
 				}
@@ -362,13 +382,133 @@ public class NdrExtractionService {
 				}
 
 				nigeriaemrService.updateStatus(ndrExport.getId(), ndrExport.getBatchId(), "Processing", false);
+				if(!updateBatch){
+					nigeriaemrService.updateExportBatch(idInt, "Restarted", false);
+					updateBatch = true;
+				}
 				ndrEvent.send(ndrExport);
 			}
-			if (ndrExports.size() > 0) nigeriaemrService.updateExportBatch(idInt, "Processing", false);
+			Context.getAdministrationService().updateGlobalProperty("check_batch","true");
 			return true;
 		}
 		catch (Exception e) {
+			Context.getAdministrationService().updateGlobalProperty("check_batch","true");
 			return false;
 		}
+	}
+	
+	public void checkIfExportIsComplete() {
+		String checkBatch = Context.getAdministrationService().getGlobalProperty("check_batch");
+		if ("true".equalsIgnoreCase(checkBatch)) {
+			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+			try {
+				List<NDRExportBatch> ndrExportBatches = nigeriaemrService.getExportBatchByStatus("Done", false);
+				for (NDRExportBatch ndrExportBatch : ndrExportBatches) {
+					String IPReportingState = Utils.getIPReportingState();
+					String IPReportingLgaCode = Utils.getIPReportingLgaCode();
+					String DATIMID = Utils.getFacilityDATIMId();
+					String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExportBatch.getDateStarted());
+					String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate;
+					String zipFileName = fileName + ".zip";
+					String errorZipFileName = fileName + "_error" + ".zip";
+					String path = Utils.ZipFolder(ndrExportBatch.getContextPath(), ndrExportBatch.getReportFolder(),
+					    zipFileName, "NDR");
+					File dir = new File(ndrExportBatch.getReportFolder());
+					String errorReportFolder = ndrExportBatch.getReportFolder() + "-error";
+					String errorPath = Utils.ZipFolder(ndrExportBatch.getContextPath(), dir.getParent(), errorReportFolder,
+					    errorZipFileName, "NDR");
+					String csvFile = Paths.get(dir.getParent(), ndrExportBatch.getId() + "_error_list.csv").toString();
+					String errorList = Paths.get(ndrExportBatch.getContextPath(), "downloads", "NDR",
+					    ndrExportBatch.getId() + "_error_list.csv").toString();
+					int numError = getNumberOfPatientsWithError(csvFile);
+					String status;
+					if (!"no new patient record found".equalsIgnoreCase(errorPath)) {
+						ndrExportBatch.setPath(path);
+						if (numError > 0) {
+							ndrExportBatch.setErrorPath(errorPath);
+							ndrExportBatch.setErrorList(errorList);
+							status = "Completed with " + numError + " Errors";
+						} else {
+							status = "Completed";
+						}
+					} else {
+						status = "Failed";
+					}
+					ndrExportBatch.setStatus(status);
+					nigeriaemrService.saveNdrExportBatchItem(ndrExportBatch, false);
+				}
+			}
+			catch (Exception e) {
+				LoggerUtils.write(NDRExtractor.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+				    LoggerUtils.LogLevel.live);
+				//ignore error
+			}
+			
+			try {
+				List<NDRExportBatch> ndrExportBatchesInProgress = nigeriaemrService.getExportBatchByStatus("Processing",
+				    false);
+				List<NDRExportBatch> ndrExportBatchesRestarted = nigeriaemrService
+				        .getExportBatchByStatus("Restarted", false);
+				
+				processBatchInProgress(nigeriaemrService, ndrExportBatchesInProgress, false);
+				processBatchInProgress(nigeriaemrService, ndrExportBatchesRestarted, true);
+			}
+			catch (Exception e) {
+				LoggerUtils.write(NDRExtractor.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+				    LoggerUtils.LogLevel.live);
+				//ignore error
+			}
+		}
+	}
+	
+	private void processBatchInProgress(NigeriaemrService nigeriaemrService, List<NDRExportBatch> ndrExportBatchesInProgress,
+										boolean restarted) throws IOException {
+		if (ndrExportBatchesInProgress != null) {
+			for (NDRExportBatch ndrExportBatch : ndrExportBatchesInProgress) {
+				Map<String, Object> conditions = new HashMap<>();
+				conditions.put("status", "Done");
+				conditions.put("batchId", ndrExportBatch.getId());
+				List<NDRExport> doneNdrExports = nigeriaemrService.getExports(conditions, null, false);
+
+				conditions.put("status", "Failed");
+				conditions.put("batchId", ndrExportBatch.getId());
+				List<NDRExport> FailedNdrExports = nigeriaemrService.getExports(conditions, null, false);
+				int count = 0;
+				for (NDRExport ndrExport : doneNdrExports) {
+					String patient = ndrExport.getPatientsList();
+					List values = mapper.readValue(patient, List.class);
+					count = count + values.size();
+				}
+				for (NDRExport ndrExport : FailedNdrExports) {
+					String patient = ndrExport.getPatientsList();
+					List values = mapper.readValue(patient, List.class);
+					count = count + values.size();
+				}
+				if (ndrExportBatch.getPatients().equals(count)) {
+					ndrExportBatch.setPatientsProcessed(count);
+					ndrExportBatch.setStatus("Done");
+					ndrExportBatch.setDateEnded(new Date());
+					ndrExportBatch.setDateUpdated(new Date());
+					nigeriaemrService.saveNdrExportBatchItem(ndrExportBatch, restarted);
+				}else{
+					ndrExportBatch.setPatientsProcessed(count);
+					ndrExportBatch.setDateUpdated(new Date());
+					nigeriaemrService.saveNdrExportBatchItem(ndrExportBatch, restarted);
+				}
+			}
+		}
+	}
+	
+	private int getNumberOfPatientsWithError(String errorList) throws IOException {
+		File csvFile = new File(errorList);
+		int num = 0;
+		if (csvFile.exists()) {
+			Reader in = new FileReader(errorList);
+			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+			for (CSVRecord ignored : records) {
+				num += 1;
+			}
+		}
+		return num;
 	}
 }

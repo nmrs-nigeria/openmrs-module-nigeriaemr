@@ -86,6 +86,12 @@
 		<defaultValue>false</defaultValue>
 		<description/>
 	</globalProperty>
+	<globalProperty>
+		<property>check_batch</property>
+		<defaultValue>true</defaultValue>
+		<description/>
+	</globalProperty>
+
 
 	
 	<!--

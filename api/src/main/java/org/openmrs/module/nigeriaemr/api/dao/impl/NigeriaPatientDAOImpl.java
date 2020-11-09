@@ -71,6 +71,23 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 	}
 	
 	@Override
+	public List<Integer> getPatientsFromStringIds(List<String> patientIds, Date fromDate, Date toDate, boolean includeVoided)
+	        throws DAOException {
+		String query = "SELECT patient_id FROM patient WHERE patient_id in (:patientIds)";
+		if (fromDate != null)
+			query += " AND (patient.date_created >= :fromDate OR patient.date_changed >= :fromDate)";
+		if (toDate != null)
+			query += " AND (patient.date_created <= :toDate OR patient.date_changed <= :toDate)";
+		SQLQuery sql = getSession().createSQLQuery(query);
+		sql.setParameterList("patientIds", patientIds);
+		if (fromDate != null)
+			sql.setDate("fromDate", fromDate);
+		if (toDate != null)
+			sql.setDate("toDate", toDate);
+		return sql.list();
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException {
 		List<Patient> patients = new ArrayList<Patient>();
@@ -100,13 +117,37 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 	
 	@Override
 	public List<Integer> getPatientIdsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException {
-		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
+		String query = "SELECT distinct(encounter.patient_id) FROM encounter encounter WHERE TRUE";
+		if (fromDate != null)
+			query += " AND (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
 		if (toDate != null)
 			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		
-		sql.setDate("fromDate", fromDate);
+		if (fromDate != null)
+			sql.setDate("fromDate", fromDate);
+		if (toDate != null)
+			sql.setDate("toDate", toDate);
+		
+		return sql.list();
+	}
+	
+	@Override
+	public List<Integer> getPatientIdsByIdentifiers(List<String> identifiers, Date fromDate, Date toDate)
+	        throws DAOException {
+		String query = "SELECT patient_identifier.patient_id FROM patient_identifier ";
+		if (fromDate != null || toDate != null)
+			query += " LEFT JOIN patient ON patient.patient_id = patient_identifier.patient_id";
+		query += " WHERE identifier_type = 4 AND identifier in (:identifiers) ";
+		if (fromDate != null)
+			query += " AND (patient.date_created >= :fromDate OR patient.date_changed >= :fromDate)";
+		if (toDate != null)
+			query += " AND (patient.date_created <= :toDate OR patient.date_changed <= :toDate)";
+		SQLQuery sql = getSession().createSQLQuery(query);
+		sql.setParameterList("identifiers", identifiers);
+		if (fromDate != null)
+			sql.setDate("fromDate", fromDate);
 		if (toDate != null)
 			sql.setDate("toDate", toDate);
 		

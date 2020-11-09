@@ -1005,8 +1005,7 @@ public class Utils {
 				System.out.println("deleted previous xml successfully ? " + b);
 			}
 			//check for error folder
-			String errorFolders = Paths.get(todayFolders, "error").toString();
-			File errorDir = new File(errorFolders);
+			File errorDir = new File(todayFolders + "-error");
 			if (errorDir.exists()) {
 				
 				File[] errorFiles = errorDir.listFiles();

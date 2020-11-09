@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -69,7 +70,55 @@ public class NdrFragmentController {
 		if (filteredPatientByLocation.size() == 0)
 			return "";
 		
-		return startGenerateFile(request, filteredPatientByLocation, facilityLocation.getDatimCode(), null, currentDate);
+		return startGenerateFile(request, filteredPatientByLocation, facilityLocation.getDatimCode(), null, currentDate,
+		    true);
+	}
+	
+	public String generateCustomNDRFile(HttpServletRequest request,
+	        @RequestParam(value = "identifiers", required = false) String identifiers,
+	        @RequestParam(value = "to", required = false) String to,
+	        @RequestParam(value = "from", required = false) String from) throws Exception {
+		try {
+			// get date that's bounds to the date the export is kicked off
+			Date currentDate = null;
+			if (to != null && !to.isEmpty()) {
+				currentDate = new SimpleDateFormat("yyyy-MM-dd").parse(to);
+			}
+			Date lastDate = null;
+			if (from != null && !from.isEmpty()) {
+				lastDate = new SimpleDateFormat("yyyy-MM-dd").parse(from);
+			}
+
+			List<Integer> patients = new ArrayList<>();
+			if (identifiers != null && !identifiers.isEmpty()) {
+				String[] ary = identifiers.split(",");
+				if (ary.length > 0) {
+					List<Integer> newPatients = new ArrayList<>();
+					List<String> identifierList = Arrays.asList(ary);
+					List<Integer> patientIds = nigeriaPatientService.getPatientsFromStringIds(identifierList, lastDate, currentDate);
+					if(patientIds != null && patientIds.size()>0) newPatients.addAll(patientIds);
+					List<Integer> patientIdsFromIdentifiers = nigeriaPatientService.getPatientIdsByIdentifiers(identifierList, lastDate, currentDate);
+					if(patientIdsFromIdentifiers != null && patientIdsFromIdentifiers.size()>0) newPatients.addAll(patientIdsFromIdentifiers);
+					Set<Integer> set = new HashSet<>(newPatients);
+					patients = new ArrayList<>(set);
+				}
+			} else {
+				List<Integer> patientIds = nigeriaPatientService.getPatientIdsByEncounterDate(lastDate, currentDate);
+				if(patientIds != null && patientIds.size()>0) patients.addAll(patientIds);
+			}
+
+			DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
+
+			//check if global variable for logging exists
+			LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
+			LoggerUtils.clearLogFile();
+			LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
+
+			String DATIMID = Utils.getFacilityDATIMId();
+			return startGenerateFile(request, patients, DATIMID, lastDate, currentDate, false);
+		}catch (Exception ex){
+			return ex.getMessage();
+		}
 	}
 	
 	public String generateNDRFile(HttpServletRequest request) throws Exception {
@@ -84,23 +133,14 @@ public class NdrFragmentController {
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
 		List<Integer> patients;
 		Date lastDate = Utils.getLastNDRDate();
-		//		String patientIdLimit = Utils.getPatientIdLimit();
-		//		if (patientIdLimit != null && !"".equals(patientIdLimit)) {
-		//			String[] patientIdArray = patientIdLimit.split(",");
-		//			int startIndex = Integer.parseInt(patientIdArray[0]);
-		//			int endIndex = Integer.parseInt(patientIdArray[1]);
-		//			patients = nigeriaPatientService.getPatientIdsInIndex(startIndex, endIndex);
-		//		} else {
-		//			patients = nigeriaPatientService.getPatientIdsByEncounterDate(lastDate, currentDate);
-		//		}
 		patients = nigeriaPatientService.getPatientIdsByEncounterDate(lastDate, currentDate);
 		String DATIMID = Utils.getFacilityDATIMId();
-		return startGenerateFile(request, patients, DATIMID, lastDate, currentDate);
+		return startGenerateFile(request, patients, DATIMID, lastDate, currentDate, true);
 		
 	}
 	
 	private String startGenerateFile(HttpServletRequest request, List<Integer> filteredPatients,
-									 String DATIMID,Date lastDate, Date currentDate) throws Exception {
+									 String DATIMID,Date lastDate, Date currentDate, boolean updateNdrLastRun) throws Exception {
 
 		// Check that no export is in progress
 		Map<String, Object> condition = new HashMap<>();
@@ -114,14 +154,14 @@ public class NdrFragmentController {
 		Thread thread = new Thread(() -> {
 			try {
 				Consumer.initialize(userContext);
-				ndrExtractionService.saveExport(fullContextPath,contextPath,filteredPatients,DATIMID,lastDate,currentDate);
+				ndrExtractionService.saveExport(fullContextPath,contextPath,filteredPatients,DATIMID,lastDate,currentDate, updateNdrLastRun);
 			} catch (Exception e) {
 				LoggerUtils.write(NdrFragmentController.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
 						LoggerUtils.LogLevel.live);
 			}
 		});
 		thread.start();
-		Utils.updateLast_NDR_Run_Date(new Date());
+		if (updateNdrLastRun) Utils.updateLast_NDR_Run_Date(new Date());
 		return "Export is being processed";
 	}
 	
@@ -138,7 +178,11 @@ public class NdrFragmentController {
 	}
 	
 	public String getFileList() throws IOException {
-		return ndrExtractionService.getFileList();
+		return ndrExtractionService.getFileList(true);
+	}
+	
+	public String getManualFileList() throws IOException {
+		return ndrExtractionService.getFileList(false);
 	}
 	
 	public boolean deleteFile(HttpServletRequest request, @RequestParam(value = "id") String id) {

@@ -54,11 +54,11 @@ public class Consumer implements MessageListener {
 	
 	public void checkIfExportIsComplete() {
 		try {
-			ndrExtractor = new NDRExtractor();
+			NdrExtractionService ndrExtractionService = new NdrExtractionService(jaxbContext);
 			initialize(null);
-			ndrExtractor.checkIfExportIsComplete();
+			ndrExtractionService.checkIfExportIsComplete();
+			Context.clearSession();
 			Context.closeSession();
-			ndrExtractor = null;
 		}
 		catch (Exception e) {
 			LoggerUtils.write(Consumer.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,

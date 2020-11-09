@@ -10,18 +10,23 @@ import java.util.List;
 
 public interface NigeriaPatientDAO extends PatientDAO {
 	
-	public List<Patient> getPatients(Integer startId, Integer endId, boolean includeVoided) throws DAOException;
+	List<Patient> getPatients(Integer startId, Integer endId, boolean includeVoided) throws DAOException;
 	
-	public List<Integer> getPatientIds(Integer startId, Integer endId, boolean includeVoided) throws DAOException;
+	List<Integer> getPatientIds(Integer startId, Integer endId, boolean includeVoided) throws DAOException;
 	
-	public List<Patient> getPatients(List<Integer> patientIds, boolean includeVoided) throws DAOException;
+	List<Patient> getPatients(List<Integer> patientIds, boolean includeVoided) throws DAOException;
 	
-	public List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException;
+	List<Integer> getPatientsFromStringIds(List<String> patientIds, Date fromDate, Date toDate, boolean includeVoided)
+	        throws DAOException;
 	
-	public List<Integer> getPatientIdsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException;
+	List<Patient> getPatientsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException;
 	
-	public List<Patient> getPatientsByEncounterDate(int startIndex, int endIndex, Date lastEncounterDate,
-	        boolean includeVoided) throws DAOException;
+	List<Integer> getPatientIdsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException;
 	
-	public String getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType) throws DAOException;
+	List<Integer> getPatientIdsByIdentifiers(List<String> identifiers, Date fromDate, Date toDate) throws DAOException;
+	
+	List<Patient> getPatientsByEncounterDate(int startIndex, int endIndex, Date lastEncounterDate, boolean includeVoided)
+	        throws DAOException;
+	
+	String getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType) throws DAOException;
 }
