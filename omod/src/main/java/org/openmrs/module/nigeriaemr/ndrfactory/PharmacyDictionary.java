@@ -153,6 +153,18 @@ public class PharmacyDictionary {
         regimenMap.put(160566, "8");
         regimenMap.put(160569, "9");
 
+        //Added because of IHVN
+/*
+        ABC-FTC-EFV400   -  165694
+        ABC-3TC-EFV400   -  165693
+        TDF-FTC-EFV400  -   165687
+        TDF-3TC-EFV400  -   165686
+ */
+        regimenMap.put(165694, "1r"); // ABC-FTC-EFV400
+        regimenMap.put(165693, "4c"); // ABC-3TC-EFV400
+        regimenMap.put(165687, "1c"); // TDF-FTC-EFV400
+        regimenMap.put(165686, "1e"); // TDF-3TC-EFV400
+
         //key is concept id, value is NDR code text
         regimenCodeDescTextMap.put(160124, "AZT-3TC-EFV");
         regimenCodeDescTextMap.put(1652, "AZT-3TC-NVP");
@@ -174,9 +186,9 @@ public class PharmacyDictionary {
         regimenCodeDescTextMap.put(165522, "AZT-3TC-TDF");
         regimenCodeDescTextMap.put(162563, "ABC-3TC-EFV");
         regimenCodeDescTextMap.put(165681, "TDF-3TC-DTG");
-        regimenCodeDescTextMap.put(165686, "TDF-3TC-EFV400");
+        regimenCodeDescTextMap.put(165686, "TDF-3TC-EFV");
         regimenCodeDescTextMap.put(165682, "TDF-FTC-DTG");
-        regimenCodeDescTextMap.put(165687, "TDF-FTC-EFV400");
+        regimenCodeDescTextMap.put(165687, "TDF-FTC-EFV");
         regimenCodeDescTextMap.put(165523, "TDF-FTC-LPV/r");
         regimenCodeDescTextMap.put(162201, "TDF-3TC-LPV/r");
         regimenCodeDescTextMap.put(165524, "TDF-FTC-ATV/r");
@@ -191,20 +203,20 @@ public class PharmacyDictionary {
         regimenCodeDescTextMap.put(817, "AZT-3TC-ABC");
         regimenCodeDescTextMap.put(792, "d4T-3TC-NVP");
         regimenCodeDescTextMap.put(165691, "ABC-3TC-DTG");
-        regimenCodeDescTextMap.put(165693, "ABC-3TC-EFV400");
+        regimenCodeDescTextMap.put(165693, "ABC-3TC-EFV");
         regimenCodeDescTextMap.put(162200, "ABC-3TC-LPV/r");
         regimenCodeDescTextMap.put(165692, "ABC-FTC-DTG");
-        regimenCodeDescTextMap.put(165694, "ABC-FTC-EFV400");
+        regimenCodeDescTextMap.put(165694, "ABC-FTC-EFV");
         regimenCodeDescTextMap.put(165690, "ABC-FTC-NVP");
         regimenCodeDescTextMap.put(162561, "AZT-3TC-LPV/r");
         regimenCodeDescTextMap.put(165695, "AZT-3TC-RAL");
         //regimenCodeDescTextMap.put(165681, "TDF-3TC-DTG");
         //regimenCodeDescTextMap.put(164505, "TDF-3TC-EFV");
-        regimenCodeDescTextMap.put(165686, "TDF-3TC-EFV400");
+        regimenCodeDescTextMap.put(165686, "TDF-3TC-EFV");
         //regimenCodeDescTextMap.put(162565, "TDF-3TC-NVP");
         //regimenCodeDescTextMap.put(165682, "TDF-FTC-DTG");
         regimenCodeDescTextMap.put(104565, "TDF-FTC-EFV");
-        regimenCodeDescTextMap.put(165687, "TDF-FTC-EFV400");
+        regimenCodeDescTextMap.put(165687, "TDF-FTC-EFV");
         regimenCodeDescTextMap.put(162561, "AZT-3TC-LPV/r");
         regimenCodeDescTextMap.put(162560, "d4T-3TC-LPV/r");
         regimenCodeDescTextMap.put(165526, "ABC-3TC-ddi");
