@@ -40,6 +40,9 @@ public class BiometricformPageController {
 		model.addAttribute("biometricUrl", url);
 		model.addAttribute("authenticatedUser", Context.getAuthenticatedUser());
 		model.addAttribute("authenticatedUserId", Context.getAuthenticatedUser().getId());
+		if (Context.getAuthenticatedUser() != null) {
+			model.addAttribute("authenticatedUserId", Context.getAuthenticatedUser().getId());
+		}
 		return null;
 	}
 	
