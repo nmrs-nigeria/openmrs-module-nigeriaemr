@@ -1,8 +1,5 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.xml.datatype.DatatypeConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.openmrs.Encounter;
@@ -14,6 +11,9 @@ import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.HIVEncounterType;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.util.*;
 
 public class ClinicalDictionary {
     Utils utils = new Utils();
