@@ -106,10 +106,13 @@ public class NdrExtractionService {
 		ndrExportBatch.setAutomatic(automatic);
 		
 		String name = IPReportingState + "_" + IPReportingLgaCode + "_" + DATIMID + formattedDate;
+		name = name.replaceAll("/", "_");
+		
 		ndrExportBatch.setName(name);
 		nigeriaemrService.saveNdrExportBatchItem(ndrExportBatch, false);
 		for (List<Integer> patients : partitions) {
 			String fileName = IPReportingState + "_" + IPReportingLgaCode + "_" + DATIMID + "_{pepFarId}_" + formattedDate;
+			fileName = fileName.replaceAll("/", "_");
 			// Start export process
 			NDRExport ndrExport = new NDRExport();
 			ndrExport.setDateStarted(currentDate);
@@ -155,6 +158,8 @@ public class NdrExtractionService {
 			String DATIMID = Utils.getFacilityDATIMId();
 			if (ndrExport.getDateStarted() != null) {
 				formattedDate = new SimpleDateFormat("ddMMyy").format(ndrExport.getDateStarted());
+			} else {
+				new SimpleDateFormat("ddMMyy").format(new Date());
 			}
 			
 			List<Integer> patients;
@@ -407,8 +412,14 @@ public class NdrExtractionService {
 					String IPReportingState = Utils.getIPReportingState();
 					String IPReportingLgaCode = Utils.getIPReportingLgaCode();
 					String DATIMID = Utils.getFacilityDATIMId();
-					String formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExportBatch.getDateStarted());
+					String formattedDate;
+					if (ndrExportBatch.getDateStarted() != null) {
+						formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(ndrExportBatch.getDateStarted());
+					} else {
+						formattedDate = new SimpleDateFormat("ddMMyyHHmmss").format(new Date());
+					}
 					String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate;
+					fileName = fileName.replaceAll("/", "_");
 					String zipFileName = fileName + ".zip";
 					String errorZipFileName = fileName + "_error" + ".zip";
 					String path = Utils.ZipFolder(ndrExportBatch.getContextPath(), ndrExportBatch.getReportFolder(),
@@ -431,6 +442,8 @@ public class NdrExtractionService {
 						} else {
 							status = "Completed";
 						}
+					} else if (!"no new patient record found".equalsIgnoreCase(path)) {
+						status = "Completed";
 					} else {
 						status = "Failed";
 					}

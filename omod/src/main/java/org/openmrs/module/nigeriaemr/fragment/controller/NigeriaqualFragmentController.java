@@ -56,6 +56,8 @@ public class NigeriaqualFragmentController {
 		}
 
 		String zipFileName = Utils.getIPShortName()+ "_" +Utils.getFacilityDATIMId()+"_"+ new SimpleDateFormat("yyyy-MM-dd").format(new Date())+".zip";
+		zipFileName = zipFileName.replaceAll("/", "_");
+
 		return util.ZipFolder(request.getContextPath(), reportFolder,zipFileName, reportType);
 	}
 }

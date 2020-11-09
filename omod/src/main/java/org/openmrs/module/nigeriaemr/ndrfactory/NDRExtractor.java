@@ -132,7 +132,8 @@ public class NDRExtractor {
 	
 	private synchronized void writeErrorCsv(Patient patient, String reportFolder,
 											String message, Container container, File file, JAXBContext jaxbContext, int batchId) {
-		file.delete();
+		boolean deleted = file.delete();
+		if(!deleted) file.deleteOnExit();
 		String newReportFolder = reportFolder + "-error";
 		File dir2 = new File(reportFolder);
 		File dir = new File(newReportFolder);
