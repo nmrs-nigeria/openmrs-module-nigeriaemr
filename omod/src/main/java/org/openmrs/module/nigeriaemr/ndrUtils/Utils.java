@@ -648,8 +648,10 @@ public class Utils {
 		List<Integer> encounterTypeList = new ArrayList<Integer>();
 		encounterTypeList.addAll(Arrays.asList(encounterTypeArr));
 		for (Obs ele : allPatientObsList) {
-			if (encounterTypeList.contains(ele.getEncounter().getEncounterType().getEncounterTypeId())) {
-				enrollmentObsList.add(ele);
+			if (ele.getEncounter() != null){
+				if (encounterTypeList.contains(ele.getEncounter().getEncounterType().getEncounterTypeId())) {
+					enrollmentObsList.add(ele);
+				}
 			}
 		}
 		return enrollmentObsList;
