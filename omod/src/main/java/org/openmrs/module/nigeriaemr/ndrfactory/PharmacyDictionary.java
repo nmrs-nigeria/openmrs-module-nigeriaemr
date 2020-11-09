@@ -64,7 +64,6 @@ public class PharmacyDictionary {
 		Concept ID for regimen to be gotten from
      */
     public void loadDictionary() {
-        //key is concept id, value is NDR coded value
 
         regimenMap.put(160124, "1a");//"AZT-3TC-EFV"
         regimenMap.put(1652, "1b");//"AZT-3TC-NVP"
@@ -94,41 +93,7 @@ public class PharmacyDictionary {
         regimenMap.put(166188, "2i");// DDI-3TC-LPV/r
         regimenMap.put(162559, "2j"); //ABC-DDI-LPV/r
         regimenMap.put(166245, "2k"); // AZT-TDF-ATV/r
-        regimenMap.put(166092, "2m"); // ABC-3TC-ATV/r
-        regimenMap.put(165541, "2n"); // ABC-DDI-SQV/r
-        regimenMap.put(165527, "2o"); // TDF-FTC-SQV/r
-        regimenMap.put(165528, "2p"); // TDF-3TC-SQV/r
-        regimenMap.put(165529, "2q"); // AZT-3TC-SQV/r
-        regimenMap.put(165534, "2r"); // AZT-3TC-IDV/r
-        regimenMap.put(166190, "2s"); // D4T-3TC-IDV/r
-        regimenMap.put(165539, "2t"); // TDF-FTC-IDV/r
-        regimenMap.put(165533, "2u");// TDF-3TC-IDV/r
-        regimenMap.put(166191, "2v"); // DDI-3TC-IND/r
-        regimenMap.put(165542, "2w"); // TDF-DDI-IDV/r
-        regimenMap.put(166192, "2x"); // AZT-3TC-DRV/r
-        regimenMap.put(166193, "2y"); // TDF-3TC-DRV/r
-
         regimenMap.put(165530, "3a");//"AZT-TDF-3TC-LPV/r" // formerlly 2h
-        regimenMap.put(165540, "3b"); // AZT-TDF-FTC-LPV/r       
-        regimenMap.put(165537, "3c");//"TDF-AZT-3TC-ATV/r" //formerly 2i
-        regimenMap.put(166194, "3d"); // TDF-3TC-DTG-LPV/r
-        regimenMap.put(166195, "3e"); // TDF-FTC-AZT-ATV/r
-        regimenMap.put(166196, "3f"); // TDF-3TC-DTG-DRV-RTV
-        regimenMap.put(166197, "3g"); // ABC-3TC-DTG-ATV/r
-        regimenMap.put(166198, "3h"); // ABC-3TC-DTG-DRV-RTV
-        regimenMap.put(166199, "3i"); // ABC-3TC-AZT-LPV/r
-        regimenMap.put(166200, "3j"); // AZT-3TC-LPV-SQV/r
-        regimenMap.put(166201, "3k"); // AZT-3TC-LPV-ATV/r
-        regimenMap.put(166202, "3m"); // ABC-3TC-AZT-EFV
-        regimenMap.put(166203, "3n"); // ABC-3TC-AZT-ATV/r
-        regimenMap.put(166204, "3o"); // ABC-3TC-LPV-ATV/r
-        regimenMap.put(166205, "3p"); // TDF-FTC-LPV-ATV/r
-        regimenMap.put(165535, "3q"); // TDF-AZT-FTC-IDV/r
-        regimenMap.put(165531, "3r"); // TDF-AZT-FTC-SQV/r
-        regimenMap.put(165536, "3s"); // TDF-AZT-3TC-IDV/r
-        regimenMap.put(165532, "3t"); // TDF-AZT-3TC-SQV/r
-        regimenMap.put(166206, "3w"); // TDF-3TC-RAL
-        regimenMap.put(166207, "3x"); // AZT-RAL-ATV/r                   
         regimenMap.put(165695, "3u");//AZT-3TC-RAL //formerlly 4o
         regimenMap.put(165696, "3v");//ABC-3TC-RAL // change 5g to 3v
 
@@ -138,32 +103,24 @@ public class PharmacyDictionary {
         regimenMap.put(164512, "2d");//"TDF-3TC-ATV/r"
         regimenMap.put(162561, "2e");//"AZT-3TC-LPV/r"
         regimenMap.put(164511, "2f");//"AZT-3TC-ATV/r"
-
-        regimenMap.put(1652, "4b");//"AZT-3TC-NVP"
         regimenMap.put(162563, "4c");//"ABC-3TC-EFV"
         regimenMap.put(162199, "4d");//"ABC-3TC-NVP"
         //  regimenMap.put(817, "4e");//"AZT-3TC-ABC" Same as ABC-3TC-AZT (took it off)
         regimenMap.put(792, "4f");//"d4T-3TC-NVP"
-        regimenMap.put(166074, "4g"); // Nelson Added Concept in NigeriaMRS and mapped it here as code already exist on NDR.
-
-        regimenMap.put(162561, "5b"); //AZT-3TC-LPV/r //formaerlly 4n
-
         regimenMap.put(162200, "5a");;//"ABC-3TC-LPV/r"
-        regimenMap.put(162561, "5b");;//"AZT-3TC-LPV/r"
         regimenMap.put(162560, "5c");;//"d4T-3TC-LPV/r"
 
         //added latest regimen
-        regimenMap.put(165525, "5d"); // ddi-3TC-NVP
+        //regimenMap.put(165525, "5d"); // ddi-3TC-NVP
 
         regimenMap.put(165526, "1y");;//"ABC-3TC-ddi" //change 5e to 1y
-
         regimenMap.put(165698, "6a"); //DRV/r + 2 NRTIs + 2 NNRTI
         regimenMap.put(165700, "6b"); //DRV/r +2NRTIs
         regimenMap.put(165688, "6c"); //DRV/r-DTG + 1-2 NRTIs
         regimenMap.put(165701, "6d"); //DRV/r-RAL + 1-2NRTIs
         regimenMap.put(165697, "6e"); //DTG+2 NRTIs
         regimenMap.put(165699, "6f"); //RAL + 2 NRTIs
-        regimenMap.put(165689, "6g");
+        //regimenMap.put(165689, "6g");
 
         //for drug combination
         regimenMap.put(86663, "9a");//"AZT" Concept ID didnt match. So, Changed concept id from 26 to 86663 as defined In NMRS
@@ -176,13 +133,7 @@ public class PharmacyDictionary {
         regimenMap.put(166075, "9h"); //"3TC-d4T" Changed the code desc from 3TC-4DT to 3TC-NVP and Created new concept for it on NMRS and replaced the initial Concpet Id of 33 to 166075
         regimenMap.put(161364, "Unknown NDR Code APINSs Instance");//TDF/3TC Missing Drug Combination without NDR Code
         regimenMap.put(165631, "Missing NDR Code from IHVN Instance"); //Dolutegravir
-        regimenMap.put(1674, "Missing NDR Code frm IHVN Instance");//RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS
-
-        regimenMap.put(165257, "CTX480");//
-        regimenMap.put(76488, "FLUC");
-        regimenMap.put(1679, "H");
-        regimenMap.put(80945, "CTX960");
-
+        // regimenMap.put(1674, "Missing NDR Code frm IHVN Instance");//RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS
 
         /* Added by Bright Ibezim */
         regimenMap.put(164506, "10");
@@ -202,20 +153,42 @@ public class PharmacyDictionary {
         regimenMap.put(160566, "8");
         regimenMap.put(160569, "9");
 
+        //Added because of IHVN
+/*
+        ABC-FTC-EFV400   -  165694
+        ABC-3TC-EFV400   -  165693
+        TDF-FTC-EFV400  -   165687
+        TDF-3TC-EFV400  -   165686
+ */
+        regimenMap.put(165694, "1r"); // ABC-FTC-EFV400
+        regimenMap.put(165693, "4c"); // ABC-3TC-EFV400
+        regimenMap.put(165687, "1c"); // TDF-FTC-EFV400
+        regimenMap.put(165686, "1e"); // TDF-3TC-EFV400
+
         //key is concept id, value is NDR code text
         regimenCodeDescTextMap.put(160124, "AZT-3TC-EFV");
         regimenCodeDescTextMap.put(1652, "AZT-3TC-NVP");
-        regimenCodeDescTextMap.put(104565, "DF-FTC-EFV");
+        regimenCodeDescTextMap.put(160104, "D4T-3TC-EFV");
+        regimenCodeDescTextMap.put(166179, "ABC-FTC-EFV");
+        regimenCodeDescTextMap.put(166181, "ABC-3TC-TDF");
+        regimenCodeDescTextMap.put(166183, "D4T-3TC-ABC");
+        regimenCodeDescTextMap.put(166185, "AZT-TDF-NVP");
+        regimenCodeDescTextMap.put(166186, "DDI-3TC-EFV");
+        regimenCodeDescTextMap.put(166187, "AZT-3TC-DTG");
+        regimenCodeDescTextMap.put(162564, "ABC-AZT-LPV/r");
+        regimenCodeDescTextMap.put(166188, "DDI-3TC-LPV/r");
+        regimenCodeDescTextMap.put(162559, "ABC-DDI-LPV/r");
+        //regimenCodeDescTextMap.put(104565, "DF-FTC-EFV");
         regimenCodeDescTextMap.put(164854, "TDF-FTC-NVP");
         regimenCodeDescTextMap.put(164505, "TDF-3TC-EFV");
         regimenCodeDescTextMap.put(162565, "TDF-3TC-NVP");
-        regimenCodeDescTextMap.put(817, "AZT-3TC-ABC");
+        //regimenCodeDescTextMap.put(817, "AZT-3TC-ABC");
         regimenCodeDescTextMap.put(165522, "AZT-3TC-TDF");
         regimenCodeDescTextMap.put(162563, "ABC-3TC-EFV");
         regimenCodeDescTextMap.put(165681, "TDF-3TC-DTG");
-        regimenCodeDescTextMap.put(165686, "TDF-3TC-EFV400");
+        regimenCodeDescTextMap.put(165686, "TDF-3TC-EFV");
         regimenCodeDescTextMap.put(165682, "TDF-FTC-DTG");
-        regimenCodeDescTextMap.put(165687, "TDF-FTC-EFV400");
+        regimenCodeDescTextMap.put(165687, "TDF-FTC-EFV");
         regimenCodeDescTextMap.put(165523, "TDF-FTC-LPV/r");
         regimenCodeDescTextMap.put(162201, "TDF-3TC-LPV/r");
         regimenCodeDescTextMap.put(165524, "TDF-FTC-ATV/r");
@@ -225,40 +198,32 @@ public class PharmacyDictionary {
         regimenCodeDescTextMap.put(165530, "AZT-TDF-3TC-LPV/r");
         regimenCodeDescTextMap.put(165537, "TDF-AZT-3TC-ATV/r");
         regimenCodeDescTextMap.put(165688, "DRV/r-DTG + 1-2 NRTIs");
-        regimenCodeDescTextMap.put(160124, "AZT-3TC-EFV");
         regimenCodeDescTextMap.put(1652, "AZT-3TC-NVP");
-        regimenCodeDescTextMap.put(162563, "ABC-3TC-EFV");
         regimenCodeDescTextMap.put(162199, "ABC-3TC-NVP");
         regimenCodeDescTextMap.put(817, "AZT-3TC-ABC");
         regimenCodeDescTextMap.put(792, "d4T-3TC-NVP");
         regimenCodeDescTextMap.put(165691, "ABC-3TC-DTG");
-        regimenCodeDescTextMap.put(165693, "ABC-3TC-EFV400");
+        regimenCodeDescTextMap.put(165693, "ABC-3TC-EFV");
         regimenCodeDescTextMap.put(162200, "ABC-3TC-LPV/r");
         regimenCodeDescTextMap.put(165692, "ABC-FTC-DTG");
-        regimenCodeDescTextMap.put(165694, "ABC-FTC-EFV400");
+        regimenCodeDescTextMap.put(165694, "ABC-FTC-EFV");
         regimenCodeDescTextMap.put(165690, "ABC-FTC-NVP");
         regimenCodeDescTextMap.put(162561, "AZT-3TC-LPV/r");
         regimenCodeDescTextMap.put(165695, "AZT-3TC-RAL");
-        regimenCodeDescTextMap.put(165681, "TDF-3TC-DTG");
-        regimenCodeDescTextMap.put(164505, "TDF-3TC-EFV");
-        regimenCodeDescTextMap.put(165686, "TDF-3TC-EFV400");
-        regimenCodeDescTextMap.put(162565, "TDF-3TC-NVP");
-        regimenCodeDescTextMap.put(165682, "TDF-FTC-DTG");
+        //regimenCodeDescTextMap.put(165681, "TDF-3TC-DTG");
+        //regimenCodeDescTextMap.put(164505, "TDF-3TC-EFV");
+        regimenCodeDescTextMap.put(165686, "TDF-3TC-EFV");
+        //regimenCodeDescTextMap.put(162565, "TDF-3TC-NVP");
+        //regimenCodeDescTextMap.put(165682, "TDF-FTC-DTG");
         regimenCodeDescTextMap.put(104565, "TDF-FTC-EFV");
-        regimenCodeDescTextMap.put(165687, "TDF-FTC-EFV400");
-        regimenCodeDescTextMap.put(164854, "TDF-FTC-NVP");
-        regimenCodeDescTextMap.put(162200, "ABC-3TC-LPV/r");
+        regimenCodeDescTextMap.put(165687, "TDF-FTC-EFV");
         regimenCodeDescTextMap.put(162561, "AZT-3TC-LPV/r");
         regimenCodeDescTextMap.put(162560, "d4T-3TC-LPV/r");
         regimenCodeDescTextMap.put(165526, "ABC-3TC-ddi");
         regimenCodeDescTextMap.put(165696, "ABC-3TC-RAL");
-        regimenCodeDescTextMap.put(164511, "AZT-3TC-ATV/r");
         regimenCodeDescTextMap.put(165695, "AZT-3TC-RAL");
-        regimenCodeDescTextMap.put(164512, "TDF-3TC-ATV/r");
-        regimenCodeDescTextMap.put(162201, "TDF-3TC-LPV/r");
         regimenCodeDescTextMap.put(165698, "DRV/r + 2 NRTIs + 2 NNRTI");
         regimenCodeDescTextMap.put(165700, "DRV/r +2NRTIs");
-        regimenCodeDescTextMap.put(165688, "DRV/r-DTG + 1-2 NRTIs");
         regimenCodeDescTextMap.put(165701, "DRV/r-RAL + 1-2 NRTIs");
         regimenCodeDescTextMap.put(165697, "DTG+2 NRTIs");
         regimenCodeDescTextMap.put(165699, "RAL + 2 NRTIs");
@@ -272,14 +237,14 @@ public class PharmacyDictionary {
         regimenCodeDescTextMap.put(166075, "3TC-NVP"); //"3TC-d4T" Changed the code desc from 3TC-4DT to 3TC-NVP and Created new concept for it on NMRS and replaced the initial Concpet Id of 33 to 166075
         regimenCodeDescTextMap.put(165257, "Cotrimoxazole 480mg"); //Defined Concept name is CTX prophylaxis. Check with Dr. Sunday for clearification
         regimenCodeDescTextMap.put(76488, "FLUCONAZOLE");//Added By Nelson
-        regimenCodeDescTextMap.put(1679, "Isoniazid");//Added By Nelson
-        regimenCodeDescTextMap.put(80945, "Nystatin");//Added By Nelson
+        regimenCodeDescTextMap.put(1679, "Isoniazid-Pyridoxine ");//Added By Nelson
+        regimenCodeDescTextMap.put(80945, "Cotrimoxazole 960mg");//Added By Nelson
         regimenCodeDescTextMap.put(161364, "TDF/3TC"); //Missing NDR Code lamivudine/fenofovir from APINS Instance
         regimenCodeDescTextMap.put(165631, "Dolutegravir");// Missing NDR Code from IHVN Instance
-       // regimenCodeDescTextMap.put(1674, "RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS");// Missing NDR Code from IHVN Instance
+        // regimenCodeDescTextMap.put(1674, "RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS");// Missing NDR Code from IHVN Instance
 
         //Added by APIN Team 02-09-2020
-        regimenCodeDescTextMap.put(656, "Isoniazid");
+        regimenCodeDescTextMap.put(656 , "Isoniazid");
         regimenCodeDescTextMap.put(767, "Rifampicin");
         regimenCodeDescTextMap.put(5829, "Pyrazinamide");
         regimenCodeDescTextMap.put(745, "Ethambutol");
@@ -289,35 +254,8 @@ public class PharmacyDictionary {
         regimenCodeDescTextMap.put(1677, "Isoniazid-Rifampicin-Ethambutol");
         regimenCodeDescTextMap.put(1131, "Isoniazid-Rifampicin-Pyrazinamide-Ethambutol");
         regimenCodeDescTextMap.put(1674, "Isoniazid-Rifampicin-Pyrazinamide-Ethambutol-Streptomycin");
-        regimenCodeDescTextMap.put(82912,"Pyridoxine");
-        regimenCodeDescTextMap.put(160020,"Viomycin");
-        regimenCodeDescTextMap.put(84836,"Terizidone");
-        regimenCodeDescTextMap.put(73581,"Clofazimine");
-        regimenCodeDescTextMap.put(73498,"Clarithromycin");
-        regimenCodeDescTextMap.put(450,"Amoxicillin and clavulanic acid");
-        regimenCodeDescTextMap.put(160019,"Thioacetazone");
-        regimenCodeDescTextMap.put(82772,"Prothionamide");
-        regimenCodeDescTextMap.put(81457,"P-aminosalicylic acid");
-        regimenCodeDescTextMap.put(76835,"Gatifloxacin");
-        regimenCodeDescTextMap.put(80133,"Moxifloxacin");
-        regimenCodeDescTextMap.put(78788,"Levofloxacin");
-        regimenCodeDescTextMap.put(81022,"Ofloxacin");
-        regimenCodeDescTextMap.put(73449,"Ciprofloxacin");
-        regimenCodeDescTextMap.put(71060,"Amikacin");
-        regimenCodeDescTextMap.put(78385,"Kanamycin");
-        regimenCodeDescTextMap.put(72794,"Capreomycin");
-        regimenCodeDescTextMap.put(74123,"Cycloserine");
-        regimenCodeDescTextMap.put(84360,"STREPTOMYCIN");
-        regimenCodeDescTextMap.put(82900,"PYRAZINAMIDE");
-        regimenCodeDescTextMap.put(75976,"Ethionamide");
-        regimenCodeDescTextMap.put(80133,"Moxifloxacin");
-        regimenCodeDescTextMap.put(78788,"Levofloxacin");
-        regimenCodeDescTextMap.put(72794,"CAPREOMYCIN");
-        regimenCodeDescTextMap.put(83352,"RIFABUTIN");
-        regimenCodeDescTextMap.put(72794,"CAPREOMYCIN");
-        regimenCodeDescTextMap.put(71060,"AMIKACIN");
         regimenCodeDescTextMap.put(1675,"Rifampicin-Isoniazid-Pyrazinamide-Ethambutol Prophylaxis");
-
+        regimenCodeDescTextMap.put(83352,"RIFABUTIN");
 
         regimenMap.put(656, "H");
         regimenMap.put(767, "R");
@@ -331,9 +269,10 @@ public class PharmacyDictionary {
         regimenMap.put(1674, "HRZES");
         regimenMap.put(1675,"HRZES");
         regimenMap.put(83352,"R");
-        regimenMap.put(84360,"S");
-        regimenMap.put(82900,"Z");
-
+        regimenMap.put(165257, "CTX480");//
+        regimenMap.put(76488, "FLUC");
+        regimenMap.put(1679, "INHB6");
+        regimenMap.put(80945, "CTX960");
 
 
         //added new regimen
