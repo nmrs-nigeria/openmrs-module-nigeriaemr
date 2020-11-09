@@ -195,6 +195,8 @@ public class NdrFragmentController {
 						//String fileName = IPShortName + "_" + DATIMID + "_" + counter  + "_" + pepFarId + "_" + formattedDate;
 						String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + pepFarId + "_"
 						        + formattedDate;
+						
+						fileName = fileName.replaceAll("/", "_");
 						// older implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
 						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
 						
