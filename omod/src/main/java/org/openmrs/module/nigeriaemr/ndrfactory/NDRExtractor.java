@@ -74,6 +74,9 @@ public class NDRExtractor {
 				try {
 					String fileName = Utils.getIPReportingState() + Utils.getIPReportingLgaCode() + "_" + DATIMID + "_"
 					        + pepFarId + "_" + formattedDate;
+					
+					fileName = fileName.replaceAll("/", "_");
+					
 					File dir = new File(reportFolder);
 					if (!dir.exists())
 						dir.mkdir();
