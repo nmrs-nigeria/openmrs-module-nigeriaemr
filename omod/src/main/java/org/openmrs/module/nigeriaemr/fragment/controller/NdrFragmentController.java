@@ -195,6 +195,8 @@ public class NdrFragmentController {
 						//String fileName = IPShortName + "_" + DATIMID + "_" + counter  + "_" + pepFarId + "_" + formattedDate;
 						String fileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + pepFarId + "_"
 						        + formattedDate;
+						
+						fileName = fileName.replaceAll("/", "_");
 						// older implementation		String xmlFile = reportFolder + "\\" + fileName + ".xml";
 						String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
 						
@@ -234,6 +236,7 @@ public class NdrFragmentController {
 			String zipFileName = IPReportingState + IPReportingLgaCode + "_" + DATIMID + "_" + formattedDate + ".zip";
 			/*String response = "Files Exported successfully, view uploaded files here: \n"
 			        + util.ZipFolder(request, reportFolder, zipFileName, reportType);*/
+			zipFileName = zipFileName.replaceAll("/", "_");
 			String response = util.ZipFolder(request, reportFolder, zipFileName, reportType);
 			return response;
 			//request.getContextPath() + "/downloads/" + zipFileName;
@@ -275,7 +278,7 @@ public class NdrFragmentController {
 	}
 	
 	public String createFacilityLocation(@RequestParam(value = "falicityLocationString") String falicityLocationString) {
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		FacilityLocationService facilityLocationService = new FacilityLocationService();
 		int response = 0;
