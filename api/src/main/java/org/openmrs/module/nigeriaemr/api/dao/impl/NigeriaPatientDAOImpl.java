@@ -134,8 +134,7 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 	}
 	
 	@Override
-	public List<Integer> getPatientIdsByIdentifiers(List<String> identifiers, Date fromDate, Date toDate)
-	        throws DAOException {
+	public List<String> getPatientIdsByIdentifiers(List<String> identifiers, Date fromDate, Date toDate) throws DAOException {
 		String query = "SELECT patient_identifier.patient_id FROM patient_identifier ";
 		if (fromDate != null || toDate != null)
 			query += " LEFT JOIN patient ON patient.patient_id = patient_identifier.patient_id";

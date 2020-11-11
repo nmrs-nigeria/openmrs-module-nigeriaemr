@@ -215,5 +215,11 @@
             INSERT INTO patientflags_flag_tag (`flag_id`,`tag_id`) VALUES (@var_name,1);
         </sql>
     </changeSet>
+    
+    <changeSet id="obs_index_2020_10_111057" author="wande">
+        <createIndex  tableName="obs" indexName="index_obs_date_created">
+            <column name="date_created"/>
+        </createIndex>
+    </changeSet>
  
 </databaseChangeLog>

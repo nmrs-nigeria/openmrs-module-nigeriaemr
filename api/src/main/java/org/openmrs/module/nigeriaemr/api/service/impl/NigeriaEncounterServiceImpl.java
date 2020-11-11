@@ -73,4 +73,9 @@ public class NigeriaEncounterServiceImpl extends EncounterServiceImpl implements
 		}
 		return encounters == null || encounters.size() == 0 ? null : encounters.get(0);
 	}
+	
+	@Override
+	public List<Encounter> getEncountersByEncounterIds(List<Integer> encounterIds) throws APIException {
+		return dao.getEncountersByEncounterIds(encounterIds);
+	}
 }

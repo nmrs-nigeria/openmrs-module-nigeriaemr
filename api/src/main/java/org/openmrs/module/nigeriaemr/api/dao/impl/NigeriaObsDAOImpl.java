@@ -16,6 +16,7 @@ import org.openmrs.module.nigeriaemr.api.dao.NigeriaObsDAO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO {
 	
@@ -234,5 +235,105 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		criteria.add(Restrictions.eq("voided", includeVoided));
 		criteria.add(Restrictions.in("conceptId", conceptIds));
 		return criteria.list();
+	}
+	
+	@Override
+	public List<Integer> getPatientsByObsDate(Date from, Date to, List<String> patientIds, boolean includeVoided)
+	        throws DAOException {
+		
+		String query = getQueryString(from, to, patientIds, includeVoided, "patient", "patient_id", false) + " UNION ALL "
+		        + getQueryString(from, to, patientIds, includeVoided, "person", "person_id", false) + "  UNION ALL "
+		        + getQueryString(from, to, patientIds, includeVoided, "person_address", "person_id", false) + "  UNION ALL "
+		        + getQueryString(from, to, patientIds, includeVoided, "patient_identifier", "patient_id", false)
+		        + "  UNION ALL "
+		        + getQueryString(from, to, patientIds, includeVoided, "patient_program", "patient_id", false)
+		        + "  UNION ALL "
+		        + getQueryString(from, to, patientIds, includeVoided, "person_attribute", "person_id", false)
+		        + "  UNION ALL " + getQueryString(from, to, patientIds, includeVoided, "person_name", "person_id", false)
+		        + "  UNION ALL " + getQueryString(from, to, patientIds, includeVoided, "obs", "person_id", true)
+		        + "  UNION ALL " + getQueryString(from, to, patientIds, includeVoided, "encounter", "patient_id", false)
+		        + "  UNION ALL " + getQueryString(from, to, patientIds, includeVoided, "visit", "patient_id", false);
+		
+		SQLQuery sql = getSession().createSQLQuery(query);
+		if (from != null)
+			sql.setDate("from", from);
+		if (to != null)
+			sql.setDate("to", to);
+		if (patientIds != null && patientIds.size() > 0)
+			sql.setParameterList("patientIds", patientIds);
+		
+		List<Integer> ret = sql.list();
+		
+		return ret.stream().distinct().collect(Collectors.toList());
+	}
+	
+	private String getQueryString(Date from, Date to, List<String> patientIds, boolean includeVoided, String tableName,
+	        String fieldName, boolean noDateChanged) {
+		StringBuilder query = new StringBuilder();
+		if (noDateChanged) {
+			query.append("  SELECT ").append(tableName).append(".").append(fieldName).append(" AS patient_id FROM ")
+			        .append(tableName).append(" WHERE TRUE");
+			if (from != null)
+				query.append(" AND ").append(tableName).append(".date_created >= :from ");
+			if (to != null)
+				query.append(" AND ").append(tableName).append(".date_created <= :to ");
+		} else {
+			query.append("  SELECT ").append(tableName).append(".").append(fieldName).append(" AS patient_id FROM ")
+			        .append(tableName).append(" WHERE TRUE");
+			if (from != null)
+				query.append(" AND (").append(tableName).append(".date_created >= :from OR ").append(tableName)
+				        .append(".date_created >= :from) ");
+			if (to != null)
+				query.append(" AND (").append(tableName).append(".date_changed <= :to OR ").append(tableName)
+				        .append(".date_changed <= :to) ");
+		}
+		if (!includeVoided)
+			query.append(" AND ").append(tableName).append(".voided = FALSE ");
+		if (patientIds != null && patientIds.size() > 0)
+			query.append(" AND ").append(tableName).append(".").append(fieldName).append(" IN (:patientIds)  ");
+		return query.toString();
+	}
+	
+	@Override
+	public List<Integer> getPatientEncounterIdsByDate(Integer id, Date fromDate, Date toDate) throws DAOException {
+		String query = "SELECT encounter_id FROM obs WHERE voided = false ";
+		if (id != null)
+			query += " AND person_id = :person_id";
+		if (fromDate != null)
+			query += " AND date_created >= :fromDate";
+		if (toDate != null)
+			query += " AND date_created <= :toDate";
+		
+		query += " UNION ALL ";
+		
+		query += "SELECT encounter_id FROM encounter WHERE voided = false ";
+		if (id != null)
+			query += " AND patient_id = :person_id";
+		if (fromDate != null)
+			query += " AND (date_created >= :fromDate or date_changed >= :fromDate)";
+		if (toDate != null)
+			query += " AND (date_created <= :toDate or date_changed >= :toDate)";
+		
+		query += " UNION ALL ";
+		
+		query += "SELECT encounter.encounter_id from encounter, visit WHERE visit.visit_id = encounter.visit_id  AND visit.voided = FALSE AND encounter.voided = FALSE ";
+		if (id != null)
+			query += " AND encounter.patient_id = :person_id";
+		if (fromDate != null)
+			query += " AND (visit.date_created >= :fromDate OR visit.date_changed >= :fromDate)";
+		if (toDate != null)
+			query += " AND (visit.date_created <= :toDate OR visit.date_changed >= :toDate)";
+		
+		SQLQuery sql = getSession().createSQLQuery(query);
+		if (fromDate != null)
+			sql.setDate("fromDate", fromDate);
+		if (toDate != null)
+			sql.setDate("toDate", toDate);
+		if (id != null)
+			sql.setInteger("person_id", id);
+		
+		List<Integer> ret = sql.list();
+		
+		return ret.stream().distinct().collect(Collectors.toList());
 	}
 }

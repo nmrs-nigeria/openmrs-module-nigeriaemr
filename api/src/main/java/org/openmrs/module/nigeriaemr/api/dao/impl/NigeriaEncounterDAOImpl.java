@@ -120,4 +120,10 @@ public class NigeriaEncounterDAOImpl extends HibernateEncounterDAO implements Ni
 		return criteria.list();
 	}
 	
+	@Override
+	public List<Encounter> getEncountersByEncounterIds(List<Integer> encounterIds) throws DAOException {
+		Criteria criteria = getSession().createCriteria(Encounter.class);
+		criteria.add(Restrictions.in("encounterId", encounterIds));
+		return criteria.list();
+	}
 }

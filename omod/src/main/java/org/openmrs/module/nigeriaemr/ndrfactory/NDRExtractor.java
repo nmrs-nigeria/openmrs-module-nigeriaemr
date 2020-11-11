@@ -92,6 +92,10 @@ public class NDRExtractor {
 					if (cnt.getMessageHeader() != null) {
 						cnt.setValidation(generator.getValidation(patientId.toString()));
 						writeFile(patient, reportFolder, cnt, aXMLFile, jaxbContext, batchId);
+					} else {
+						boolean delete = aXMLFile.delete();
+						if (!delete)
+							aXMLFile.deleteOnExit();
 					}
 				}
 				catch (Exception ex) {

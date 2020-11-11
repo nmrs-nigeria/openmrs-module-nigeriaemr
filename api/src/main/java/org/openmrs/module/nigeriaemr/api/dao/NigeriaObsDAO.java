@@ -34,4 +34,9 @@ public interface NigeriaObsDAO extends ObsDAO {
 	List<Obs> getObsByConcept(List<Concept> concept, List<Integer> obsList) throws DAOException;
 	
 	List<Concept> getConcepts(List<Integer> conceptIds, boolean includeVoided) throws DAOException;
+	
+	List<Integer> getPatientsByObsDate(Date from, Date to, List<String> patientIds, boolean includeVoided)
+	        throws DAOException;
+	
+	List<Integer> getPatientEncounterIdsByDate(Integer id, Date fromDate, Date toDate) throws DAOException;
 }

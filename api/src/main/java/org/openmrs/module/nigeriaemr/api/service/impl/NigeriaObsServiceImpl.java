@@ -144,4 +144,14 @@ public class NigeriaObsServiceImpl extends ObsServiceImpl implements NigeriaObsS
 		return dao.getConcepts(conceptIds, includeVoided);
 	}
 	
+	@Override
+	public List<Integer> getPatientsByObsDate(Date from, Date to, List<String> patientIds, boolean includeVoided)
+	        throws APIException {
+		return dao.getPatientsByObsDate(from, to, patientIds, includeVoided);
+	}
+	
+	@Override
+	public List<Integer> getPatientEncounterIdsByDate(Integer id, Date fromDate, Date toDate) throws APIException {
+		return dao.getPatientEncounterIdsByDate(id, fromDate, toDate);
+	}
 }

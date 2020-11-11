@@ -8,6 +8,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ServiceContext;
 import org.openmrs.module.nigeriaemr.NDREvent;
 import org.openmrs.module.nigeriaemr.NigeriaemrConfig;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
@@ -159,7 +160,7 @@ public class NdrExtractionService {
 			if (ndrExport.getDateStarted() != null) {
 				formattedDate = new SimpleDateFormat("ddMMyy").format(ndrExport.getDateStarted());
 			} else {
-				new SimpleDateFormat("ddMMyy").format(new Date());
+				formattedDate = new SimpleDateFormat("ddMMyy").format(new Date());
 			}
 			
 			List<Integer> patients;
@@ -523,5 +524,10 @@ public class NdrExtractionService {
 			}
 		}
 		return num;
+	}
+	
+	public List<Integer> getPatientIds(Date from, Date to, List<String> patientIds, boolean includeVoided) {
+		NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
+		return nigeriaObsService.getPatientsByObsDate(from, to, patientIds, includeVoided);
 	}
 }

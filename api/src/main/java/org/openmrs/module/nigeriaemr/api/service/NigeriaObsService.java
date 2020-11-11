@@ -26,32 +26,38 @@ public interface NigeriaObsService extends ObsService {
 	        throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	public Obs getLastObsByConceptId(Person person, Concept concept, Date from, Date to, boolean includeVoided)
+	Obs getLastObsByConceptId(Person person, Concept concept, Date from, Date to, boolean includeVoided) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	Obs getFirstObsByConceptId(Person person, Concept concept, Date from, Date to, boolean includeVoided)
 	        throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	public Obs getFirstObsByConceptId(Person person, Concept concept, Date from, Date to, boolean includeVoided)
+	Obs getHighestObsByConcept(Person person, Concept concept, Date from, Date to, boolean includeVoided)
 	        throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	public Obs getHighestObsByConcept(Person person, Concept concept, Date from, Date to, boolean includeVoided)
+	Obs getObsbyValueCoded(Concept concept, Concept valueCoded, List<Integer> obsList) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	Obs getLastObsByConcept(Concept concept, List<Integer> obsList) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	List<Obs> getObsByConcept(Concept concept, List<Integer> obsList) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	List<Obs> getObsByConcept(List<Concept> concept, List<Integer> obsList) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	List<Obs> getObsByVisitDate(Date visitDate, List<Integer> obsIds, boolean includeVoided) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	List<Concept> getConcepts(List<Integer> conceptIds, boolean includeVoided) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	List<Integer> getPatientsByObsDate(Date from, Date to, List<String> patientIds, boolean includeVoided)
 	        throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	public Obs getObsbyValueCoded(Concept concept, Concept valueCoded, List<Integer> obsList) throws APIException;
-	
-	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	public Obs getLastObsByConcept(Concept concept, List<Integer> obsList) throws APIException;
-	
-	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	public List<Obs> getObsByConcept(Concept concept, List<Integer> obsList) throws APIException;
-	
-	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	public List<Obs> getObsByConcept(List<Concept> concept, List<Integer> obsList) throws APIException;
-	
-	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	public List<Obs> getObsByVisitDate(Date visitDate, List<Integer> obsIds, boolean includeVoided) throws APIException;
-	
-	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
-	public List<Concept> getConcepts(List<Integer> conceptIds, boolean includeVoided) throws APIException;
+	List<Integer> getPatientEncounterIdsByDate(Integer id, Date fromDate, Date toDate) throws APIException;
 }

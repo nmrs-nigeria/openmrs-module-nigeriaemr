@@ -1,12 +1,14 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
 import com.umb.ndr.signer.Signer;
+import org.apache.commons.lang.time.DateUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PersonAddress;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
@@ -44,6 +46,8 @@ public class NDRConverter {
 	private Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType = new HashMap<>();
 	
 	private final NigeriaEncounterService nigeriaEncounterService;
+
+    private final NigeriaObsService nigeriaObsService;
 	
 	private final Date fromDate;
 	
@@ -54,11 +58,10 @@ public class NDRConverter {
 		this.nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 		this.fromDate = fromDate;
 		this.toDate = toDate;
+		this.nigeriaObsService = Context.getService(NigeriaObsService.class);
 	}
 	
-	public Container createContainer(Patient pts) {
-
-        Container container = new Container();
+	public Container createContainer(Patient pts) throws Exception {
         String facilityName = Utils.getFacilityName();
         String DATIMID = Utils.getFacilityDATIMId();
         String FacilityType = "FAC";
@@ -67,45 +70,49 @@ public class NDRConverter {
 
         try {
             patient = pts;
-
-
             if(!pts.isVoided()) {
-                List<Encounter> filteredEncounters = nigeriaEncounterService.getEncountersByPatient(pts, this.fromDate, this.toDate);
-                if (filteredEncounters == null || filteredEncounters.isEmpty()) {
-                    return null;
+                List<Integer> encounterIds = nigeriaObsService.getPatientEncounterIdsByDate(pts.getId(), this.fromDate, this.toDate);
+                if(encounterIds != null && encounterIds.size() > 0) {
+                    List<Encounter> filteredEncounters = nigeriaEncounterService.getEncountersByEncounterIds(encounterIds);
+                    if (filteredEncounters == null || filteredEncounters.isEmpty()) {
+                        return null;
+                    }
+                    List<Encounter> encounters = new ArrayList<>(filteredEncounters);
+                    this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
+                   this.groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
+
+                    List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
+                    Map<String, Map<Object, List<Obs>>> grouped = Utils.groupObs(allobs);
+                    this.groupedObsByConceptIds = grouped.get("groupedByConceptIds");
+                    this.groupedObsByEncounterTypes = grouped.get("groupedByEncounterTypes");
+                    this.groupedObsByVisitDate = grouped.get("groupedObsByVisitDate");
+                    List<Obs> patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
+                    Map<String, Map<Object, List<Obs>>> groupedPatientBaseLine = Utils.groupObs(patientBaselineObs);
+                    this.groupedpatientBaselineObsByConcept = groupedPatientBaseLine.get("groupedByConceptIds");
+                    this.groupedpatientBaselineObsByEncounterType = groupedPatientBaseLine.get("groupedByEncounterTypes");
+
+                    if (filteredEncounters.size() > 0)
+                    for(Encounter enc: filteredEncounters){
+                        Date newToDate = this.toDate;
+                        if(newToDate == null) newToDate = new Date();
+                        int dateCreatedComp = enc.getDateCreated().compareTo(newToDate);
+                        int dateModifiedComp = -1;
+                        if (enc.getDateChanged() != null) {
+                            dateModifiedComp = enc.getDateChanged().compareTo(newToDate);
+                        }
+                        if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
+                            hasUpdate = true;
+                            break;
+                        }
+                    }
                 }
-                List<Encounter> encounters = new ArrayList<>(filteredEncounters);
-                this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
-                this.groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
-
-                List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
-                Map<String,Map<Object, List<Obs>>> grouped = Utils.groupObs(allobs);
-                this.groupedObsByConceptIds = grouped.get("groupedByConceptIds");
-                this.groupedObsByEncounterTypes = grouped.get("groupedByEncounterTypes");
-                this.groupedObsByVisitDate = grouped.get("groupedObsByVisitDate");
-                List<Obs> patientBaselineObs = Context.getObsService().getObservationsByPerson(patient);
-                Map<String,Map<Object, List<Obs>>> groupedPatientBaseLine = Utils.groupObs(patientBaselineObs);
-                this.groupedpatientBaselineObsByConcept = groupedPatientBaseLine.get("groupedByConceptIds");
-                this.groupedpatientBaselineObsByEncounterType = groupedPatientBaseLine.get("groupedByEncounterTypes");
-
-                if(filteredEncounters.size() > 0)  hasUpdate = true;
-//                for(Encounter enc: filteredEncounters){
-//                    int dateCreatedComp = enc.getDateCreated().compareTo(this.toDate);
-//                    int dateModifiedComp = -1;
-//                    if (enc.getDateChanged() != null) {
-//                        dateModifiedComp = enc.getDateChanged().compareTo(this.toDate);
-//                    }
-//                    if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
-//
-//                        break;
-//                    }
-//                }
             }
 
             MessageHeaderType header = createMessageHeaderType(pts, hasUpdate);
             FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
             header.setMessageSendingOrganization(sendingOrganization);
 
+            Container container = new Container();
             container.setMessageHeader(header);
 
             IndividualReportType individualReportType = createIndividualReportType();
@@ -127,8 +134,8 @@ public class NDRConverter {
             return container;
         } catch (Exception ex) {
             LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+            throw ex;
         }
-        return container;
     }
 	
 	private IndividualReportType createIndividualReportType() {

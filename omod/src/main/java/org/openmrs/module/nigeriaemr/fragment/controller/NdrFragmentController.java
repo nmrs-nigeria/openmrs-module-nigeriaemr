@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.Consumer;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
@@ -29,6 +30,8 @@ import java.util.logging.Logger;
 public class NdrFragmentController {
 	
 	NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
+	
+	NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 	
 	NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 	
@@ -93,17 +96,15 @@ public class NdrFragmentController {
 			if (identifiers != null && !identifiers.isEmpty()) {
 				String[] ary = identifiers.split(",");
 				if (ary.length > 0) {
-					List<Integer> newPatients = new ArrayList<>();
 					List<String> identifierList = Arrays.asList(ary);
-					List<Integer> patientIds = nigeriaPatientService.getPatientsFromStringIds(identifierList, lastDate, currentDate);
-					if(patientIds != null && patientIds.size()>0) newPatients.addAll(patientIds);
-					List<Integer> patientIdsFromIdentifiers = nigeriaPatientService.getPatientIdsByIdentifiers(identifierList, lastDate, currentDate);
-					if(patientIdsFromIdentifiers != null && patientIdsFromIdentifiers.size()>0) newPatients.addAll(patientIdsFromIdentifiers);
-					Set<Integer> set = new HashSet<>(newPatients);
+					List<String> patientIdsFromIdentifiers = nigeriaPatientService.getPatientIdsByIdentifiers(identifierList, lastDate, currentDate);
+					identifierList.addAll(patientIdsFromIdentifiers);
+					List<Integer> patientIds = ndrExtractionService.getPatientIds(lastDate,currentDate,identifierList,true);
+					Set<Integer> set = new HashSet<>(patientIds);
 					patients = new ArrayList<>(set);
 				}
 			} else {
-				List<Integer> patientIds = nigeriaPatientService.getPatientIdsByEncounterDate(lastDate, currentDate);
+				List<Integer> patientIds = ndrExtractionService.getPatientIds(lastDate,currentDate,null,true);
 				if(patientIds != null && patientIds.size()>0) patients.addAll(patientIds);
 			}
 
@@ -124,19 +125,15 @@ public class NdrFragmentController {
 	public String generateNDRFile(HttpServletRequest request) throws Exception {
 		// get date that's bounds to the date the export is kicked off
 		Date currentDate = new Date();
-		
 		DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
-		
 		//check if global variable for logging exists
 		LoggerUtils.checkLoggerGlobalProperty(openmrsConn);
 		LoggerUtils.clearLogFile();
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
-		List<Integer> patients;
 		Date lastDate = Utils.getLastNDRDate();
-		patients = nigeriaPatientService.getPatientIdsByEncounterDate(lastDate, currentDate);
+		List<Integer> patients = ndrExtractionService.getPatientIds(lastDate, currentDate, null, true);
 		String DATIMID = Utils.getFacilityDATIMId();
 		return startGenerateFile(request, patients, DATIMID, lastDate, currentDate, true);
-		
 	}
 	
 	private String startGenerateFile(HttpServletRequest request, List<Integer> filteredPatients,
