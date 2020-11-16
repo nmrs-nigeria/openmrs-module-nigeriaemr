@@ -278,7 +278,7 @@ public class NdrFragmentController {
 	}
 	
 	public String createFacilityLocation(@RequestParam(value = "falicityLocationString") String falicityLocationString) {
-
+		
 		ObjectMapper mapper = new ObjectMapper();
 		FacilityLocationService facilityLocationService = new FacilityLocationService();
 		int response = 0;
