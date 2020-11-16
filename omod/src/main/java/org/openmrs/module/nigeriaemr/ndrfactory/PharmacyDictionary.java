@@ -601,7 +601,7 @@ public class PharmacyDictionary {
             try {
                 //set type code
                 if (obs != null && obs.getObsGroup().getConcept().getConceptId() == OI_regimen_Concept_set) {
-                    regimenType.setPrescribedRegimenTypeCode("NONART");
+                    regimenType.setPrescribedRegimenTypeCode("OI");
                 } else if (obs != null && obs.getObsGroup().getConcept().getConceptId() == TB_regimen_Concept_set) {
                     regimenType.setPrescribedRegimenTypeCode("TB");
                 }
