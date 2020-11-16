@@ -131,4 +131,8 @@ public interface NigeriaemrService extends OpenmrsService {
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
 	void deleteExports(int idInt) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	String getSqlVersion() throws APIException;
 }

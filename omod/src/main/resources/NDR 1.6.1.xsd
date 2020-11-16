@@ -5,15 +5,15 @@
 	for a Patient. AUTHOR: InductiveHealth Informatics, Point of Contact: Stephen 
 	Macauley (support@inductivehealth.com) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	elementFormDefault="unqualified">
+           elementFormDefault="unqualified">
   <xs:element name="Container">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="MessageHeader" type="MessageHeaderType"
-					minOccurs="1" maxOccurs="1" />
+                    minOccurs="1" maxOccurs="1" />
         <xs:choice>
           <xs:element name="IndividualReport" type="IndividualReportType"
-						minOccurs="1" maxOccurs="1" />
+                      minOccurs="1" maxOccurs="1" />
         </xs:choice>
         <xs:element name="Validation" type="xs:string" minOccurs="0" maxOccurs="1"></xs:element>
       </xs:sequence>
@@ -22,7 +22,7 @@
   <xs:complexType name="MessageHeaderType">
     <xs:sequence>
       <xs:element name="MessageStatusCode" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -37,7 +37,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="MessageCreationDateTime" type="xs:dateTime"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Message Creation Date
@@ -46,7 +46,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="MessageSchemaVersion" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -62,7 +62,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="MessageUniqueID" type="StringType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The unique identifier
@@ -72,7 +72,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="MessageSendingOrganization" type="FacilityType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Organization that
@@ -85,7 +85,7 @@
   <xs:complexType name="FacilityType">
     <xs:sequence>
       <xs:element name="FacilityName" type="StringType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Facility Name
@@ -93,7 +93,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="FacilityID" type="StringType" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Facility ID that is
@@ -102,7 +102,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="FacilityTypeCode" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The type of facility.
@@ -124,31 +124,31 @@
   <xs:complexType name="IndividualReportType">
     <xs:sequence>
       <xs:element name="PatientDemographics" type="PatientDemographicsType"
-				minOccurs="1" maxOccurs="1" />
+                  minOccurs="1" maxOccurs="1" />
       <xs:element name="Condition" type="ConditionType"
-				minOccurs="1" maxOccurs="unbounded" />
+                  minOccurs="1" maxOccurs="unbounded" />
       <xs:element name="HIVTestingReport" type="HIVTestingReportType"
-          minOccurs="0" maxOccurs="unbounded" />
+                  minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ConditionType">
     <xs:sequence>
       <xs:element name="ConditionCode" type="CodeType" minOccurs="1"
-    		maxOccurs="1" />
+                  maxOccurs="1" />
       <xs:element name="ProgramArea" type="ProgramAreaType"
-    		minOccurs="1" maxOccurs="1" />
+                  minOccurs="1" maxOccurs="1" />
       <xs:element name="PatientAddress" type="AddressType"
-    		minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="CommonQuestions" type="CommonQuestionsType"
-    		minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="ConditionSpecificQuestions"
-    		type="ConditionSpecificQuestionsType" minOccurs="0" maxOccurs="1" />
+                  type="ConditionSpecificQuestionsType" minOccurs="0" maxOccurs="1" />
       <xs:element name="Encounters" type="EncountersType"
-    		minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="LaboratoryReport" type="LaboratoryReportType"
-    		minOccurs="0" maxOccurs="unbounded" />
+                  minOccurs="0" maxOccurs="unbounded" />
       <xs:element name="Regimen" type="RegimenType" minOccurs="0"
-    		maxOccurs="unbounded" />
+                  maxOccurs="unbounded" />
       <!-- <xs:element name="Immunization" type="ImmunizationType"
     		minOccurs="0" maxOccurs="unbounded" /> -->
 
@@ -156,25 +156,25 @@
     		minOccurs="0" maxOccurs="unbounded" />
     	-->
       <xs:element name="ChildBirthDetails"
-    		type="ChildBirthDetailsType" minOccurs="0" maxOccurs="unbounded" />
+                  type="ChildBirthDetailsType" minOccurs="0" maxOccurs="unbounded" />
 
       <xs:element name="ChildFollowup" type="ChildFollowupType"
-    		minOccurs="0" maxOccurs="unbounded" />
+                  minOccurs="0" maxOccurs="unbounded" />
 
       <xs:element name="InfantPCRTesting" type="InfantPCRTestingType"
-    		minOccurs="0" maxOccurs="unbounded" />
+                  minOccurs="0" maxOccurs="unbounded" />
 
       <xs:element name="HealthFacilityVisits"
-    		type="HealthFacilityVisitsType" minOccurs="0"
-    		maxOccurs="unbounded" />
+                  type="HealthFacilityVisitsType" minOccurs="0"
+                  maxOccurs="unbounded" />
 
       <xs:element name="PartnerDetails"
-    		type="PartnerDetailsType" minOccurs="0"
-    		maxOccurs="unbounded" />
+                  type="PartnerDetailsType" minOccurs="0"
+                  maxOccurs="unbounded" />
 
       <xs:element name="InfantRapidTest"
-    		type="InfantRapidTestType" minOccurs="0"
-    		maxOccurs="unbounded" />
+                  type="InfantRapidTestType" minOccurs="0"
+                  maxOccurs="unbounded" />
 
 
 
@@ -183,7 +183,7 @@
   <xs:complexType name="ConditionSpecificQuestionsType">
     <xs:choice>
       <xs:element name="HIVQuestions" type="HIVQuestionsType"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
     </xs:choice>
   </xs:complexType>
   <xs:complexType name="HIVQuestionsType">
@@ -215,7 +215,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="FirstConfirmedHIVTestDate" type="xs:date"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of First Confirmed HIV test
@@ -223,7 +223,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="FirstHIVTestMode" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents the type of first confirmed HIV
@@ -238,7 +238,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="WhereFirstHIVTest" type="StringType"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Description of where the first HIV test occurred
@@ -246,7 +246,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PriorArt" type="CodeType" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Type of prior ART
@@ -254,7 +254,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="MedicallyEligibleDate" type="xs:date"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of Patient became medically eligible for ART
@@ -262,7 +262,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ReasonMedicallyEligible" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Why Eligible for ART
@@ -278,7 +278,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="InitialAdherenceCounselingCompletedDate"
-    		type="xs:date" minOccurs="0" maxOccurs="1">
+                  type="xs:date" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Initial Adherence Counseling Completed
@@ -286,10 +286,10 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PatientTransferredIn" type="xs:boolean"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
       </xs:element>
       <xs:element name="TransferredInDate" type="xs:date"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date initially transferred in to ARV care
@@ -297,7 +297,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="TransferredInFrom" type="FacilityType"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Facility where patient transferred from
@@ -305,7 +305,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="TransferredInFromPatId" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -320,7 +320,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="FirstARTRegimen" type="CodedSimpleType"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code and description that represents the first ART
@@ -329,7 +329,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ARTStartDate" type="xs:date" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date ART Started
@@ -337,7 +337,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="WHOClinicalStageARTStart" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents the WHO Clinical Stage of the
@@ -359,7 +359,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="WeightAtARTStart" type="xs:int" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's Weight in (kg) at ART start
@@ -367,7 +367,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ChildHeightAtARTStart" type="xs:int"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's Height in (cm) if child at ART start
@@ -375,7 +375,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="FunctionalStatusStartART" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents the Functional Status of the
@@ -391,7 +391,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="CD4AtStartOfART" type="StringType"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             CD4 absolute of the patient at the start of ART
@@ -399,7 +399,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PatientTransferredOut" type="xs:boolean"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             True or false, did the Patient transfer out
@@ -407,7 +407,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="TransferredOutStatus" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents ART status when patient
@@ -422,7 +422,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="TransferredOutDate" type="xs:date"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date patient transferred out from this facility
@@ -430,7 +430,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="FacilityReferredTo" type="FacilityType"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Facility where patient was referred to
@@ -438,7 +438,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PatientHasDied" type="xs:boolean"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Did the Patient Die
@@ -460,7 +460,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="DeathDate" type="xs:date" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date patient died
@@ -468,7 +468,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="SourceOfDeathInformation" type="StringType"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Source of death information
@@ -476,7 +476,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="CauseOfDeathHIVRelated" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Was cause of death HIV related
@@ -491,7 +491,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="DrugAllergies" type="StringType" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Patient's drug allergies
@@ -499,7 +499,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="EnrolledInHIVCareDate" type="xs:date"
-    		minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date initially enrolled in HIV care
@@ -507,7 +507,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="InitialTBStatus" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents the Initial TB Status of the
@@ -547,7 +547,7 @@
   <xs:complexType name="ProgramAreaType">
     <xs:sequence>
       <xs:element name="ProgramAreaCode" type="CodeType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Program Area Code
@@ -559,7 +559,7 @@
   <xs:complexType name="PatientDemographicsType">
     <xs:sequence>
       <xs:element name="PatientIdentifier" minOccurs="1"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -576,7 +576,7 @@
 
       </xs:element>
       <xs:element name="TreatmentFacility" type="FacilityType"
-    		minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The facility where the patient is being treated
@@ -584,7 +584,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="OtherPatientIdentifiers"
-    		type="IdentifiersType" minOccurs="0">
+                  type="IdentifiersType" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Other Patient Identifiers
@@ -592,7 +592,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PatientDateOfBirth" type="RestrictedDateType"
-    		minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's DOB
@@ -617,7 +617,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PatientDeceasedIndicator" type="xs:boolean"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's Deceased Indicator
@@ -625,7 +625,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PatientDeceasedDate" type="xs:date"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's Deceased Date
@@ -633,7 +633,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PatientPrimaryLanguageCode" type="CodeType"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's Primary Language Code
@@ -641,7 +641,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PatientEducationLevelCode" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -660,7 +660,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PatientOccupationCode" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -678,7 +678,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PatientMaritalStatusCode" minOccurs="0"
-    		maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -706,7 +706,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="StateOfNigeriaOriginCode" type="CodeType"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's State of Origin Code (assuming
@@ -716,7 +716,7 @@
       </xs:element>
       <xs:element name="PatientNotes" type="NoteType" minOccurs="0" />
       <xs:element name="FingerPrints" type="FingerPrintType"
-    		minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
       </xs:element>
 
     </xs:sequence>
@@ -724,7 +724,7 @@
   <xs:complexType name="TelephoneType">
     <xs:sequence>
       <xs:element name="Number" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Telephone number
@@ -740,7 +740,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="EmailAddress" type="StringType"
-				minOccurs="0">
+                  minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Email Address
@@ -748,7 +748,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="TelephoneTypeCode" type="CodeType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Telephone Type Code
@@ -760,7 +760,7 @@
   <xs:complexType name="NameType">
     <xs:sequence>
       <xs:element name="NameTypeCode" type="CodeType" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Name Type Code
@@ -793,7 +793,7 @@
   <xs:complexType name="IdentifiersType">
     <xs:sequence>
       <xs:element name="Identifier" type="IdentifierType"
-				maxOccurs="unbounded" />
+                  maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="IdentifierType">
@@ -817,7 +817,7 @@
   <xs:complexType name="AddressType">
     <xs:sequence>
       <xs:element name="AddressTypeCode" type="CodeType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Address Type Code
@@ -825,7 +825,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="WardVillage" type="StringType"
-				minOccurs="0">
+                  minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Ward or Village
@@ -839,7 +839,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="LGACode" type="CodeType" minOccurs="1" maxOccurs="1">
+      <xs:element name="LGACode" type="CodeType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The code representing
@@ -847,7 +847,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="StateCode" type="CodeType" minOccurs="1" maxOccurs="1">
+      <xs:element name="StateCode" type="CodeType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The code representing
@@ -871,7 +871,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="OtherAddressInformation" type="StringType"
-				minOccurs="0">
+                  minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Other Address
@@ -896,7 +896,7 @@
   <xs:complexType name="CommonQuestionsType">
     <xs:sequence>
       <xs:element name="HospitalNumber" type="StringType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Hospital Number
@@ -904,17 +904,17 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="DiagnosisFacility" type="FacilityType"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="DateOfFirstReport" type="xs:date"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="DateOfLastReport" type="xs:date"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="DiagnosisDate" type="xs:date" minOccurs="1"
-				maxOccurs="1" />
+                  maxOccurs="1" />
       <xs:element name="PatientDieFromThisIllness" type="xs:boolean"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="PatientPregnancyStatusCode" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="CodeType">
             <xs:enumeration value="P" />
@@ -925,9 +925,9 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="EstimatedDeliveryDate" type="xs:date"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="PatientAge" type="xs:int" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's Age
@@ -939,7 +939,7 @@
   <xs:complexType name="RegimenType">
     <xs:sequence>
       <xs:element name="VisitID" type="StringType" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Visit ID Number
@@ -947,7 +947,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="VisitDate" type="xs:date" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of Visit
@@ -956,7 +956,7 @@
       </xs:element>
 
       <xs:element name="PrescribedRegimen" type="CodedSimpleType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -965,7 +965,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PrescribedRegimenTypeCode" type="CodeType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Prescribed Regimen Type
@@ -974,7 +974,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PrescribedRegimenLineCode" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Prescribed Regimen Line
@@ -982,7 +982,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PrescribedRegimenDuration" type="CodeType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Prescribed Regimen
@@ -991,11 +991,11 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PrescribedRegimenDispensedDate" type="xs:date"
-				minOccurs="1" maxOccurs="1" />
+                  minOccurs="1" maxOccurs="1" />
       <xs:element name="DateRegimenStarted" type="xs:date"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="DateRegimenStartedDD" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="0" />
@@ -1004,7 +1004,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="DateRegimenStartedMM" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="0" />
@@ -1013,7 +1013,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="DateRegimenStartedYYYY" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="0" />
@@ -1022,9 +1022,9 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="DateRegimenEnded" type="xs:date"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="DateRegimenEndedDD" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="0" />
@@ -1033,7 +1033,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="DateRegimenEndedMM" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="0" />
@@ -1042,7 +1042,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="DateRegimenEndedYYYY" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:minLength value="0" />
@@ -1055,7 +1055,7 @@
   <xs:complexType name="LaboratoryReportType">
     <xs:sequence>
       <xs:element name="VisitID" type="StringType" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The unique Visit
@@ -1066,7 +1066,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="VisitDate" type="xs:date" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of Visit
@@ -1074,7 +1074,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="LaboratoryTestIdentifier" type="StringType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The unique identifier
@@ -1084,7 +1084,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="BaselineRepeatCode" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -1099,7 +1099,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="ARTStatusCode" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Patient's ART Status at
@@ -1108,7 +1108,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="CollectionDate" type="xs:date"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Specimen was
@@ -1117,9 +1117,9 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="LaboratoryOrderAndResult" type="LaboratoryOrderAndResult"
-				minOccurs="0" maxOccurs="unbounded" />
+                  minOccurs="0" maxOccurs="unbounded" />
       <xs:element name="Clinician" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Captures the clinician
@@ -1128,7 +1128,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ReportedBy" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Captures Reported By
@@ -1136,7 +1136,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="CheckedBy" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Captures Checked By
@@ -1149,7 +1149,7 @@
   <xs:complexType name="LaboratoryOrderAndResult">
     <xs:sequence>
       <xs:element name="LaboratoryTestTypeCode" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Type of Laboratory Test
@@ -1157,7 +1157,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="OrderedTestDate" type="xs:date"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Order was made
@@ -1165,7 +1165,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="LaboratoryOrderedTest" type="CodedSimpleType"
-				minOccurs="0">
+                  minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -1174,7 +1174,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="LaboratoryResultedTest" type="CodedSimpleType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -1183,7 +1183,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="LaboratoryResult" type="AnswerType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Captures the type of
@@ -1192,7 +1192,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ResultedTestDate" type="xs:date"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Results are made
@@ -1201,7 +1201,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="OtherLaboratoryInformation" type="StringType"
-				minOccurs="0">
+                  minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Captures additional
@@ -1215,7 +1215,7 @@
   <xs:complexType name="ContactType">
     <xs:sequence>
       <xs:element name="ContactRelationshipType" type="CodeType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Relationship Type
@@ -1223,7 +1223,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ContactName" type="NameType" minOccurs="1"
-				maxOccurs="1" />
+                  maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
 
@@ -1231,7 +1231,7 @@
 
     <xs:sequence>
       <xs:element name="ChildHospitalNumber" type="StringType" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Child Hospital Registration Number
@@ -1239,7 +1239,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ChildEIDNumber" type="StringType" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             HIV Exposed Infant Number
@@ -1247,7 +1247,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ChildDateOfBirth" type="xs:date" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of Birth
@@ -1255,7 +1255,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ChildSexCode" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Child Sex
@@ -1273,7 +1273,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="ChildGivenNVPWithin72hrs"  minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Child given ART within 72 Hours
@@ -1288,7 +1288,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="ChildStatus" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Child Status
@@ -1303,7 +1303,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="APGARScore" type="xs:float" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             APGAR score
@@ -1311,7 +1311,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="BirthMUAC" type="xs:float" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Mean Upper Arm Circumference
@@ -1319,7 +1319,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="BirthLenght" type="xs:float" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Birth lenght
@@ -1327,7 +1327,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="BirthWeight" type="xs:float" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Birth weight
@@ -1335,7 +1335,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="HeadCircumferenceAtBirth" type="xs:float" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Head circumference
@@ -1343,7 +1343,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ImmunizationReceived" type="StringType" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Immunization received at birth
@@ -1351,7 +1351,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="HBVExposedInfantGivenHepBIg" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             HBV Exposed Infant given Hep B lg within 24 hours of birth
@@ -1366,7 +1366,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="NonHBVExposedInfantGivenHBV" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Non-HBV Exposed Infant given HBV vaccine within 24hours of birth
@@ -1385,7 +1385,7 @@
   <xs:complexType name="ChildFollowupType">
     <xs:sequence>
       <xs:element name="InfantARVType" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Infant ARV Type
@@ -1401,7 +1401,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="TimingOfARVProphylaxis" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Timing of ARV Prophylaxis
@@ -1417,7 +1417,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="AgeAtCTXInitiation" type="xs:int" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Age at CTX Initiation
@@ -1425,7 +1425,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="InfantOutcomeAt18Months" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Infant Outcome at 18 Months
@@ -1444,7 +1444,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="DateLinkedToARTClinic" type="xs:date" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Linked to ART clinic
@@ -1452,7 +1452,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ARTEnrollmentNumber" type="StringType" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             ART Enrollment No.
@@ -1466,7 +1466,7 @@
 
     <xs:sequence>
       <xs:element name="AgeAtTest" type="xs:int" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Age at Test
@@ -1474,7 +1474,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="DateSampleCollected" type="xs:date" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Sample Collected
@@ -1482,7 +1482,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="DateSampleSent" type="xs:date" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Sample Sent
@@ -1490,7 +1490,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="DateResultReceivedAtFacility" type="xs:date" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Result Received at Facility
@@ -1498,7 +1498,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="DateCaregiverGivenResult" type="xs:date" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Caregiver Given Result
@@ -1506,7 +1506,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PCRTestResult" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Test Result
@@ -1526,7 +1526,7 @@
   <xs:complexType name="InfantRapidTestType">
     <xs:sequence>
       <xs:element name="AgeAtTest"  type="xs:int" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Age at Test
@@ -1534,7 +1534,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="DateOfTest"  type="xs:date" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of Test
@@ -1542,7 +1542,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="RapidTestResult" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Test Result
@@ -1563,7 +1563,7 @@
   <xs:complexType name="HealthFacilityVisitsType">
     <xs:sequence>
       <xs:element name="VisitDate"  type="xs:date" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Visit Date
@@ -1571,7 +1571,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="VisitStatus"  minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Visit Status
@@ -1591,7 +1591,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="Cotrimoxazole" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Cotrimoxazole
@@ -1606,7 +1606,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="Weight"  type="xs:int" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Weight (kg)
@@ -1614,7 +1614,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="BreastFeeding" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Breast Feeding
@@ -1634,7 +1634,7 @@
   <xs:complexType name="PartnerDetailsType">
     <xs:sequence>
       <xs:element name="PartnerAge"  type="xs:int" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Partner Age
@@ -1642,7 +1642,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PartnerPreTestCounseled"  minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Partner pre-test counselled
@@ -1657,7 +1657,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PartnerPostTestCounseled"  minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Partner post-test counseled
@@ -1672,7 +1672,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PartnerAcceptsHIVTest"  minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Partner accepts HIV test
@@ -1687,7 +1687,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PartnerHIVTestResult" minOccurs="1"
-     maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
@@ -1699,7 +1699,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PartnerHBVStatus"  minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Partner HBV status
@@ -1713,7 +1713,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PartnerHCVStatus"  minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Partner HCV status
@@ -1727,7 +1727,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PartnerSyphilisStatus"   minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Partner syphilis status
@@ -1741,7 +1741,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PartnerReferredTo"  minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Partner referred to
@@ -1761,7 +1761,7 @@
   <xs:complexType name="KnowledgeAssessmentType">
     <xs:sequence>
       <xs:element name="PreviouslyTestedHIVNegative"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Previously tested HIV negative
@@ -1769,7 +1769,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ClientInformedAboutHIVTransmissionRoutes"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Client informed about HIV transmission routes
@@ -1777,7 +1777,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ClientPregnant"  type="xs:boolean" minOccurs="0"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Client pregnant (Test and ensure linkage to PMTCT program)
@@ -1785,7 +1785,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ClientInformedOfHIVTransmissionRiskFactors"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Client informed about risk factors for HIV transmission
@@ -1793,7 +1793,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ClientInformedAboutPreventingHIV"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Client informed on preventing HIV transmission methods
@@ -1801,7 +1801,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ClientInformedAboutPossibleTestResults"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Client informed about possible test results
@@ -1809,7 +1809,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="InformedConsentForHIVTestingGiven"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Informed consent for HIV testing given
@@ -1822,7 +1822,7 @@
   <xs:complexType name="HIVRiskAssessmentType">
     <xs:sequence>
       <xs:element name="EverHadSexualIntercourse"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Ever had sexual intercourse
@@ -1830,7 +1830,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="BloodTransfussionInLast3Months"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Blood transfusion in last 3 months
@@ -1838,7 +1838,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="UnprotectedSexWithCasualPartnerinLast3Months"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Unprotected sex with casual partner in last 3 months
@@ -1846,7 +1846,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="UnprotectedSexWithRegularPartnerInLast3Months"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Unprotected sex with regular partner in the last 3months
@@ -1854,7 +1854,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="MoreThan1SexPartnerDuringLast3Months"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             More than 1 sex partner during last 3 months
@@ -1862,7 +1862,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="STIInLast3Months" type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             STI in last 3 months
@@ -1875,7 +1875,7 @@
   <xs:complexType name="ClinicalTBScreeningType">
     <xs:sequence>
       <xs:element name="CurrentlyCough"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Current cough
@@ -1883,7 +1883,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="WeightLoss" type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Weight loss
@@ -1891,7 +1891,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="Fever"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Fever
@@ -1899,7 +1899,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="NightSweats"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Night sweats
@@ -1912,31 +1912,31 @@
   <xs:complexType name="SyndromicSTIScreeningType">
     <xs:sequence>
       <xs:element name="VaginalDischargeOrBurningWhenUrinating"  type="xs:boolean" minOccurs="0"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="LowerAbdominalPainsWithOrWithoutVaginalDischarge"  type="xs:boolean" minOccurs="0"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="UrethralDischargeOrBurningWhenUrinating"  type="xs:boolean" minOccurs="0"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="ScrotalSwellingAndPain"  type="xs:boolean" minOccurs="0"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="GenitalSoreOrSwollenInguinalLymphNodes"  type="xs:boolean" minOccurs="0"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en"> Description </xs:documentation>
         </xs:annotation>
@@ -1946,7 +1946,7 @@
   <xs:complexType name="PostTestCounsellingType">
     <xs:sequence>
       <xs:element name="TestedForHIVBeforeWithinThisYear"   minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Have you been tested for HIV before within this year
@@ -1962,7 +1962,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="HIVRequestAndResultFormSignedByTester"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             HIV Request and Result form signed by tester(s)
@@ -1970,7 +1970,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="HIVRequestAndResultFormFilledWithCTIForm"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             HIV Request and Result form filled with CT Intake Form
@@ -1978,7 +1978,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ClientRecievedHIVTestResult"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Client received HIV test result
@@ -1986,7 +1986,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PostTestCounsellingDone"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Post test counseling done
@@ -1994,7 +1994,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="RiskReductionPlanDeveloped"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Risk reduction plan developed
@@ -2002,7 +2002,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PostTestDisclosurePlanDeveloped"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Post test disclosure plan developed
@@ -2010,7 +2010,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="WillBringPartnerForHIVTesting"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Will bring partner(s) for HIV testing
@@ -2018,7 +2018,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="WillBringOwnChildrenForHIVTesting"  type="xs:boolean" minOccurs="1"
-      maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Will bring own children less than 5 years for HIV testing
@@ -2028,7 +2028,7 @@
       </xs:element>
 
       <xs:element name="ProvidedWithInformationOnFPandDualContraception"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Provided with information on FP and dual contraception
@@ -2036,7 +2036,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ClientOrPartnerUseFPMethodsOtherThanCondoms"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Client/Partner use FP methods (other than condom)
@@ -2044,7 +2044,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ClientOrPartnerUseCondomsAsOneFPMethods"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Client/Partner use condoms as (one) FP method
@@ -2052,7 +2052,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="CorrectCondomUseDemonstrated"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Correct condom use demonstrated
@@ -2060,7 +2060,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="CondomsProvidedToClient"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Condoms provided to client
@@ -2068,7 +2068,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ClientReferredToOtherServices"  type="xs:boolean" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Client referred to other services
@@ -2082,7 +2082,7 @@
   <xs:complexType name="ImmunizationType">
     <xs:sequence>
       <xs:element name="VisitID" type="StringType" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The unique Visit
@@ -2091,7 +2091,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="VisitDate" type="xs:date" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of Visit
@@ -2099,7 +2099,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ImmunizationIdentifier" type="StringType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The unique identifier
@@ -2116,7 +2116,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="LotNumber" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Vaccine lot number
@@ -2124,7 +2124,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ExpirationDate" type="xs:date"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Vaccine expiration date
@@ -2132,7 +2132,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ManufacturerCode" type="StringType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Vaccine manufacturer
@@ -2140,7 +2140,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ImmunizationType" type="CodedSimpleType"
-				minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The type of vaccine
@@ -2149,7 +2149,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="SiteCode" type="CodeType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Body site vaccine was
@@ -2158,7 +2158,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="RouteCode" type="CodeType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             How vaccine entered
@@ -2167,7 +2167,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="Dose" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Amount of vaccine
@@ -2176,9 +2176,9 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="SelfReported" type="xs:boolean"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="Clinician" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Captures the clinician
@@ -2187,7 +2187,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PerformedBy" type="StringType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Captures Reported By
@@ -2195,7 +2195,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="CheckedBy" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Captures Checked By
@@ -2207,24 +2207,24 @@
   <xs:complexType name="EncountersType">
     <xs:sequence>
       <xs:element name="HIVEncounter" type="HIVEncounterType"
-				minOccurs="0" maxOccurs="unbounded" />
+                  minOccurs="0" maxOccurs="unbounded" />
 
 
 
       <xs:element name="AntenatalRegistration" type="AntenatalRegistrationType"
-				minOccurs="0" maxOccurs="unbounded" />
+                  minOccurs="0" maxOccurs="unbounded" />
 
 
 
       <xs:element name="DeliveryEncounter" type="DeliveryEncounterType"
-				minOccurs="0" maxOccurs="unbounded" />
+                  minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
 
   </xs:complexType>
   <xs:complexType name="HIVEncounterType">
     <xs:sequence>
       <xs:element name="VisitID" type="StringType" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The unique Visit
@@ -2233,7 +2233,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="VisitDate" type="xs:date" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of Visit
@@ -2241,7 +2241,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="DurationOnArt" type="xs:int" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Duration (in Months)on
@@ -2250,7 +2250,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="Weight" type="xs:int" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's Weight in
@@ -2259,7 +2259,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ChildHeight" type="xs:int" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Patient's Height in
@@ -2268,7 +2268,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="BloodPressure" type="StringType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Blood Pressure (mmHg)
@@ -2277,7 +2277,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="EDDandPMTCTLink" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2295,7 +2295,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PatientFamilyPlanningCode" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2310,7 +2310,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PatientFamilyPlanningMethodCode" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2320,7 +2320,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="FunctionalStatus" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2336,7 +2336,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="WHOClinicalStage" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2371,7 +2371,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="OtherOIOtherProblems" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Other OIs/ Other
@@ -2380,7 +2380,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="NotedSideEffects" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Noted Side Effects
@@ -2388,7 +2388,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ARVDrugRegimen" type="CodedSimpleType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2397,7 +2397,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ARVDrugAdherence" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2414,7 +2414,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="WhyPoorFairARVDrugAdherence" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2445,7 +2445,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="CotrimoxazoleDose" type="CodedSimpleType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2456,7 +2456,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="CotrimoxazoleAdherence" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2473,7 +2473,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="WhyPoorFairCotrimoxazoleDrugAdherence"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2504,7 +2504,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="INHDose" type="CodedSimpleType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2529,7 +2529,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="WhyPoorFairINHDrugAdherence" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -2560,7 +2560,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="CD4" type="xs:int" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             CD4 absolute value test
@@ -2569,7 +2569,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="CD4TestDate" type="xs:date" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of CD4 test result
@@ -2578,7 +2578,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ReasonForRegimenSwitchSubs" type="CodeType"
-  minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Reasons for regimen
@@ -2588,11 +2588,11 @@
       </xs:element>
 
       <xs:element name="PrescribedRegimenInitialIndicator" type="xs:boolean"
-    minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="PrescribedRegimenCurrentIndicator" type="xs:boolean"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="TypeOfPreviousExposureCode" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Type of Previous ARV
@@ -2601,9 +2601,9 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="PoorAdherenceIndicator" type="xs:boolean"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="ReasonForPoorAdherence" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Reason for Poor
@@ -2612,7 +2612,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ReasonRegimenEndedCode" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Reason Regimen Ended
@@ -2621,11 +2621,11 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="SubstitutionIndicator" type="xs:boolean"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="SwitchIndicator" type="xs:boolean"
-				minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="NextAppointmentDate" type="xs:date"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of next
@@ -2648,7 +2648,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="VisitDate" type="xs:date" minOccurs="1"
-  maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of Antenatal registration
@@ -2657,7 +2657,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="LastMenstralPeriod" type="xs:date" minOccurs="1"
-      maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of last menstral period before current pregnancy
@@ -2666,7 +2666,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="GestationalAgeAtANCRegistration" type="xs:int" minOccurs="1"
-      maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Age in weeks of current pregnancy
@@ -2675,7 +2675,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="Gravida" type="xs:int" minOccurs="1"
-      maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Decription
@@ -2683,7 +2683,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="Parity" type="xs:int" minOccurs="1"
-      maxOccurs="1" >
+                  maxOccurs="1" >
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Decription
@@ -2691,7 +2691,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="SourceOfReferral" type="StringType" minOccurs="1"
-      maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Decription
@@ -2699,7 +2699,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="ExpectedDateOfDelivery" type="xs:date" minOccurs="1"
-      maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Expected Date of Delivery
@@ -2711,7 +2711,7 @@
         <xs:complexType>
           <xs:sequence>
             <xs:element name="TestedForSyphilis" minOccurs="1"
-      maxOccurs="1">
+                        maxOccurs="1">
               <xs:annotation>
                 <xs:documentation xml:lang="en">
                   If the woman was tested for syphilis
@@ -2727,7 +2727,7 @@
               </xs:simpleType>
             </xs:element>
             <xs:element name="SyphilisTestResult"  minOccurs="1"
-      maxOccurs="1">
+                        maxOccurs="1">
               <xs:annotation>
                 <xs:documentation xml:lang="en">
                   Woman's syphilis test result
@@ -2742,7 +2742,7 @@
               </xs:simpleType>
             </xs:element>
             <xs:element name="TreatedForSyphilis"  minOccurs="1"
-      maxOccurs="1">
+                        maxOccurs="1">
               <xs:annotation>
                 <xs:documentation xml:lang="en">
                   If the woman was treated for syphilis
@@ -2758,7 +2758,7 @@
               </xs:simpleType>
             </xs:element>
             <xs:element name="SyphilisResult" type="StringType" minOccurs="1"
-      maxOccurs="1">
+                        maxOccurs="1">
               <xs:annotation>
                 <xs:documentation xml:lang="en">
                   Reffered Syphilis Positive Client
@@ -2767,7 +2767,7 @@
               </xs:annotation>
             </xs:element>
             <xs:element name="ReferredSyphilisPositiveClient"  minOccurs="1"
-       maxOccurs="1">
+                        maxOccurs="1">
               <xs:annotation>
                 <xs:documentation xml:lang="en"> Description </xs:documentation>
               </xs:annotation>
@@ -2795,7 +2795,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="VisitDate" type="xs:date" minOccurs="1"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date the woman delivered of her baby
@@ -2803,7 +2803,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="TimeOfHIVDiagnosis" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Period when woman was diagnosized HIV positive
@@ -2819,7 +2819,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="GestationalAgeAtDelivery" type="xs:int" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Age in weeks the pregnancy was at delivery
@@ -2827,7 +2827,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="HBVStatus" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Hepatitis B Virus Status
@@ -2841,7 +2841,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="HCVStatus"  minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Hepatitis C Virus Status
@@ -2855,7 +2855,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="WomanOnART" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Is woman on ART
@@ -2870,7 +2870,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="ARTStartedInLDWard" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Whether ART was started in labour and delivery ward
@@ -2885,7 +2885,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="ROMDeliveryInterval" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             ROM Delivery Interval
@@ -2899,7 +2899,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="ModeOfDelivery" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Mode of Delivery
@@ -2915,7 +2915,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="Episiotomy" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Episiotomy
@@ -2930,7 +2930,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="VaginalTear" minOccurs="1"
-      maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Vaginal Tear
@@ -2946,7 +2946,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="FeedingDecision" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Feeding Decision
@@ -2961,7 +2961,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="MaternalOutcome" minOccurs="1"
-       maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Maternal Outcome
@@ -2982,7 +2982,7 @@
     <xs:sequence>
       <xs:choice>
         <xs:element name="Drug" type="CodedSimpleType" minOccurs="1"
-					maxOccurs="1">
+                    maxOccurs="1">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               Code that represents
@@ -2991,7 +2991,7 @@
           </xs:annotation>
         </xs:element>
         <xs:element name="DrugOther" type="StringType" minOccurs="0"
-					maxOccurs="1">
+                    maxOccurs="1">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               Free text that
@@ -3001,7 +3001,7 @@
         </xs:element>
       </xs:choice>
       <xs:element name="FrequencyCode" type="CodeType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Code that represents
@@ -3010,7 +3010,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="Duration" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The length of time the
@@ -3019,7 +3019,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="QuantityPrescribed" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -3034,7 +3034,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="QuantityDispensed" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:simpleType>
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -3049,7 +3049,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="SingleDose" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             For Pediatric, the
@@ -3058,7 +3058,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="TotalDailyDose" type="StringType"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             For Pediatric, the
@@ -3106,7 +3106,7 @@
     <xs:sequence>
       <xs:element name="Code" type="CodeType" minOccurs="1" />
       <xs:element name="CodeDescTxt" type="CodeDescTxtType"
-				minOccurs="0" />
+                  minOccurs="0" />
     </xs:sequence>
   </xs:complexType>
   <xs:simpleType name="CodeType">
@@ -3130,7 +3130,7 @@
   <xs:complexType name="NumericType">
     <xs:sequence>
       <xs:element name="ComparatorCode" type="ComparatorCodeType"
-				minOccurs="0" />
+                  minOccurs="0" />
       <xs:element name="Value1">
         <xs:simpleType>
           <xs:restriction base="xs:float" />
@@ -3181,13 +3181,13 @@
   <xs:complexType name="FingerPrintType">
     <xs:sequence>
       <xs:element name="dateCaptured" type="xs:date" minOccurs="0"
-  			maxOccurs="1">
+                  maxOccurs="1">
       </xs:element>
       <xs:element name="rightHand" type="rightHandType"
-  			minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
       </xs:element>
       <xs:element name="leftHand" type="leftHandType" minOccurs="1"
-  			maxOccurs="1">
+                  maxOccurs="1">
       </xs:element>
 
     </xs:sequence>
@@ -3224,10 +3224,10 @@
   <xs:complexType name="HIVTestingReportType">
     <xs:sequence>
       <xs:element name="ClientCode" type="xs:string" minOccurs="1"
-        maxOccurs="1">
+                  maxOccurs="1">
       </xs:element>
       <xs:element name="VisitDate" type="xs:date" minOccurs="1"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date of Visit
@@ -3235,7 +3235,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="VisitID" type="StringType" minOccurs="1"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             The Visit ID Number
@@ -3264,7 +3264,7 @@
       </xs:element>
 
       <xs:element name="FirstTimeVisit" minOccurs="1"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             First Time Visit
@@ -3278,7 +3278,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="SessionType" minOccurs="0"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Type of Session
@@ -3293,7 +3293,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="ReferredFrom" minOccurs="0"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Referred From
@@ -3313,7 +3313,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="MaritalStatus" minOccurs="0"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Marital Status
@@ -3331,13 +3331,13 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="NoOfOwnChildrenLessThan5Years"
-        type="xs:int" minOccurs="0" maxOccurs="1">
+                  type="xs:int" minOccurs="0" maxOccurs="1">
       </xs:element>
       <xs:element name="NoOfAllWives" type="xs:int"
-        minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
       </xs:element>
       <xs:element name="IsIndexClient" minOccurs="0"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Is Client from an Index Client
@@ -3365,10 +3365,10 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="IndexClientId" type="xs:string"
-        minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
       </xs:element>
       <xs:element name="ReTestingForResultVerification"
-        minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Is Client Retesting for result verification
@@ -3382,13 +3382,13 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="PreTestInformation"
-        type="PreTestInformationType" minOccurs="0" maxOccurs="1" />
+                  type="PreTestInformationType" minOccurs="0" maxOccurs="1" />
       <xs:element name="HIVTestResult" type="HIVTestResultType"
-        minOccurs="0" maxOccurs="1" />
+                  minOccurs="0" maxOccurs="1" />
       <xs:element name="PostTestCounselling"
-        type="PostTestCounsellingType" minOccurs="0" maxOccurs="1" />
+                  type="PostTestCounsellingType" minOccurs="0" maxOccurs="1" />
       <xs:element name="SyphilisTestResult" minOccurs="0"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Syphilis Test Result
@@ -3402,7 +3402,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="HBVTestResult" minOccurs="0"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Hepatitis B virus test result
@@ -3416,7 +3416,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="HCVTestResult" minOccurs="0"
-        maxOccurs="1">
+                  maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Hepatitis C virus test result
@@ -3430,13 +3430,13 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="IndexNotificationServices"
-        type="IndexNotificationServicesType" minOccurs="0"
-        maxOccurs="1" />
+                  type="IndexNotificationServicesType" minOccurs="0"
+                  maxOccurs="1" />
       <xs:element name="CompletedBy" type="xs:string"
-        minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
       </xs:element>
       <xs:element name="DateCompleted" type="xs:string"
-        minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
       </xs:element>
     </xs:sequence>
   </xs:complexType>
@@ -3444,19 +3444,19 @@
   <xs:complexType name="PreTestInformationType">
     <xs:sequence>
       <xs:element name="KnowledgeAssessment"
-type="KnowledgeAssessmentType" minOccurs="0"
-maxOccurs="1" />
+                  type="KnowledgeAssessmentType" minOccurs="0"
+                  maxOccurs="1" />
 
       <xs:element name="HIVRiskAssessment"
-    		type="HIVRiskAssessmentType" minOccurs="0" maxOccurs="1" />
+                  type="HIVRiskAssessmentType" minOccurs="0" maxOccurs="1" />
 
       <xs:element name="ClinicalTBScreening"
-    		type="ClinicalTBScreeningType" minOccurs="0"
-    		maxOccurs="1" />
+                  type="ClinicalTBScreeningType" minOccurs="0"
+                  maxOccurs="1" />
 
       <xs:element name="SyndromicSTIScreening"
-    		type="SyndromicSTIScreeningType" minOccurs="0"
-    		maxOccurs="1" />
+                  type="SyndromicSTIScreeningType" minOccurs="0"
+                  maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
 
@@ -3464,11 +3464,11 @@ maxOccurs="1" />
   <xs:complexType name="HIVTestResultType">
     <xs:sequence>
       <xs:element name="TestResult"
-    		type="TestResultType" minOccurs="0"
-    		maxOccurs="1" />
+                  type="TestResultType" minOccurs="0"
+                  maxOccurs="1" />
       <xs:element name="RecencyTesting"
-    type="RecencyTestingType" minOccurs="0"
-    maxOccurs="1" />
+                  type="RecencyTestingType" minOccurs="0"
+                  maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
 
@@ -3497,7 +3497,7 @@ maxOccurs="1" />
         </xs:simpleType>
       </xs:element>
       <xs:element name="DateSampleCollected" type="xs:date"
-        minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Sample Collected
@@ -3505,7 +3505,7 @@ maxOccurs="1" />
         </xs:annotation>
       </xs:element>
       <xs:element name="DateSampleSent" type="xs:date"
-        minOccurs="1" maxOccurs="1">
+                  minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Sample Sent
@@ -3528,10 +3528,10 @@ maxOccurs="1" />
         </xs:simpleType>
       </xs:element>
       <xs:element name="ViralLoadConfirmationResult"
-        type="xs:double" minOccurs="0" maxOccurs="1">
+                  type="xs:double" minOccurs="0" maxOccurs="1">
       </xs:element>
       <xs:element name="ViralLoadConfirmationTestDate"
-        type="xs:date" minOccurs="0" maxOccurs="1">
+                  type="xs:date" minOccurs="0" maxOccurs="1">
       </xs:element>
       <xs:element name="FinalRecencyTestResult">
         <xs:annotation>
@@ -3567,7 +3567,7 @@ maxOccurs="1" />
       <xs:element name="ViralLoadRequest" type="YNCodeType"></xs:element>
 
       <xs:element name="SampleReferenceNumber"
-        type="xs:string">
+                  type="xs:string">
       </xs:element>
       <xs:element name="ViralLoadClassification" type="xs:string"></xs:element>
     </xs:sequence>
@@ -3688,7 +3688,7 @@ maxOccurs="1" />
         </xs:simpleType>
       </xs:element>
       <xs:element name="DescriptiveAddress"
-        type="xs:string">
+                  type="xs:string">
       </xs:element>
       <xs:element name="PhoneNumber" type="xs:string"></xs:element>
 
@@ -3698,10 +3698,10 @@ maxOccurs="1" />
   <xs:complexType name="IdentifierChangeType">
     <xs:sequence>
       <xs:element name="PatientIdentifierChange" type="xs:boolean"
-				minOccurs="0" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
       </xs:element>
       <xs:element name="OldPatientIdentifier" type="StringType" minOccurs="0"
-				maxOccurs="1">
+                  maxOccurs="1">
       </xs:element>
     </xs:sequence>
   </xs:complexType>

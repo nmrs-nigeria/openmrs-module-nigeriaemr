@@ -205,4 +205,9 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	public void deleteExports(int batchId) throws APIException {
 		dao.deleteExports(batchId);
 	}
+	
+	@Override
+	public String getSqlVersion() throws APIException {
+		return dao.getSqlVersion();
+	}
 }

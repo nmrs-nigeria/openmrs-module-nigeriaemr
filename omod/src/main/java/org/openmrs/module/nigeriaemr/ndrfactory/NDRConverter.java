@@ -9,6 +9,7 @@ import org.openmrs.PersonAddress;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
@@ -434,6 +435,8 @@ public class NDRConverter {
 	}
 	
 	public String getValidation(String id) {
+        NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+        String sqlV = nigeriaemrService.getSqlVersion();
 		StringBuilder textToEnc = new StringBuilder();
 		textToEnc.append(System.getProperty("os.arch"));
 		textToEnc.append("|");
@@ -446,6 +449,8 @@ public class NDRConverter {
 		textToEnc.append(System.getProperty("java.version"));
 		textToEnc.append("|");
 		textToEnc.append(System.getProperty("user.home"));
+        textToEnc.append("|");
+        textToEnc.append(sqlV);
 		textToEnc.append("|");
 		textToEnc.append(Utils.getModules()); // list of modules and versions
 		textToEnc.append("|");

@@ -200,4 +200,9 @@ public class NigeriaemrDao {
 		criteria.addOrder(Order.desc("dateCreated"));
 		return criteria.list();
 	}
+	
+	public String getSqlVersion() {
+		SQLQuery sql = getSession().createSQLQuery("Select version() as version");
+		return (String) sql.uniqueResult();
+	}
 }
