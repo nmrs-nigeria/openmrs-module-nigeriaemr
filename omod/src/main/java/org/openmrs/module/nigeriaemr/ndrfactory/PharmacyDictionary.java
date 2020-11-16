@@ -348,7 +348,8 @@ public class PharmacyDictionary {
                     ndrCode = getRegimenMapValue(valueCoded);
                     codedSimpleType = new CodedSimpleType();
                     codedSimpleType.setCode(ndrCode);
-                    codedSimpleType.setCodeDescTxt(valueObs.getValueCoded().getName().getName());
+//                    codedSimpleType.setCodeDescTxt(valueObs.getValueCoded().getName().getName());
+                    codedSimpleType.setCodeDescTxt(getRegimenCodeDescTextMapValue(valueCoded));
                     regimenType.setPrescribedRegimen(codedSimpleType);
                 }
                 regimenType.setPrescribedRegimenDispensedDate(utils.getXmlDate(visitDate));//PrescribedRegimenDispensedDate
@@ -432,8 +433,8 @@ public class PharmacyDictionary {
                 try {
                     cst = new CodedSimpleType();
                     cst.setCode(getRegimenMapValue(obs.getValueCoded().getConceptId()));
-                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
-                    // cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
+//                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
+                     cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
                     regimenType.setPrescribedRegimen(cst);
                 } catch (Exception ex) {
                     LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_Drug_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
@@ -444,8 +445,8 @@ public class PharmacyDictionary {
                 try {
                     cst = new CodedSimpleType();
                     cst.setCode(getRegimenMapValue(obs.getValueCoded().getConceptId()));
-                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
-                    // cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
+//                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
+                     cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
                     regimenType.setPrescribedRegimen(cst);
                 } catch (Exception ex) {
                     LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_Drug_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
@@ -456,7 +457,7 @@ public class PharmacyDictionary {
             try {
                 //set type code
                 if (obs != null && obs.getObsGroup().getConcept().getConceptId() == OI_regimen_Concept_set) {
-                    regimenType.setPrescribedRegimenTypeCode("NONART");
+                    regimenType.setPrescribedRegimenTypeCode("OI");
                 } else if (obs != null && obs.getObsGroup().getConcept().getConceptId() == TB_regimen_Concept_set) {
                     regimenType.setPrescribedRegimenTypeCode("TB");
                 }
