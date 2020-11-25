@@ -64,6 +64,8 @@ public class Utils {
 	
 	public final static int Laboratory_Encounter_Type_Id = 11;
 	
+	public final static int Sample_Collection_Encounter_Type_Id = 31;
+	
 	public final static int Care_card_Encounter_Type_Id = 12;
 	
 	public final static int Adult_Ped_Initial_Encounter_Type_Id = 8;
