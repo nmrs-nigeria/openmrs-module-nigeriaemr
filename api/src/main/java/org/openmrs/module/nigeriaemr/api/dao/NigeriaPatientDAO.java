@@ -23,7 +23,7 @@ public interface NigeriaPatientDAO extends PatientDAO {
 	
 	List<Integer> getPatientIdsByEncounterDate(Date fromDate, Date toDate, boolean includeVoided) throws DAOException;
 	
-	List<String> getPatientIdsByIdentifiers(List<String> identifiers, Date fromDate, Date toDate) throws DAOException;
+	List<Integer> getPatientIdsByIdentifiers(List<String> identifiers, Date fromDate, Date toDate) throws DAOException;
 	
 	List<Patient> getPatientsByEncounterDate(int startIndex, int endIndex, Date lastEncounterDate, boolean includeVoided)
 	        throws DAOException;

@@ -437,6 +437,10 @@ public class Utils {
 		}
 	}
 	
+	public static String getLastNDRDateString() {
+		return Context.getAdministrationService().getGlobalProperty("ndr_last_run_date");
+	}
+	
 	public static String getBiometricServer() {
 		return Context.getAdministrationService().getGlobalProperty("biometric_server");
 	}

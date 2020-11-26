@@ -17,6 +17,7 @@ import org.openmrs.module.nigeriaemr.omodmodels.LocationModel;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
 import org.openmrs.module.nigeriaemr.service.NdrExtractionService;
+import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class NdrFragmentController {
 	
@@ -53,7 +55,6 @@ public class NdrFragmentController {
 	}
 	
 	public void controller() {
-		
 	}
 	
 	public String generateNDRFileByLocation(HttpServletRequest request,
@@ -83,22 +84,19 @@ public class NdrFragmentController {
 	        @RequestParam(value = "from", required = false) String from) throws Exception {
 		try {
 			// get date that's bounds to the date the export is kicked off
-			Date currentDate = null;
-			if (to != null && !to.isEmpty()) {
-				currentDate = new SimpleDateFormat("yyyy-MM-dd").parse(to);
-			}
 			Date lastDate = null;
 			if (from != null && !from.isEmpty()) {
 				lastDate = new SimpleDateFormat("yyyy-MM-dd").parse(from);
 			}
+			Date currentDate = Utils.getLastNDRDate();
 
 			List<Integer> patients = new ArrayList<>();
 			if (identifiers != null && !identifiers.isEmpty()) {
 				String[] ary = identifiers.split(",");
 				if (ary.length > 0) {
-					List<String> identifierList = Arrays.asList(ary);
-					List<String> patientIdsFromIdentifiers = nigeriaPatientService.getPatientIdsByIdentifiers(identifierList, lastDate, currentDate);
-					identifierList.addAll(patientIdsFromIdentifiers);
+					List<String> identifierList = new ArrayList<>(Arrays.asList(ary));
+					List<Integer> patientIdsFromIdentifiers = nigeriaPatientService.getPatientIdsByIdentifiers(identifierList, lastDate, currentDate);
+					identifierList.addAll(patientIdsFromIdentifiers.stream().map(String::valueOf).collect(Collectors.toList()));
 					List<Integer> patientIds = ndrExtractionService.getPatientIds(lastDate,currentDate,identifierList,true);
 					Set<Integer> set = new HashSet<>(patientIds);
 					patients = new ArrayList<>(set);

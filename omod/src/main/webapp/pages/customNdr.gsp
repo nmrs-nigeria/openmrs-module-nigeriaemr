@@ -14,13 +14,13 @@
     <div class="container" style="padding-top: 10px;">
          <div style="margin-left: 32%; width: 40%; height: 50%; background-color: #00463f; border-radius: 10px; ">
                         <br/> <br/>
-
                 <div>
                     <input style="background-color: #E8F0FE; border-radius: 25px; margin-top: 15px" type="checkbox" id="custom" name="custom" value="custom" onclick="checkBoxCheck()">
                     <label for="custom" style="color: white;">Custom</label><br>
-                    <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display: none" type="text" value="comma separated patient identifiers or Ids" id="identifiers" onfocus=this.value='' name="identifiers">
+                    <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display: none" type="text" value="comma separated patient identifiers or Ids" id="identifiers" onfocus=this.value='' name="identifiers"><br>
+                    <input style="background-color: #E8F0FE; margin-left: 52px; border-radius: 25px; margin-top: 15px; display: none" type="checkbox" id="customStart" name="customStart" value="customStart" onclick="checkBoxStartCheck()">
+                    <label for="customStart" id="labelCustomStart" style=" color: white; width: 70%; height: 45px; margin-top: 15px; display: none">Initial</label><br>
                     <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display: none" id="from" type="date"  />
-                    <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display: none" id="to" type="date" />
                     <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px" type="button" value="Export" onclick="exportData()" class="btn btn-primary" />
                     <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display: none" id="btnClear" type="button" value="Clear" onclick="clearData()" class="btn btn-primary" />
                 </div>
@@ -65,31 +65,48 @@
     
     
 <script>
+    let lastNDRRunDate = '${lastNDRRunDate}'
+
     jq = jQuery;
+    checkBoxCheck();
     function checkBoxCheck()
     {
         const checkBox = document.getElementById("custom");
         if (checkBox.checked === true){
             document.getElementById('identifiers').style.display =  'inline';
             document.getElementById('from').style.display =  'inline';
-            document.getElementById('to').style.display =  'inline';
             document.getElementById('btnClear').style.display =  'inline';
+            document.getElementById('customStart').style.display =  'inline';
+            document.getElementById('labelCustomStart').style.display =  'inline';
             jq("#tb_commtester tbody tr").remove();
         }else{
             document.getElementById('identifiers').style.display =  'none';
             document.getElementById('from').style.display =  'none';
-            document.getElementById('to').style.display =  'none';
             document.getElementById('btnClear').style.display =  'none';
+            document.getElementById('customStart').style.display =  'none';
+            document.getElementById('labelCustomStart').style.display =  'none';
             jq("#tb_commtester tbody tr").remove();
         }
         loadFileListDefault(true);
+    }
+
+    checkBoxStartCheck()
+    function checkBoxStartCheck()
+    {
+        const checkBox = document.getElementById("customStart");
+        if (checkBox.checked === true){
+            document.getElementById('from').value =  '';
+            document.getElementById('from').style.display =  'none';
+        }else{
+            document.getElementById('from').style.display =  'inline';
+        }
     }
 
     function clearData()
     {
         document.getElementById('identifiers').value = ''
         document.getElementById('from').value = ''
-        document.getElementById('to').value = ''
+        // document.getElementById('to').value = ''
     }
     
    function exportData() 
@@ -103,7 +120,7 @@
 
         let identifiers = jq('#identifiers').val();
         const from = jq('#from').val();
-        const to = jq('#to').val();
+        // const to = jq('#to').val();
 
         if(identifiers === "comma separated patient identifiers or Ids") identifiers = ''
        
@@ -115,7 +132,7 @@
                 dataType: "json",
                  data: {
                         'identifiers' : identifiers,
-                     'to' : to,
+                     // 'to' : to,
                      'from' : from
                 }
 
@@ -207,6 +224,7 @@
                                    "<td>" +
                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                   "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Files\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
                                    "</td>" +
                                    "</tr>");
                        }
@@ -312,7 +330,7 @@
    }
 
    function restartFile(id){
-       if (confirm("Are you sure you want to restart ? this will restart the export from the begining") === true) {
+       if (confirm("Are you sure you want to restart ? this will delete your previous file and restart the export from the beginning") === true) {
            jq('#gen-wait').show();
            if(id)
            {
