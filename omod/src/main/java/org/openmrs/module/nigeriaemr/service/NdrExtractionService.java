@@ -444,6 +444,7 @@ public class NdrExtractionService {
 							status = "Completed";
 						}
 					} else if (!"no new patient record found".equalsIgnoreCase(path)) {
+						ndrExportBatch.setPath(path);
 						status = "Completed";
 					} else {
 						status = "Failed";

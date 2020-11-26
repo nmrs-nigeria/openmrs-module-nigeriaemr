@@ -213,9 +213,13 @@ public class LaboratoryReportType {
 	 */
 	public List<LaboratoryOrderAndResult> getLaboratoryOrderAndResult() {
 		if (laboratoryOrderAndResult == null) {
-			laboratoryOrderAndResult = new ArrayList<LaboratoryOrderAndResult>();
+			laboratoryOrderAndResult = new ArrayList<>();
 		}
 		return this.laboratoryOrderAndResult;
+	}
+	
+	public void setLaboratoryOrderAndResult(List<LaboratoryOrderAndResult> laboratoryOrderAndResult) {
+		this.laboratoryOrderAndResult = laboratoryOrderAndResult;
 	}
 	
 	/**
