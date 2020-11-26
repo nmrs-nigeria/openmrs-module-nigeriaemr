@@ -1760,7 +1760,7 @@
 
   <xs:complexType name="KnowledgeAssessmentType">
     <xs:sequence>
-      <xs:element name="PreviouslyTestedHIVNegative"  type="xs:boolean" minOccurs="1"
+      <xs:element name="PreviouslyTestedHIVNegative"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1768,7 +1768,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ClientInformedAboutHIVTransmissionRoutes"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ClientInformedAboutHIVTransmissionRoutes"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1784,7 +1784,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ClientInformedOfHIVTransmissionRiskFactors"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ClientInformedOfHIVTransmissionRiskFactors"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1792,7 +1792,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ClientInformedAboutPreventingHIV"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ClientInformedAboutPreventingHIV"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1800,7 +1800,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ClientInformedAboutPossibleTestResults"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ClientInformedAboutPossibleTestResults"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1808,7 +1808,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="InformedConsentForHIVTestingGiven"  type="xs:boolean" minOccurs="1"
+      <xs:element name="InformedConsentForHIVTestingGiven"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1821,7 +1821,7 @@
 
   <xs:complexType name="HIVRiskAssessmentType">
     <xs:sequence>
-      <xs:element name="EverHadSexualIntercourse"  type="xs:boolean" minOccurs="1"
+      <xs:element name="EverHadSexualIntercourse"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1829,7 +1829,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="BloodTransfussionInLast3Months"  type="xs:boolean" minOccurs="1"
+      <xs:element name="BloodTransfussionInLast3Months"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1837,7 +1837,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="UnprotectedSexWithCasualPartnerinLast3Months"  type="xs:boolean" minOccurs="1"
+      <xs:element name="UnprotectedSexWithCasualPartnerinLast3Months"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1845,7 +1845,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="UnprotectedSexWithRegularPartnerInLast3Months"  type="xs:boolean" minOccurs="1"
+      <xs:element name="UnprotectedSexWithRegularPartnerInLast3Months"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1853,7 +1853,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="MoreThan1SexPartnerDuringLast3Months"  type="xs:boolean" minOccurs="1"
+      <xs:element name="MoreThan1SexPartnerDuringLast3Months"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1861,7 +1861,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="STIInLast3Months" type="xs:boolean" minOccurs="1"
+      <xs:element name="STIInLast3Months" type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1874,7 +1874,7 @@
 
   <xs:complexType name="ClinicalTBScreeningType">
     <xs:sequence>
-      <xs:element name="CurrentlyCough"  type="xs:boolean" minOccurs="1"
+      <xs:element name="CurrentlyCough"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1882,7 +1882,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="WeightLoss" type="xs:boolean" minOccurs="1"
+      <xs:element name="WeightLoss" type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1890,7 +1890,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="Fever"  type="xs:boolean" minOccurs="1"
+      <xs:element name="Fever"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1898,7 +1898,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="NightSweats"  type="xs:boolean" minOccurs="1"
+      <xs:element name="NightSweats"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1945,7 +1945,7 @@
   </xs:complexType>
   <xs:complexType name="PostTestCounsellingType">
     <xs:sequence>
-      <xs:element name="TestedForHIVBeforeWithinThisYear"   minOccurs="1"
+      <xs:element name="TestedForHIVBeforeWithinThisYear"   minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1961,7 +1961,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
-      <xs:element name="HIVRequestAndResultFormSignedByTester"  type="xs:boolean" minOccurs="1"
+      <xs:element name="HIVRequestAndResultFormSignedByTester"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1969,7 +1969,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="HIVRequestAndResultFormFilledWithCTIForm"  type="xs:boolean" minOccurs="1"
+      <xs:element name="HIVRequestAndResultFormFilledWithCTIForm"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1977,7 +1977,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ClientRecievedHIVTestResult"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ClientRecievedHIVTestResult"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1985,7 +1985,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="PostTestCounsellingDone"  type="xs:boolean" minOccurs="1"
+      <xs:element name="PostTestCounsellingDone"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -1993,7 +1993,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="RiskReductionPlanDeveloped"  type="xs:boolean" minOccurs="1"
+      <xs:element name="RiskReductionPlanDeveloped"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -2001,7 +2001,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="PostTestDisclosurePlanDeveloped"  type="xs:boolean" minOccurs="1"
+      <xs:element name="PostTestDisclosurePlanDeveloped"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -2009,7 +2009,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="WillBringPartnerForHIVTesting"  type="xs:boolean" minOccurs="1"
+      <xs:element name="WillBringPartnerForHIVTesting"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -2017,7 +2017,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="WillBringOwnChildrenForHIVTesting"  type="xs:boolean" minOccurs="1"
+      <xs:element name="WillBringOwnChildrenForHIVTesting"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -2027,7 +2027,7 @@
         </xs:annotation>
       </xs:element>
 
-      <xs:element name="ProvidedWithInformationOnFPandDualContraception"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ProvidedWithInformationOnFPandDualContraception"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -2035,7 +2035,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ClientOrPartnerUseFPMethodsOtherThanCondoms"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ClientOrPartnerUseFPMethodsOtherThanCondoms"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -2043,7 +2043,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ClientOrPartnerUseCondomsAsOneFPMethods"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ClientOrPartnerUseCondomsAsOneFPMethods"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -2051,7 +2051,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="CorrectCondomUseDemonstrated"  type="xs:boolean" minOccurs="1"
+      <xs:element name="CorrectCondomUseDemonstrated"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -2059,7 +2059,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="CondomsProvidedToClient"  type="xs:boolean" minOccurs="1"
+      <xs:element name="CondomsProvidedToClient"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -2067,7 +2067,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="ClientReferredToOtherServices"  type="xs:boolean" minOccurs="1"
+      <xs:element name="ClientReferredToOtherServices"  type="xs:boolean" minOccurs="0"
                   maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
@@ -3497,7 +3497,7 @@
         </xs:simpleType>
       </xs:element>
       <xs:element name="DateSampleCollected" type="xs:date"
-                  minOccurs="1" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Sample Collected
@@ -3505,7 +3505,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element name="DateSampleSent" type="xs:date"
-                  minOccurs="1" maxOccurs="1">
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Date Sample Sent
@@ -3634,7 +3634,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="FinalTestResult">
+      <xs:element name="FinalTestResult" maxOccurs="1" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="en">
             Final Test Result
