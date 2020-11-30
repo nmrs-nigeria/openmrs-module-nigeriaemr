@@ -19,6 +19,7 @@ import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
 
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Date;
@@ -303,18 +304,17 @@ public class NDRConverter {
                     condition.setEncounters(encType);
                 }
 
-                List<Encounter> tempEncs = this.groupedEncounters.get(Utils.Laboratory_Encounter_Type_Id);
-                if (tempEncs != null && !tempEncs.isEmpty()) {
-                    for (Encounter each : tempEncs) {
-                        List<Obs> obsList = new ArrayList<>(each.getAllObs());
-                        LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
-                                each, obsList);
-                        if (laboratoryReport != null) {
-                            condition.getLaboratoryReport().add(laboratoryReport);
-                        }
-                    }
 
-                }
+                List<Encounter> sampleCollectionEncounterType = this.groupedEncounters.get(Utils.Sample_Collection_Encounter_Type_Id);
+                Map<String,LaboratoryReportType> sampleCollectionReport = getLabReport(mainDictionary, sampleCollectionEncounterType);
+
+                List<Encounter> labOrderAndResultEncounterType = this.groupedEncounters.get(Utils.Laboratory_Encounter_Type_Id);
+                Map<String,LaboratoryReportType> labOrderAndResultReport = getLabReport(mainDictionary, labOrderAndResultEncounterType);
+
+                List<LaboratoryReportType> combinedReport = getCombinedReport(sampleCollectionReport,labOrderAndResultReport);
+
+                condition.getLaboratoryReport().addAll(combinedReport);
+
                 //Partner details
                 try {
                     List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.groupedEncounters, this.groupedObsByConceptIds);
@@ -342,8 +342,68 @@ public class NDRConverter {
 
         return condition;
     }
-	
-	/**
+
+    private List<LaboratoryReportType> getCombinedReport(Map<String,LaboratoryReportType> sampleCollectionReport,
+                                                         Map<String,LaboratoryReportType> labOrderAndResultReport) {
+
+        List<LaboratoryReportType> result = new ArrayList<>();
+        for(String visitDate: labOrderAndResultReport.keySet()){
+            if(sampleCollectionReport.get(visitDate) != null){
+                LaboratoryReportType sampleLaboratoryReportType = sampleCollectionReport.get(visitDate);
+                LaboratoryReportType labLaboratoryReportType = labOrderAndResultReport.get(visitDate);
+
+                //set collection Date
+                labLaboratoryReportType.setCollectionDate(sampleLaboratoryReportType.getCollectionDate());
+                //set ordered date
+                if(sampleLaboratoryReportType.getLaboratoryOrderAndResult().size() > 0 &&
+                        labLaboratoryReportType.getLaboratoryOrderAndResult().size() > 0 ){
+                        List<LaboratoryOrderAndResult> newLaboratoryOrderAndResults = new ArrayList<>();
+                    for(LaboratoryOrderAndResult laboratoryOrderAndResult : labLaboratoryReportType.getLaboratoryOrderAndResult()){
+                        for(LaboratoryOrderAndResult laboratoryOrderAndResult2: sampleLaboratoryReportType.getLaboratoryOrderAndResult()){
+                            if(laboratoryOrderAndResult.getLaboratoryTestTypeCode().equalsIgnoreCase(laboratoryOrderAndResult2.getLaboratoryTestTypeCode())){
+                                laboratoryOrderAndResult.setOrderedTestDate(laboratoryOrderAndResult2.getOrderedTestDate());
+                            }
+                        }
+                        laboratoryOrderAndResult.setLaboratoryTestTypeCode(null);
+                        newLaboratoryOrderAndResults.add(laboratoryOrderAndResult);
+                    }
+                    labLaboratoryReportType.setLaboratoryOrderAndResult(newLaboratoryOrderAndResults);
+                }
+                sampleCollectionReport.remove(visitDate);
+                labOrderAndResultReport.put(visitDate,labLaboratoryReportType);
+            }
+        }
+        result.addAll(clearResults(new ArrayList<>(sampleCollectionReport.values())));
+        result.addAll(labOrderAndResultReport.values());
+
+        return result;
+    }
+
+    private List<LaboratoryReportType> clearResults(List<LaboratoryReportType> values) {
+        List<LaboratoryReportType> newList = new ArrayList<>();
+        for(LaboratoryReportType laboratoryReportType: values){
+            laboratoryReportType.setLaboratoryOrderAndResult(new ArrayList<>());
+            newList.add(laboratoryReportType);
+        }
+        return newList;
+    }
+
+    private Map<String,LaboratoryReportType> getLabReport(NDRMainDictionary mainDictionary, List<Encounter> encounterTypes) throws DatatypeConfigurationException {
+        Map<String,LaboratoryReportType> laboratoryReports = new HashMap<>();
+        if (encounterTypes != null && !encounterTypes.isEmpty()) {
+            for (Encounter each : encounterTypes) {
+                List<Obs> obsList = new ArrayList<>(each.getAllObs());
+                LaboratoryReportType laboratoryReport = mainDictionary.createLaboratoryOrderAndResult(patient,
+                        each, obsList);
+                if (laboratoryReport != null) {
+                    laboratoryReports.put(laboratoryReport.getVisitDate().toString(),laboratoryReport);
+                }
+            }
+        }
+        return laboratoryReports;
+    }
+
+    /**
 	 * Create PatientDemographicsType for pts Create CommonQuestionType for pts Create
 	 * HIVQuestionsType for pts Get all Pharmacy visits for patients For each Pharmacy visit create
 	 * RegimenType Get all Clinical visits for patients // For each Clinical visits create

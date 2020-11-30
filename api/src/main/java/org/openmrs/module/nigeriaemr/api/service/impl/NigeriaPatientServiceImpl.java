@@ -57,7 +57,8 @@ public class NigeriaPatientServiceImpl extends PatientServiceImpl implements Nig
 	}
 	
 	@Override
-	public List<String> getPatientIdsByIdentifiers(List<String> identifiers, Date fromDate, Date toDate) throws APIException {
+	public List<Integer> getPatientIdsByIdentifiers(List<String> identifiers, Date fromDate, Date toDate)
+	        throws APIException {
 		return dao.getPatientIdsByIdentifiers(identifiers, fromDate, toDate);
 	}
 	

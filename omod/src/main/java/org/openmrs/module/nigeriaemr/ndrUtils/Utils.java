@@ -64,6 +64,8 @@ public class Utils {
 	
 	public final static int Laboratory_Encounter_Type_Id = 11;
 	
+	public final static int Sample_Collection_Encounter_Type_Id = 31;
+	
 	public final static int Care_card_Encounter_Type_Id = 12;
 	
 	public final static int Adult_Ped_Initial_Encounter_Type_Id = 8;
@@ -435,6 +437,10 @@ public class Utils {
 				return null;
 			}
 		}
+	}
+	
+	public static String getLastNDRDateString() {
+		return Context.getAdministrationService().getGlobalProperty("ndr_last_run_date");
 	}
 	
 	public static String getBiometricServer() {

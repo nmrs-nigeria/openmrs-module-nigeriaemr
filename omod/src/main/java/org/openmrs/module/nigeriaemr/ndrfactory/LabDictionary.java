@@ -114,6 +114,7 @@ public class LabDictionary {
         labTestDictionary.put(1339, 0);//MONOCYTES (%) - MICROSCOPIC EXAM
         labTestDictionary.put(1022, 13);//NEUTROPHILS
         labTestDictionary.put(45, 58);//URINE PREGNANCY TEST
+        labTestDictionary.put(165765,80);//Viral Load Order
     }
 
     private void loadOtherCodedValues() {
@@ -196,8 +197,6 @@ public class LabDictionary {
     }
 
     public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> obsIdList) {
-        List<Integer> obsCodeList = Arrays.asList(Visit_Type_Concept_Id,Laboratory_Identifier_Concept_Id,Ordered_By_Concept_Id,
-                Checked_By_Concept_Id,REPORTED_BY_CONCEPT_ID);
 
         Map<Object, List<Obs>> labObsList = Utils.groupedByConceptIdsOnly(obsIdList);
         LaboratoryReportType labReportType = new LaboratoryReportType();
@@ -206,7 +205,6 @@ public class LabDictionary {
             XMLGregorianCalendar convertedDate = utils.getXmlDate(enc.getEncounterDatetime());
             labReportType.setVisitID(Utils.getVisitId(pts, enc));
             labReportType.setVisitDate(convertedDate);
-            labReportType.setCollectionDate(convertedDate);
 
             boolean artStatusFlag = isArtStatusFlag(pts, enc);
             if(artStatusFlag){
@@ -220,6 +218,15 @@ public class LabDictionary {
                 LoggerUtils.write(LabDictionary.class.getName(), "About to pull Visit_Type_Concept_Id", LogFormat.FATAL, LogLevel.debug);
                 labReportType.setBaselineRepeatCode(getMappedAnswerValue(obs.getValueCoded().getConceptId()));
                 LoggerUtils.write(LabDictionary.class.getName(), "Finished pulling Visit_Type_Concept_Id", LogFormat.FATAL, LogLevel.debug);
+            }
+
+            obs = Utils.extractObs(SAMPLE_COLLECTION_DATE, labObsList);
+            if (obs != null && obs.getValueDate() != null) {
+                XMLGregorianCalendar collectionDate = utils.getXmlDate(obs.getValueDate());
+                labReportType.setCollectionDate(collectionDate);
+            }else {
+                labReportType.setCollectionDate(convertedDate);
+
             }
 
             obs = Utils.extractObs(Laboratory_Identifier_Concept_Id, labObsList);
@@ -247,8 +254,6 @@ public class LabDictionary {
             if (laboratoryOrderAndResultList.size() > 0) {
                 labReportType.getLaboratoryOrderAndResult().addAll(laboratoryOrderAndResultList);
                 return labReportType;
-            } else {
-                return null;
             }
 
         } catch (Exception ex) {
@@ -299,7 +304,7 @@ public class LabDictionary {
         CodedSimpleType cst;
 
         AnswerType answer;
-        NumericType numeric;
+        NumericType numeric = null;
         Date orderedDate = null;
 
         Obs obsEle = extractObsByConceptId(Ordered_Date_Concept_id, obsList);
@@ -308,7 +313,6 @@ public class LabDictionary {
         }
 
         LaboratoryOrderAndResult labOrderAndResult;
-        NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 
         for (Obs obs : obsList) {
 
@@ -324,6 +328,7 @@ public class LabDictionary {
 
                 try {
                     ndrCodedValue = getMappedValue(conceptID);
+                    labOrderAndResult.setLaboratoryTestTypeCode(String.valueOf(ndrCodedValue));
 
                     LoggerUtils.write(LabDictionary.class.getName(), "About to pull Laboratory_Result_TEST", LogFormat.FATAL, LogLevel.debug);
                     cst.setCode(Integer.toString(ndrCodedValue));
@@ -331,9 +336,8 @@ public class LabDictionary {
                     labOrderAndResult.setLaboratoryResultedTest(cst);
                     LoggerUtils.write(LabDictionary.class.getName(), "Finished pulling Laboratory_Result_TEST", LogFormat.FATAL, LogLevel.debug);
 
-                    answer = new AnswerType();
-                    numeric = new NumericType();
                     if (obs.getValueNumeric() != null) {
+                        numeric = new NumericType();
                         numeric.setValue1(obs.getValueNumeric().intValue());
                     }
 
@@ -342,10 +346,10 @@ public class LabDictionary {
                     }else{
                         labOrderAndResult.setOrderedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
                     }
-                    labOrderAndResult.setResultedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
+//                    labOrderAndResult.setResultedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
 
                     //TODO:revisit this implementation
-                    if (labTestUnits.containsKey(conceptID)) {
+                    if (labTestUnits.containsKey(conceptID) && numeric != null) {
 
                         CodedType ct = new CodedType();
                         ct.setCode(labTestUnits.get(conceptID));
@@ -358,8 +362,12 @@ public class LabDictionary {
                         numeric.setUnit(ct);
                     }
 
-                    answer.setAnswerNumeric(numeric);
-                    labOrderAndResult.setLaboratoryResult(answer);
+                    if(numeric != null) {
+                        answer = new AnswerType();
+                        answer.setAnswerNumeric(numeric);
+                        labOrderAndResult.setLaboratoryResult(answer);
+                        labOrderAndResult.setResultedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
+                    }
                     labResultList.add(labOrderAndResult);
 
                 } catch (Exception ex) {
@@ -374,26 +382,30 @@ public class LabDictionary {
                     LoggerUtils.write(LabDictionary.class.getName(), "About to pull Coded_DataType_ConceptId", LogFormat.FATAL, LogLevel.debug);
                     //set the lab test code
                     ndrCodedValue = getMappedValue(conceptID);
+                    labOrderAndResult.setLaboratoryTestTypeCode(String.valueOf(ndrCodedValue));
                     cst.setCode(Integer.toString(ndrCodedValue));
                     cst.setCodeDescTxt(obs.getConcept().getName().getName());
                     labOrderAndResult.setLaboratoryResultedTest(cst);
 
                     //get the answer
-                    CodedType ct = new CodedType();
+                    CodedType ct = null;
                     if (obs.getValueCoded() != null) {
+                        ct = new CodedType();
                         ct.setCode(obs.getValueCoded().getName().getName());
                         ct.setCodeDescTxt(obs.getValueCoded().getName().getName());
                         ct.setCodeSystemCode(obs.getValueCoded().getName().getName());
                     }
 
-                    answer = new AnswerType();
-                    answer.setAnswerCode(ct);
-                    labOrderAndResult.setLaboratoryResult(answer);
+                    if(ct != null) {
+                        answer = new AnswerType();
+                        answer.setAnswerCode(ct);
+                        labOrderAndResult.setLaboratoryResult(answer);
+                        labOrderAndResult.setResultedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
+                    }
 
                     if (orderedDate != null) {
                         labOrderAndResult.setOrderedTestDate(utils.getXmlDate(orderedDate));
                     }
-                    labOrderAndResult.setResultedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
                     labResultList.add(labOrderAndResult);
                 } catch (Exception ex) {
                     LoggerUtils.write(LabDictionary.class.getName(), "Error in Coded_DataType_ConceptId: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
