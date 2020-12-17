@@ -9,9 +9,11 @@
  */
 package org.openmrs.module.nigeriaemr.model;
 
-import org.openmrs.User;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.sql.Blob;
 import java.util.Date;
 
 /**
@@ -31,6 +33,9 @@ public class BiometricInfo {
 	
 	@Column(name = "template")
 	private String template;
+	
+	@Column(name = "new_template")
+	private Blob newTemplate;
 	
 	@Column(name = "imageWidth")
 	private Integer imageWidth;
@@ -79,6 +84,14 @@ public class BiometricInfo {
 	}
 	
 	public String getTemplate() {
+		if (getNewTemplate() != null) {
+			Blob blob = getNewTemplate();
+			try {
+				byte[] blobData = blob.getBytes(1, (int) blob.length());
+				return new String(blobData);
+			}
+			catch (Exception ex) {}
+		}
 		return template;
 	}
 	
@@ -164,5 +177,13 @@ public class BiometricInfo {
 	
 	public void setDateCreated(Date dateCreated) {
 		this.dateCreated = dateCreated;
+	}
+	
+	public Blob getNewTemplate() {
+		return newTemplate;
+	}
+	
+	public void setNewTemplate(Blob newTemplate) {
+		this.newTemplate = newTemplate;
 	}
 }
