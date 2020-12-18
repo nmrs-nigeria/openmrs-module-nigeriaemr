@@ -159,7 +159,7 @@ public class NDRConverter {
             ConditionType condition = createHIVCondition();
             individualReport.getCondition().add(condition);
 
-            PMTCTType pmtctType = createPmtctType(groupedObsByConceptIds);
+            PMTCTType pmtctType = createPmtctType();
 
             if(pmtctType != null){
                 individualReport.setPmtctType(pmtctType);
@@ -190,20 +190,18 @@ public class NDRConverter {
         return individualReport;
     }
 
-    private PMTCTType createPmtctType(Map<Object, List<Obs>> groupedObsByConcept) {
+    private PMTCTType createPmtctType() {
         NDRMainDictionary mainDictionary = new NDRMainDictionary();
         PMTCTType pmtctType = null;
-
-        Encounter maternalCohortEncounter = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE));
-        if(maternalCohortEncounter != null) {
-            MaternalCohortType maternalCohortType =  mainDictionary.createMaternalCohort(maternalCohortEncounter, groupedObsByConcept);
-            if(maternalCohortType != null){
+        List<Encounter> pmtctEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE);
+        if(pmtctEncounters != null) {
+            List<MaternalCohortType> maternalCohortTypes =  mainDictionary.createMaternalCohort(pmtctEncounters);
+            if(maternalCohortTypes != null){
                 pmtctType = new PMTCTType();
-                pmtctType.setMaternalCohortType(maternalCohortType);
+                pmtctType.setMaternalCohortTypes(maternalCohortTypes);
             }
         }
 
-        List<Encounter> pmtctEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE);
         if(pmtctEncounters != null) {
             List<HealthFacilityVisitsType> healthFacilityVisitTypes = mainDictionary.createHealthFacilityVisits(
                     this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE));

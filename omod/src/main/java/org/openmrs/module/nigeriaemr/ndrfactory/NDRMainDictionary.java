@@ -233,8 +233,8 @@ public class NDRMainDictionary {
         return hivTestingReport;
     }
 
-    public MaternalCohortType createMaternalCohort(Encounter maternalCohortEncounter, Map<Object, List<Obs>> groupedObsByConcept){
-        return pmtctDictionary.createMaternalCohort(maternalCohortEncounter, groupedObsByConcept);
+    public List<MaternalCohortType> createMaternalCohort(List<Encounter> maternalCohortEncounter){
+        return pmtctDictionary.createMaternalCohort(maternalCohortEncounter);
     }
 
     public List<HealthFacilityVisitsType> createHealthFacilityVisits(List<Encounter> pmtctEncounters) {

@@ -661,81 +661,87 @@ public class PMTCTDictionary {
             }
             healthFacilityVisitsTypes.add(healthFacilityVisitsType);
         }
-
-        return healthFacilityVisitsTypes;
+        return healthFacilityVisitsTypes.isEmpty() ? null :  healthFacilityVisitsTypes;
     }
 
-    public MaternalCohortType createMaternalCohort(Encounter maternalCohortEncounter, Map<Object, List<Obs>> groupedObsByConcept){
-        MaternalCohortType maternalCohortType = new MaternalCohortType();
-        //visit date and ID
-        maternalCohortType.setVisitID(String.valueOf(maternalCohortEncounter.getVisit().getVisitId()));
-        maternalCohortType.setVisitDate(utils.getXmlDate(maternalCohortEncounter.getEncounterDatetime()));
+    public List<MaternalCohortType> createMaternalCohort(List<Encounter> maternalCohortEncounters){
+        List<MaternalCohortType> maternalCohortTypes = new ArrayList<>();
+        for(Encounter maternalCohortEncounter : maternalCohortEncounters) {
+            Set<Obs> obsSet = maternalCohortEncounter.getAllObs();
+            List<Obs> obsList = new ArrayList<>(obsSet);
+            Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
+            MaternalCohortType maternalCohortType = new MaternalCohortType();
+            //visit date and ID
+            maternalCohortType.setVisitID(String.valueOf(maternalCohortEncounter.getVisit().getVisitId()));
+            maternalCohortType.setVisitDate(utils.getXmlDate(maternalCohortEncounter.getEncounterDatetime()));
 
-        Obs obs = extractObs(viralLoadPeriod_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueCoded() != null) {
-            int valueCoded = obs.getValueCoded().getConceptId();
-            String ndrCode = getMappedValue(valueCoded);
-            maternalCohortType.setViralLoadPeriod(ndrCode);
+            Obs obs = extractObs(viralLoadPeriod_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                maternalCohortType.setViralLoadPeriod(ndrCode);
+            }
+            obs = extractObs(sampleCollectionDate_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueDate() != null) {
+                maternalCohortType.setSampleCollectionDate(utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObs(viralLoadResult_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueNumeric() != null) {
+                maternalCohortType.setViralLoadResult(obs.getValueNumeric());
+            }
+            obs = extractObs(pmtctEntryPoint_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                maternalCohortType.setPmtctEntryPoint(ndrCode);
+            }
+            obs = extractObs(gestationalAgeAtSampleCollection_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueNumeric() != null) {
+                maternalCohortType.setGestationalAgeAtSampleCollection(obs.getValueNumeric().intValue());
+            }
+            obs = extractObs(gestationalAge_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueNumeric() != null) {
+                maternalCohortType.setGestationalAge(obs.getValueNumeric().intValue());
+            }
+            obs = extractObs(timingOfArtInitiation_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getTimingMappedValue(valueCoded);
+                maternalCohortType.setTimingOfArtInitiation(ndrCode);
+            }
+            obs = extractObs(tbStatus_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                int ndrCode = getTbMappedValue(valueCoded);
+                if (ndrCode > 0) maternalCohortType.setTbStatus(ndrCode);
+            }
+            obs = extractObs(gravida_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueNumeric() != null) {
+                maternalCohortType.setGravida(obs.getValueNumeric().intValue());
+            }
+            obs = extractObs(artStartDate_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueDate() != null) {
+                maternalCohortType.setArtStartDate(utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObs(dateOfDelivery_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueDate() != null) {
+                maternalCohortType.setDateOfDelivery(utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObs(familyPlanningCounselling_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                maternalCohortType.setFamilyPlanningCounselling(ndrCode);
+            }
+            obs = extractObs(familyPlanningMethod_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getFpmMappedValue(valueCoded);
+                maternalCohortType.setFamilyPlanningMethod(ndrCode);
+            }
+            maternalCohortTypes.add(maternalCohortType);
         }
-        obs = extractObs(sampleCollectionDate_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueDate() != null) {
-            maternalCohortType.setSampleCollectionDate(utils.getXmlDate(obs.getValueDate()));
-        }
-        obs = extractObs(viralLoadResult_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueNumeric() != null) {
-            maternalCohortType.setViralLoadResult(obs.getValueNumeric());
-        }
-        obs = extractObs(pmtctEntryPoint_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueCoded() != null) {
-            int valueCoded = obs.getValueCoded().getConceptId();
-            String ndrCode = getMappedValue(valueCoded);
-            maternalCohortType.setPmtctEntryPoint(ndrCode);
-        }
-        obs = extractObs(gestationalAgeAtSampleCollection_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueNumeric() != null) {
-            maternalCohortType.setGestationalAgeAtSampleCollection(obs.getValueNumeric().intValue());
-        }
-        obs = extractObs(gestationalAge_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueNumeric() != null) {
-            maternalCohortType.setGestationalAge(obs.getValueNumeric().intValue());
-        }
-        obs = extractObs(timingOfArtInitiation_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueCoded() != null) {
-            int valueCoded = obs.getValueCoded().getConceptId();
-            String ndrCode = getTimingMappedValue(valueCoded);
-            maternalCohortType.setTimingOfArtInitiation(ndrCode);
-        }
-        obs = extractObs(tbStatus_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueCoded() != null) {
-            int valueCoded = obs.getValueCoded().getConceptId();
-            int ndrCode = getTbMappedValue(valueCoded);
-            if (ndrCode > 0) maternalCohortType.setTbStatus(ndrCode);
-        }
-        obs = extractObs(gravida_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueNumeric() != null) {
-            maternalCohortType.setGravida(obs.getValueNumeric().intValue());
-        }
-        obs = extractObs(artStartDate_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueDate() != null) {
-            maternalCohortType.setArtStartDate(utils.getXmlDate(obs.getValueDate()));
-        }
-        obs = extractObs(dateOfDelivery_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueDate() != null) {
-            maternalCohortType.setDateOfDelivery(utils.getXmlDate(obs.getValueDate()));
-        }
-        obs = extractObs(familyPlanningCounselling_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueCoded() != null) {
-            int valueCoded = obs.getValueCoded().getConceptId();
-            String ndrCode = getMappedValue(valueCoded);
-            maternalCohortType.setFamilyPlanningCounselling(ndrCode);
-        }
-        obs = extractObs(familyPlanningMethod_ConceptID, groupedObsByConcept);
-        if (obs != null && obs.getValueCoded() != null) {
-            int valueCoded = obs.getValueCoded().getConceptId();
-            String ndrCode = getFpmMappedValue(valueCoded);
-            maternalCohortType.setFamilyPlanningMethod(ndrCode);
-        }
-        return maternalCohortType;
+        return maternalCohortTypes.isEmpty() ? null :  maternalCohortTypes;
     }
 
     private String getMappedValue(int conceptID) {
