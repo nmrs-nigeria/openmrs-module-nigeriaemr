@@ -1072,12 +1072,6 @@ public class HTSDictionary {
         return partnerDetailsType;
     }
 
-    public HealthFacilityVisitsType createHealthFacilityVisit(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
-        HealthFacilityVisitsType healthFacilityVisitsType = new HealthFacilityVisitsType();
-
-        return healthFacilityVisitsType;
-    }
-
     private String getMappedValue(int conceptID) {
         try {
             return htsDictionary.get(conceptID);
