@@ -12,7 +12,6 @@ import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
-import org.openmrs.module.nigeriaemr.api.service.impl.NigeriaObsServiceImpl;
 import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
@@ -26,7 +25,6 @@ import org.openmrs.module.nigeriaemr.util.FileUtils;
 import org.openmrs.module.nigeriaemr.util.ZipUtil;
 import org.openmrs.util.OpenmrsUtil;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.BufferedWriter;
@@ -307,6 +305,10 @@ public class Utils {
 	public final static int PATIENT_DATE_TERMINATED = 165469;
 	
 	public final static int REASON_FOR_TERMINATION = 165470;
+	
+	public final static int YES_NO_VALUE = 1065;
+	
+	public final static int YES_NO_ALTERNATIVE_VALUE = 1;
 	
 	/*
 	       HIVQuestionsType

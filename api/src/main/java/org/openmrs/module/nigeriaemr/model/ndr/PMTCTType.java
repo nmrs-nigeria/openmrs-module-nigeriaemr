@@ -9,7 +9,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PMTCTType", propOrder = { "immunizationTypes", "deliveryEncounterTypes", "antenatalRegistrationTypes",
         "childBirthDetailsTypes", "childFollowupTypes", "infantPCRTestingTypes", "healthFacilityVisitTypes",
-        "partnerDetailsTypes", "InfantRapidTestTypes", "maternalCohortTypes" })
+        "partnerDetailsTypes", "InfantRapidTestTypes", "maternalCohortTypes", "pmtctHTSTYPE" })
 public class PMTCTType {
 	
 	@XmlElement(name = "Immunization")
@@ -41,7 +41,11 @@ public class PMTCTType {
 	
 	@XmlElement(name = "MaternalCohort")
 	protected List<MaternalCohortType> maternalCohortTypes;
+
+	@XmlElement(name = "PMTCTHTS")
+	protected PMTCTHTSType pmtctHTSTYPE;
 	
+
 	public List<ImmunizationType> getImmunizationTypes() {
 		return immunizationTypes;
 	}
@@ -120,5 +124,13 @@ public class PMTCTType {
 	
 	public void setMaternalCohortTypes(List<MaternalCohortType> maternalCohortTypes) {
 		this.maternalCohortTypes = maternalCohortTypes;
+	}
+	
+	public PMTCTHTSType getPMTCTHTS() {
+		return pmtctHTSTYPE;
+	}
+	
+	public void setPMTCTHTS(PMTCTHTSType value) {
+		this.pmtctHTSTYPE = value;
 	}
 }
