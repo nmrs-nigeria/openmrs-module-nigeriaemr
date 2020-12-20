@@ -926,7 +926,6 @@ public class PMTCTDictionary {
         if (pmtctClinicalTBScreeningType != null) {
             pmtcttHTSType.setClinicalTBScreening(pmtctClinicalTBScreeningType);
         }
-
         return pmtcttHTSType == null ? null : pmtcttHTSType;
     }
 
