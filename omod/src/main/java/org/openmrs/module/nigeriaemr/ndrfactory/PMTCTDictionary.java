@@ -5,29 +5,24 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.ZoneId;
-import java.util.*;
-
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
+import org.openmrs.module.nigeriaemr.model.ndr.AntenatalRegistrationType.Syphilis;
+import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
+import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
-
-import org.openmrs.PatientIdentifier;
-import org.openmrs.module.nigeriaemr.model.ndr.AntenatalRegistrationType.Syphilis;
-import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
-import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
+import java.time.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
 
@@ -108,6 +103,29 @@ public class PMTCTDictionary {
     private static final int familyPlanningCounselling_ConceptID = 1382;
     private static final int familyPlanningMethod_ConceptID = 374;
 
+    //PMTCTHTS tag concept IDs
+    private static final int hts_register_setting_ConceptID = 166025;
+    private static final int previouslyKnownHIVPositive_ConceptID = 166030;
+    private static final int acceptedHIVTesting_ConceptID = 164167;
+    private static final int hivTestResult_ConceptID = 166122;
+    private static final int recievedHIVTestResult_ConceptID = 164848;
+    private static final int hivRetesting_ConceptID = 166033;
+    private static final int testedForHepB_ConceptID = 165514;
+    private static final int hepBTestResult_ConceptID = 166036;
+    private static final int testedForHepC_ConceptID = 165515;
+    private static final int hepCTestResult_ConceptID = 166037;
+    private static final int hivHBVCoinfected_ConceptID = 166038;
+    private static final int hivHCVCoinfected_ConceptID = 166039;
+    private static final int agreedToPartnerNotification_ConceptID = 166039;
+
+    //PMTCTClinicalTBScreening tag concept IDs
+    private static final int currentlyCough_ConceptID = 143264;
+    private static final int weightLoss_ConceptID = 832;
+    private static final int fever_ConceptID = 140238;
+    private static final int nightSweats_ConceptID = 133027;
+    private static final int contactWithTBPositivePatient_ConceptID = 124068;
+
+
     //Health facility Visit
     private static int visit_Date = 1769;
     private static int visit_Status = 166129;
@@ -173,6 +191,16 @@ public class PMTCTDictionary {
         //Viral Load Period
         pmtctDictionary.put(166122, "1");
         pmtctDictionary.put(166123, "2");
+
+        //PMTCT HTS maps
+        pmtctDictionary.put(166026, "1");
+        pmtctDictionary.put(166027, "2");
+        pmtctDictionary.put(166028, "3");
+        pmtctDictionary.put(664, "Neg");
+        pmtctDictionary.put(703, "Pos");
+        pmtctDictionary.put(166032, "RHN");
+        pmtctDictionary.put(166034, "SHP");
+
         //Family Planning Method
         fpm = new HashMap<>();
         fpm.put(1107, "FP1");
@@ -742,6 +770,182 @@ public class PMTCTDictionary {
             maternalCohortTypes.add(maternalCohortType);
         }
         return maternalCohortTypes.isEmpty() ? null :  maternalCohortTypes;
+    }
+
+    public PMTCTHTSType createPMTCTHTS(List<Encounter> pmtctHTSEncounters){
+        Encounter pmtctHTSEncounter = pmtctHTSEncounters
+                .stream()
+                .filter(c -> c.getForm().getId() == 54)
+                .collect(Collectors.toList()).stream().findFirst().get();
+        PMTCTHTSType pmtcttHTSType = new PMTCTHTSType();
+        PMTCTClinicalTBScreeningType pmtctClinicalTBScreeningType = new PMTCTClinicalTBScreeningType();
+        TestResultType testResultType = new TestResultType();
+        if (pmtctHTSEncounter != null ) {
+
+            Set<Obs> obsSet = pmtctHTSEncounter.getAllObs();
+            List<Obs> obsList = new ArrayList<>(obsSet);
+            Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
+
+            //visit date and ID
+            pmtcttHTSType.setVisitID(String.valueOf(pmtctHTSEncounter.getVisit().getVisitId()));
+            pmtcttHTSType.setVisitDate(utils.getXmlDate(pmtctHTSEncounter.getEncounterDatetime()));
+
+            Obs obs = extractObs(hts_register_setting_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                pmtcttHTSType.setPMTCTEntryPoint(ndrCode);
+            }
+
+            obs = extractObs(previouslyKnownHIVPositive_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                    pmtcttHTSType.setPreviouslyKnownHIVPositive(Boolean.TRUE);
+                } else {
+                    pmtcttHTSType.setPreviouslyKnownHIVPositive(Boolean.FALSE);
+                }
+
+                obs = extractObs(acceptedHIVTesting_ConceptID, groupedObsByConcept);
+                if (obs != null && obs.getValueCoded() != null) {
+                    if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                        pmtcttHTSType.setAcceptedHIVTesting(Boolean.TRUE);
+                        obs = extractObs(hivTestResult_ConceptID, groupedObsByConcept);
+                        //todo build HIVTest result Object
+                       /* if (obs != null && obs.getValueCoded() != null) {
+                            int valueCoded = obs.getValueCoded().getConceptId();
+                            String ndrCode = getMappedValue(valueCoded);
+                            pmtcttHTSType.setHIVTestResult(ndrCode);
+                        }*/
+                    } else {
+                        pmtcttHTSType.setAcceptedHIVTesting(Boolean.FALSE);
+                    }
+                }
+
+                obs = extractObs(recievedHIVTestResult_ConceptID, groupedObsByConcept);
+                if (obs != null && obs.getValueCoded() != null) {
+                    if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                        pmtcttHTSType.setReceivedHIVTestResult(Boolean.TRUE);
+                    } else {
+                        pmtcttHTSType.setReceivedHIVTestResult(Boolean.FALSE);
+                    }
+                }
+            }
+
+            obs = extractObs(hivRetesting_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                pmtcttHTSType.setHIVRetesting(ndrCode);
+            }
+
+            obs = extractObs(testedForHepB_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                    pmtcttHTSType.setTestedForHepB(Boolean.TRUE);
+                    obs = extractObs(hepBTestResult_ConceptID, groupedObsByConcept);
+                    if (obs != null && obs.getValueCoded() != null) {
+                        int valueCoded = obs.getValueCoded().getConceptId();
+                        String ndrCode = getMappedValue(valueCoded);
+                        pmtcttHTSType.setHepBTestResult(ndrCode);
+                    }
+                } else {
+                    pmtcttHTSType.setTestedForHepB(Boolean.FALSE);
+                }
+            }
+
+            obs = extractObs(testedForHepC_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                    pmtcttHTSType.setTestedForHepC(Boolean.TRUE);
+                    obs = extractObs(hepCTestResult_ConceptID, groupedObsByConcept);
+                    if (obs != null && obs.getValueCoded() != null) {
+                        int valueCoded = obs.getValueCoded().getConceptId();
+                        String ndrCode = getMappedValue(valueCoded);
+                        pmtcttHTSType.setHepCTestResult(ndrCode);
+                    }
+                } else {
+                    pmtcttHTSType.setTestedForHepB(Boolean.FALSE);
+                }
+            }
+
+            obs = extractObs(hivHBVCoinfected_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                    pmtcttHTSType.setHIVHBVCoInfected(Boolean.TRUE);
+                } else {
+                    pmtcttHTSType.setHIVHBVCoInfected(Boolean.FALSE);
+                }
+            }
+
+            obs = extractObs(hivHCVCoinfected_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                    pmtcttHTSType.setHIVHCVCoInfected(Boolean.TRUE);
+                } else {
+                    pmtcttHTSType.setHIVHCVCoInfected(Boolean.FALSE);
+                }
+            }
+
+            obs = extractObs(agreedToPartnerNotification_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                    pmtcttHTSType.setAgreedToPartnerNotification(Boolean.TRUE);
+                } else {
+                    pmtcttHTSType.setAgreedToPartnerNotification(Boolean.FALSE);
+                }
+            }
+
+            obs = extractObs(currentlyCough_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                    pmtctClinicalTBScreeningType.setCurrentlyCough(Boolean.TRUE);
+                } else {
+                    pmtctClinicalTBScreeningType.setCurrentlyCough(Boolean.FALSE);
+                }
+            }
+
+            obs = extractObs(weightLoss_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_ALTERNATIVE_VALUE ) {
+                    pmtctClinicalTBScreeningType.setWeightLoss(Boolean.TRUE);
+                } else {
+                    pmtctClinicalTBScreeningType.setWeightLoss(Boolean.FALSE);
+                }
+            }
+
+            obs = extractObs(fever_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                    pmtctClinicalTBScreeningType.setFever(Boolean.TRUE);
+                } else {
+                    pmtctClinicalTBScreeningType.setFever(Boolean.FALSE);
+                }
+            }
+
+            obs = extractObs(nightSweats_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_ALTERNATIVE_VALUE ) {
+                    pmtctClinicalTBScreeningType.setNightSweats(Boolean.TRUE);
+                } else {
+                    pmtctClinicalTBScreeningType.setNightSweats(Boolean.FALSE);
+                }
+            }
+
+            obs = extractObs(contactWithTBPositivePatient_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                if (obs.getValueCoded().getConceptId() == Utils.YES_NO_VALUE ) {
+                    pmtctClinicalTBScreeningType.setContactWithTBPositivePatient(Boolean.TRUE);
+                } else {
+                    pmtctClinicalTBScreeningType.setContactWithTBPositivePatient(Boolean.FALSE);
+                }
+            }
+        }
+
+        if(pmtctClinicalTBScreeningType != null){
+            pmtcttHTSType.setClinicalTBScreening(pmtctClinicalTBScreeningType);
+        }
+
+        return pmtcttHTSType == null ? null :  pmtcttHTSType;
     }
 
     private String getMappedValue(int conceptID) {

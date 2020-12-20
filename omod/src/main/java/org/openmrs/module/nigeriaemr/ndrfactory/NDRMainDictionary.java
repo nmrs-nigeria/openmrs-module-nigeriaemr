@@ -9,13 +9,14 @@ import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
+import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
-import java.util.Date;
-import java.util.*;
-
-import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 //on master
 public class NDRMainDictionary {
@@ -223,7 +224,7 @@ public class NDRMainDictionary {
         return clinicalTBScreeningTypes;
     }
 
-    public HIVTestingReportType createHIVTestIntake(Patient patient, Encounter enc,  Map<Object, List<Obs>> groupedObsByConcept, HIVTestingReportType hivTestingReport) {
+    public HIVTestingReportType createHIVTestIntake(Patient patient, Encounter enc, Map<Object, List<Obs>> groupedObsByConcept, HIVTestingReportType hivTestingReport) {
 
         try {
             return htsDictionary.createClientIntakeTags(patient, enc, groupedObsByConcept, hivTestingReport);
@@ -237,16 +238,20 @@ public class NDRMainDictionary {
         return pmtctDictionary.createMaternalCohort(maternalCohortEncounter);
     }
 
+    public PMTCTHTSType createPMTCTHTS(List<Encounter> pmtctHTSEncounter){
+        return pmtctDictionary.createPMTCTHTS(pmtctHTSEncounter);
+    }
+
     public List<HealthFacilityVisitsType> createHealthFacilityVisits(List<Encounter> pmtctEncounters) {
         return pmtctDictionary.createHealthFacilityVisit(pmtctEncounters);
     }
 
-    public HIVTestResultType createHIVTestResult(Patient patient,  Map<Object, List<Obs>> groupedObsByConcept) {
+    public HIVTestResultType createHIVTestResult(Patient patient, Map<Object, List<Obs>> groupedObsByConcept) {
         return htsDictionary.createHIVTestResult(patient, groupedObsByConcept);
     }
 
-    public IndexNotificationServicesType createIndexNotificationServicesTypes( Map<Object, List<Obs>> groupedObsByConcept) {
-      IndexNotificationServicesType  indexNotificationServicesType = htsDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
+    public IndexNotificationServicesType createIndexNotificationServicesTypes(Map<Object, List<Obs>> groupedObsByConcept) {
+      IndexNotificationServicesType indexNotificationServicesType = htsDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
         return indexNotificationServicesType;
     }
 
@@ -293,7 +298,7 @@ public class NDRMainDictionary {
         return syndromicSTIScreeningTypes;
     }
 
-    public List<PartnerDetailsType> createPartnerDetails(Patient pts, Map<Integer, List<Encounter>> grouped,Map<Object, List<Obs>> groupedObsByConcept) {
+    public List<PartnerDetailsType> createPartnerDetails(Patient pts, Map<Integer, List<Encounter>> grouped, Map<Object, List<Obs>> groupedObsByConcept) {
 
         List<PartnerDetailsType> partnerDetailsTypes = new ArrayList<>();
         List<Encounter> partnerRegisterEncounterId = grouped.get(Utils.Partner_register_Encounter_Id);

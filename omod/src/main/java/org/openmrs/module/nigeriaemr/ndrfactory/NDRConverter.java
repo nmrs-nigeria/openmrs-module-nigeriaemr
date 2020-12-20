@@ -1,7 +1,6 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
 import com.umb.ndr.signer.Signer;
-import org.apache.commons.lang.time.DateUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -19,13 +18,10 @@ import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
 
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.Date;
 import java.util.*;
-
-import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
+import java.util.Date;
 
 public class NDRConverter {
 
@@ -83,7 +79,7 @@ public class NDRConverter {
                     }
                     List<Encounter> encounters = new ArrayList<>(filteredEncounters);
                     this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
-                   this.groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
+                    this.groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
 
                     List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
                     Map<String, Map<Object, List<Obs>>> grouped = Utils.groupObs(allobs);
@@ -113,7 +109,7 @@ public class NDRConverter {
             }
 
             MessageHeaderType header = createMessageHeaderType(pts, hasUpdate);
-            FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
+            org.openmrs.module.nigeriaemr.model.ndr.FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
             header.setMessageSendingOrganization(sendingOrganization);
 
             Container container = new Container();
@@ -194,12 +190,21 @@ public class NDRConverter {
         NDRMainDictionary mainDictionary = new NDRMainDictionary();
         PMTCTType pmtctType = null;
         List<Encounter> pmtctEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE);
+        List<Encounter> generalAntenatalCareEncounters = this.groupedEncounters.get(ConstantsUtil.GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE);
+
         if(pmtctEncounters != null) {
             List<MaternalCohortType> maternalCohortTypes =  mainDictionary.createMaternalCohort(pmtctEncounters);
             if(maternalCohortTypes != null){
                 pmtctType = new PMTCTType();
                 pmtctType.setMaternalCohortTypes(maternalCohortTypes);
             }
+        }
+
+
+        if(pmtctEncounters != null){
+            PMTCTHTSType pmtctTHTSType =  mainDictionary.createPMTCTHTS(generalAntenatalCareEncounters);
+            if (pmtctType == null) pmtctType = new PMTCTType();
+            pmtctType.setPMTCTHTS(pmtctTHTSType);
         }
 
         if(pmtctEncounters != null) {
@@ -214,7 +219,7 @@ public class NDRConverter {
         return pmtctType;
     }
 
-    private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter,  Map<Object, List<Obs>> groupedObsByConcept) {
+    private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter, Map<Object, List<Obs>> groupedObsByConcept) {
 
         //TODO: pull hivtestReport as a list
         NDRMainDictionary mainDictionary = new NDRMainDictionary();
@@ -292,7 +297,7 @@ public class NDRConverter {
         return hivTestingReportList;
 
     }
-	
+
 	private ConditionType createHIVCondition() {
 
         ConditionType condition = new ConditionType();
