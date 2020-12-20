@@ -194,20 +194,73 @@ public class NDRConverter {
         NDRMainDictionary mainDictionary = new NDRMainDictionary();
         PMTCTType pmtctType = null;
         List<Encounter> pmtctEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE);
+        List<Encounter> antenatalEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE);
+        List<Encounter> partnerRegisterEncounter = this.groupedEncounters.get(Utils.Partner_register_Encounter_Id);
         if(pmtctEncounters != null) {
             List<MaternalCohortType> maternalCohortTypes =  mainDictionary.createMaternalCohort(pmtctEncounters);
             if(maternalCohortTypes != null){
                 pmtctType = new PMTCTType();
                 pmtctType.setMaternalCohortTypes(maternalCohortTypes);
             }
-        }
-
-        if(pmtctEncounters != null) {
             List<HealthFacilityVisitsType> healthFacilityVisitTypes = mainDictionary.createHealthFacilityVisits(
-                    this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE));
-            if (healthFacilityVisitTypes != null) {
+                    pmtctEncounters));
+            if (healthFacilityVisitTypes != null && healthFacilityVisitTypes.size() > 0) {
                 if (pmtctType == null) pmtctType = new PMTCTType();
                 pmtctType.setHealthFacilityVisitTypes(healthFacilityVisitTypes);
+            }
+            List<ImmunizationType> immunizationTypes = mainDictionary.createImmunizationType(
+                    pmtctEncounters));
+            if (immunizationTypes != null && immunizationTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setImmunizationTypes(immunizationTypes);
+            }
+        }
+
+        if(antenatalEncounters != null){
+            List<DeliveryEncounterType> deliveryEncounterTypes = mainDictionary.createDeliveryEncounterType(
+                    antenatalEncounters));
+            if (deliveryEncounterTypes != null && deliveryEncounterTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setDeliveryEncounterTypes(deliveryEncounterTypes);
+            }
+            List<AntenatalRegistrationType> antenatalRegistrationTypes = mainDictionary.createAntenatalRegistrationType(
+                    antenatalEncounters);
+            if (antenatalRegistrationTypes != null && antenatalRegistrationTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setAntenatalRegistrationTypes(antenatalRegistrationTypes);
+            }
+            List<ChildBirthDetailsType> childBirthDetailsTypes = mainDictionary.createChildBirthDetailsType(
+                    antenatalEncounters);
+            if (childBirthDetailsTypes != null && childBirthDetailsTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setChildBirthDetailsTypes(childBirthDetailsTypes);
+            }
+            List<ChildFollowupType> childFollowupTypes = mainDictionary.createChildFollowupType(
+                    antenatalEncounters);
+            if (childFollowupTypes != null && childFollowupTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setChildFollowupTypes(childFollowupTypes);
+            }
+            List<InfantPCRTestingType> infantPCRTestingTypes = mainDictionary.createInfantPCRTestingType(
+                    antenatalEncounters);
+            if (infantPCRTestingTypes != null && infantPCRTestingTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setInfantPCRTestingTypes(infantPCRTestingTypes);
+            }
+            List<InfantRapidTestType> infantRapidTestTypes = mainDictionary.createInfantRapidTestType(
+                    antenatalEncounters);
+            if (infantRapidTestTypes != null && infantRapidTestTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setInfantRapidTestTypes(infantRapidTestTypes);
+            }
+        }
+
+        if(partnerRegisterEncounter != null){
+            List<PartnerDetailsType> partnerDetailsTypes = mainDictionary.createPartnerDetailsType(
+                    partnerRegisterEncounter);
+            if (partnerDetailsTypes != null && partnerDetailsTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setPartnerDetailsTypes(partnerDetailsTypes);
             }
         }
 

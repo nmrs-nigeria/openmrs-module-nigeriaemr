@@ -241,6 +241,38 @@ public class NDRMainDictionary {
         return pmtctDictionary.createHealthFacilityVisit(pmtctEncounters);
     }
 
+    public List<ImmunizationType> createImmunizationType(List<Encounter> pmtctEncounters) {
+        return pmtctDictionary.createImmunizationType(pmtctEncounters);
+    }
+
+    public List<DeliveryEncounterType> createDeliveryEncounterType(List<Encounter> pmtctEncounters) {
+        return pmtctDictionary.createDeliveryEncounterType(pmtctEncounters);
+    }
+
+    public List<AntenatalRegistrationType> createAntenatalRegistrationType(List<Encounter> pmtctEncounters) {
+        return pmtctDictionary.createAntenatalRegistrationType(pmtctEncounters);
+    }
+
+    public List<ChildBirthDetailsType> createChildBirthDetailsType(List<Encounter> pmtctEncounters) {
+        return pmtctDictionary.createChildBirthDetailsType(pmtctEncounters);
+    }
+
+    public List<ChildFollowupType> createChildFollowupType(List<Encounter> pmtctEncounters) {
+        return pmtctDictionary.createChildFollowupType(pmtctEncounters);
+    }
+
+    public List<InfantPCRTestingType> createInfantPCRTestingType(List<Encounter> pmtctEncounters) {
+        return pmtctDictionary.createInfantPCRTestingType(pmtctEncounters);
+    }
+
+    public List<PartnerDetailsType> createPartnerDetailsType(List<Encounter> pmtctEncounters) {
+        return pmtctDictionary.createPartnerDetailsType(pmtctEncounters);
+    }
+
+    public List<InfantRapidTestType> createInfantRapidTestType(List<Encounter> pmtctEncounters) {
+        return pmtctDictionary.createInfantRapidTestType(pmtctEncounters);
+    }
+
     public HIVTestResultType createHIVTestResult(Patient patient,  Map<Object, List<Obs>> groupedObsByConcept) {
         return htsDictionary.createHIVTestResult(patient, groupedObsByConcept);
     }
