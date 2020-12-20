@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "IndividualReportType", propOrder = { "patientDemographics", "condition", "hivTestingReport" })
+@XmlType(name = "IndividualReportType", propOrder = { "patientDemographics", "condition", "hivTestingReport", "pmtctType" })
 public class IndividualReportType {
 	
 	@XmlElement(name = "PatientDemographics", required = true)
@@ -46,6 +46,9 @@ public class IndividualReportType {
 	
 	@XmlElement(name = "HIVTestingReport")
 	protected List<HIVTestingReportType> hivTestingReport;
+	
+	@XmlElement(name = "PMTCT")
+	protected PMTCTType pmtctType;
 	
 	/**
 	 * Gets the value of the patientDemographics property.
@@ -109,4 +112,11 @@ public class IndividualReportType {
 		return this.hivTestingReport;
 	}
 	
+	public PMTCTType getPmtctType() {
+		return pmtctType;
+	}
+	
+	public void setPmtctType(PMTCTType pmtctType) {
+		this.pmtctType = pmtctType;
+	}
 }

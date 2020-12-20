@@ -25,6 +25,8 @@ import java.sql.*;
 import java.util.Date;
 import java.util.*;
 
+import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
+
 public class NDRConverter {
 
     Utils utils = new Utils();
@@ -157,6 +159,11 @@ public class NDRConverter {
             ConditionType condition = createHIVCondition();
             individualReport.getCondition().add(condition);
 
+            PMTCTType pmtctType = createPmtctType();
+
+            if(pmtctType != null){
+                individualReport.setPmtctType(pmtctType);
+            }
 
             //retrieve latest encounter for client intake form
             Encounter intakeEncounter = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE));
@@ -182,8 +189,32 @@ public class NDRConverter {
 
         return individualReport;
     }
-	
-	private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter,  Map<Object, List<Obs>> groupedObsByConcept) {
+
+    private PMTCTType createPmtctType() {
+        NDRMainDictionary mainDictionary = new NDRMainDictionary();
+        PMTCTType pmtctType = null;
+        List<Encounter> pmtctEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE);
+        if(pmtctEncounters != null) {
+            List<MaternalCohortType> maternalCohortTypes =  mainDictionary.createMaternalCohort(pmtctEncounters);
+            if(maternalCohortTypes != null){
+                pmtctType = new PMTCTType();
+                pmtctType.setMaternalCohortTypes(maternalCohortTypes);
+            }
+        }
+
+        if(pmtctEncounters != null) {
+            List<HealthFacilityVisitsType> healthFacilityVisitTypes = mainDictionary.createHealthFacilityVisits(
+                    this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE));
+            if (healthFacilityVisitTypes != null) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setHealthFacilityVisitTypes(healthFacilityVisitTypes);
+            }
+        }
+
+        return pmtctType;
+    }
+
+    private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter,  Map<Object, List<Obs>> groupedObsByConcept) {
 
         //TODO: pull hivtestReport as a list
         NDRMainDictionary mainDictionary = new NDRMainDictionary();

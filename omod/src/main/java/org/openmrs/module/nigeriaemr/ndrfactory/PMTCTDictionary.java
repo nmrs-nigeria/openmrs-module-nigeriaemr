@@ -10,7 +10,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.Arrays;
+import java.util.*;
+
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -22,9 +23,7 @@ import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.model.ndr.AntenatalRegistrationType.Syphilis;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
@@ -34,6 +33,8 @@ import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
 
 public class PMTCTDictionary {
     Utils utils = new Utils();
+    private final PharmacyDictionary pharmacyDictionary;
+    private final ClinicalDictionary clinicalDictionary;
 
     // Logger logger = Logger.getLogger(PMTCTDictionary.class);
     //Antenatal registration concepts
@@ -92,11 +93,42 @@ public class PMTCTDictionary {
     private static final int Test_Result = 165872;
     private static final int Date_of_Test = 165025;
 
+    //Maternal Cohort
+    private static final int viralLoadPeriod_ConceptID = 166124;
+    private static final int sampleCollectionDate_ConceptID = 159951;
+    private static final int viralLoadResult_ConceptID = 166122;
+    private static final int pmtctEntryPoint_ConceptID = 164851;
+    private static final int gestationalAgeAtSampleCollection_ConceptID = 166125;
+    private static final int gestationalAge_ConceptID = 1438;
+    private static final int timingOfArtInitiation_ConceptID = 165518;
+    private static final int tbStatus_ConceptID = 1659;
+    private static final int gravida_ConceptID = 5624;
+    private static final int artStartDate_ConceptID = 159599;
+    private static final int dateOfDelivery_ConceptID = 5599;
+    private static final int familyPlanningCounselling_ConceptID = 1382;
+    private static final int familyPlanningMethod_ConceptID = 374;
+
+    //Health facility Visit
+    private static int visit_Date = 1769;
+    private static int visit_Status = 166129;
+    private static int weight = 5089;
+    private static int breast_Feeding = 165047;
+    private static int cotrimoxazole_conceptID = 0;
+//    private static int prescribedRegimen_conceptID = 165708;
+    private static int prescribedRegimenLineCode_conceptID = 165708;
+    private static int maternalOutcome_conceptID = 160085;
+
     public PMTCTDictionary() {
+        pharmacyDictionary = new PharmacyDictionary();
+        clinicalDictionary = new ClinicalDictionary();
         loadDictionary();
     }
 
     private Map<Integer, String> pmtctDictionary = new HashMap<>();
+    private Map<Integer, String> maternalOutcome = new HashMap<>();
+    private Map<Integer, String> timing = new HashMap<>();
+    private Map<Integer, String> fpm = new HashMap<>();
+    private Map<Integer, Integer> tb = new HashMap<>();
 
     private void loadDictionary() {
         //Map OpenMRS concepts to corresponding NDR values
@@ -124,6 +156,58 @@ public class PMTCTDictionary {
         pmtctDictionary.put(165863, "1");
         pmtctDictionary.put(165862, "2");
         pmtctDictionary.put(165861, "3");
+        //Visit status
+        pmtctDictionary.put(166126, "A");
+        pmtctDictionary.put(160563, "TI");
+        pmtctDictionary.put(159492, "TO");
+        pmtctDictionary.put(166127, "L"); // TP = Transferred to another PMTCT cohort (new pregnancy)
+        pmtctDictionary.put(166128, "DC"); // TA = Transitioned to ART clinic
+        pmtctDictionary.put(160031, "X");
+        pmtctDictionary.put(5240, "LTFU");
+        pmtctDictionary.put(160432, "D");
+        //Point of entry
+        pmtctDictionary.put(1622, "1"); // TA = Transitioned to ART clinic
+        pmtctDictionary.put(164850, "2");
+        pmtctDictionary.put(1180, "3");
+        pmtctDictionary.put(166121, "4");
+        //Viral Load Period
+        pmtctDictionary.put(166122, "1");
+        pmtctDictionary.put(166123, "2");
+        //Family Planning Method
+        fpm = new HashMap<>();
+        fpm.put(1107, "FP1");
+        fpm.put(190, "FP2");
+        fpm.put(780, "FP3");
+        fpm.put(5279, "FP4");
+        fpm.put(159589, "FP5");
+        fpm.put(136452, "FP6");
+        fpm.put(5622, "FP7");
+//        pmtctDictionary.put(166123, "FP8");
+
+        //Timing of ART Initialization
+        timing = new HashMap<>();
+        timing.put(165519, "AIT1");
+        timing.put(165520, "AIT2");
+        timing.put(165521, "AIT3");
+        timing.put(164850, "AIT4");
+        timing.put(1180, "AIT5");
+        //Tb Status
+        tb = new HashMap<>();
+        tb.put(1660, 1);
+        tb.put(142177, 2);
+        tb.put(166042, 3);
+        tb.put(1661, 4);
+        tb.put(1662, 5);
+
+        //Maternal Outcome
+        maternalOutcome = new HashMap<>();
+        maternalOutcome.put(160432, "Dead");
+        maternalOutcome.put(166126, "A");
+        maternalOutcome.put(160563, "TO");
+        maternalOutcome.put(166127, "TP");
+        maternalOutcome.put(166128, "TA");
+        maternalOutcome.put(5240, "LTFU");
+
         //pmtctDictionary.put(165860, "4");
     }
 
@@ -527,6 +611,139 @@ public class PMTCTDictionary {
         return infantPCRTestingType;
     }
 
+    public List<HealthFacilityVisitsType> createHealthFacilityVisit(List<Encounter> maternalCohortEncounters) {
+
+        List<HealthFacilityVisitsType> healthFacilityVisitsTypes = new ArrayList<>();
+        for(Encounter maternalCohortEncounter : maternalCohortEncounters) {
+            Set<Obs> obsSet = maternalCohortEncounter.getAllObs();
+            List<Obs> obsList = new ArrayList<>(obsSet);
+            Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
+            HealthFacilityVisitsType healthFacilityVisitsType = new HealthFacilityVisitsType();
+            healthFacilityVisitsType.setVisitDate(utils.getXmlDate(maternalCohortEncounter.getEncounterDatetime()));
+
+            Obs obs = extractObs(visit_Status, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                healthFacilityVisitsType.setVisitStatus(ndrCode);
+            }
+            obs = extractObs(weight, groupedObsByConcept);
+            if (obs != null && obs.getValueNumeric() != null) {
+                healthFacilityVisitsType.setWeight(obs.getValueNumeric().intValue());
+            }
+            obs = extractObs(breast_Feeding, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                healthFacilityVisitsType.setBreastFeeding(ndrCode);
+            }
+
+            obs = extractObs(prescribedRegimenLineCode_conceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded  = obs.getValueCoded().getConceptId();
+                String ndrCode = pharmacyDictionary.getRegimenMapValue(valueCoded);
+                healthFacilityVisitsType.setPrescribedRegimenLineCode(ndrCode);
+                Obs valueObs = Utils.extractObs(valueCoded, groupedObsByConcept); // PrescribedRegimen
+                if (valueObs != null) {
+                    valueCoded = valueObs.getValueCoded().getConceptId();
+                    ndrCode = pharmacyDictionary.getRegimenMapValue(valueCoded);
+                    CodedSimpleType codedSimpleType = new CodedSimpleType();
+                    codedSimpleType.setCode(ndrCode);
+                    codedSimpleType.setCodeDescTxt( pharmacyDictionary.getRegimenCodeDescTextMapValue(valueCoded));
+                    healthFacilityVisitsType.setPrescribedRegimen(codedSimpleType);
+                }
+            }
+            obs = extractObs(maternalOutcome_conceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMaternalMappedValue(valueCoded);
+                healthFacilityVisitsType.setMaternalOutcome(ndrCode);
+            }
+            healthFacilityVisitsTypes.add(healthFacilityVisitsType);
+        }
+        return healthFacilityVisitsTypes.isEmpty() ? null :  healthFacilityVisitsTypes;
+    }
+
+    public List<MaternalCohortType> createMaternalCohort(List<Encounter> maternalCohortEncounters){
+        List<MaternalCohortType> maternalCohortTypes = new ArrayList<>();
+        for(Encounter maternalCohortEncounter : maternalCohortEncounters) {
+            Set<Obs> obsSet = maternalCohortEncounter.getAllObs();
+            List<Obs> obsList = new ArrayList<>(obsSet);
+            Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
+            MaternalCohortType maternalCohortType = new MaternalCohortType();
+            //visit date and ID
+            maternalCohortType.setVisitID(String.valueOf(maternalCohortEncounter.getVisit().getVisitId()));
+            maternalCohortType.setVisitDate(utils.getXmlDate(maternalCohortEncounter.getEncounterDatetime()));
+
+            Obs obs = extractObs(viralLoadPeriod_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                maternalCohortType.setViralLoadPeriod(ndrCode);
+            }
+            obs = extractObs(sampleCollectionDate_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueDate() != null) {
+                maternalCohortType.setSampleCollectionDate(utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObs(viralLoadResult_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueNumeric() != null) {
+                maternalCohortType.setViralLoadResult(obs.getValueNumeric());
+            }
+            obs = extractObs(pmtctEntryPoint_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                maternalCohortType.setPmtctEntryPoint(ndrCode);
+            }
+            obs = extractObs(gestationalAgeAtSampleCollection_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueNumeric() != null) {
+                maternalCohortType.setGestationalAgeAtSampleCollection(obs.getValueNumeric().intValue());
+            }
+            obs = extractObs(gestationalAge_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueNumeric() != null) {
+                maternalCohortType.setGestationalAge(obs.getValueNumeric().intValue());
+            }
+            obs = extractObs(timingOfArtInitiation_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getTimingMappedValue(valueCoded);
+                maternalCohortType.setTimingOfArtInitiation(ndrCode);
+            }
+            obs = extractObs(tbStatus_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                int ndrCode = getTbMappedValue(valueCoded);
+                if (ndrCode > 0) maternalCohortType.setTbStatus(ndrCode);
+            }
+            obs = extractObs(gravida_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueNumeric() != null) {
+                maternalCohortType.setGravida(obs.getValueNumeric().intValue());
+            }
+            obs = extractObs(artStartDate_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueDate() != null) {
+                maternalCohortType.setArtStartDate(utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObs(dateOfDelivery_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueDate() != null) {
+                maternalCohortType.setDateOfDelivery(utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObs(familyPlanningCounselling_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                maternalCohortType.setFamilyPlanningCounselling(ndrCode);
+            }
+            obs = extractObs(familyPlanningMethod_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getFpmMappedValue(valueCoded);
+                maternalCohortType.setFamilyPlanningMethod(ndrCode);
+            }
+            maternalCohortTypes.add(maternalCohortType);
+        }
+        return maternalCohortTypes.isEmpty() ? null :  maternalCohortTypes;
+    }
+
     private String getMappedValue(int conceptID) {
         try {
             return pmtctDictionary.get(conceptID);
@@ -534,6 +751,45 @@ public class PMTCTDictionary {
             LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
             return "";
+        }
+    }
+
+    private String getMaternalMappedValue(int conceptID) {
+        try {
+            return maternalOutcome.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+
+    private String getTimingMappedValue(int conceptID) {
+        try {
+            return timing.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+    private String getFpmMappedValue(int conceptID) {
+        try {
+            return fpm.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+
+    private int getTbMappedValue(int conceptID) {
+        try {
+            return tb.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return 0;
         }
     }
 }

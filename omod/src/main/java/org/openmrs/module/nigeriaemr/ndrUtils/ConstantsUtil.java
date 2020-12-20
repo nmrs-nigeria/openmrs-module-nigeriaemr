@@ -32,6 +32,8 @@ public class ConstantsUtil {
 	
 	public static final int ADMISSION_ENCOUNTER_TYPE = 2;
 	
+	public static final int PMTCT_ENCOUNTER_TYPE = 29;
+	
 	//Endpoints
 	//public static final String BASE_URL = "https://hts.shieldnigeriaproject.com/api";
 	
