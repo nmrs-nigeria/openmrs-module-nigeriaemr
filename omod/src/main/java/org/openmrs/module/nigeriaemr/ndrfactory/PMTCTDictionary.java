@@ -778,14 +778,20 @@ public class PMTCTDictionary {
     }
 
     public PMTCTHTSType createPMTCTHTS(List<Encounter> pmtctHTSEncounters) {
-        Encounter pmtctHTSEncounter = pmtctHTSEncounters
+
+        //filter for PMTCT HTS form
+        List<Encounter> fliteredPmtctHTSEncounters= pmtctHTSEncounters
                 .stream()
                 .filter(c -> c.getForm().getUuid().equals(ConstantsUtil.PMTCT_HTS_FORM_UUID))
-                .collect(Collectors.toList()).stream().findFirst().get();
+                .collect(Collectors.toList());
+
+        //getting first encounter in list
+        Encounter pmtctHTSEncounter = fliteredPmtctHTSEncounters.stream().findFirst().get();
+
         PMTCTHTSType pmtcttHTSType = new PMTCTHTSType();
         PMTCTClinicalTBScreeningType pmtctClinicalTBScreeningType = new PMTCTClinicalTBScreeningType();
-        TestResultType testResultType = new TestResultType();
 
+        TestResultType testResultType = new TestResultType();
         if (pmtctHTSEncounter != null) {
 
             Set<Obs> obsSet = pmtctHTSEncounter.getAllObs();
@@ -921,10 +927,11 @@ public class PMTCTDictionary {
                 Boolean ndrCode = getYesNoToggleValue(valueCoded);
                 pmtctClinicalTBScreeningType.setContactWithTBPositivePatient(ndrCode);
             }
-        }
 
-        if (pmtctClinicalTBScreeningType != null) {
-            pmtcttHTSType.setClinicalTBScreening(pmtctClinicalTBScreeningType);
+
+            if (pmtctClinicalTBScreeningType != null) {
+                pmtcttHTSType.setClinicalTBScreening(pmtctClinicalTBScreeningType);
+            }
         }
         return pmtcttHTSType == null ? null : pmtcttHTSType;
     }
