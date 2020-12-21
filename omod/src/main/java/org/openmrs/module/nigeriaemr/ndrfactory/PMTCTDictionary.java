@@ -45,7 +45,7 @@ public class PMTCTDictionary {
     final static int Gestation_Age_At_Delivery_Concept_Id = 1409;
     final static int Hbv_Status_Concept_Id = 159430;
     final static int Hcv_Status_Concept_Id = 161471;
-    final static int Woman_On_Art_Concept_Id = 165563;
+    final static int Woman_On_Art_Concept_Id = 160119;
     final static int Art_Started_In_Ld_Ward_Concept_Id = 165563;
     final static int Rom_Delivery_Internal_Concept_Id = 165479;
     final static int Mode_Of_Delivery_Concept_Id = 5630;
@@ -181,6 +181,10 @@ public class PMTCTDictionary {
         pmtctDictionary.put(165863, "1");
         pmtctDictionary.put(165862, "2");
         pmtctDictionary.put(165861, "3");
+        pmtctDictionary.put(166026,"1");
+        pmtctDictionary.put(165825,"2");
+        pmtctDictionary.put(165826,"3");
+        pmtctDictionary.put(165475,"4");
         //Visit status
         pmtctDictionary.put(166126, "A");
         pmtctDictionary.put(160563, "TI");
@@ -203,8 +207,6 @@ public class PMTCTDictionary {
         pmtctDictionary.put(166026, "1");
         pmtctDictionary.put(166027, "2");
         pmtctDictionary.put(166028, "3");
-        pmtctDictionary.put(664, "Neg");
-        pmtctDictionary.put(703, "Pos");
         pmtctDictionary.put(166032, "RHN");
         pmtctDictionary.put(166034, "SHP");
 
@@ -343,8 +345,8 @@ public class PMTCTDictionary {
                 deliveryEncounterType.setVisitID(String.valueOf(enc.getEncounterDatetime().getTime()));
 
                 Obs obs = extractObs(Time_Of_Hiv_Diagnosis_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
-                    deliveryEncounterType.setTimeOfHIVDiagnosis(utils.getXmlDateTime(obs.getValueDatetime()).toString());
+                if (obs != null && obs.getValueCoded() != null) {
+                    deliveryEncounterType.setTimeOfHIVDiagnosis(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
                 obs = extractObs(Gestation_Age_At_Delivery_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueNumeric() != null) {
@@ -361,59 +363,40 @@ public class PMTCTDictionary {
                 }
                 obs = extractObs(Hcv_Status_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-
                     deliveryEncounterType.setHCVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
-
                 }
                 obs = extractObs(Woman_On_Art_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-
                     deliveryEncounterType.setWomanOnART(getMappedValue(obs.getValueCoded().getConceptId()));
-
                 }
                 obs = extractObs(Art_Started_In_Ld_Ward_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-
                     deliveryEncounterType.setARTStartedInLDWard(getMappedValue(obs.getValueCoded().getConceptId()));
-
                 }
                 obs = extractObs(Rom_Delivery_Internal_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-
                     deliveryEncounterType.setROMDeliveryInterval(getMappedValue(obs.getValueCoded().getConceptId()));
-
                 }
                 obs = extractObs(Mode_Of_Delivery_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-
                     deliveryEncounterType.setModeOfDelivery(getMappedValue(obs.getValueCoded().getConceptId()));
-
                 }
                 obs = extractObs(Episiotomy_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-
                     deliveryEncounterType.setEpisiotomy(getMappedValue(obs.getValueCoded().getConceptId()));
-
                 }
                 obs = extractObs(Vaginal_Tear_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-
                     deliveryEncounterType.setVaginalTear(getMappedValue(obs.getValueCoded().getConceptId()));
-
                 }
                 obs = extractObs(Feeding_Decision_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-
                     deliveryEncounterType.setFeedingDecision(getMappedValue(obs.getValueCoded().getConceptId()));
-
                 }
                 obs = extractObs(Maternal_Outcome_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-
                     deliveryEncounterType.setMaternalOutcome(getMappedValue(obs.getValueCoded().getConceptId()));
-
                 }
-
                 deliveryEncounterTypes.add(deliveryEncounterType);
             }
         } catch (Exception ex) {

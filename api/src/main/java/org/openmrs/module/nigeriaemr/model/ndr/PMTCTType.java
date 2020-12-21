@@ -41,11 +41,10 @@ public class PMTCTType {
 	
 	@XmlElement(name = "MaternalCohort")
 	protected List<MaternalCohortType> maternalCohortTypes;
-
+	
 	@XmlElement(name = "PMTCTHTS")
 	protected PMTCTHTSType pmtctHTSTYPE;
 	
-
 	public List<ImmunizationType> getImmunizationTypes() {
 		return immunizationTypes;
 	}
