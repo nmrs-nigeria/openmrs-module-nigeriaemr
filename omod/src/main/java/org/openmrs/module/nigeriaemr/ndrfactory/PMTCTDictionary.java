@@ -162,8 +162,8 @@ public class PMTCTDictionary {
         pmtctDictionary.put(664, "Neg");
         pmtctDictionary.put(1065, "Y");
         pmtctDictionary.put(1066, "N");
-        pmtctDictionary.put(165478, "1");
-        pmtctDictionary.put(165477, "2");
+        pmtctDictionary.put(165478, "2");
+        pmtctDictionary.put(165477, "1");
         pmtctDictionary.put(5630, "Unbooked");
         pmtctDictionary.put(5526, "EBF");
         pmtctDictionary.put(164857, "ERF");
@@ -181,24 +181,20 @@ public class PMTCTDictionary {
         pmtctDictionary.put(165863, "1");
         pmtctDictionary.put(165862, "2");
         pmtctDictionary.put(165861, "3");
-        pmtctDictionary.put(166026,"1");
-        pmtctDictionary.put(165825,"2");
-        pmtctDictionary.put(165826,"3");
-        pmtctDictionary.put(165475,"4");
         //Visit status
         pmtctDictionary.put(166126, "A");
         pmtctDictionary.put(160563, "TI");
         pmtctDictionary.put(159492, "TO");
-        pmtctDictionary.put(166127, "L"); // TP = Transferred to another PMTCT cohort (new pregnancy)
-        pmtctDictionary.put(166128, "DC"); // TA = Transitioned to ART clinic
+        pmtctDictionary.put(166127, "DC"); // TP = Transferred to another PMTCT cohort (new pregnancy)
+        pmtctDictionary.put(166128, "L"); // TA = Transitioned to ART clinic
         pmtctDictionary.put(160031, "X");
         pmtctDictionary.put(5240, "LTFU");
         pmtctDictionary.put(160432, "D");
         //Point of entry
-        pmtctDictionary.put(1622, "1"); // TA = Transitioned to ART clinic
+        pmtctDictionary.put(1622, "1");
         pmtctDictionary.put(164850, "2");
-        pmtctDictionary.put(1180, "3");
-        pmtctDictionary.put(166121, "4");
+        pmtctDictionary.put(1180, "4");
+        pmtctDictionary.put(166121, "5");
         //Viral Load Period
         pmtctDictionary.put(166122, "1");
         pmtctDictionary.put(166123, "2");
@@ -233,8 +229,8 @@ public class PMTCTDictionary {
         tb.put(1660, 1);
         tb.put(142177, 2);
         tb.put(166042, 3);
-        tb.put(1661, 4);
-        tb.put(1662, 5);
+        tb.put(1661, 5);
+        tb.put(1662, 4);
 
         //Maternal Outcome
         maternalOutcome = new HashMap<>();
@@ -249,6 +245,12 @@ public class PMTCTDictionary {
         yesNoToggle.put(1065, Boolean.TRUE);
         yesNoToggle.put(0, Boolean.FALSE);
         yesNoToggle.put(1, Boolean.TRUE);
+
+        //Timing of HIV
+        timing.put(166026,"2");
+        timing.put(165825,"3");
+        timing.put(165826,"4");
+        timing.put(165475,"1");
 
         //pmtctDictionary.put(165860, "4");
     }
@@ -346,7 +348,7 @@ public class PMTCTDictionary {
 
                 Obs obs = extractObs(Time_Of_Hiv_Diagnosis_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
-                    deliveryEncounterType.setTimeOfHIVDiagnosis(getMappedValue(obs.getValueCoded().getConceptId()));
+                    deliveryEncounterType.setTimeOfHIVDiagnosis(getTimingMappedValue(obs.getValueCoded().getConceptId()));
                 }
                 obs = extractObs(Gestation_Age_At_Delivery_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueNumeric() != null) {
