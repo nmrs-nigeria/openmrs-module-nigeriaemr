@@ -188,9 +188,10 @@ public class HTSDictionary {
         htsDictionary.put(5271, "4");
         htsDictionary.put(160542, "5");
         htsDictionary.put(161629, "6");
-        htsDictionary.put(165788, "7");
+//        htsDictionary.put(165788, "7");
         htsDictionary.put(165838, "9");
         htsDictionary.put(5622, "8");
+        htsDictionary.put(160545, "7");
 
         //session
         htsDictionary.put(165792, "1");

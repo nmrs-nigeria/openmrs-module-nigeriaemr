@@ -38,6 +38,12 @@ public class ConstantsUtil {
 	
 	public static final int DELIVERY_REGISTER_ENCOUNTER_TYPE = 16;
 	
+	public static final int CHILD_FOLLOW_UP = 18;
+	
+	public static final int PARTNER_REGISTER = 19;
+	
+	public static final int CHILD_BIRTH_REGISTRATION_ENCOUNTER = 9;
+	
 	public static final String PMTCT_HTS_FORM_UUID = "1b64c8bc-b289-45f7-943c-122be5de7274";
 	
 	//Endpoints
