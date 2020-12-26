@@ -314,7 +314,11 @@ public class HTSDictionary {
         }
 
         //visit date and ID
-        hivTestingReport.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
+        if(enc.getVisit() != null) {
+            hivTestingReport.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
+        }else {
+            hivTestingReport.setVisitID(enc.getEncounterId().toString());
+        }
         hivTestingReport.setVisitDate(utils.getXmlDate(enc.getEncounterDatetime()));
 
         //setting with others been retrieved

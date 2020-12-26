@@ -47,7 +47,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class InfantRapidTestType {
 	
 	@XmlElement(name = "AgeAtTest")
-	protected int ageAtTest;
+	protected Integer ageAtTest;
 	
 	@XmlElement(name = "DateOfTest", required = true)
 	@XmlSchemaType(name = "date")
@@ -59,14 +59,14 @@ public class InfantRapidTestType {
 	/**
 	 * Gets the value of the ageAtTest property.
 	 */
-	public int getAgeAtTest() {
+	public Integer getAgeAtTest() {
 		return ageAtTest;
 	}
 	
 	/**
 	 * Sets the value of the ageAtTest property.
 	 */
-	public void setAgeAtTest(int value) {
+	public void setAgeAtTest(Integer value) {
 		this.ageAtTest = value;
 	}
 	

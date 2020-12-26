@@ -156,6 +156,7 @@ public class PMTCTDictionary {
     }
 
     private Map<Integer, String> pmtctDictionary = new HashMap<>();
+    private Map<Integer, String> syphilis = new HashMap<>();
     private Map<Integer, String> maternalOutcome = new HashMap<>();
     private Map<Integer, Boolean> yesNoToggle = new HashMap<>();
     private Map<Integer, String> timing = new HashMap<>();
@@ -262,6 +263,10 @@ public class PMTCTDictionary {
         timing.put(165826,"4");
         timing.put(165475,"1");
 
+        //SyphilisStatus
+        syphilis.put(1228, "R");
+        syphilis.put(1229, "NR");
+
         //pmtctDictionary.put(165860, "4");
     }
 
@@ -280,7 +285,7 @@ public class PMTCTDictionary {
 
                 Obs obs = extractObs(Last_Menstural_Period_Concept_Id, anthenatalObsList);
                 if (obs == null) {
-                    return null;
+                    continue;
                 }
                 if (obs.getObsDatetime() != null) {
                     registrationType.setLastMenstralPeriod(utils.getXmlDate(obs.getObsDatetime()));
@@ -418,10 +423,10 @@ public class PMTCTDictionary {
         return deliveryEncounterTypes.isEmpty() ? null :  deliveryEncounterTypes;
     }
 
-    public List<ChildBirthDetailsType> createChildBirthDetailsType(List<Encounter> anteNatelEncounters) {
+    public List<ChildBirthDetailsType> createChildBirthDetailsType(List<Encounter> childBirthEncounters) {
         List<ChildBirthDetailsType> childBirthDetailsTypes = new ArrayList<>();
         try {
-            for(Encounter enc : anteNatelEncounters) {
+            for(Encounter enc : childBirthEncounters) {
                 Set<Obs> obsSet = enc.getAllObs();
                 List<Obs> obsList = new ArrayList<>(obsSet);
                 Map<Object, List<Obs>> antenatalObsList = Utils.groupedByConceptIdsOnly(obsList);
@@ -436,7 +441,14 @@ public class PMTCTDictionary {
                     }
                 }
                 LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
-
+                if(childBirthDetailsType.getChildEIDNumber() == null){
+                    PatientIdentifier exposedInfantId = patient.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
+                    childBirthDetailsType.setChildEIDNumber(exposedInfantId.getIdentifier());
+                }
+                PatientIdentifier hospitalNumber = patient.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
+                if(hospitalNumber != null) {
+                    childBirthDetailsType.setChildHospitalNumber(hospitalNumber.getIdentifier());
+                }
                 childBirthDetailsType.setChildDateOfBirth(utils.getXmlDate(patient.getBirthdate()));
 
                 childBirthDetailsType.setChildSexCode(patient.getGender());
@@ -478,6 +490,9 @@ public class PMTCTDictionary {
                 if (obs != null && obs.getValueText() != null) {
                     childBirthDetailsType.setImmunizationReceived(obs.getValueText());
                 }
+
+                childBirthDetailsType.setChildStatus("Alive");
+
                 LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
 
                 //}
@@ -500,7 +515,7 @@ public class PMTCTDictionary {
                 ChildFollowupType childFollowupType = new ChildFollowupType();
                 Obs obs = extractObs(Infant_Arv_Type_Concept_Id, antenatalObsList);
                 if (obs == null) {
-                    return null;
+                    continue;
                 }
                 if (obs.getValueCoded() != null) {
                     try {
@@ -552,11 +567,15 @@ public class PMTCTDictionary {
                 ImmunizationType immunizationType = new ImmunizationType();
                 XMLGregorianCalendar convertedDate = utils.getXmlDate(immunizationEncounter.getEncounterDatetime());
                 immunizationType.setVisitDate(convertedDate);
-                immunizationType.setVisitID(String.valueOf(immunizationEncounter.getVisit().getVisitId()));
+                if(immunizationEncounter.getVisit() != null){
+                    immunizationType.setVisitID(String.valueOf(immunizationEncounter.getVisit().getVisitId()));
+                }else{
+                    immunizationType.setVisitID(immunizationEncounter.getEncounterId().toString());
+                }
 
                 Obs obs = extractObs(Immunization_Date, groupedObsByConcept);
                 if (obs == null) {
-                    return null;
+                   continue;
                 }
                 if (obs.getValueDatetime() != null) {
                     immunizationType.setImmunizationDate(utils.getXmlDate(obs.getValueDate()));
@@ -629,7 +648,8 @@ public class PMTCTDictionary {
             obs = Utils.extractObs(SYPHILIS_STATUS_RESULT, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
-                partnerDetailsType.setPartnerSyphilisStatus(getMappedValue(obs.getValueCoded().getConceptId()));
+                String result = syphilis.get(obs.getValueCoded().getConceptId());
+                partnerDetailsType.setPartnerSyphilisStatus(result);
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
             }
 
@@ -657,7 +677,7 @@ public class PMTCTDictionary {
                 InfantPCRTestingType infantPCRTestingType = new InfantPCRTestingType();
                 Obs obs = extractObs(Date_Sample_Collected, antenatalObsList);
                 if (obs == null) {
-                    return null;
+                   continue;
                 }
                 if (obs.getValueDatetime() != null) {
                     infantPCRTestingType.setDateSampleCollected(utils.getXmlDate(obs.getValueDatetime()));
@@ -767,7 +787,13 @@ public class PMTCTDictionary {
             Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
             MaternalCohortType maternalCohortType = new MaternalCohortType();
             //visit date and ID
-            maternalCohortType.setVisitID(String.valueOf(maternalCohortEncounter.getVisit().getVisitId()));
+
+            if(maternalCohortEncounter.getVisit() != null){
+                maternalCohortType.setVisitID(String.valueOf(maternalCohortEncounter.getVisit().getVisitId()));
+            }else{
+                maternalCohortType.setVisitID(maternalCohortEncounter.getEncounterId().toString());
+            }
+
             maternalCohortType.setVisitDate(utils.getXmlDate(maternalCohortEncounter.getEncounterDatetime()));
 
             Obs obs = extractObs(viralLoadPeriod_ConceptID, groupedObsByConcept);
@@ -870,7 +896,11 @@ public class PMTCTDictionary {
         Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
 
         //visit date and ID
-        pmtcttHTSType.setVisitID(String.valueOf(pmtctHTSEncounter.getVisit().getVisitId()));
+        if(pmtctHTSEncounter.getVisit() != null){
+            pmtcttHTSType.setVisitID(String.valueOf(pmtctHTSEncounter.getVisit().getVisitId()));
+        }else{
+            pmtcttHTSType.setVisitID(pmtctHTSEncounter.getEncounterId().toString());
+        }
         pmtcttHTSType.setVisitDate(utils.getXmlDate(pmtctHTSEncounter.getEncounterDatetime()));
 
         Obs obs = extractObs(hts_register_setting_ConceptID, groupedObsByConcept);

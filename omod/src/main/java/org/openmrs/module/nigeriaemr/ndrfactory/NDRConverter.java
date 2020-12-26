@@ -210,19 +210,19 @@ public class NDRConverter {
             }
         }
         if(childFollowUpEncounters != null){
-            List<ChildFollowupType> childFollowupTypes = mainDictionary.createChildFollowupType(pmtctEncounters);
+            List<ChildFollowupType> childFollowupTypes = mainDictionary.createChildFollowupType(childFollowUpEncounters);
             if (childFollowupTypes != null && childFollowupTypes.size() > 0) {
                 if (pmtctType == null) pmtctType = new PMTCTType();
                 pmtctType.setChildFollowupTypes(childFollowupTypes);
             }
 
-            List<InfantPCRTestingType> infantPCRTestingTypes = mainDictionary.createInfantPCRTestingType(pmtctEncounters);
+            List<InfantPCRTestingType> infantPCRTestingTypes = mainDictionary.createInfantPCRTestingType(childFollowUpEncounters);
             if (infantPCRTestingTypes != null && infantPCRTestingTypes.size() > 0) {
                 if (pmtctType == null) pmtctType = new PMTCTType();
                 pmtctType.setInfantPCRTestingTypes(infantPCRTestingTypes);
             }
 
-            List<InfantRapidTestType> infantRapidTestTypes = mainDictionary.createInfantRapidTestType(pmtctEncounters);
+            List<InfantRapidTestType> infantRapidTestTypes = mainDictionary.createInfantRapidTestType(childFollowUpEncounters);
             if (infantRapidTestTypes != null && infantRapidTestTypes.size() > 0) {
                 if (pmtctType == null) pmtctType = new PMTCTType();
                 pmtctType.setInfantRapidTestTypes(infantRapidTestTypes);
@@ -251,7 +251,7 @@ public class NDRConverter {
 
         if(childBirthEncounters != null){
             List<ChildBirthDetailsType> childBirthDetailsTypes = mainDictionary.createChildBirthDetailsType(
-                    generalAntenatalCareEncounters);
+                    childBirthEncounters);
             if (childBirthDetailsTypes != null && childBirthDetailsTypes.size() > 0) {
                 if (pmtctType == null) pmtctType = new PMTCTType();
                 pmtctType.setChildBirthDetailsTypes(childBirthDetailsTypes);
@@ -411,16 +411,16 @@ public class NDRConverter {
 
                 condition.getLaboratoryReport().addAll(combinedReport);
 
-                //Partner details
-                try {
-                    List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.groupedEncounters, this.groupedObsByConceptIds);
-                    if (!partnerDetailsType.isEmpty()) {
-                        condition.getPartnerDetails().addAll(partnerDetailsType);
-                    }
-                } catch (Exception ex) {
-                    LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                            LogLevel.live);
-                }
+                //Partner details -> moved to PMTCT
+//                try {
+//                    List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.groupedEncounters, this.groupedObsByConceptIds);
+//                    if (!partnerDetailsType.isEmpty()) {
+//                        condition.getPartnerDetails().addAll(partnerDetailsType);
+//                    }
+//                } catch (Exception ex) {
+//                    LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+//                            LogLevel.live);
+//                }
 
                 List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, this.groupedEncounters);
                 if (arvRegimenTypeList != null && arvRegimenTypeList.size() > 0) {
