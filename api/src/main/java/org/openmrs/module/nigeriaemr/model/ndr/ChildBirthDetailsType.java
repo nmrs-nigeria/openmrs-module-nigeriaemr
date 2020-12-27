@@ -58,11 +58,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="APGARScore" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *         &lt;element name="BirthMUAC" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *         &lt;element name="BirthLenght" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *         &lt;element name="BirthWeight" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *         &lt;element name="HeadCircumferenceAtBirth" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="APGARScore" type="{http://www.w3.org/2001/XMLSchema}Float"/>
+ *         &lt;element name="BirthMUAC" type="{http://www.w3.org/2001/XMLSchema}Float"/>
+ *         &lt;element name="BirthLenght" type="{http://www.w3.org/2001/XMLSchema}Float"/>
+ *         &lt;element name="BirthWeight" type="{http://www.w3.org/2001/XMLSchema}Float"/>
+ *         &lt;element name="HeadCircumferenceAtBirth" type="{http://www.w3.org/2001/XMLSchema}Float"/>
  *         &lt;element name="ImmunizationReceived" type="{}StringType"/>
  *         &lt;element name="HBVExposedInfantGivenHepBIg">
  *           &lt;simpleType>
@@ -114,19 +114,19 @@ public class ChildBirthDetailsType {
 	protected String childStatus;
 	
 	@XmlElement(name = "APGARScore")
-	protected float apgarScore;
+	protected Float apgarScore;
 	
 	@XmlElement(name = "BirthMUAC")
-	protected float birthMUAC;
+	protected Float birthMUAC;
 	
 	@XmlElement(name = "BirthLenght")
-	protected float birthLenght;
+	protected Float birthLenght;
 	
 	@XmlElement(name = "BirthWeight")
-	protected float birthWeight;
+	protected Float birthWeight;
 	
 	@XmlElement(name = "HeadCircumferenceAtBirth")
-	protected float headCircumferenceAtBirth;
+	protected Float headCircumferenceAtBirth;
 	
 	@XmlElement(name = "ImmunizationReceived", required = true)
 	protected String immunizationReceived;
@@ -248,70 +248,70 @@ public class ChildBirthDetailsType {
 	/**
 	 * Gets the value of the apgarScore property.
 	 */
-	public float getAPGARScore() {
+	public Float getAPGARScore() {
 		return apgarScore;
 	}
 	
 	/**
 	 * Sets the value of the apgarScore property.
 	 */
-	public void setAPGARScore(float value) {
+	public void setAPGARScore(Float value) {
 		this.apgarScore = value;
 	}
 	
 	/**
 	 * Gets the value of the birthMUAC property.
 	 */
-	public float getBirthMUAC() {
+	public Float getBirthMUAC() {
 		return birthMUAC;
 	}
 	
 	/**
 	 * Sets the value of the birthMUAC property.
 	 */
-	public void setBirthMUAC(float value) {
+	public void setBirthMUAC(Float value) {
 		this.birthMUAC = value;
 	}
 	
 	/**
 	 * Gets the value of the birthLenght property.
 	 */
-	public float getBirthLenght() {
+	public Float getBirthLenght() {
 		return birthLenght;
 	}
 	
 	/**
 	 * Sets the value of the birthLenght property.
 	 */
-	public void setBirthLenght(float value) {
+	public void setBirthLenght(Float value) {
 		this.birthLenght = value;
 	}
 	
 	/**
 	 * Gets the value of the birthWeight property.
 	 */
-	public float getBirthWeight() {
+	public Float getBirthWeight() {
 		return birthWeight;
 	}
 	
 	/**
 	 * Sets the value of the birthWeight property.
 	 */
-	public void setBirthWeight(float value) {
+	public void setBirthWeight(Float value) {
 		this.birthWeight = value;
 	}
 	
 	/**
 	 * Gets the value of the headCircumferenceAtBirth property.
 	 */
-	public float getHeadCircumferenceAtBirth() {
+	public Float getHeadCircumferenceAtBirth() {
 		return headCircumferenceAtBirth;
 	}
 	
 	/**
 	 * Sets the value of the headCircumferenceAtBirth property.
 	 */
-	public void setHeadCircumferenceAtBirth(float value) {
+	public void setHeadCircumferenceAtBirth(Float value) {
 		this.headCircumferenceAtBirth = value;
 	}
 	

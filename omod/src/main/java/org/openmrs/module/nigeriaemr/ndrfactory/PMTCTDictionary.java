@@ -7,6 +7,8 @@ package org.openmrs.module.nigeriaemr.ndrfactory;
 
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.model.ndr.AntenatalRegistrationType.Syphilis;
@@ -143,12 +145,18 @@ public class PMTCTDictionary {
     final static int Partner_referred_to = 164960;
     final static int SYPHILIS_STATUS_RESULT = 299;
 
+    // Infant Rapid Test
+    final static int rapid_test_date = 165025;
+    final static int rapid_test_result = 165026;
+    final static int rapid_test_age = 0; //not available
+
     public PMTCTDictionary() {
         pharmacyDictionary = new PharmacyDictionary();
         loadDictionary();
     }
 
     private Map<Integer, String> pmtctDictionary = new HashMap<>();
+    private Map<Integer, String> syphilis = new HashMap<>();
     private Map<Integer, String> maternalOutcome = new HashMap<>();
     private Map<Integer, Boolean> yesNoToggle = new HashMap<>();
     private Map<Integer, String> timing = new HashMap<>();
@@ -206,6 +214,9 @@ public class PMTCTDictionary {
         pmtctDictionary.put(166032, "RHN");
         pmtctDictionary.put(166034, "SHP");
 
+        //infant Rapid Test Result
+        pmtctDictionary.put(1138, "Indet");
+
         //Family Planning Method
         fpm = new HashMap<>();
         fpm.put(1107, "FP1");
@@ -252,6 +263,10 @@ public class PMTCTDictionary {
         timing.put(165826,"4");
         timing.put(165475,"1");
 
+        //SyphilisStatus
+        syphilis.put(1228, "R");
+        syphilis.put(1229, "NR");
+
         //pmtctDictionary.put(165860, "4");
     }
 
@@ -270,7 +285,7 @@ public class PMTCTDictionary {
 
                 Obs obs = extractObs(Last_Menstural_Period_Concept_Id, anthenatalObsList);
                 if (obs == null) {
-                    return null;
+                    continue;
                 }
                 if (obs.getObsDatetime() != null) {
                     registrationType.setLastMenstralPeriod(utils.getXmlDate(obs.getObsDatetime()));
@@ -408,14 +423,15 @@ public class PMTCTDictionary {
         return deliveryEncounterTypes.isEmpty() ? null :  deliveryEncounterTypes;
     }
 
-    public List<ChildBirthDetailsType> createChildBirthDetailsType(List<Encounter> anteNatelEncounters) {
+    public List<ChildBirthDetailsType> createChildBirthDetailsType(List<Encounter> childBirthEncounters) {
         List<ChildBirthDetailsType> childBirthDetailsTypes = new ArrayList<>();
         try {
-            for(Encounter enc : anteNatelEncounters) {
+            for(Encounter enc : childBirthEncounters) {
                 Set<Obs> obsSet = enc.getAllObs();
                 List<Obs> obsList = new ArrayList<>(obsSet);
                 Map<Object, List<Obs>> antenatalObsList = Utils.groupedByConceptIdsOnly(obsList);
                 ChildBirthDetailsType childBirthDetailsType = new ChildBirthDetailsType();
+                Patient patient = enc.getPatient();
                 Obs obs = extractObs(Hiv_Exposed_Infant_Number_Concept_Id, antenatalObsList);
                 if (obs != null && obs.getValueText() != null) {
                     try {
@@ -425,14 +441,18 @@ public class PMTCTDictionary {
                     }
                 }
                 LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
-                obs = extractObs(Date_of_Birth_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
-                    childBirthDetailsType.setChildDateOfBirth(utils.getXmlDate(obs.getValueDate()));
+                if(childBirthDetailsType.getChildEIDNumber() == null){
+                    PatientIdentifier exposedInfantId = patient.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
+                    childBirthDetailsType.setChildEIDNumber(exposedInfantId.getIdentifier());
                 }
-                obs = extractObs(Child_Sex_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueText() != null) {
-                    childBirthDetailsType.setChildSexCode(obs.getValueText());
+                PatientIdentifier hospitalNumber = patient.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
+                if(hospitalNumber != null) {
+                    childBirthDetailsType.setChildHospitalNumber(hospitalNumber.getIdentifier());
                 }
+                childBirthDetailsType.setChildDateOfBirth(utils.getXmlDate(patient.getBirthdate()));
+
+                childBirthDetailsType.setChildSexCode(patient.getGender());
+
                 obs = extractObs(Hbv_Exposed_Infant_Given_Blg_Within_24_Hours_Concept_Id, antenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
                     childBirthDetailsType.setHBVExposedInfantGivenHepBIg(getMappedValue(obs.getValueCoded().getConceptId()));
@@ -470,6 +490,9 @@ public class PMTCTDictionary {
                 if (obs != null && obs.getValueText() != null) {
                     childBirthDetailsType.setImmunizationReceived(obs.getValueText());
                 }
+
+                childBirthDetailsType.setChildStatus("Alive");
+
                 LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
 
                 //}
@@ -492,7 +515,7 @@ public class PMTCTDictionary {
                 ChildFollowupType childFollowupType = new ChildFollowupType();
                 Obs obs = extractObs(Infant_Arv_Type_Concept_Id, antenatalObsList);
                 if (obs == null) {
-                    return null;
+                    continue;
                 }
                 if (obs.getValueCoded() != null) {
                     try {
@@ -544,11 +567,15 @@ public class PMTCTDictionary {
                 ImmunizationType immunizationType = new ImmunizationType();
                 XMLGregorianCalendar convertedDate = utils.getXmlDate(immunizationEncounter.getEncounterDatetime());
                 immunizationType.setVisitDate(convertedDate);
-                immunizationType.setVisitID(String.valueOf(immunizationEncounter.getVisit().getVisitId()));
+                if(immunizationEncounter.getVisit() != null){
+                    immunizationType.setVisitID(String.valueOf(immunizationEncounter.getVisit().getVisitId()));
+                }else{
+                    immunizationType.setVisitID(immunizationEncounter.getEncounterId().toString());
+                }
 
                 Obs obs = extractObs(Immunization_Date, groupedObsByConcept);
                 if (obs == null) {
-                    return null;
+                   continue;
                 }
                 if (obs.getValueDatetime() != null) {
                     immunizationType.setImmunizationDate(utils.getXmlDate(obs.getValueDate()));
@@ -621,7 +648,8 @@ public class PMTCTDictionary {
             obs = Utils.extractObs(SYPHILIS_STATUS_RESULT, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
-                partnerDetailsType.setPartnerSyphilisStatus(getMappedValue(obs.getValueCoded().getConceptId()));
+                String result = syphilis.get(obs.getValueCoded().getConceptId());
+                partnerDetailsType.setPartnerSyphilisStatus(result);
                 LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
             }
 
@@ -649,7 +677,7 @@ public class PMTCTDictionary {
                 InfantPCRTestingType infantPCRTestingType = new InfantPCRTestingType();
                 Obs obs = extractObs(Date_Sample_Collected, antenatalObsList);
                 if (obs == null) {
-                    return null;
+                   continue;
                 }
                 if (obs.getValueDatetime() != null) {
                     infantPCRTestingType.setDateSampleCollected(utils.getXmlDate(obs.getValueDatetime()));
@@ -759,7 +787,13 @@ public class PMTCTDictionary {
             Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
             MaternalCohortType maternalCohortType = new MaternalCohortType();
             //visit date and ID
-            maternalCohortType.setVisitID(String.valueOf(maternalCohortEncounter.getVisit().getVisitId()));
+
+            if(maternalCohortEncounter.getVisit() != null){
+                maternalCohortType.setVisitID(String.valueOf(maternalCohortEncounter.getVisit().getVisitId()));
+            }else{
+                maternalCohortType.setVisitID(maternalCohortEncounter.getEncounterId().toString());
+            }
+
             maternalCohortType.setVisitDate(utils.getXmlDate(maternalCohortEncounter.getEncounterDatetime()));
 
             Obs obs = extractObs(viralLoadPeriod_ConceptID, groupedObsByConcept);
@@ -856,157 +890,180 @@ public class PMTCTDictionary {
         PMTCTClinicalTBScreeningType pmtctClinicalTBScreeningType = new PMTCTClinicalTBScreeningType();
 
         TestResultType testResultType = new TestResultType();
-        if (pmtctHTSEncounter != null) {
 
-            Set<Obs> obsSet = pmtctHTSEncounter.getAllObs();
-            List<Obs> obsList = new ArrayList<>(obsSet);
-            Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
+        Set<Obs> obsSet = pmtctHTSEncounter.getAllObs();
+        List<Obs> obsList = new ArrayList<>(obsSet);
+        Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
 
-            //visit date and ID
+        //visit date and ID
+        if(pmtctHTSEncounter.getVisit() != null){
             pmtcttHTSType.setVisitID(String.valueOf(pmtctHTSEncounter.getVisit().getVisitId()));
-            pmtcttHTSType.setVisitDate(utils.getXmlDate(pmtctHTSEncounter.getEncounterDatetime()));
+        }else{
+            pmtcttHTSType.setVisitID(pmtctHTSEncounter.getEncounterId().toString());
+        }
+        pmtcttHTSType.setVisitDate(utils.getXmlDate(pmtctHTSEncounter.getEncounterDatetime()));
 
-            Obs obs = extractObs(hts_register_setting_ConceptID, groupedObsByConcept);
+        Obs obs = extractObs(hts_register_setting_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            String ndrCode = getMappedValue(valueCoded);
+            pmtcttHTSType.setPMTCTEntryPoint(ndrCode);
+        }
+
+        obs = extractObs(previouslyKnownHIVPositive_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+
+            int valueCodedPreviouslyKnownHIVPositive = obs.getValueCoded().getConceptId();
+            Boolean ndrCodePreviouslyKnownHIVPositive = getYesNoToggleValue(valueCodedPreviouslyKnownHIVPositive);
+            pmtcttHTSType.setAcceptedHIVTesting(ndrCodePreviouslyKnownHIVPositive);
+
+            obs = extractObs(acceptedHIVTesting_ConceptID, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
+
                 int valueCoded = obs.getValueCoded().getConceptId();
-                String ndrCode = getMappedValue(valueCoded);
-                pmtcttHTSType.setPMTCTEntryPoint(ndrCode);
+                Boolean ndrCode = getYesNoToggleValue(valueCoded);
+                pmtcttHTSType.setAcceptedHIVTesting(ndrCode);
+
+                obs = extractObs(hivTestResult_ConceptID, groupedObsByConcept);
+                //TODO build HIVTest result Object
+                // if (obs != null && obs.getValueCoded() != null) { }
             }
 
-            obs = extractObs(previouslyKnownHIVPositive_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-
-                int valueCodedPreviouslyKnownHIVPositive = obs.getValueCoded().getConceptId();
-                Boolean ndrCodePreviouslyKnownHIVPositive = getYesNoToggleValue(valueCodedPreviouslyKnownHIVPositive);
-                pmtcttHTSType.setAcceptedHIVTesting(ndrCodePreviouslyKnownHIVPositive);
-
-                obs = extractObs(acceptedHIVTesting_ConceptID, groupedObsByConcept);
-                if (obs != null && obs.getValueCoded() != null) {
-
-                    int valueCoded = obs.getValueCoded().getConceptId();
-                    Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                    pmtcttHTSType.setAcceptedHIVTesting(ndrCode);
-
-                    obs = extractObs(hivTestResult_ConceptID, groupedObsByConcept);
-                    //TODO build HIVTest result Object
-                    // if (obs != null && obs.getValueCoded() != null) { }
-                }
-
-                obs = extractObs(recievedHIVTestResult_ConceptID, groupedObsByConcept);
-                if (obs != null && obs.getValueCoded() != null) {
-                    int valueCoded = obs.getValueCoded().getConceptId();
-                    Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                    pmtcttHTSType.setReceivedHIVTestResult(ndrCode);
-                }
-            }
-
-            obs = extractObs(hivRetesting_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                String ndrCode = getMappedValue(valueCoded);
-                pmtcttHTSType.setHIVRetesting(ndrCode);
-            }
-
-            obs = extractObs(testedForHepB_ConceptID, groupedObsByConcept);
+            obs = extractObs(recievedHIVTestResult_ConceptID, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
                 int valueCoded = obs.getValueCoded().getConceptId();
                 Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtcttHTSType.setTestedForHepB(ndrCode);
+                pmtcttHTSType.setReceivedHIVTestResult(ndrCode);
+            }
+        }
 
-                obs = extractObs(hepBTestResult_ConceptID, groupedObsByConcept);
+        obs = extractObs(hivRetesting_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            String ndrCode = getMappedValue(valueCoded);
+            pmtcttHTSType.setHIVRetesting(ndrCode);
+        }
+
+        obs = extractObs(testedForHepB_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtcttHTSType.setTestedForHepB(ndrCode);
+
+            obs = extractObs(hepBTestResult_ConceptID, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCodedResult = obs.getValueCoded().getConceptId();
+                String ndrCodeResult = getMappedValue(valueCodedResult);
+                pmtcttHTSType.setHepBTestResult(ndrCodeResult);
+            }
+        }
+
+        obs = extractObs(testedForHepC_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtcttHTSType.setTestedForHepC(ndrCode);
+            if (ndrCode) {
+                obs = extractObs(hepCTestResult_ConceptID, groupedObsByConcept);
                 if (obs != null && obs.getValueCoded() != null) {
                     int valueCodedResult = obs.getValueCoded().getConceptId();
                     String ndrCodeResult = getMappedValue(valueCodedResult);
-                    pmtcttHTSType.setHepBTestResult(ndrCodeResult);
+                    pmtcttHTSType.setHepCTestResult(ndrCodeResult);
                 }
-            }
-
-            obs = extractObs(testedForHepC_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtcttHTSType.setTestedForHepC(ndrCode);
-                if (ndrCode) {
-                    obs = extractObs(hepCTestResult_ConceptID, groupedObsByConcept);
-                    if (obs != null && obs.getValueCoded() != null) {
-                        int valueCodedResult = obs.getValueCoded().getConceptId();
-                        String ndrCodeResult = getMappedValue(valueCodedResult);
-                        pmtcttHTSType.setHepCTestResult(ndrCodeResult);
-                    }
-                }
-            }
-
-            obs = extractObs(hivHBVCoinfected_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtcttHTSType.setHIVHBVCoInfected(ndrCode);
-            }
-
-            obs = extractObs(hivHCVCoinfected_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtcttHTSType.setHIVHCVCoInfected(ndrCode);
-            }
-
-            obs = extractObs(agreedToPartnerNotification_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtcttHTSType.setAgreedToPartnerNotification(ndrCode);
-            }
-
-            obs = extractObs(currentlyCough_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtctClinicalTBScreeningType.setCurrentlyCough(ndrCode);
-            }
-
-            obs = extractObs(weightLoss_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtctClinicalTBScreeningType.setWeightLoss(ndrCode);
-            }
-
-            obs = extractObs(fever_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtctClinicalTBScreeningType.setFever(ndrCode);
-            }
-
-            obs = extractObs(nightSweats_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtctClinicalTBScreeningType.setNightSweats(ndrCode);
-            }
-
-            obs = extractObs(contactWithTBPositivePatient_ConceptID, groupedObsByConcept);
-            if (obs != null && obs.getValueCoded() != null) {
-                int valueCoded = obs.getValueCoded().getConceptId();
-                Boolean ndrCode = getYesNoToggleValue(valueCoded);
-                pmtctClinicalTBScreeningType.setContactWithTBPositivePatient(ndrCode);
-            }
-
-
-            if (pmtctClinicalTBScreeningType != null) {
-                pmtcttHTSType.setClinicalTBScreening(pmtctClinicalTBScreeningType);
             }
         }
-        return pmtcttHTSType == null ? null : pmtcttHTSType;
+
+        obs = extractObs(hivHBVCoinfected_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtcttHTSType.setHIVHBVCoInfected(ndrCode);
+        }
+
+        obs = extractObs(hivHCVCoinfected_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtcttHTSType.setHIVHCVCoInfected(ndrCode);
+        }
+
+        obs = extractObs(agreedToPartnerNotification_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtcttHTSType.setAgreedToPartnerNotification(ndrCode);
+        }
+
+        obs = extractObs(currentlyCough_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtctClinicalTBScreeningType.setCurrentlyCough(ndrCode);
+        }
+
+        obs = extractObs(weightLoss_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtctClinicalTBScreeningType.setWeightLoss(ndrCode);
+        }
+
+        obs = extractObs(fever_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtctClinicalTBScreeningType.setFever(ndrCode);
+        }
+
+        obs = extractObs(nightSweats_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtctClinicalTBScreeningType.setNightSweats(ndrCode);
+        }
+
+        obs = extractObs(contactWithTBPositivePatient_ConceptID, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            int valueCoded = obs.getValueCoded().getConceptId();
+            Boolean ndrCode = getYesNoToggleValue(valueCoded);
+            pmtctClinicalTBScreeningType.setContactWithTBPositivePatient(ndrCode);
+        }
+
+
+        pmtcttHTSType.setClinicalTBScreening(pmtctClinicalTBScreeningType);
+        return pmtcttHTSType;
     }
 
-    public List<InfantRapidTestType> createInfantRapidTestType(List<Encounter> pmtctEncounters) {
+    public List<InfantRapidTestType> createInfantRapidTestType(List<Encounter> childFollowUpEncounters) {
         List<InfantRapidTestType> infantRapidTestTypes = new ArrayList<>();
-        for(Encounter maternalCohortEncounter : pmtctEncounters) {
-            Set<Obs> obsSet = maternalCohortEncounter.getAllObs();
+        for(Encounter childFollowUpEncounter : childFollowUpEncounters) {
+            Patient patient = childFollowUpEncounter.getPatient();
+            Set<Obs> obsSet = childFollowUpEncounter.getAllObs();
             List<Obs> obsList = new ArrayList<>(obsSet);
             Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
             InfantRapidTestType infantRapidTestType = new InfantRapidTestType();
+
+            Obs obs = extractObs(rapid_test_date, groupedObsByConcept);
+            if (obs != null && obs.getValueDate() != null) {
+                infantRapidTestType.setDateOfTest(utils.getXmlDate(obs.getValueDate()));
+                LocalDate birthDate = patient.getPerson().getBirthdate().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                LocalDate testDate = obs.getValueDate().toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                int ageAtTest = Period.between(birthDate,testDate).getYears();
+                infantRapidTestType.setAgeAtTest(ageAtTest);
+            }
+
+            obs = extractObs(rapid_test_result, groupedObsByConcept);
+            if (obs != null && obs.getValueCoded() != null) {
+                int valueCoded = obs.getValueCoded().getConceptId();
+                String ndrCode = getMappedValue(valueCoded);
+                if(ndrCode != null) {
+                    infantRapidTestType.setRapidTestResult(ndrCode);
+                }
+            }
             infantRapidTestTypes.add(infantRapidTestType);
         }
         return infantRapidTestTypes.isEmpty() ? null :  infantRapidTestTypes;
