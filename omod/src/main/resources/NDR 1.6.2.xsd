@@ -1239,16 +1239,34 @@
 	<xs:complexType name="ChildBirthDetailsType">
 
 		<xs:sequence>
-			<xs:element name="ChildHospitalNumber" type="StringType" minOccurs="1"
+			<xs:element name="VisitID" type="StringType" minOccurs="1"
 						maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The unique Visit
+
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VisitDate" type="xs:date" minOccurs="1"
+						maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Date of Visit
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EnrollmentDate" type="xs:date" maxOccurs="1" minOccurs="1"></xs:element>
+			<xs:element name="ChildHospitalNumber" type="StringType"
+						minOccurs="1" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Child Hospital Registration Number
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="ChildEIDNumber" type="StringType" minOccurs="0"
-						maxOccurs="1">
+			<xs:element name="ChildEIDNumber" type="StringType"
+						minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						HIV Exposed Infant Number
@@ -1263,8 +1281,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="ChildSexCode" minOccurs="1"
-						maxOccurs="1">
+			<xs:element name="ChildSexCode" minOccurs="1" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Child Sex
@@ -1281,7 +1298,7 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="ChildGivenNVPWithin72hrs"  minOccurs="0"
+			<xs:element name="ChildGivenNVPWithin72hrs" minOccurs="0"
 						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -1296,8 +1313,7 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="ChildStatus" minOccurs="1"
-						maxOccurs="1">
+			<xs:element name="ChildStatus" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Child Status
@@ -1319,13 +1335,18 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="BirthMUAC" type="xs:float" minOccurs="0"
-						maxOccurs="1">
+			<xs:element name="BirthMUAC" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Mean Upper Arm Circumference
 					</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="CodeType">
+						<xs:enumeration value="LT" />
+						<xs:enumeration value="GT" />
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="BirthLenght" type="xs:float" minOccurs="0"
 						maxOccurs="1">
@@ -1343,16 +1364,16 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="HeadCircumferenceAtBirth" type="xs:float" minOccurs="0"
-						maxOccurs="1">
+			<xs:element name="HeadCircumferenceAtBirth" type="xs:float"
+						minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Head circumference
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="ImmunizationReceived" type="StringType" minOccurs="0"
-						maxOccurs="1">
+			<xs:element name="ImmunizationReceived" type="StringType"
+						minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Immunization received at birth
@@ -1363,7 +1384,8 @@
 						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
-						HBV Exposed Infant given Hep B lg within 24 hours of birth
+						HBV Exposed Infant given Hep B lg within 24 hours of
+						birth
 					</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
@@ -1378,7 +1400,8 @@
 						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
-						Non-HBV Exposed Infant given HBV vaccine within 24hours of birth
+						Non-HBV Exposed Infant given HBV vaccine within
+						24hours of birth
 					</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
@@ -1389,15 +1412,25 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="ChildFollowupType">
-		<xs:sequence>
-			<xs:element name="InfantARVType" minOccurs="0"
+			<xs:element name="ARVProphylaxis" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						ARV Prophylaxis
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="CodeType">
+						<xs:enumeration value="AP1" />
+						<xs:enumeration value="AP2" />
+						<xs:enumeration value="AP3" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="TimingOfARVProphylaxis" minOccurs="0"
 						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
-						Infant ARV Type
+						Timing of ARV Prophylaxis
 					</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
@@ -1409,11 +1442,32 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="TimingOfARVProphylaxis" minOccurs="0"
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ChildFollowupType">
+		<xs:sequence>
+			<xs:element name="VisitID" type="StringType" minOccurs="1"
 						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
-						Timing of ARV Prophylaxis
+						The unique Visit
+
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VisitDate" type="xs:date" minOccurs="1"
+						maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Date of Visit
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="InfantARVType" minOccurs="0"
+						maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Infant ARV Type
 					</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
@@ -1579,6 +1633,15 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="VisitID" type="StringType" minOccurs="1"
+						maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The unique Visit
+
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="VisitStatus"  minOccurs="0"
 						maxOccurs="1">
 				<xs:annotation>
@@ -1687,6 +1750,23 @@
 
 	<xs:complexType name="PartnerDetailsType">
 		<xs:sequence>
+			<xs:element name="VisitID" type="StringType" minOccurs="1"
+						maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The unique Visit
+
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VisitDate" type="xs:date" minOccurs="1"
+						maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Date of Visit
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="PartnerAge"  type="xs:int" minOccurs="0"
 						maxOccurs="1">
 				<xs:annotation>

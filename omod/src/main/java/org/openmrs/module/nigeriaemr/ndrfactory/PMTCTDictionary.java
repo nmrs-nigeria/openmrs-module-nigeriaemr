@@ -62,7 +62,7 @@ public class PMTCTDictionary {
     final static int Hbv_Exposed_Infant_Given_Blg_Within_24_Hours_Concept_Id = 165667;
     final static int Non_Hbv_Exposed_Infant_Given_Blg_Within_24_Hours_Concept_Id = 165930;
     final static int Apgar_Score_Concept_Id = 1504;
-    final static int Mean_Upper_Arm_Circumference_Concept_Id = 1343;
+    final static int Mean_Upper_Arm_Circumference_Concept_Id = 165935;
     final static int Birth_Length_Concept_Id = 1503;
     final static int Birth_Weight_concept_Id = 5916;
     final static int Head_Circumference_Concept_Id = 5314;
@@ -73,6 +73,7 @@ public class PMTCTDictionary {
     final static int Infant_Outcome_at_18_Months_Concept_Id = 165035;
     final static int Date_Linked_to_Art_Clinic_Concept_Id = 166062;
     final static int Art_Enrollment_No_Concept_Id = 165560;
+    final static int Arv_Prophylaxis_Concept_Id = 164971;
     //Immunization
     final static int Immunization_Date = 1410;
     final static int Lot_Number = 1420;
@@ -105,7 +106,7 @@ public class PMTCTDictionary {
     private static final int hts_register_setting_ConceptID = 166025;
     private static final int previouslyKnownHIVPositive_ConceptID = 166030;
     private static final int acceptedHIVTesting_ConceptID = 164167;
-    private static final int hivTestResult_ConceptID = 166122;
+    private static final int hivTestResult_ConceptID = 159427;
     private static final int recievedHIVTestResult_ConceptID = 164848;
     private static final int hivRetesting_ConceptID = 166033;
     private static final int testedForHepB_ConceptID = 165514;
@@ -138,7 +139,7 @@ public class PMTCTDictionary {
     final static int Partner_Age = 164955;
     final static int Partner_preTest_counselled_ = 164956;
     final static int Partner_accepts_HIV_test = 164957;
-    final static int Partner_HIV_test_result = 164958;
+    final static int Partner_HIV_test_result = 1436;
     final static int Partner_postTest_counseled = 165571;
     final static int Partner_HBV_status = 165561;
     final static int Partner_HCV_status = 165562;
@@ -162,6 +163,7 @@ public class PMTCTDictionary {
     private Map<Integer, String> timing = new HashMap<>();
     private Map<Integer, String> fpm = new HashMap<>();
     private Map<Integer, Integer> tb = new HashMap<>();
+    private Map<Integer, String> arv = new HashMap<>();
 
     private void loadDictionary() {
         //Map OpenMRS concepts to corresponding NDR values
@@ -213,6 +215,29 @@ public class PMTCTDictionary {
         pmtctDictionary.put(166028, "3");
         pmtctDictionary.put(166032, "RHN");
         pmtctDictionary.put(166034, "SHP");
+
+        //partner referred to
+        pmtctDictionary.put(1382, "FP");
+        pmtctDictionary.put(1610, "ART");
+        pmtctDictionary.put(5622, "Other");
+
+        //Child Outcome at 18 months
+        pmtctDictionary.put(165552, "1");
+        pmtctDictionary.put(165553, "2");
+        pmtctDictionary.put(165554, "3");
+        pmtctDictionary.put(1404, "4");
+        pmtctDictionary.put(165556, "5");
+        pmtctDictionary.put(165557, "6");
+        pmtctDictionary.put(165558, "7");
+
+        //birth MUAC
+        pmtctDictionary.put(165933, "LT");
+        pmtctDictionary.put(165934, "GT");
+
+        //ARV
+        arv = new HashMap<>();
+        arv.put(164970, "AP1");
+        arv.put(165544, "AP2");
 
         //infant Rapid Test Result
         pmtctDictionary.put(1138, "Indet");
@@ -266,6 +291,8 @@ public class PMTCTDictionary {
         //SyphilisStatus
         syphilis.put(1228, "R");
         syphilis.put(1229, "NR");
+        syphilis.put(664, "NR");
+        syphilis.put(703, "R");
 
         //pmtctDictionary.put(165860, "4");
     }
@@ -280,8 +307,12 @@ public class PMTCTDictionary {
                 AntenatalRegistrationType registrationType = new AntenatalRegistrationType();
 
                 XMLGregorianCalendar convertedDate = utils.getXmlDate(enc.getEncounterDatetime());
+                if(enc.getVisit() != null){
+                    registrationType.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
+                }else{
+                    registrationType.setVisitID(enc.getEncounterId().toString());
+                }
                 registrationType.setVisitDate(convertedDate);
-                registrationType.setVisitID(String.valueOf(enc.getEncounterDatetime().getTime()));
 
                 Obs obs = extractObs(Last_Menstural_Period_Concept_Id, anthenatalObsList);
                 if (obs == null) {
@@ -311,8 +342,8 @@ public class PMTCTDictionary {
                     registrationType.setSourceOfReferral(obs.getValueText());
                 }
                 obs = extractObs(EDD_Concept_Id, anthenatalObsList);
-                if (obs != null && obs.getObsDatetime() != null) {
-                    registrationType.setExpectedDateOfDelivery(utils.getXmlDate(obs.getObsDatetime()));
+                if (obs != null && obs.getValueDate() != null) {
+                    registrationType.setExpectedDateOfDelivery(utils.getXmlDate(obs.getValueDate()));
                 }
 
                 //get data for Syphilis and add to antenatal reg type
@@ -356,10 +387,14 @@ public class PMTCTDictionary {
                 Map<Object, List<Obs>> anthenatalObsList = Utils.groupedByConceptIdsOnly(obsList);
 
                 DeliveryEncounterType deliveryEncounterType = new DeliveryEncounterType();
-
                 XMLGregorianCalendar convertedDate = utils.getXmlDate(enc.getEncounterDatetime());
+                if(enc.getVisit() != null){
+                    deliveryEncounterType.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
+                }else{
+                    deliveryEncounterType.setVisitID(enc.getEncounterId().toString());
+                }
                 deliveryEncounterType.setVisitDate(convertedDate);
-                deliveryEncounterType.setVisitID(String.valueOf(enc.getEncounterDatetime().getTime()));
+
 
                 Obs obs = extractObs(Time_Of_Hiv_Diagnosis_Concept_Id, anthenatalObsList);
                 if (obs != null && obs.getValueCoded() != null) {
@@ -431,6 +466,15 @@ public class PMTCTDictionary {
                 List<Obs> obsList = new ArrayList<>(obsSet);
                 Map<Object, List<Obs>> antenatalObsList = Utils.groupedByConceptIdsOnly(obsList);
                 ChildBirthDetailsType childBirthDetailsType = new ChildBirthDetailsType();
+
+                XMLGregorianCalendar convertedDate = utils.getXmlDate(enc.getEncounterDatetime());
+                if(enc.getVisit() != null){
+                    childBirthDetailsType.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
+                }else{
+                    childBirthDetailsType.setVisitID(enc.getEncounterId().toString());
+                }
+                childBirthDetailsType.setVisitDate(convertedDate);
+
                 Patient patient = enc.getPatient();
                 Obs obs = extractObs(Hiv_Exposed_Infant_Number_Concept_Id, antenatalObsList);
                 if (obs != null && obs.getValueText() != null) {
@@ -472,9 +516,8 @@ public class PMTCTDictionary {
                     childBirthDetailsType.setHeadCircumferenceAtBirth(value_float);
                 }
                 obs = extractObs(Mean_Upper_Arm_Circumference_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueNumeric() != null) {
-                    float value_float = (float) Math.round(obs.getValueNumeric());
-                    childBirthDetailsType.setBirthMUAC(value_float);
+                if (obs != null && obs.getValueCoded() != null) {
+                    childBirthDetailsType.setBirthMUAC(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
                 obs = extractObs(Birth_Length_Concept_Id, antenatalObsList);
                 if (obs != null && obs.getValueNumeric() != null) {
@@ -491,7 +534,24 @@ public class PMTCTDictionary {
                     childBirthDetailsType.setImmunizationReceived(obs.getValueText());
                 }
 
-                childBirthDetailsType.setChildStatus("Alive");
+                childBirthDetailsType.setEnrollmentDate(utils.getXmlDate(enc.getEncounterDatetime()));
+
+                obs = extractObs(Timimg_Of_Arv_Prophylaxis_Concept_Id, antenatalObsList);
+                if (obs != null && obs.getValueCoded() != null) {
+                    childBirthDetailsType.setTimingOfARVProphylaxis(getMappedValue(obs.getValueCoded().getConceptId()));
+                }
+
+                obs = extractObs(Arv_Prophylaxis_Concept_Id, antenatalObsList);
+                if (obs != null && obs.getValueCoded() != null) {
+                    if(arv.get(obs.getValueCoded().getConceptId()) == null) {
+                        childBirthDetailsType.setArvProphylaxis("AP3");
+                    }else {
+                        childBirthDetailsType.setArvProphylaxis(arv.get(obs.getValueCoded().getConceptId()));
+                    }
+                }
+
+                //TODO
+//                childBirthDetailsType.setChildStatus("Alive");
 
                 LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling all data for CHILD_BIRTH_DETAIL_TYPE", LogFormat.FATAL, LogLevel.debug);
 
@@ -513,6 +573,15 @@ public class PMTCTDictionary {
                 List<Obs> obsList = new ArrayList<>(obsSet);
                 Map<Object, List<Obs>> antenatalObsList = Utils.groupedByConceptIdsOnly(obsList);
                 ChildFollowupType childFollowupType = new ChildFollowupType();
+
+                XMLGregorianCalendar convertedDate = utils.getXmlDate(enc.getEncounterDatetime());
+                if(enc.getVisit() != null){
+                    childFollowupType.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
+                }else{
+                    childFollowupType.setVisitID(enc.getEncounterId().toString());
+                }
+                childFollowupType.setVisitDate(convertedDate);
+
                 Obs obs = extractObs(Infant_Arv_Type_Concept_Id, antenatalObsList);
                 if (obs == null) {
                     continue;
@@ -524,19 +593,15 @@ public class PMTCTDictionary {
                         LoggerUtils.write(PMTCTDictionary.class.getName(), "Error on Infant_Arv_Type_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
                     }
                 }
-                obs = extractObs(Timimg_Of_Arv_Prophylaxis_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueCoded() != null) {
-                    childFollowupType.setTimingOfARVProphylaxis(getMappedValue(obs.getValueCoded().getConceptId()));
 
-                }
                 obs = extractObs(Age_At_Ctx_Initiation_Concept_Id, antenatalObsList);
                 if (obs != null && obs.getValueNumeric() != null) {
                     int value_numeric = (int) Math.round(obs.getValueNumeric());
                     childFollowupType.setAgeAtCTXInitiation(value_numeric);
                 }
                 obs = extractObs(Infant_Outcome_at_18_Months_Concept_Id, antenatalObsList);
-                if (obs != null && obs.getValueText() != null) {
-                    childFollowupType.setInfantOutcomeAt18Months(obs.getValueText());
+                if (obs != null && obs.getValueCoded() != null) {
+                    childFollowupType.setInfantOutcomeAt18Months(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
                 obs = extractObs(Date_Linked_to_Art_Clinic_Concept_Id, antenatalObsList);
                 if (obs != null && obs.getValueDatetime() != null) {
@@ -600,6 +665,15 @@ public class PMTCTDictionary {
         List<PartnerDetailsType> partnerDetailsTypes = new ArrayList<>();
         for(Encounter partnerDetailsEncounter : pmtctEncounters) {
             PartnerDetailsType partnerDetailsType = new PartnerDetailsType();
+
+            XMLGregorianCalendar convertedDate = utils.getXmlDate(partnerDetailsEncounter.getEncounterDatetime());
+            if(partnerDetailsEncounter.getVisit() != null){
+                partnerDetailsType.setVisitID(String.valueOf(partnerDetailsEncounter.getVisit().getVisitId()));
+            }else{
+                partnerDetailsType.setVisitID(partnerDetailsEncounter.getEncounterId().toString());
+            }
+            partnerDetailsType.setVisitDate(convertedDate);
+
             Set<Obs> obsSet = partnerDetailsEncounter.getAllObs();
             List<Obs> obsList = new ArrayList<>(obsSet);
             Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
@@ -611,53 +685,53 @@ public class PMTCTDictionary {
             }
             obs = Utils.extractObs(Partner_preTest_counselled_, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
-                LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_preTest_counselled_", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull Partner_preTest_counselled_", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerPreTestCounseled(getMappedValue(obs.getValueCoded().getConceptId()));
-                LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_preTest_counselled_", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling Partner_preTest_counselled_", LogFormat.FATAL, LogLevel.debug);
             }
             obs = Utils.extractObs(Partner_accepts_HIV_test, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
-                LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_accepts_HIV_test", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull Partner_accepts_HIV_test", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerAcceptsHIVTest(getMappedValue(obs.getValueCoded().getConceptId()));
-                LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_accepts_HIV_test", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling Partner_accepts_HIV_test", LogFormat.FATAL, LogLevel.debug);
             }
             obs = Utils.extractObs(Partner_HIV_test_result, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
-                LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_HIV_test_result", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull Partner_HIV_test_result", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerHIVTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
-                LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HIV_test_result", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling Partner_HIV_test_result", LogFormat.FATAL, LogLevel.debug);
             }
             obs = Utils.extractObs(Partner_postTest_counseled, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
-                LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_postTest_counseled", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull Partner_postTest_counseled", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerPostTestCounseled(getMappedValue(obs.getValueCoded().getConceptId()));
-                LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_postTest_counseled", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling Partner_postTest_counseled", LogFormat.FATAL, LogLevel.debug);
             }
             obs = Utils.extractObs(Partner_HBV_status, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
-                LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_HBV_status", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull Partner_HBV_status", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerHBVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
-                LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HBV_status", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling Partner_HBV_status", LogFormat.FATAL, LogLevel.debug);
             }
             obs = Utils.extractObs(Partner_HCV_status, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
-                LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_HCV_status", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull Partner_HCV_status", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerHCVStatus(getMappedValue(obs.getValueCoded().getConceptId()));
-                LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_HCV_status", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling Partner_HCV_status", LogFormat.FATAL, LogLevel.debug);
             }
             obs = Utils.extractObs(SYPHILIS_STATUS_RESULT, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
-                LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
                 String result = syphilis.get(obs.getValueCoded().getConceptId());
                 partnerDetailsType.setPartnerSyphilisStatus(result);
-                LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling Partner_syphilis_status", LogFormat.FATAL, LogLevel.debug);
             }
 
             obs = Utils.extractObs(Partner_referred_to, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
-                LoggerUtils.write(HTSDictionary.class.getName(), "About to pull Partner_referred_to", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull Partner_referred_to", LogFormat.FATAL, LogLevel.debug);
                 partnerDetailsType.setPartnerReferredTo(getMappedValue(obs.getValueCoded().getConceptId()));
-                LoggerUtils.write(HTSDictionary.class.getName(), "Finished pulling Partner_referred_to", LogFormat.FATAL, LogLevel.debug);
+                LoggerUtils.write(PMTCTDictionary.class.getName(), "Finished pulling Partner_referred_to", LogFormat.FATAL, LogLevel.debug);
             }
             partnerDetailsTypes.add(partnerDetailsType);
         }
@@ -700,15 +774,16 @@ public class PMTCTDictionary {
                     infantPCRTestingType.setPCRTestResult(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
                 obs = extractObs(Date_of_Test, antenatalObsList);
-                if (obs != null && obs.getValueDatetime() != null) {
+                if (obs != null && obs.getValueDate() != null) {
+                    LocalDate birthDate = enc.getPatient().getPerson().getBirthdate().toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate();
+                    LocalDate testDate = obs.getValueDate().toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate();
+                    int ageAtTest = Period.between(birthDate,testDate).getYears();
 
-                    Instant instant = Instant.ofEpochMilli(obs.getValueDatetime().getTime());
-                    LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-                    LocalDate dateOfTest_local = localDateTime.toLocalDate();
-                    LocalDate now = LocalDate.now();
-                    Period period = Period.between(now, dateOfTest_local);
-
-                    infantPCRTestingType.setAgeAtTest(period.getYears());
+                    infantPCRTestingType.setAgeAtTest(ageAtTest);
                 }
                 infantPCRTestingTypes.add(infantPCRTestingType);
             }
@@ -726,6 +801,13 @@ public class PMTCTDictionary {
             List<Obs> obsList = new ArrayList<>(obsSet);
             Map<Object, List<Obs>> groupedObsByConcept = Utils.groupedByConceptIdsOnly(obsList);
             HealthFacilityVisitsType healthFacilityVisitsType = new HealthFacilityVisitsType();
+
+            if(maternalCohortEncounter.getVisit() != null){
+                healthFacilityVisitsType.setVisitID(String.valueOf(maternalCohortEncounter.getVisit().getVisitId()));
+            }else{
+                healthFacilityVisitsType.setVisitID(maternalCohortEncounter.getEncounterId().toString());
+            }
+
             healthFacilityVisitsType.setVisitDate(utils.getXmlDate(maternalCohortEncounter.getEncounterDatetime()));
 
             Obs obs = extractObs(visit_Status, groupedObsByConcept);
@@ -889,7 +971,6 @@ public class PMTCTDictionary {
         PMTCTHTSType pmtcttHTSType = new PMTCTHTSType();
         PMTCTClinicalTBScreeningType pmtctClinicalTBScreeningType = new PMTCTClinicalTBScreeningType();
 
-        TestResultType testResultType = new TestResultType();
 
         Set<Obs> obsSet = pmtctHTSEncounter.getAllObs();
         List<Obs> obsList = new ArrayList<>(obsSet);
@@ -925,8 +1006,11 @@ public class PMTCTDictionary {
                 pmtcttHTSType.setAcceptedHIVTesting(ndrCode);
 
                 obs = extractObs(hivTestResult_ConceptID, groupedObsByConcept);
-                //TODO build HIVTest result Object
-                // if (obs != null && obs.getValueCoded() != null) { }
+                 if (obs != null && obs.getValueCoded() != null) {
+                     TestResultType testResultType = new TestResultType();
+                     testResultType.setScreeningTestResult(syphilis.get(obs.getValueCoded().getConceptId()));
+                     pmtcttHTSType.setHIVTestResult(testResultType);
+                 }
             }
 
             obs = extractObs(recievedHIVTestResult_ConceptID, groupedObsByConcept);

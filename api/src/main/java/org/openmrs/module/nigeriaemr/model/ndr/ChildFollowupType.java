@@ -68,15 +68,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ChildFollowupType", propOrder = { "infantARVType", "timingOfARVProphylaxis", "ageAtCTXInitiation",
+@XmlType(name = "ChildFollowupType", propOrder = { "visitID", "visitDate", "infantARVType", "ageAtCTXInitiation",
         "infantOutcomeAt18Months", "dateLinkedToARTClinic", "artEnrollmentNumber" })
 public class ChildFollowupType {
 	
+	@XmlElement(name = "VisitID", required = true)
+	protected String visitID;
+	
+	@XmlElement(name = "VisitDate", required = true)
+	@XmlSchemaType(name = "date")
+	protected XMLGregorianCalendar visitDate;
+	
 	@XmlElement(name = "InfantARVType", required = true)
 	protected String infantARVType;
-	
-	@XmlElement(name = "TimingOfARVProphylaxis", required = true)
-	protected String timingOfARVProphylaxis;
 	
 	@XmlElement(name = "AgeAtCTXInitiation")
 	protected int ageAtCTXInitiation;
@@ -107,24 +111,6 @@ public class ChildFollowupType {
 	 */
 	public void setInfantARVType(String value) {
 		this.infantARVType = value;
-	}
-	
-	/**
-	 * Gets the value of the timingOfARVProphylaxis property.
-	 * 
-	 * @return possible object is {@link String }
-	 */
-	public String getTimingOfARVProphylaxis() {
-		return timingOfARVProphylaxis;
-	}
-	
-	/**
-	 * Sets the value of the timingOfARVProphylaxis property.
-	 * 
-	 * @param value allowed object is {@link String }
-	 */
-	public void setTimingOfARVProphylaxis(String value) {
-		this.timingOfARVProphylaxis = value;
 	}
 	
 	/**
@@ -195,4 +181,19 @@ public class ChildFollowupType {
 		this.artEnrollmentNumber = value;
 	}
 	
+	public String getVisitID() {
+		return visitID;
+	}
+	
+	public void setVisitID(String visitID) {
+		this.visitID = visitID;
+	}
+	
+	public XMLGregorianCalendar getVisitDate() {
+		return visitDate;
+	}
+	
+	public void setVisitDate(XMLGregorianCalendar visitDate) {
+		this.visitDate = visitDate;
+	}
 }

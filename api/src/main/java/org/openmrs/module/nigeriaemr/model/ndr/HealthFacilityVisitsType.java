@@ -66,9 +66,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "HealthFacilityVisitsType", propOrder = { "visitDate", "visitStatus", "cotrimoxazole", "weight",
+@XmlType(name = "HealthFacilityVisitsType", propOrder = { "visitDate", "visitID", "visitStatus", "cotrimoxazole", "weight",
         "breastFeeding", "prescribedRegimen", "prescribedRegimenLineCode", "maternalOutcome" })
 public class HealthFacilityVisitsType {
+	
+	@XmlElement(name = "VisitID", required = true)
+	protected String visitID;
 	
 	@XmlElement(name = "VisitDate", required = true)
 	@XmlSchemaType(name = "date")
@@ -203,5 +206,13 @@ public class HealthFacilityVisitsType {
 	
 	public void setMaternalOutcome(String maternalOutcome) {
 		this.maternalOutcome = maternalOutcome;
+	}
+	
+	public String getVisitID() {
+		return visitID;
+	}
+	
+	public void setVisitID(String visitID) {
+		this.visitID = visitID;
 	}
 }

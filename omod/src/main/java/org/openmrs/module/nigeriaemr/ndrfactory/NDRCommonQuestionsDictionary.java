@@ -226,7 +226,7 @@ public class NDRCommonQuestionsDictionary {
             if (exposedInfantId != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(exposedInfantId.getIdentifier());
-                idt.setIDTypeCode("EI");
+                idt.setIDTypeCode("HEI");
                 identifiersType.getIdentifier().add(idt);
             }
             if (pepId != null) {
