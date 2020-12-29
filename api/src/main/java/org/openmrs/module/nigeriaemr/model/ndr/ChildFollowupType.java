@@ -83,7 +83,7 @@ public class ChildFollowupType {
 	protected String infantARVType;
 	
 	@XmlElement(name = "AgeAtCTXInitiation")
-	protected int ageAtCTXInitiation;
+	protected Integer ageAtCTXInitiation;
 	
 	@XmlElement(name = "InfantOutcomeAt18Months", required = true)
 	protected String infantOutcomeAt18Months;
@@ -116,14 +116,14 @@ public class ChildFollowupType {
 	/**
 	 * Gets the value of the ageAtCTXInitiation property.
 	 */
-	public int getAgeAtCTXInitiation() {
+	public Integer getAgeAtCTXInitiation() {
 		return ageAtCTXInitiation;
 	}
 	
 	/**
 	 * Sets the value of the ageAtCTXInitiation property.
 	 */
-	public void setAgeAtCTXInitiation(int value) {
+	public void setAgeAtCTXInitiation(Integer value) {
 		this.ageAtCTXInitiation = value;
 	}
 	
