@@ -7,10 +7,8 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * <p>
@@ -99,10 +97,17 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PartnerDetailsType", propOrder = { "partnerAge", "partnerPreTestCounseled", "partnerPostTestCounseled",
-        "partnerAcceptsHIVTest", "partnerHIVTestResult", "partnerHBVStatus", "partnerHCVStatus", "partnerSyphilisStatus",
-        "partnerReferredTo" })
+@XmlType(name = "PartnerDetailsType", propOrder = { "visitID", "visitDate", "partnerAge", "partnerPreTestCounseled",
+        "partnerPostTestCounseled", "partnerAcceptsHIVTest", "partnerHIVTestResult", "partnerHBVStatus", "partnerHCVStatus",
+        "partnerSyphilisStatus", "partnerReferredTo" })
 public class PartnerDetailsType {
+	
+	@XmlElement(name = "VisitID", required = true)
+	protected String visitID;
+	
+	@XmlElement(name = "VisitDate", required = true)
+	@XmlSchemaType(name = "date")
+	protected XMLGregorianCalendar visitDate;
 	
 	@XmlElement(name = "PartnerAge")
 	protected int partnerAge;
@@ -289,4 +294,19 @@ public class PartnerDetailsType {
 		this.partnerReferredTo = value;
 	}
 	
+	public String getVisitID() {
+		return visitID;
+	}
+	
+	public void setVisitID(String visitID) {
+		this.visitID = visitID;
+	}
+	
+	public XMLGregorianCalendar getVisitDate() {
+		return visitDate;
+	}
+	
+	public void setVisitDate(XMLGregorianCalendar visitDate) {
+		this.visitDate = visitDate;
+	}
 }
