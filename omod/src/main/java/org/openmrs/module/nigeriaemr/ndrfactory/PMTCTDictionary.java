@@ -583,10 +583,7 @@ public class PMTCTDictionary {
                 childFollowupType.setVisitDate(convertedDate);
 
                 Obs obs = extractObs(Infant_Arv_Type_Concept_Id, antenatalObsList);
-                if (obs == null) {
-                    continue;
-                }
-                if (obs.getValueCoded() != null) {
+                if (obs != null && obs.getValueCoded() != null) {
                     try {
                         childFollowupType.setInfantARVType(getMappedValue(obs.getValueCoded().getConceptId()));
                     } catch (Exception ex) {
