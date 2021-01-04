@@ -66,7 +66,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "HealthFacilityVisitsType", propOrder = { "visitDate", "visitID", "visitStatus", "cotrimoxazole", "weight",
+@XmlType(name = "HealthFacilityVisitsType", propOrder = { "visitID", "visitDate", "visitStatus", "cotrimoxazole", "weight",
         "breastFeeding", "prescribedRegimen", "prescribedRegimenLineCode", "maternalOutcome" })
 public class HealthFacilityVisitsType {
 	

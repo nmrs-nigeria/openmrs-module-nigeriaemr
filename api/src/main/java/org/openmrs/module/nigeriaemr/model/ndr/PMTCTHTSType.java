@@ -27,7 +27,7 @@ public class PMTCTHTSType {
 	protected Boolean acceptedHIVTesting;
 	
 	@XmlElement(name = "HIVTestResult")
-	protected TestResultType hivTestResult;
+	protected String hivTestResult;
 	
 	@XmlElement(name = "ReceivedHIVTestResult")
 	protected Boolean receivedHIVTestResult;
@@ -99,11 +99,11 @@ public class PMTCTHTSType {
 		this.acceptedHIVTesting = value;
 	}
 	
-	public TestResultType getHIVTestResult() {
+	public String getHIVTestResult() {
 		return hivTestResult;
 	}
 	
-	public void setHIVTestResult(TestResultType value) {
+	public void setHIVTestResult(String value) {
 		this.hivTestResult = value;
 	}
 	

@@ -238,7 +238,7 @@ public class NDRMainDictionary {
         return pmtctDictionary.createMaternalCohort(maternalCohortEncounter);
     }
 
-    public PMTCTHTSType createPMTCTHTS(List<Encounter> pmtctHTSEncounter){
+    public  List<PMTCTHTSType> createPMTCTHTS(List<Encounter> pmtctHTSEncounter){
         return pmtctDictionary.createPMTCTHTS(pmtctHTSEncounter);
     }
 
