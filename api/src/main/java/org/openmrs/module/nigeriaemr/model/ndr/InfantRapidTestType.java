@@ -43,8 +43,15 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "InfantRapidTestType", propOrder = { "ageAtTest", "dateOfTest", "rapidTestResult" })
+@XmlType(name = "InfantRapidTestType", propOrder = { "visitID", "visitDate", "ageAtTest", "dateOfTest", "rapidTestResult" })
 public class InfantRapidTestType {
+	
+	@XmlElement(name = "VisitID", required = true)
+	protected String visitID;
+	
+	@XmlElement(name = "VisitDate", required = true)
+	@XmlSchemaType(name = "date")
+	protected XMLGregorianCalendar visitDate;
 	
 	@XmlElement(name = "AgeAtTest")
 	protected Integer ageAtTest;
@@ -106,4 +113,19 @@ public class InfantRapidTestType {
 		this.rapidTestResult = value;
 	}
 	
+	public String getVisitID() {
+		return visitID;
+	}
+	
+	public void setVisitID(String visitID) {
+		this.visitID = visitID;
+	}
+	
+	public XMLGregorianCalendar getVisitDate() {
+		return visitDate;
+	}
+	
+	public void setVisitDate(XMLGregorianCalendar visitDate) {
+		this.visitDate = visitDate;
+	}
 }

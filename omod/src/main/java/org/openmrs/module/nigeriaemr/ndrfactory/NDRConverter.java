@@ -236,10 +236,10 @@ public class NDRConverter {
 
         }
         if(generalAntenatalCareEncounters != null){
-            PMTCTHTSType pmtctTHTSType =  mainDictionary.createPMTCTHTS(generalAntenatalCareEncounters);
+            List<PMTCTHTSType> pmtctTHTSType =  mainDictionary.createPMTCTHTS(generalAntenatalCareEncounters);
             if(pmtctTHTSType != null) {
                 if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setPMTCTHTS(pmtctTHTSType);
+                pmtctType.setPmtctHTSTYPES(pmtctTHTSType);
             }
             List<AntenatalRegistrationType> antenatalRegistrationTypes = mainDictionary.createAntenatalRegistrationType(
                     generalAntenatalCareEncounters);

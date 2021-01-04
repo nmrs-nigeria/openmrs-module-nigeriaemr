@@ -131,7 +131,7 @@
 						maxOccurs="unbounded" />
 			<xs:element name="HIVTestingReport" type="HIVTestingReportType"
 						minOccurs="0" maxOccurs="unbounded" />
-			<xs:element name="PMTCT" type="PMTCTType" maxOccurs="1" minOccurs="0"></xs:element>
+			<xs:element name="PMTCT" type="PMTCTType" maxOccurs="unbounded" minOccurs="0"></xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="PMTCTType">
@@ -1528,6 +1528,22 @@
 	<xs:complexType name="InfantPCRTestingType">
 
 		<xs:sequence>
+			<xs:element name="VisitID" type="StringType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The unique Visit
+
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VisitDate"  type="xs:date" minOccurs="1"
+						maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Visit Date
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="AgeAtTest" type="xs:int" minOccurs="0"
 						maxOccurs="1">
 				<xs:annotation>
@@ -1588,6 +1604,22 @@
 
 	<xs:complexType name="InfantRapidTestType">
 		<xs:sequence>
+			<xs:element name="VisitID" type="StringType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The unique Visit
+
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VisitDate"  type="xs:date" minOccurs="1"
+						maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Visit Date
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="AgeAtTest"  type="xs:int" minOccurs="0"
 						maxOccurs="1">
 				<xs:annotation>
@@ -1625,20 +1657,19 @@
 
 	<xs:complexType name="HealthFacilityVisitsType">
 		<xs:sequence>
+			<xs:element name="VisitID" type="StringType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The unique Visit
+
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="VisitDate"  type="xs:date" minOccurs="1"
 						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Visit Date
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="VisitID" type="StringType" minOccurs="1"
-						maxOccurs="1">
-				<xs:annotation>
-					<xs:documentation xml:lang="en">
-						The unique Visit
-
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
@@ -4053,13 +4084,19 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="HIVTestResult"  type="TestResultType" minOccurs="0"
+			<xs:element name="HIVTestResult" minOccurs="0"
 						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						HIV Test Result
 					</xs:documentation>
 				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="CodeType">
+						<xs:enumeration value="Pos" />
+						<xs:enumeration value="Neg" />
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:element>
 			<xs:element name="ReceivedHIVTestResult"  type="xs:boolean" minOccurs="0"
 						maxOccurs="1">
