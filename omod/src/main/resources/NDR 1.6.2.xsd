@@ -131,7 +131,7 @@
 						maxOccurs="unbounded" />
 			<xs:element name="HIVTestingReport" type="HIVTestingReportType"
 						minOccurs="0" maxOccurs="unbounded" />
-			<xs:element name="PMTCT" type="PMTCTType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+			<xs:element name="PMTCT" type="PMTCTType" maxOccurs="1" minOccurs="0"></xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="PMTCTType">
@@ -165,7 +165,7 @@
 						minOccurs="0" maxOccurs="unbounded" />
 			<xs:element name="MaternalCohort" type="MaternalCohortType"
 						minOccurs="0" maxOccurs="unbounded" />
-			<xs:element name="PMTCTHTS" type="PMTCTHTSType" maxOccurs="1" minOccurs="0"></xs:element>
+			<xs:element name="PMTCTHTS" type="PMTCTHTSType" maxOccurs="unbounded" minOccurs="0"></xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="ConditionType">

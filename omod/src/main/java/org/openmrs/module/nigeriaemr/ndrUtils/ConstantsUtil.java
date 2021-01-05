@@ -42,6 +42,8 @@ public class ConstantsUtil {
 	
 	public static final int PARTNER_REGISTER = 19;
 	
+	public static final String PMTCT_HTS_REGISTER = "136e629b-78b6-4cdb-b76a-01c598d6a173";
+	
 	public static final int CHILD_BIRTH_REGISTRATION_ENCOUNTER = 9;
 	
 	public static final String PMTCT_HTS_FORM_UUID = "1b64c8bc-b289-45f7-943c-122be5de7274";

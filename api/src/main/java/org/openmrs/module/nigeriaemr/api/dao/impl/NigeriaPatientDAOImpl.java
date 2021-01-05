@@ -139,7 +139,7 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		String query = "SELECT patient_identifier.patient_id FROM patient_identifier ";
 		if (fromDate != null || toDate != null)
 			query += " LEFT JOIN patient ON patient.patient_id = patient_identifier.patient_id";
-		query += " WHERE identifier_type = 4 AND identifier in (:identifiers) ";
+		query += " WHERE identifier in (:identifiers) ";
 		if (fromDate != null)
 			query += " AND (patient.date_created >= :fromDate OR patient.date_changed >= :fromDate)";
 		if (toDate != null)

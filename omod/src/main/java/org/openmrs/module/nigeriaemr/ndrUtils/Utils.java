@@ -552,6 +552,26 @@ public class Utils {
 		return grouped;
 	}
 	
+	public static Map<String, List<Encounter>> extractEncountersByEncounterTypesUUID(List<Encounter> encounters) {
+		Map<String, List<Encounter>> grouped = new HashMap<>();
+		if(encounters != null && encounters.size()>0){
+			for (Encounter encounter:encounters){
+				if(encounter.getEncounterType()!= null && encounter.getEncounterType().getUuid() != null){
+					if(grouped.get(encounter.getEncounterType().getUuid()) == null){
+						List<Encounter> encs = new ArrayList<>();
+						encs.add(encounter);
+						grouped.put(encounter.getEncounterType().getUuid(), encs);
+					}else{
+						List<Encounter> groupedEncounters = grouped.get(encounter.getEncounterType().getUuid());
+						groupedEncounters.add(encounter);
+						grouped.put(encounter.getEncounterType().getUuid(),groupedEncounters);
+					}
+				}
+			}
+		}
+		return grouped;
+	}
+	
 	public static Map<String,Map<Object, List<Obs>>> groupObs(List<Obs> obsList) {
 		Map<String, Map<Object, List<Obs>>> grouped = new HashMap<>();
 		Map<Object, List<Obs>> groupedByConceptIds = new HashMap<>();
