@@ -31,6 +31,8 @@ public class NDRConverter {
 
 	private Map<Integer, List<Encounter>> groupedEncounters = new HashMap<>();
 
+    private Map<String, List<Encounter>> groupedEncountersByUUID = new HashMap<>();
+
 	private Map<Object, List<Obs>> groupedObsByConceptIds = new HashMap<>();
 	
 	private Map<Object, List<Obs>> groupedObsByEncounterTypes = new HashMap<>();
@@ -80,6 +82,7 @@ public class NDRConverter {
                     List<Encounter> encounters = new ArrayList<>(filteredEncounters);
                     this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
                     this.groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
+                    this.groupedEncountersByUUID = Utils.extractEncountersByEncounterTypesUUID(encounters);
 
                     List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
                     Map<String, Map<Object, List<Obs>>> grouped = Utils.groupObs(allobs);
@@ -195,6 +198,7 @@ public class NDRConverter {
         List<Encounter> childFollowUpEncounters = this.groupedEncounters.get(ConstantsUtil.CHILD_FOLLOW_UP);
         List<Encounter> childBirthEncounters = this.groupedEncounters.get(ConstantsUtil.CHILD_BIRTH_REGISTRATION_ENCOUNTER);
         List<Encounter> partnerEncounters = this.groupedEncounters.get(ConstantsUtil.PARTNER_REGISTER);
+        List<Encounter> pmtctHtsRegisterEncounters = this.groupedEncountersByUUID.get(ConstantsUtil.PMTCT_HTS_REGISTER);
 
         if(pmtctEncounters != null) {
             List<MaternalCohortType> maternalCohortTypes =  mainDictionary.createMaternalCohort(pmtctEncounters);
@@ -246,6 +250,17 @@ public class NDRConverter {
             if (antenatalRegistrationTypes != null && antenatalRegistrationTypes.size() > 0) {
                 if (pmtctType == null) pmtctType = new PMTCTType();
                 pmtctType.setAntenatalRegistrationTypes(antenatalRegistrationTypes);
+            }
+        }
+
+        if(pmtctHtsRegisterEncounters != null){
+            List<PMTCTHTSType> pmtctTHTSType =  mainDictionary.createPMTCTHTS(pmtctHtsRegisterEncounters);
+            if(pmtctTHTSType != null) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                if(pmtctType.getPmtctHTSTYPES() != null && pmtctType.getPmtctHTSTYPES().size() > 0){
+                    pmtctTHTSType.addAll(pmtctType.getPmtctHTSTYPES());
+                }
+                pmtctType.setPmtctHTSTYPES(pmtctTHTSType);
             }
         }
 
