@@ -171,11 +171,11 @@ public class NDRCommonQuestionsDictionary {
            // pepfarid = new PatientIdentifier();
             // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
 
-            PatientIdentifierType pepfaridPatientIdentifierType =
-                    Context.getPatientService().getPatientIdentifierType(Utils.PEPFAR_IDENTIFIER_INDEX);
+//            PatientIdentifierType pepfaridPatientIdentifierType =
+//                    Context.getPatientService().getPatientIdentifierType(Utils.PEPFAR_IDENTIFIER_INDEX);
 
 //            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts,pepfaridPatientIdentifierType);
-            String pepfaridForRedactedPatient = nigeriaPatientService.getPatientIdentifierByPatientsId(pts.getPatientId(), Utils.PEPFAR_IDENTIFIER_INDEX);
+
             pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
             pidHospital = pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX);
             pidOthers = pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX);
@@ -194,6 +194,7 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDNumber(pepfarid.getIdentifier());
                 demo.setPatientIdentifier(pepfarid.getIdentifier());
             }else{
+                String pepfaridForRedactedPatient = nigeriaPatientService.getPatientIdentifierByPatientsId(pts.getPatientId(), Utils.PEPFAR_IDENTIFIER_INDEX);
                 if(pepfaridForRedactedPatient != null) {
                     demo.setPatientIdentifier(pepfaridForRedactedPatient);
                 }

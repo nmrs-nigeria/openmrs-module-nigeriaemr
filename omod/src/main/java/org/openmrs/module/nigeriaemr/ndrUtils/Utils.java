@@ -1418,7 +1418,7 @@ public class Utils {
 		Map<Object, List<Obs>> obsListForEncounterTypes = Utils.groupedByConceptIdsOnly(obsList);
 		List<Obs> obsListFinal = obsListForEncounterTypes.get(conceptId);
 		try {
-			if(obsList != null) {
+			if(obsListFinal != null) {
 				for (Obs obs : obsListFinal) {
 					if (obs != null && obs.getValueText() != null) {
 						ids.add(obs.getValueText());
