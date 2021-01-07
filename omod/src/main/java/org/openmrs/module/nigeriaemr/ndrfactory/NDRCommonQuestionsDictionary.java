@@ -28,6 +28,7 @@ import org.openmrs.module.nigeriaemr.model.ndr.IdentifiersType;
 import org.openmrs.module.nigeriaemr.model.ndr.LeftHandType;
 import org.openmrs.module.nigeriaemr.model.ndr.PatientDemographicsType;
 import org.openmrs.module.nigeriaemr.model.ndr.RightHandType;
+import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
@@ -222,6 +223,14 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDNumber(ancId.getIdentifier());
                 idt.setIDTypeCode("ANC");
                 identifiersType.getIdentifier().add(idt);
+            }else{
+                List<String> ancIds = utils.getIds(groupedObsByEncounterTypes.get(ConstantsUtil.GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE),165567);
+                if(ancIds != null && ancIds.size() > 0){
+                    idt = new IdentifierType();
+                    idt.setIDNumber(ancIds.get(0));
+                    idt.setIDTypeCode("ANC");
+                    identifiersType.getIdentifier().add(idt);
+                }
             }
             if (exposedInfantId != null) {
                 idt = new IdentifierType();

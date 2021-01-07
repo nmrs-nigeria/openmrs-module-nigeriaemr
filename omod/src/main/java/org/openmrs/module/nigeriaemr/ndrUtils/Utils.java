@@ -18,6 +18,7 @@ import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
+import org.openmrs.module.nigeriaemr.ndrfactory.PMTCTDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.PharmacyDictionary;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
@@ -1411,4 +1412,22 @@ public class Utils {
 			return String.valueOf(defaultValue);
 		}
 	}
+	
+	public List<String> getIds(List<Obs> obsList, int conceptId) {
+		List<String> ids = new ArrayList<>();
+		Map<Object, List<Obs>> obsListForEncounterTypes = Utils.groupedByConceptIdsOnly(obsList);
+		List<Obs> obsListFinal = obsListForEncounterTypes.get(conceptId);
+		try {
+			if(obsList != null) {
+				for (Obs obs : obsListFinal) {
+					if (obs != null && obs.getValueText() != null) {
+						ids.add(obs.getValueText());
+					}
+				}
+			}
+		}catch (Exception ex) {
+			LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+		}
+		return ids;
+    }
 }
