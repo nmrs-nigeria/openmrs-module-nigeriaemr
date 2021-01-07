@@ -201,5 +201,20 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		}
 		return null;
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public String getPatientIdentifierByPatientsId(Integer patientId, Integer identifierType) throws DAOException {
+
+		String query = "SELECT distinct(patient_identifier.identifier) FROM patient_identifier patient_identifier "
+				+ " WHERE patient_identifier.identifier_type = :identifierType AND patient_identifier.patient_id = :patientId ";
+		SQLQuery sql = getSession().createSQLQuery(query);
+		sql.setInteger("identifierType", identifierType);
+		sql.setInteger("patientId", patientId);
+		if (sql.uniqueResult() != null) {
+			return sql.uniqueResult().toString();
+		}
+		return null;
+	}
 	
 }
