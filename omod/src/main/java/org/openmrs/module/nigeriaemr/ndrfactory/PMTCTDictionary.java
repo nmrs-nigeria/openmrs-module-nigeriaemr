@@ -344,6 +344,11 @@ public class PMTCTDictionary {
                     registrationType.setExpectedDateOfDelivery(utils.getXmlDate(obs.getValueDate()));
                 }
 
+                obs = extractObs(anc_no, anthenatalObsList);
+                if (obs != null && obs.getValueText() != null) {
+                    registrationType.setAncNumber(obs.getValueText());
+                }
+
                 //get data for Syphilis and add to antenatal reg type
                 LoggerUtils.write(PMTCTDictionary.class.getName(), "About to pull all SYPHILIS", LogFormat.FATAL, LogLevel.live);
                 Syphilis syphilis = new Syphilis();
