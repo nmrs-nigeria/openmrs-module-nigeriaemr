@@ -347,6 +347,10 @@ public class PMTCTDictionary {
                 obs = extractObs(anc_no, anthenatalObsList);
                 if (obs != null && obs.getValueText() != null) {
                     registrationType.setAncNumber(obs.getValueText());
+                }else{
+                    Patient patient = enc.getPatient();
+                    PatientIdentifier ancId = patient.getPatientIdentifier(Utils.PMTCT_IDENTIFIER_INDEX);
+                    registrationType.setAncNumber(ancId.getIdentifier());
                 }
 
                 //get data for Syphilis and add to antenatal reg type
