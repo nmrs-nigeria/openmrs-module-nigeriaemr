@@ -131,7 +131,7 @@
 						maxOccurs="unbounded" />
 			<xs:element name="HIVTestingReport" type="HIVTestingReportType"
 						minOccurs="0" maxOccurs="unbounded" />
-			<xs:element name="PMTCT" type="PMTCTType" maxOccurs="1" minOccurs="0"></xs:element>
+			<xs:element name="PMTCT" type="PMTCTType" maxOccurs="unbounded" minOccurs="0"></xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="PMTCTType">
@@ -2795,11 +2795,11 @@
 
 	<xs:complexType name="AntenatalRegistrationType">
 		<xs:sequence>
-			<xs:element name="VisitID" type="StringType" minOccurs="1"  maxOccurs="1">
+			<xs:element name="VisitID" type="StringType" minOccurs="1"
+						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
-						The unique Visit
-						Identifier
+						The unique Visit Identifier
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
@@ -2812,17 +2812,19 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="LastMenstralPeriod" type="xs:date" minOccurs="0"
-						maxOccurs="1">
+			<xs:element name="ANCNumber" type="xs:string" maxOccurs="1" minOccurs="1"></xs:element>
+			<xs:element name="LastMenstralPeriod" type="xs:date"
+						minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
-						Date of last menstral period before current pregnancy
+						Date of last menstral period before current
+						pregnancy
 
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="GestationalAgeAtANCRegistration" type="xs:int" minOccurs="0"
-						maxOccurs="1">
+			<xs:element name="GestationalAgeAtANCRegistration" type="xs:int"
+						minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Age in weeks of current pregnancy
@@ -2839,14 +2841,6 @@
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="Parity" type="xs:int" minOccurs="0"
-						maxOccurs="1" >
-				<xs:annotation>
-					<xs:documentation xml:lang="en">
-						Decription
-					</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element name="SourceOfReferral" type="StringType" minOccurs="0"
 						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -2854,8 +2848,16 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="ExpectedDateOfDelivery" type="xs:date" minOccurs="0"
-						maxOccurs="1">
+			<xs:element name="SourceOfReferral" type="StringType"
+						minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Decription
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpectedDateOfDelivery" type="xs:date"
+						minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Expected Date of Delivery
@@ -2863,7 +2865,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="Syphilis">
+			<xs:element name="Syphilis" maxOccurs="1" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="TestedForSyphilis" minOccurs="0"
@@ -2882,7 +2884,7 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="SyphilisTestResult"  minOccurs="0"
+						<xs:element name="SyphilisTestResult" minOccurs="0"
 									maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation xml:lang="en">
@@ -2897,7 +2899,7 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="TreatedForSyphilis"  minOccurs="0"
+						<xs:element name="TreatedForSyphilis" minOccurs="0"
 									maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation xml:lang="en">
@@ -2913,8 +2915,8 @@
 								</xs:restriction>
 							</xs:simpleType>
 						</xs:element>
-						<xs:element name="SyphilisResult" type="StringType" minOccurs="0"
-									maxOccurs="1">
+						<xs:element name="SyphilisResult" type="StringType"
+									minOccurs="0" maxOccurs="1">
 							<xs:annotation>
 								<xs:documentation xml:lang="en">
 									Reffered Syphilis Positive Client
@@ -2922,10 +2924,12 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="ReferredSyphilisPositiveClient"  minOccurs="0"
-									maxOccurs="1">
+						<xs:element name="ReferredSyphilisPositiveClient"
+									minOccurs="0" maxOccurs="1">
 							<xs:annotation>
-								<xs:documentation xml:lang="en"> Description </xs:documentation>
+								<xs:documentation xml:lang="en">
+									Description
+								</xs:documentation>
 							</xs:annotation>
 							<xs:simpleType>
 								<xs:restriction base="CodeType">
