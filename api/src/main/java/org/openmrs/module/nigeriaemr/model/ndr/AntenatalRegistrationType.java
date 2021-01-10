@@ -86,7 +86,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AntenatalRegistrationType", propOrder = { "visitID", "visitDate","ancNumber", "lastMenstralPeriod",
+@XmlType(name = "AntenatalRegistrationType", propOrder = { "visitID", "visitDate", "ancNumber", "lastMenstralPeriod",
         "gestationalAgeAtANCRegistration", "gravida", "parity", "sourceOfReferral", "expectedDateOfDelivery", "syphilis" })
 public class AntenatalRegistrationType {
 	
@@ -112,10 +112,9 @@ public class AntenatalRegistrationType {
 	
 	@XmlElement(name = "SourceOfReferral", required = true)
 	protected String sourceOfReferral;
-
+	
 	@XmlElement(name = "ANCNumber", required = true)
 	protected String ancNumber;
-
 	
 	@XmlElement(name = "ExpectedDateOfDelivery", required = true)
 	@XmlSchemaType(name = "date")
@@ -123,15 +122,15 @@ public class AntenatalRegistrationType {
 	
 	@XmlElement(name = "Syphilis", required = true)
 	protected AntenatalRegistrationType.Syphilis syphilis;
-
+	
 	public String getAncNumber() {
 		return ancNumber;
 	}
-
+	
 	public void setAncNumber(String ancNumber) {
 		this.ancNumber = ancNumber;
 	}
-
+	
 	/**
 	 * Gets the value of the visitID property.
 	 * 
