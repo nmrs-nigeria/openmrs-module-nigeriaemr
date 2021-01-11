@@ -58,11 +58,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *             &lt;/restriction>
  *           &lt;/simpleType>
  *         &lt;/element>
- *         &lt;element name="APGARScore" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *         &lt;element name="BirthMUAC" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *         &lt;element name="BirthLenght" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *         &lt;element name="BirthWeight" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *         &lt;element name="HeadCircumferenceAtBirth" type="{http://www.w3.org/2001/XMLSchema}float"/>
+ *         &lt;element name="APGARScore" type="{http://www.w3.org/2001/XMLSchema}Float"/>
+ *         &lt;element name="BirthMUAC" type="{http://www.w3.org/2001/XMLSchema}Float"/>
+ *         &lt;element name="BirthLenght" type="{http://www.w3.org/2001/XMLSchema}Float"/>
+ *         &lt;element name="BirthWeight" type="{http://www.w3.org/2001/XMLSchema}Float"/>
+ *         &lt;element name="HeadCircumferenceAtBirth" type="{http://www.w3.org/2001/XMLSchema}Float"/>
  *         &lt;element name="ImmunizationReceived" type="{}StringType"/>
  *         &lt;element name="HBVExposedInfantGivenHepBIg">
  *           &lt;simpleType>
@@ -89,10 +89,18 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ChildBirthDetailsType", propOrder = { "childHospitalNumber", "childEIDNumber", "childDateOfBirth",
-        "childSexCode", "childGivenNVPWithin72Hrs", "childStatus", "apgarScore", "birthMUAC", "birthLenght", "birthWeight",
-        "headCircumferenceAtBirth", "immunizationReceived", "hbvExposedInfantGivenHepBIg", "nonHBVExposedInfantGivenHBV" })
+@XmlType(name = "ChildBirthDetailsType", propOrder = { "visitID", "visitDate", "enrollmentDate", "childHospitalNumber",
+        "childEIDNumber", "childDateOfBirth", "childSexCode", "childGivenNVPWithin72Hrs", "childStatus", "apgarScore",
+        "birthMUAC", "birthLenght", "birthWeight", "headCircumferenceAtBirth", "immunizationReceived",
+        "hbvExposedInfantGivenHepBIg", "nonHBVExposedInfantGivenHBV", "arvProphylaxis", "timingOfARVProphylaxis" })
 public class ChildBirthDetailsType {
+	
+	@XmlElement(name = "VisitID", required = true)
+	protected String visitID;
+	
+	@XmlElement(name = "VisitDate", required = true)
+	@XmlSchemaType(name = "date")
+	protected XMLGregorianCalendar visitDate;
 	
 	@XmlElement(name = "ChildHospitalNumber", required = true)
 	protected String childHospitalNumber;
@@ -114,19 +122,19 @@ public class ChildBirthDetailsType {
 	protected String childStatus;
 	
 	@XmlElement(name = "APGARScore")
-	protected float apgarScore;
+	protected Float apgarScore;
 	
 	@XmlElement(name = "BirthMUAC")
-	protected float birthMUAC;
+	protected String birthMUAC;
 	
 	@XmlElement(name = "BirthLenght")
-	protected float birthLenght;
+	protected Float birthLenght;
 	
 	@XmlElement(name = "BirthWeight")
-	protected float birthWeight;
+	protected Float birthWeight;
 	
 	@XmlElement(name = "HeadCircumferenceAtBirth")
-	protected float headCircumferenceAtBirth;
+	protected Float headCircumferenceAtBirth;
 	
 	@XmlElement(name = "ImmunizationReceived", required = true)
 	protected String immunizationReceived;
@@ -136,6 +144,16 @@ public class ChildBirthDetailsType {
 	
 	@XmlElement(name = "NonHBVExposedInfantGivenHBV", required = true)
 	protected String nonHBVExposedInfantGivenHBV;
+	
+	@XmlElement(name = "EnrollmentDate", required = true)
+	@XmlSchemaType(name = "date")
+	protected XMLGregorianCalendar enrollmentDate;
+	
+	@XmlElement(name = "TimingOfARVProphylaxis")
+	protected String timingOfARVProphylaxis;
+	
+	@XmlElement(name = "ARVProphylaxis")
+	protected String arvProphylaxis;
 	
 	/**
 	 * Gets the value of the childHospitalNumber property.
@@ -248,70 +266,56 @@ public class ChildBirthDetailsType {
 	/**
 	 * Gets the value of the apgarScore property.
 	 */
-	public float getAPGARScore() {
+	public Float getAPGARScore() {
 		return apgarScore;
 	}
 	
 	/**
 	 * Sets the value of the apgarScore property.
 	 */
-	public void setAPGARScore(float value) {
+	public void setAPGARScore(Float value) {
 		this.apgarScore = value;
-	}
-	
-	/**
-	 * Gets the value of the birthMUAC property.
-	 */
-	public float getBirthMUAC() {
-		return birthMUAC;
-	}
-	
-	/**
-	 * Sets the value of the birthMUAC property.
-	 */
-	public void setBirthMUAC(float value) {
-		this.birthMUAC = value;
 	}
 	
 	/**
 	 * Gets the value of the birthLenght property.
 	 */
-	public float getBirthLenght() {
+	public Float getBirthLenght() {
 		return birthLenght;
 	}
 	
 	/**
 	 * Sets the value of the birthLenght property.
 	 */
-	public void setBirthLenght(float value) {
+	public void setBirthLenght(Float value) {
 		this.birthLenght = value;
 	}
 	
 	/**
 	 * Gets the value of the birthWeight property.
 	 */
-	public float getBirthWeight() {
+	public Float getBirthWeight() {
 		return birthWeight;
 	}
 	
 	/**
 	 * Sets the value of the birthWeight property.
 	 */
-	public void setBirthWeight(float value) {
+	public void setBirthWeight(Float value) {
 		this.birthWeight = value;
 	}
 	
 	/**
 	 * Gets the value of the headCircumferenceAtBirth property.
 	 */
-	public float getHeadCircumferenceAtBirth() {
+	public Float getHeadCircumferenceAtBirth() {
 		return headCircumferenceAtBirth;
 	}
 	
 	/**
 	 * Sets the value of the headCircumferenceAtBirth property.
 	 */
-	public void setHeadCircumferenceAtBirth(float value) {
+	public void setHeadCircumferenceAtBirth(Float value) {
 		this.headCircumferenceAtBirth = value;
 	}
 	
@@ -369,4 +373,61 @@ public class ChildBirthDetailsType {
 		this.nonHBVExposedInfantGivenHBV = value;
 	}
 	
+	public XMLGregorianCalendar getEnrollmentDate() {
+		return enrollmentDate;
+	}
+	
+	public void setEnrollmentDate(XMLGregorianCalendar enrollmentDate) {
+		this.enrollmentDate = enrollmentDate;
+	}
+	
+	/**
+	 * Gets the value of the timingOfARVProphylaxis property.
+	 * 
+	 * @return possible object is {@link String }
+	 */
+	public String getTimingOfARVProphylaxis() {
+		return timingOfARVProphylaxis;
+	}
+	
+	/**
+	 * Sets the value of the timingOfARVProphylaxis property.
+	 * 
+	 * @param value allowed object is {@link String }
+	 */
+	public void setTimingOfARVProphylaxis(String value) {
+		this.timingOfARVProphylaxis = value;
+	}
+	
+	public String getBirthMUAC() {
+		return birthMUAC;
+	}
+	
+	public void setBirthMUAC(String birthMUAC) {
+		this.birthMUAC = birthMUAC;
+	}
+	
+	public String getVisitID() {
+		return visitID;
+	}
+	
+	public void setVisitID(String visitID) {
+		this.visitID = visitID;
+	}
+	
+	public XMLGregorianCalendar getVisitDate() {
+		return visitDate;
+	}
+	
+	public void setVisitDate(XMLGregorianCalendar visitDate) {
+		this.visitDate = visitDate;
+	}
+	
+	public String getArvProphylaxis() {
+		return arvProphylaxis;
+	}
+	
+	public void setArvProphylaxis(String arvProphylaxis) {
+		this.arvProphylaxis = arvProphylaxis;
+	}
 }

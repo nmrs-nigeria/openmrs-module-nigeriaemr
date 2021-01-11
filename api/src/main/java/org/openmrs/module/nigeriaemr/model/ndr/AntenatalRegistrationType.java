@@ -28,9 +28,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="VisitID" type="{}StringType"/>
  *         &lt;element name="VisitDate" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;element name="LastMenstralPeriod" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *         &lt;element name="GestationalAgeAtANCRegistration" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="Gravida" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="Parity" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="GestationalAgeAtANCRegistration" type="{http://www.w3.org/2001/XMLSchema}Integer"/>
+ *         &lt;element name="Gravida" type="{http://www.w3.org/2001/XMLSchema}Integer"/>
+ *         &lt;element name="Parity" type="{http://www.w3.org/2001/XMLSchema}Integer"/>
  *         &lt;element name="SourceOfReferral" type="{}StringType"/>
  *         &lt;element name="ExpectedDateOfDelivery" type="{http://www.w3.org/2001/XMLSchema}date"/>
  *         &lt;element name="Syphilis">
@@ -86,7 +86,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AntenatalRegistrationType", propOrder = { "visitID", "visitDate", "lastMenstralPeriod",
+@XmlType(name = "AntenatalRegistrationType", propOrder = { "visitID", "visitDate", "ancNumber", "lastMenstralPeriod",
         "gestationalAgeAtANCRegistration", "gravida", "parity", "sourceOfReferral", "expectedDateOfDelivery", "syphilis" })
 public class AntenatalRegistrationType {
 	
@@ -102,16 +102,19 @@ public class AntenatalRegistrationType {
 	protected XMLGregorianCalendar lastMenstralPeriod;
 	
 	@XmlElement(name = "GestationalAgeAtANCRegistration")
-	protected int gestationalAgeAtANCRegistration;
+	protected Integer gestationalAgeAtANCRegistration;
 	
 	@XmlElement(name = "Gravida")
-	protected int gravida;
+	protected Integer gravida;
 	
 	@XmlElement(name = "Parity")
-	protected int parity;
+	protected Integer parity;
 	
 	@XmlElement(name = "SourceOfReferral", required = true)
 	protected String sourceOfReferral;
+	
+	@XmlElement(name = "ANCNumber", required = true)
+	protected String ancNumber;
 	
 	@XmlElement(name = "ExpectedDateOfDelivery", required = true)
 	@XmlSchemaType(name = "date")
@@ -119,6 +122,14 @@ public class AntenatalRegistrationType {
 	
 	@XmlElement(name = "Syphilis", required = true)
 	protected AntenatalRegistrationType.Syphilis syphilis;
+	
+	public String getAncNumber() {
+		return ancNumber;
+	}
+	
+	public void setAncNumber(String ancNumber) {
+		this.ancNumber = ancNumber;
+	}
 	
 	/**
 	 * Gets the value of the visitID property.
@@ -177,42 +188,42 @@ public class AntenatalRegistrationType {
 	/**
 	 * Gets the value of the gestationalAgeAtANCRegistration property.
 	 */
-	public int getGestationalAgeAtANCRegistration() {
+	public Integer getGestationalAgeAtANCRegistration() {
 		return gestationalAgeAtANCRegistration;
 	}
 	
 	/**
 	 * Sets the value of the gestationalAgeAtANCRegistration property.
 	 */
-	public void setGestationalAgeAtANCRegistration(int value) {
+	public void setGestationalAgeAtANCRegistration(Integer value) {
 		this.gestationalAgeAtANCRegistration = value;
 	}
 	
 	/**
 	 * Gets the value of the gravida property.
 	 */
-	public int getGravida() {
+	public Integer getGravida() {
 		return gravida;
 	}
 	
 	/**
 	 * Sets the value of the gravida property.
 	 */
-	public void setGravida(int value) {
+	public void setGravida(Integer value) {
 		this.gravida = value;
 	}
 	
 	/**
 	 * Gets the value of the parity property.
 	 */
-	public int getParity() {
+	public Integer getParity() {
 		return parity;
 	}
 	
 	/**
 	 * Sets the value of the parity property.
 	 */
-	public void setParity(int value) {
+	public void setParity(Integer value) {
 		this.parity = value;
 	}
 	

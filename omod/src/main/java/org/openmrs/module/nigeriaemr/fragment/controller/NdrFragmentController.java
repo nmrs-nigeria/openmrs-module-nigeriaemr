@@ -88,14 +88,18 @@ public class NdrFragmentController {
 			if (from != null && !from.isEmpty()) {
 				lastDate = new SimpleDateFormat("yyyy-MM-dd").parse(from);
 			}
-			Date currentDate = Utils.getLastNDRDate();
+			Date currentDate = null;
+			if (to != null && !to.isEmpty()) {
+				currentDate = new SimpleDateFormat("yyyy-MM-dd").parse(to);
+			}
+			currentDate = Utils.getLastNDRDate();
 
 			List<Integer> patients = new ArrayList<>();
 			if (identifiers != null && !identifiers.isEmpty()) {
 				String[] ary = identifiers.split(",");
 				if (ary.length > 0) {
 					List<String> identifierList = new ArrayList<>(Arrays.asList(ary));
-					List<Integer> patientIdsFromIdentifiers = nigeriaPatientService.getPatientIdsByIdentifiers(identifierList, lastDate, currentDate);
+					List<Integer> patientIdsFromIdentifiers = nigeriaPatientService.getPatientIdsByIdentifiers(identifierList, null, null);
 					identifierList.addAll(patientIdsFromIdentifiers.stream().map(String::valueOf).collect(Collectors.toList()));
 					List<Integer> patientIds = ndrExtractionService.getPatientIds(lastDate,currentDate,identifierList,true);
 					Set<Integer> set = new HashSet<>(patientIds);

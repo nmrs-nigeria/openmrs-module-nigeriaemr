@@ -12,13 +12,13 @@ import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
-import org.openmrs.module.nigeriaemr.api.service.impl.NigeriaObsServiceImpl;
 import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
+import org.openmrs.module.nigeriaemr.ndrfactory.PMTCTDictionary;
 import org.openmrs.module.nigeriaemr.ndrfactory.PharmacyDictionary;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
@@ -26,7 +26,6 @@ import org.openmrs.module.nigeriaemr.util.FileUtils;
 import org.openmrs.module.nigeriaemr.util.ZipUtil;
 import org.openmrs.util.OpenmrsUtil;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.BufferedWriter;
@@ -308,6 +307,10 @@ public class Utils {
 	
 	public final static int REASON_FOR_TERMINATION = 165470;
 	
+	public final static int YES_NO_VALUE = 1065;
+	
+	public final static int YES_NO_ALTERNATIVE_VALUE = 1;
+	
 	/*
 	       HIVQuestionsType
 	        
@@ -543,6 +546,26 @@ public class Utils {
 						List<Encounter> groupedEncounters = grouped.get(encounter.getEncounterType().getEncounterTypeId());
 						groupedEncounters.add(encounter);
 						grouped.put(encounter.getEncounterType().getEncounterTypeId(),groupedEncounters);
+					}
+				}
+			}
+		}
+		return grouped;
+	}
+	
+	public static Map<String, List<Encounter>> extractEncountersByEncounterTypesUUID(List<Encounter> encounters) {
+		Map<String, List<Encounter>> grouped = new HashMap<>();
+		if(encounters != null && encounters.size()>0){
+			for (Encounter encounter:encounters){
+				if(encounter.getEncounterType()!= null && encounter.getEncounterType().getUuid() != null){
+					if(grouped.get(encounter.getEncounterType().getUuid()) == null){
+						List<Encounter> encs = new ArrayList<>();
+						encs.add(encounter);
+						grouped.put(encounter.getEncounterType().getUuid(), encs);
+					}else{
+						List<Encounter> groupedEncounters = grouped.get(encounter.getEncounterType().getUuid());
+						groupedEncounters.add(encounter);
+						grouped.put(encounter.getEncounterType().getUuid(),groupedEncounters);
 					}
 				}
 			}
@@ -1389,4 +1412,22 @@ public class Utils {
 			return String.valueOf(defaultValue);
 		}
 	}
+	
+	public List<String> getIds(List<Obs> obsList, int conceptId) {
+		List<String> ids = new ArrayList<>();
+		Map<Object, List<Obs>> obsListForEncounterTypes = Utils.groupedByConceptIdsOnly(obsList);
+		List<Obs> obsListFinal = obsListForEncounterTypes.get(conceptId);
+		try {
+			if(obsListFinal != null) {
+				for (Obs obs : obsListFinal) {
+					if (obs != null && obs.getValueText() != null) {
+						ids.add(obs.getValueText());
+					}
+				}
+			}
+		}catch (Exception ex) {
+			LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+		}
+		return ids;
+    }
 }

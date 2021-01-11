@@ -253,7 +253,7 @@ public class ClinicalDictionary {
         map.put(160569, "9");
     }
 
-    private String getMappedValue(int conceptID) {
+    public String getMappedValue(int conceptID) {
         if (map.containsKey(conceptID)) {
             return map.get(conceptID);
         }

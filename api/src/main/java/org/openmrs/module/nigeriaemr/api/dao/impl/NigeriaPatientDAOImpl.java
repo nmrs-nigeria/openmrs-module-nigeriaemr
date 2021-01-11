@@ -139,7 +139,7 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		String query = "SELECT patient_identifier.patient_id FROM patient_identifier ";
 		if (fromDate != null || toDate != null)
 			query += " LEFT JOIN patient ON patient.patient_id = patient_identifier.patient_id";
-		query += " WHERE identifier_type = 4 AND identifier in (:identifiers) ";
+		query += " WHERE identifier in (:identifiers) ";
 		if (fromDate != null)
 			query += " AND (patient.date_created >= :fromDate OR patient.date_changed >= :fromDate)";
 		if (toDate != null)
@@ -198,6 +198,21 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 			} else {
 				return result.get(0).getIdentifier();
 			}
+		}
+		return null;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public String getPatientIdentifierByPatientsId(Integer patientId, Integer identifierType) throws DAOException {
+		
+		String query = "SELECT distinct(patient_identifier.identifier) FROM patient_identifier patient_identifier "
+		        + " WHERE patient_identifier.identifier_type = :identifierType AND patient_identifier.patient_id = :patientId ";
+		SQLQuery sql = getSession().createSQLQuery(query);
+		sql.setInteger("identifierType", identifierType);
+		sql.setInteger("patientId", patientId);
+		if (sql.uniqueResult() != null) {
+			return sql.uniqueResult().toString();
 		}
 		return null;
 	}

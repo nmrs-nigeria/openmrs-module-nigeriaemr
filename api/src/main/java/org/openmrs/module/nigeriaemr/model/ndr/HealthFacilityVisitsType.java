@@ -66,25 +66,37 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "HealthFacilityVisitsType", propOrder = { "visitDate", "visitStatus", "cotrimoxazole", "weight",
-        "breastFeeding" })
+@XmlType(name = "HealthFacilityVisitsType", propOrder = { "visitID", "visitDate", "visitStatus", "cotrimoxazole", "weight",
+        "breastFeeding", "prescribedRegimen", "prescribedRegimenLineCode", "maternalOutcome" })
 public class HealthFacilityVisitsType {
+	
+	@XmlElement(name = "VisitID", required = true)
+	protected String visitID;
 	
 	@XmlElement(name = "VisitDate", required = true)
 	@XmlSchemaType(name = "date")
 	protected XMLGregorianCalendar visitDate;
 	
-	@XmlElement(name = "VisitStatus", required = true)
+	@XmlElement(name = "VisitStatus")
 	protected String visitStatus;
 	
-	@XmlElement(name = "Cotrimoxazole", required = true)
+	@XmlElement(name = "Cotrimoxazole")
 	protected String cotrimoxazole;
 	
 	@XmlElement(name = "Weight")
-	protected int weight;
+	protected Integer weight;
 	
-	@XmlElement(name = "BreastFeeding", required = true)
+	@XmlElement(name = "BreastFeeding")
 	protected String breastFeeding;
+	
+	@XmlElement(name = "PrescribedRegimen")
+	protected CodedSimpleType prescribedRegimen;
+	
+	@XmlElement(name = "PrescribedRegimenLineCode")
+	protected String prescribedRegimenLineCode;
+	
+	@XmlElement(name = "MaternalOutcome")
+	protected String maternalOutcome;
 	
 	/**
 	 * Gets the value of the visitDate property.
@@ -143,14 +155,14 @@ public class HealthFacilityVisitsType {
 	/**
 	 * Gets the value of the weight property.
 	 */
-	public int getWeight() {
+	public Integer getWeight() {
 		return weight;
 	}
 	
 	/**
 	 * Sets the value of the weight property.
 	 */
-	public void setWeight(int value) {
+	public void setWeight(Integer value) {
 		this.weight = value;
 	}
 	
@@ -172,4 +184,35 @@ public class HealthFacilityVisitsType {
 		this.breastFeeding = value;
 	}
 	
+	public CodedSimpleType getPrescribedRegimen() {
+		return prescribedRegimen;
+	}
+	
+	public void setPrescribedRegimen(CodedSimpleType prescribedRegimen) {
+		this.prescribedRegimen = prescribedRegimen;
+	}
+	
+	public String getPrescribedRegimenLineCode() {
+		return prescribedRegimenLineCode;
+	}
+	
+	public void setPrescribedRegimenLineCode(String prescribedRegimenLineCode) {
+		this.prescribedRegimenLineCode = prescribedRegimenLineCode;
+	}
+	
+	public String getMaternalOutcome() {
+		return maternalOutcome;
+	}
+	
+	public void setMaternalOutcome(String maternalOutcome) {
+		this.maternalOutcome = maternalOutcome;
+	}
+	
+	public String getVisitID() {
+		return visitID;
+	}
+	
+	public void setVisitID(String visitID) {
+		this.visitID = visitID;
+	}
 }

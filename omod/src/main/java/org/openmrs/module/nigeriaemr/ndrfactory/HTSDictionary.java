@@ -188,9 +188,10 @@ public class HTSDictionary {
         htsDictionary.put(5271, "4");
         htsDictionary.put(160542, "5");
         htsDictionary.put(161629, "6");
-        htsDictionary.put(165788, "7");
+//        htsDictionary.put(165788, "7");
         htsDictionary.put(165838, "9");
         htsDictionary.put(5622, "8");
+        htsDictionary.put(160545, "7");
 
         //session
         htsDictionary.put(165792, "1");
@@ -313,7 +314,11 @@ public class HTSDictionary {
         }
 
         //visit date and ID
-        hivTestingReport.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
+        if(enc.getVisit() != null) {
+            hivTestingReport.setVisitID(String.valueOf(enc.getVisit().getVisitId()));
+        }else {
+            hivTestingReport.setVisitID(enc.getEncounterId().toString());
+        }
         hivTestingReport.setVisitDate(utils.getXmlDate(enc.getEncounterDatetime()));
 
         //setting with others been retrieved
@@ -1070,12 +1075,6 @@ public class HTSDictionary {
         }
 
         return partnerDetailsType;
-    }
-
-    public HealthFacilityVisitsType createHealthFacilityVisit(Patient pts, Encounter enc, List<Obs> obsList) throws DatatypeConfigurationException {
-        HealthFacilityVisitsType healthFacilityVisitsType = new HealthFacilityVisitsType();
-
-        return healthFacilityVisitsType;
     }
 
     private String getMappedValue(int conceptID) {

@@ -66,4 +66,8 @@ public class NigeriaPatientServiceImpl extends PatientServiceImpl implements Nig
 	public String getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType) throws APIException {
 		return dao.getPatientIdentifier(patient, patientIdentifierType);
 	}
+	
+	public String getPatientIdentifierByPatientsId(Integer patientId, Integer identifierType) throws APIException {
+		return dao.getPatientIdentifierByPatientsId(patientId, identifierType);
+	}
 }

@@ -1,7 +1,6 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
 import com.umb.ndr.signer.Signer;
-import org.apache.commons.lang.time.DateUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -19,11 +18,10 @@ import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
 
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.Date;
 import java.util.*;
+import java.util.Date;
 
 public class NDRConverter {
 
@@ -32,6 +30,8 @@ public class NDRConverter {
 	private Patient patient;
 
 	private Map<Integer, List<Encounter>> groupedEncounters = new HashMap<>();
+
+    private Map<String, List<Encounter>> groupedEncountersByUUID = new HashMap<>();
 
 	private Map<Object, List<Obs>> groupedObsByConceptIds = new HashMap<>();
 	
@@ -81,7 +81,8 @@ public class NDRConverter {
                     }
                     List<Encounter> encounters = new ArrayList<>(filteredEncounters);
                     this.lastEncounter = filteredEncounters.get(filteredEncounters.size() - 1);
-                   this.groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
+                    this.groupedEncounters = Utils.extractEncountersByEncounterTypesId(encounters);
+                    this.groupedEncountersByUUID = Utils.extractEncountersByEncounterTypesUUID(encounters);
 
                     List<Obs> allobs = Utils.extractObsfromEncounter(filteredEncounters);
                     Map<String, Map<Object, List<Obs>>> grouped = Utils.groupObs(allobs);
@@ -111,7 +112,7 @@ public class NDRConverter {
             }
 
             MessageHeaderType header = createMessageHeaderType(pts, hasUpdate);
-            FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
+            org.openmrs.module.nigeriaemr.model.ndr.FacilityType sendingOrganization = Utils.createFacilityType(facilityName, DATIMID, FacilityType);
             header.setMessageSendingOrganization(sendingOrganization);
 
             Container container = new Container();
@@ -157,6 +158,11 @@ public class NDRConverter {
             ConditionType condition = createHIVCondition();
             individualReport.getCondition().add(condition);
 
+            PMTCTType pmtctType = createPmtctType();
+
+            if(pmtctType != null){
+                individualReport.setPmtctType(pmtctType);
+            }
 
             //retrieve latest encounter for client intake form
             Encounter intakeEncounter = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE));
@@ -182,8 +188,113 @@ public class NDRConverter {
 
         return individualReport;
     }
-	
-	private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter,  Map<Object, List<Obs>> groupedObsByConcept) {
+
+    private PMTCTType createPmtctType() {
+        NDRMainDictionary mainDictionary = new NDRMainDictionary();
+        PMTCTType pmtctType = null;
+        List<Encounter> pmtctEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE);
+        List<Encounter> generalAntenatalCareEncounters = this.groupedEncounters.get(ConstantsUtil.GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE);
+        List<Encounter> deliverRegisterEncounters = this.groupedEncounters.get(ConstantsUtil.DELIVERY_REGISTER_ENCOUNTER_TYPE);
+        List<Encounter> childFollowUpEncounters = this.groupedEncounters.get(ConstantsUtil.CHILD_FOLLOW_UP);
+        List<Encounter> childBirthEncounters = this.groupedEncounters.get(ConstantsUtil.CHILD_BIRTH_REGISTRATION_ENCOUNTER);
+        List<Encounter> partnerEncounters = this.groupedEncounters.get(ConstantsUtil.PARTNER_REGISTER);
+        List<Encounter> pmtctHtsRegisterEncounters = this.groupedEncountersByUUID.get(ConstantsUtil.PMTCT_HTS_REGISTER);
+
+        if(pmtctEncounters != null) {
+            List<MaternalCohortType> maternalCohortTypes =  mainDictionary.createMaternalCohort(pmtctEncounters);
+            if(maternalCohortTypes != null){
+                pmtctType = new PMTCTType();
+                pmtctType.setMaternalCohortTypes(maternalCohortTypes);
+            }
+            List<HealthFacilityVisitsType> healthFacilityVisitTypes = mainDictionary.createHealthFacilityVisits(
+                    pmtctEncounters);
+            if (healthFacilityVisitTypes != null && healthFacilityVisitTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setHealthFacilityVisitTypes(healthFacilityVisitTypes);
+            }
+        }
+        if(childFollowUpEncounters != null){
+            List<ChildFollowupType> childFollowupTypes = mainDictionary.createChildFollowupType(childFollowUpEncounters);
+            if (childFollowupTypes != null && childFollowupTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setChildFollowupTypes(childFollowupTypes);
+            }
+
+            List<InfantPCRTestingType> infantPCRTestingTypes = mainDictionary.createInfantPCRTestingType(childFollowUpEncounters);
+            if (infantPCRTestingTypes != null && infantPCRTestingTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setInfantPCRTestingTypes(infantPCRTestingTypes);
+            }
+
+            List<InfantRapidTestType> infantRapidTestTypes = mainDictionary.createInfantRapidTestType(childFollowUpEncounters);
+            if (infantRapidTestTypes != null && infantRapidTestTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setInfantRapidTestTypes(infantRapidTestTypes);
+            }
+
+//            List<ImmunizationType> immunizationTypes = mainDictionary.createImmunizationType(pmtctEncounters);
+//            if (immunizationTypes != null && immunizationTypes.size() > 0) {
+//                if (pmtctType == null) pmtctType = new PMTCTType();
+//                pmtctType.setImmunizationTypes(immunizationTypes);
+//            }
+
+        }
+        if(generalAntenatalCareEncounters != null){
+            List<PMTCTHTSType> pmtctTHTSType =  mainDictionary.createPMTCTHTS(generalAntenatalCareEncounters);
+            if(pmtctTHTSType != null) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setPmtctHTSTYPES(pmtctTHTSType);
+            }
+            List<AntenatalRegistrationType> antenatalRegistrationTypes = mainDictionary.createAntenatalRegistrationType(
+                    generalAntenatalCareEncounters);
+            if (antenatalRegistrationTypes != null && antenatalRegistrationTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setAntenatalRegistrationTypes(antenatalRegistrationTypes);
+            }
+        }
+
+        if(pmtctHtsRegisterEncounters != null){
+            List<PMTCTHTSType> pmtctTHTSType =  mainDictionary.createPMTCTHTS(pmtctHtsRegisterEncounters);
+            if(pmtctTHTSType != null) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                if(pmtctType.getPmtctHTSTYPES() != null && pmtctType.getPmtctHTSTYPES().size() > 0){
+                    pmtctTHTSType.addAll(pmtctType.getPmtctHTSTYPES());
+                }
+                pmtctType.setPmtctHTSTYPES(pmtctTHTSType);
+            }
+        }
+
+        if(childBirthEncounters != null){
+            List<ChildBirthDetailsType> childBirthDetailsTypes = mainDictionary.createChildBirthDetailsType(
+                    childBirthEncounters);
+            if (childBirthDetailsTypes != null && childBirthDetailsTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setChildBirthDetailsTypes(childBirthDetailsTypes);
+            }
+        }
+
+        if(deliverRegisterEncounters != null){
+            List<DeliveryEncounterType> deliveryEncounterTypes = mainDictionary.createDeliveryEncounterType(
+                    deliverRegisterEncounters);
+            if (deliveryEncounterTypes != null && deliveryEncounterTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setDeliveryEncounterTypes(deliveryEncounterTypes);
+            }
+        }
+
+        if(partnerEncounters != null){
+            List<PartnerDetailsType> partnerDetailsTypes = mainDictionary.createPartnerDetailsType(
+                    partnerEncounters);
+            if (partnerDetailsTypes != null && partnerDetailsTypes.size() > 0) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                pmtctType.setPartnerDetailsTypes(partnerDetailsTypes);
+            }
+        }
+
+        return pmtctType;
+    }
+
+    private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter, Map<Object, List<Obs>> groupedObsByConcept) {
 
         //TODO: pull hivtestReport as a list
         NDRMainDictionary mainDictionary = new NDRMainDictionary();
@@ -261,7 +372,7 @@ public class NDRConverter {
         return hivTestingReportList;
 
     }
-	
+
 	private ConditionType createHIVCondition() {
 
         ConditionType condition = new ConditionType();
@@ -315,16 +426,16 @@ public class NDRConverter {
 
                 condition.getLaboratoryReport().addAll(combinedReport);
 
-                //Partner details
-                try {
-                    List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.groupedEncounters, this.groupedObsByConceptIds);
-                    if (!partnerDetailsType.isEmpty()) {
-                        condition.getPartnerDetails().addAll(partnerDetailsType);
-                    }
-                } catch (Exception ex) {
-                    LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                            LogLevel.live);
-                }
+                //Partner details -> moved to PMTCT
+//                try {
+//                    List<PartnerDetailsType> partnerDetailsType = mainDictionary.createPartnerDetails(patient, this.groupedEncounters, this.groupedObsByConceptIds);
+//                    if (!partnerDetailsType.isEmpty()) {
+//                        condition.getPartnerDetails().addAll(partnerDetailsType);
+//                    }
+//                } catch (Exception ex) {
+//                    LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+//                            LogLevel.live);
+//                }
 
                 List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, this.groupedEncounters);
                 if (arvRegimenTypeList != null && arvRegimenTypeList.size() > 0) {

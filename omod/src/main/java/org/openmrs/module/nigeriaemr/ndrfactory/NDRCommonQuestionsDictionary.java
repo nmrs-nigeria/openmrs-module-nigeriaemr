@@ -28,6 +28,7 @@ import org.openmrs.module.nigeriaemr.model.ndr.IdentifiersType;
 import org.openmrs.module.nigeriaemr.model.ndr.LeftHandType;
 import org.openmrs.module.nigeriaemr.model.ndr.PatientDemographicsType;
 import org.openmrs.module.nigeriaemr.model.ndr.RightHandType;
+import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
@@ -170,8 +171,8 @@ public class NDRCommonQuestionsDictionary {
            // pepfarid = new PatientIdentifier();
             // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
 
-            PatientIdentifierType pepfaridPatientIdentifierType =
-                    Context.getPatientService().getPatientIdentifierType(Utils.PEPFAR_IDENTIFIER_INDEX);
+//            PatientIdentifierType pepfaridPatientIdentifierType =
+//                    Context.getPatientService().getPatientIdentifierType(Utils.PEPFAR_IDENTIFIER_INDEX);
 
 //            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts,pepfaridPatientIdentifierType);
 
@@ -192,7 +193,13 @@ public class NDRCommonQuestionsDictionary {
                 idt = new IdentifierType();
                 idt.setIDNumber(pepfarid.getIdentifier());
                 demo.setPatientIdentifier(pepfarid.getIdentifier());
+            }else{
+                String pepfaridForRedactedPatient = nigeriaPatientService.getPatientIdentifierByPatientsId(pts.getPatientId(), Utils.PEPFAR_IDENTIFIER_INDEX);
+                if(pepfaridForRedactedPatient != null) {
+                    demo.setPatientIdentifier(pepfaridForRedactedPatient);
+                }
             }
+
             if (pidOthers != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(pidOthers.getIdentifier());
@@ -222,11 +229,19 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDNumber(ancId.getIdentifier());
                 idt.setIDTypeCode("ANC");
                 identifiersType.getIdentifier().add(idt);
+            }else{
+                List<String> ancIds = utils.getIds(groupedObsByEncounterTypes.get(ConstantsUtil.GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE),165567);
+                if(ancIds != null && ancIds.size() > 0){
+                    idt = new IdentifierType();
+                    idt.setIDNumber(ancIds.get(0));
+                    idt.setIDTypeCode("ANC");
+                    identifiersType.getIdentifier().add(idt);
+                }
             }
             if (exposedInfantId != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(exposedInfantId.getIdentifier());
-                idt.setIDTypeCode("EI");
+                idt.setIDTypeCode("HEI");
                 identifiersType.getIdentifier().add(idt);
             }
             if (pepId != null) {
