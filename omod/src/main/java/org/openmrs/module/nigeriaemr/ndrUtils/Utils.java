@@ -283,6 +283,8 @@ public class Utils {
 	
 	public static final int RECENCY_INDENTIFIER_INDEX = 10;
 	
+	public static final int OPENMRS_IDENTIFIER_INDEX = 3;
+	
 	/* KEY FORMS */
 	//--These 4 forms was used to construct a HIVEncounterType
 	public final static int ADULT_INITIAL_ENCOUNTER_TYPE = 26;
@@ -1430,4 +1432,22 @@ public class Utils {
 		}
 		return ids;
     }
+	
+	public static PatientIdentifier getPatientIdentifier(Set<PatientIdentifier> patientIdentifiers, Integer identifierTypeId) {
+		if (patientIdentifiers != null && patientIdentifiers.size() > 0) {
+			PatientIdentifier voided = null;
+			for (PatientIdentifier patientIdentifier : patientIdentifiers) {
+				PatientIdentifierType patientIdentifierType = patientIdentifier.getIdentifierType();
+				if (identifierTypeId.equals(patientIdentifierType.getPatientIdentifierTypeId())) {
+					if (patientIdentifier.isVoided()) {
+						voided = patientIdentifier;
+					} else {
+						return patientIdentifier;
+					}
+				}
+			}
+			return voided;
+		}
+		return null;
+	}
 }
