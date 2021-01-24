@@ -275,8 +275,8 @@ public class NDRCommonQuestionsDictionary {
                 demo.setOtherPatientIdentifiers(identifiersType);
             }
 
-            if(demo.getPatientIdentifier() == null && openmrsId != null){
-                demo.setPatientIdentifier(openmrsId.getIdentifier());
+            if(demo.getPatientIdentifier() == null){
+                return null;
             }
 
             demo.setTreatmentFacility(facility);

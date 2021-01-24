@@ -798,7 +798,7 @@ public class PMTCTDictionary {
                     LocalDate testDate = obs.getValueDate().toInstant()
                             .atZone(ZoneId.systemDefault())
                             .toLocalDate();
-                    int ageAtTest = Period.between(birthDate,testDate).getYears();
+                    int ageAtTest = Period.between(birthDate,testDate).getMonths();
 
                     infantPCRTestingType.setAgeAtTest(ageAtTest);
                 }
@@ -1162,7 +1162,7 @@ public class PMTCTDictionary {
                 LocalDate testDate = obs.getValueDate().toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate();
-                int ageAtTest = Period.between(birthDate,testDate).getYears();
+                int ageAtTest = Period.between(birthDate,testDate).getMonths();
                 infantRapidTestType.setAgeAtTest(ageAtTest);
             }
 
