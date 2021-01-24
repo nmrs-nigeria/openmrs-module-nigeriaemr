@@ -32,6 +32,7 @@ import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+import org.springframework.expression.spel.ast.Identifier;
 
 /**
  *
@@ -165,7 +166,7 @@ public class NDRCommonQuestionsDictionary {
         try {
 
             //Identifier 4 is Pepfar ID
-            PatientIdentifier pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId, pepfarid;
+            PatientIdentifier pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId, pepfarid, openmrsId;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
            // pepfarid = new PatientIdentifier();
@@ -176,15 +177,17 @@ public class NDRCommonQuestionsDictionary {
 
 //            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts,pepfaridPatientIdentifierType);
 
-            pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
-            pidHospital = pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX);
-            pidOthers = pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX);
-            htsId = pts.getPatientIdentifier(Utils.HTS_IDENTIFIER_INDEX);
-            ancId = pts.getPatientIdentifier(Utils.PMTCT_IDENTIFIER_INDEX);
-            exposedInfantId = pts.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
-            pepId = pts.getPatientIdentifier(Utils.PEP_IDENTIFIER_INDEX);
+
+            pepfarid = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.PEPFAR_IDENTIFIER_INDEX);
+            pidHospital = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.HOSPITAL_IDENTIFIER_INDEX);
+            pidOthers = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.OTHER_IDENTIFIER_INDEX);
+            htsId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.HTS_IDENTIFIER_INDEX);
+            ancId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.PMTCT_IDENTIFIER_INDEX);
+            exposedInfantId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
+            pepId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.PEP_IDENTIFIER_INDEX);
            // pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
-            recencyId = pts.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX);
+            recencyId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.RECENCY_INDENTIFIER_INDEX);
+            openmrsId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.OPENMRS_IDENTIFIER_INDEX);
 
             IdentifierType idt;
             IdentifiersType identifiersType = new IdentifiersType();
@@ -200,11 +203,14 @@ public class NDRCommonQuestionsDictionary {
                 }
             }
 
-            if (pidOthers != null) {
+            if (pidHospital != null) {
                 idt = new IdentifierType();
-                idt.setIDNumber(pidOthers.getIdentifier());
-                idt.setIDTypeCode("EID");  //EDITED BY APIN TEAM
+                idt.setIDNumber(pidHospital.getIdentifier());
+                idt.setIDTypeCode("HN"); //EDITED BY APIN TEAM
                 identifiersType.getIdentifier().add(idt);
+                if(demo.getPatientIdentifier() == null){
+                    demo.setPatientIdentifier(pidHospital.getIdentifier());
+                }
             }
             if (htsId != null) {
                 idt = new IdentifierType();
@@ -215,20 +221,15 @@ public class NDRCommonQuestionsDictionary {
                     demo.setPatientIdentifier(htsId.getIdentifier());
                 }
             }
-            if (pidHospital != null) {
-                idt = new IdentifierType();
-                idt.setIDNumber(pidHospital.getIdentifier());
-                idt.setIDTypeCode("HN"); //EDITED BY APIN TEAM
-                identifiersType.getIdentifier().add(idt);
-                if(demo.getPatientIdentifier() == null){
-                    demo.setPatientIdentifier(pidHospital.getIdentifier());
-                }
-            }
+
             if (ancId != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(ancId.getIdentifier());
                 idt.setIDTypeCode("ANC");
                 identifiersType.getIdentifier().add(idt);
+                if(demo.getPatientIdentifier() == null){
+                    demo.setPatientIdentifier(ancId.getIdentifier());
+                }
             }else{
                 List<String> ancIds = utils.getIds(groupedObsByEncounterTypes.get(ConstantsUtil.GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE),165567);
                 if(ancIds != null && ancIds.size() > 0){
@@ -236,6 +237,9 @@ public class NDRCommonQuestionsDictionary {
                     idt.setIDNumber(ancIds.get(0));
                     idt.setIDTypeCode("ANC");
                     identifiersType.getIdentifier().add(idt);
+                    if(demo.getPatientIdentifier() == null){
+                        demo.setPatientIdentifier(ancIds.get(0));
+                    }
                 }
             }
             if (exposedInfantId != null) {
@@ -243,6 +247,9 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDNumber(exposedInfantId.getIdentifier());
                 idt.setIDTypeCode("HEI");
                 identifiersType.getIdentifier().add(idt);
+                if(demo.getPatientIdentifier() == null){
+                    demo.setPatientIdentifier(exposedInfantId.getIdentifier());
+                }
             }
             if (pepId != null) {
                 idt = new IdentifierType();
@@ -257,9 +264,21 @@ public class NDRCommonQuestionsDictionary {
                 identifiersType.getIdentifier().add(idt);
             }
 
+            if (pidOthers != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(pidOthers.getIdentifier());
+                idt.setIDTypeCode("EID");  //EDITED BY APIN TEAM
+                identifiersType.getIdentifier().add(idt);
+            }
+
             if(identifiersType.getIdentifier().size() > 0) {
                 demo.setOtherPatientIdentifiers(identifiersType);
             }
+
+            if(demo.getPatientIdentifier() == null && openmrsId != null){
+                demo.setPatientIdentifier(openmrsId.getIdentifier());
+            }
+
             demo.setTreatmentFacility(facility);
 
             String gender = pts.getGender();

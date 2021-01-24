@@ -87,6 +87,7 @@ public class PharmacyDictionary {
         regimenMap.put(166186, "1x"); // DDI-3TC-EFV
         regimenMap.put(166187, "1z"); //AZT-3TC-DTG
         //pending concept id for DDI/3TC/ABC
+        regimenMap.put(166092, "2m");//"ABC-3TC-ATV/r"
         regimenMap.put(162564, "2h");//"ABC-AZT-LPV/r" change concept ID from 165530
         regimenMap.put(166188, "2i");// DDI-3TC-LPV/r
         regimenMap.put(162559, "2j"); //ABC-DDI-LPV/r
@@ -164,6 +165,7 @@ public class PharmacyDictionary {
         regimenMap.put(160569, "9");
 
         //key is concept id, value is NDR code text
+        regimenCodeDescTextMap.put(166092, "ABC-3TC-ATV/r");
         regimenCodeDescTextMap.put(160124, "AZT-3TC-EFV");
         regimenCodeDescTextMap.put(1652, "AZT-3TC-NVP");
         regimenCodeDescTextMap.put(160104, "D4T-3TC-EFV");
@@ -285,7 +287,7 @@ public class PharmacyDictionary {
         if (regimenMap.containsKey(value_coded)) {
             return regimenMap.get(value_coded);
         }
-        return "";
+        return null;
     }
 
     public String getRegimenCodeDescTextMapValue(int value_coded) {
@@ -293,7 +295,7 @@ public class PharmacyDictionary {
         if (regimenCodeDescTextMap.containsKey(value_coded)) {
             return regimenCodeDescTextMap.get(value_coded);
         }
-        return "";
+        return null;
     }
 
     public List<RegimenType> createRegimenTypeList(Patient patient, Map<Integer,List<Encounter>> groupedEncounters) throws DatatypeConfigurationException {
@@ -346,11 +348,13 @@ public class PharmacyDictionary {
                 if (valueObs != null) {
                     valueCoded = valueObs.getValueCoded().getConceptId();
                     ndrCode = getRegimenMapValue(valueCoded);
-                    codedSimpleType = new CodedSimpleType();
-                    codedSimpleType.setCode(ndrCode);
+                    if(ndrCode != null) {
+                        codedSimpleType = new CodedSimpleType();
+                        codedSimpleType.setCode(ndrCode);
 //                    codedSimpleType.setCodeDescTxt(valueObs.getValueCoded().getName().getName());
-                    codedSimpleType.setCodeDescTxt(getRegimenCodeDescTextMapValue(valueCoded));
-                    regimenType.setPrescribedRegimen(codedSimpleType);
+                        codedSimpleType.setCodeDescTxt(getRegimenCodeDescTextMapValue(valueCoded));
+                        regimenType.setPrescribedRegimen(codedSimpleType);
+                    }
                 }
                 regimenType.setPrescribedRegimenDispensedDate(utils.getXmlDate(visitDate));//PrescribedRegimenDispensedDate
                 stopDateTime = retrieveMedicationDuration(visitDate, map);
