@@ -210,4 +210,9 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	public String getSqlVersion() throws APIException {
 		return dao.getSqlVersion();
 	}
+	
+	@Override
+	public void saveBiometricInfo(BiometricInfo biometricInfo) {
+		dao.saveBiometricInfo(biometricInfo);
+	}
 }
