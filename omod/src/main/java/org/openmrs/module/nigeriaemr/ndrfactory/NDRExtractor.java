@@ -10,6 +10,7 @@ import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
+import org.openmrs.module.nigeriaemr.model.ndr.ConditionType;
 import org.openmrs.module.nigeriaemr.model.ndr.Container;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
@@ -160,7 +161,24 @@ public class NDRExtractor {
 		try {
 			writer = Files.newBufferedWriter(Paths.get(csvFile), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
 			try (final CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
-				printer.printRecord(file.getName(),patient.getId(), patient.getPersonName(), message);
+				if(container != null && container.getIndividualReport() != null && container.getIndividualReport().getCondition() != null
+				&& container.getIndividualReport().getCondition().size() > 0){
+					String stopped = "ACTIVE_TREATMENT";
+					for(ConditionType conditionType : container.getIndividualReport().getCondition()){
+						if(conditionType.getConditionSpecificQuestions() != null &&
+								conditionType.getConditionSpecificQuestions().getHIVQuestions() != null){
+							if(conditionType.getConditionSpecificQuestions().getHIVQuestions().isStoppedTreatment() != null &&
+									conditionType.getConditionSpecificQuestions().getHIVQuestions().isStoppedTreatment()){
+								stopped = "STOPPED_TREATMENT";
+							}else{
+								stopped = "NOT_AVAILABLE";
+							}
+						}
+					}
+					printer.printRecord(file.getName(), patient.getId(),stopped, patient.getPersonName(), message);
+				}else {
+					printer.printRecord(file.getName(), patient.getId()," ", patient.getPersonName(), message);
+				}
 			}
 			writer.close();
 		}
