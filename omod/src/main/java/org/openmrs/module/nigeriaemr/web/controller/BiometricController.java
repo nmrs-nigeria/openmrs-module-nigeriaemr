@@ -23,7 +23,7 @@ import java.util.Map;
 public class BiometricController extends BaseRestController {
 	
 	@RequestMapping(value = "/pbs/{patientId}", method = RequestMethod.GET)
-	public List<BiometricInfo> getBiometricByPatientId(@PathVariable("patientId") String patientId,
+	public HttpServletResponse getBiometricByPatientId(@PathVariable("patientId") String patientId,
 	        HttpServletRequest request, HttpServletResponse response) {
 		SimpleObject ret = new SimpleObject();
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
@@ -31,7 +31,7 @@ public class BiometricController extends BaseRestController {
 		List<BiometricInfo> biometricInfoList = nigeriaemrService.getBiometricInfoByPatientId(Integer.parseInt(patientId));
 		ret.put("drugRoutes", biometricInfoList);
 		response.setStatus(HttpServletResponse.SC_OK);
-		return biometricInfoList;
+		return response;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
