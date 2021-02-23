@@ -25,8 +25,11 @@ public class BiometricController extends MainResourceController {
 	public Object getBiometricByPatientId(@PathVariable("patientId") String patientId, HttpServletResponse response) {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		try {
-			List<BiometricInfo> biometricInfoList = nigeriaemrService.getBiometricInfoByPatientId(Integer
-			        .parseInt(patientId));
+			Patient patient = Context.getPatientService().getPatientByUuid(patientId);
+			if (patient == null) {
+				patient = Context.getPatientService().getPatient(Integer.parseInt(patientId));
+			}
+			List<BiometricInfo> biometricInfoList = nigeriaemrService.getBiometricInfoByPatientId(patient.getId());
 			if (biometricInfoList != null && biometricInfoList.size() > 0) {
 				response.setStatus(HttpServletResponse.SC_OK);
 				response.setContentType("application/json");
@@ -139,5 +142,5 @@ public class BiometricController extends MainResourceController {
 		}
 		return null;
 	}
-
+	
 }
