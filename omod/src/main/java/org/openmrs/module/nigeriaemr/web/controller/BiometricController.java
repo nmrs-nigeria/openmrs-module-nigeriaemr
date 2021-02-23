@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/rest/" + RestConstants.VERSION_1 + "/nigeriaemr")
+@RequestMapping("/rest/" + RestConstants.VERSION_1 + "/nigeriaemr/pbs")
 public class BiometricController extends MainResourceController {
 	
-	@RequestMapping(value = "/pbs/{patientId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{patientId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Object getBiometricByPatientId(@PathVariable("patientId") String patientId, HttpServletResponse response) {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
