@@ -126,10 +126,14 @@ public class NDRMainDictionary {
         map.put(162752, "B");
         map.put(160026, "A");
         //hiv question type WHO clinical stage concept
-        map.put(165282, "I");
+        /*map.put(165282, "I");
         map.put(165283, "II");
         map.put(165284, "III");
-        map.put(165285, "IV");
+        map.put(165285, "IV");*/
+        map.put(165282, "1");
+        map.put(165283, "2");
+        map.put(165284, "3");
+        map.put(165285, "4");
         //tb status concept
         map.put(1663, "CT");
         map.put(142177, "DS");
@@ -185,9 +189,9 @@ public class NDRMainDictionary {
         return commonQuestionDictionary.createCommonQuestionType(patient, lastEncounter, groupedObsByConcept);
     }
 
-    public ConditionSpecificQuestionsType createCommConditionSpecificQuestionsType(Map<Object, List<Obs>> groupedpatientBaselineObsByConcept,
+    public ConditionSpecificQuestionsType createCommConditionSpecificQuestionsType(Patient patient,Map<Object, List<Obs>> groupedpatientBaselineObsByConcept,
                                                                                    Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType) throws DatatypeConfigurationException {
-        return commonQuestionDictionary.createConditionSpecificQuestionType(groupedpatientBaselineObsByConcept,
+        return commonQuestionDictionary.createConditionSpecificQuestionType(patient,groupedpatientBaselineObsByConcept,
                 groupedpatientBaselineObsByEncounterType);
     }
 
@@ -283,7 +287,7 @@ public class NDRMainDictionary {
     }
 
     public IndexNotificationServicesType createIndexNotificationServicesTypes(Map<Object, List<Obs>> groupedObsByConcept) {
-      IndexNotificationServicesType indexNotificationServicesType = htsDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
+        IndexNotificationServicesType indexNotificationServicesType = htsDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
         return indexNotificationServicesType;
     }
 
