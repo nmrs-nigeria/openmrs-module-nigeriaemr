@@ -169,7 +169,7 @@ public class NDRCommonQuestionsDictionary {
             PatientIdentifier pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId, pepfarid, openmrsId;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
-           // pepfarid = new PatientIdentifier();
+            // pepfarid = new PatientIdentifier();
             // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
 
 //            PatientIdentifierType pepfaridPatientIdentifierType =
@@ -185,7 +185,7 @@ public class NDRCommonQuestionsDictionary {
             ancId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.PMTCT_IDENTIFIER_INDEX);
             exposedInfantId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
             pepId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.PEP_IDENTIFIER_INDEX);
-           // pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
+            // pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
             recencyId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.RECENCY_INDENTIFIER_INDEX);
             openmrsId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.OPENMRS_IDENTIFIER_INDEX);
 
@@ -289,7 +289,7 @@ public class NDRCommonQuestionsDictionary {
             }
             demo.setPatientDateOfBirth(utils.getXmlDate(pts.getBirthdate()));
 
-         
+
             //check Finger Print if available
             demo.setFingerPrints(getPatientsFingerPrint(pts.getPatientId()));
 
@@ -303,7 +303,7 @@ public class NDRCommonQuestionsDictionary {
             List<Integer> obsCodeList = Arrays.asList(Utils.REASON_FOR_TERMINATION_CONCEPT,
                     Utils.DATE_OF_TERMINATION_CONCEPT,Utils.EDUCATIONAL_LEVEL_CONCEPT,
                     Utils.OCCUPATIONAL_STATUS_CONCEPT,Utils.MARITAL_STATUS_CONCEPT
-                    );
+            );
             Map<Object, List<Obs>> obsListForEncounterTypes = Utils.groupedByConceptIdsOnly(obsListForEncounterTypesValues);
 
             Obs obs = null;
@@ -453,11 +453,11 @@ public class NDRCommonQuestionsDictionary {
             //List<Obs> hivEnrollmentObs = Utils.FilterObsByEncounterTypeId(allObs, Utils.HIV_Enrollment_Encounter_Type_Id); // Utils.getHIVEnrollmentObs(pts);
 
             if (pepfarIdentifier != null) {
-                
+
                 try {
                     common.setHospitalNumber(pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX).getIdentifier());
                 } catch (Exception e) {
-                  //  common.setHospitalNumber(pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX).getIdentifier());
+                    //  common.setHospitalNumber(pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX).getIdentifier());
                 }
                 /*  Assuming Hospital No is 3*/
                 //old code commented for throwing error change by the try and catch code abowe
@@ -559,9 +559,9 @@ HIVQuestionsType
  -EnrolledInHIVCareDate
  -InitialTBStatus (1659)
      */
-    public HIVQuestionsType createHIVQuestionType(Map<Object, List<Obs>> groupedpatientBaselineObsByConcept,
+    public HIVQuestionsType createHIVQuestionType(Patient patient, Map<Object, List<Obs>> groupedpatientBaselineObsByConcept,
                                                   Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType) throws DatatypeConfigurationException {
-      Integer[] targetEncounterTypes = {Utils.HIV_Enrollment_Encounter_Type_Id, Utils.ART_COMMENCEMENT_ENCOUNTER_TYPE, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
+        Integer[] targetEncounterTypes = {Utils.HIV_Enrollment_Encounter_Type_Id, Utils.ART_COMMENCEMENT_ENCOUNTER_TYPE, Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
         HIVQuestionsType hivQuestionsType = null;
         List<Obs> obsList = Utils.extractObsList(groupedpatientBaselineObsByEncounterType, Arrays.asList(targetEncounterTypes));
         List<Integer> obsNewList = obsList.stream().map(Obs::getObsId).collect(Collectors.toList());
@@ -582,7 +582,7 @@ HIVQuestionsType
                 Utils.CD4_AT_START,Utils.TRANSFER_OUT_DATE,Utils.INITIAL_TB_STATUS);
 
         Map<Object, List<Obs>> obsListId = Utils.groupedByConceptIdsOnly(obsList);
-        
+
         if (!obsList.isEmpty()) {
             hivQuestionsType = new HIVQuestionsType();
             obs =  Utils.extractObs(Utils.CARE_ENTRY_POINT_CONCEPT,obsListId);
@@ -695,19 +695,33 @@ HIVQuestionsType
             obs = Utils.extractObsByValues(Utils.REASON_FOR_TERMINATION_CONCEPT, Utils.TRANSFERRED_OUT_CONCEPT, obsList);
             if (obs != null) {
                 hivQuestionsType.setPatientTransferredOut(Boolean.TRUE);
-            }
-            obs =  Utils.extractObs(Utils.TRANSFER_OUT_DATE,obsListId);
-            if (obs != null) {
-                valueDateTime = obs.getValueDate();
-                hivQuestionsType.setTransferredOutDate(utils.getXmlDate(valueDateTime));
-                
-                if (artStartDate != null) {
-                    hivQuestionsType.setTransferredOutStatus("A");
-                } else {
-                    hivQuestionsType.setTransferredOutStatus("P");
+                obs =  Utils.extractObs(Utils.TRANSFER_OUT_DATE,obsListId);
+                if (obs != null) {
+                    valueDateTime = obs.getValueDate();
+                    hivQuestionsType.setTransferredOutDate(utils.getXmlDate(valueDateTime));
+
+                    if (artStartDate != null) {
+                        hivQuestionsType.setTransferredOutStatus("A");
+                    } else {
+                        hivQuestionsType.setTransferredOutStatus("P");
+                    }
                 }
             }
 
+
+            obs = Utils.extractObsByValues(Utils.REASON_FOR_TERMINATION_CONCEPT, Utils.DEAD_CONCEPT, obsList);
+            if (obs != null || patient.isDead() == true) {
+                hivQuestionsType.setPatientHasDied(Boolean.TRUE);
+                obs =  Utils.extractObs(Utils.DEATH_DATE_CONCEPT,obsListId);
+                if (obs != null || patient.getDeathDate() != null) {
+                    if(patient.getDeathDate() != null) {
+                        hivQuestionsType.setDeathDate(utils.getXmlDate( patient.getDeathDate()));
+                    }else{
+                        valueDateTime = obs.getValueDate();
+                        hivQuestionsType.setDeathDate(utils.getXmlDate(valueDateTime));
+                    }
+                }
+            }
             /*
                 Use date confirmed positve or visit date of the HIVEnrollmentForm
              */
@@ -721,8 +735,7 @@ HIVQuestionsType
                 ndrCode = getMappedValue(valueCoded);
                 hivQuestionsType.setInitialTBStatus(ndrCode);
             }
-
-            obs = Utils.extractLastObs(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, obsNewList);
+      /*      obs = Utils.extractLastObs(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, obsNewList);
             if (obs != null && obs.getValueCoded() != null) {
                 obs = Utils.extractObsByValues(Utils.PATIENT_CARE_IN_FACILITY_TERMINATED, Utils.PATIENT_TERMINATED, obsList);
                 if (obs != null) {
@@ -742,20 +755,19 @@ HIVQuestionsType
                     ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
                     hivQuestionsType.setReasonForStoppedTreatment(ndrCodedValue);
                 }
-            }
+            }*/
 
             //hivQuestionsType.setStoppedTreatment();
             //hivQuestionsType.setDateStoppedTreatment();
             //hivQuestionsType.setReasonForStoppedTreatment();
         }
         return hivQuestionsType;
-
     }
 
-    public ConditionSpecificQuestionsType createConditionSpecificQuestionType(Map<Object, List<Obs>> groupedpatientBaselineObsByConcept,
+    public ConditionSpecificQuestionsType createConditionSpecificQuestionType(Patient patient,Map<Object, List<Obs>> groupedpatientBaselineObsByConcept,
                                                                               Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType) throws DatatypeConfigurationException {
         ConditionSpecificQuestionsType conditionSpecificQuestion = new ConditionSpecificQuestionsType();
-        HIVQuestionsType hivQuestionType = createHIVQuestionType(groupedpatientBaselineObsByConcept,
+        HIVQuestionsType hivQuestionType = createHIVQuestionType(patient, groupedpatientBaselineObsByConcept,
                 groupedpatientBaselineObsByEncounterType);
         conditionSpecificQuestion.setHIVQuestions(hivQuestionType);
         return conditionSpecificQuestion;
