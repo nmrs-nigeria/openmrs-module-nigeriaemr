@@ -215,4 +215,9 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	public void saveBiometricInfo(BiometricInfo biometricInfo) {
 		dao.saveBiometricInfo(biometricInfo);
 	}
+	
+	@Override
+	public void deleteBiometricInfoByPatientId(Integer patientId) throws APIException {
+		dao.deleteBiometricInfo(patientId);
+	}
 }

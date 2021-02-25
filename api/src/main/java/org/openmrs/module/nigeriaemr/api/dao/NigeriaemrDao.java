@@ -240,4 +240,10 @@ public class NigeriaemrDao {
 		sql.setInteger("creator", 1);
 		sql.executeUpdate();
 	}
+	
+	public void deleteBiometricInfo(Integer patientId) {
+		SQLQuery sql = getSession().createSQLQuery("delete from biometricinfo where patient_id = :patientId ");
+		sql.setInteger("patientId", patientId);
+		sql.executeUpdate();
+	}
 }

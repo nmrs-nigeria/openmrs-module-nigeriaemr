@@ -52,6 +52,31 @@ public class BiometricController extends MainResourceController {
 		}
 	}
 	
+	@RequestMapping(value = "/{patientId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public Object deleteBiometricByPatientId(@PathVariable("patientId") String patientId, HttpServletResponse response) {
+		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+		try {
+			Patient patient = Context.getPatientService().getPatientByUuid(patientId);
+			if (patient == null) {
+				patient = Context.getPatientService().getPatient(Integer.parseInt(patientId));
+			}
+			nigeriaemrService.deleteBiometricInfoByPatientId(patient.getId());
+			SimpleObject ret = new SimpleObject();
+			response.setStatus(HttpServletResponse.SC_OK);
+			ret.put("ErrorMessage", "Successful");
+			ret.put("IsSuccessful", true);
+			return ret;
+		}
+		catch (Exception ex) {
+			SimpleObject ret = new SimpleObject();
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			ret.put("ErrorMessage", ex.getMessage());
+			ret.put("IsSuccessful", false);
+			return ret;
+		}
+	}
+	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	public SimpleObject getBiometricByPatientId(@RequestBody Map<String, Object> body, HttpServletResponse response) {
