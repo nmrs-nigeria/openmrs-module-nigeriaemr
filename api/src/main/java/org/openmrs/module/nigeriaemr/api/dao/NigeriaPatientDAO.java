@@ -31,4 +31,6 @@ public interface NigeriaPatientDAO extends PatientDAO {
 	String getPatientIdentifier(Patient patient, PatientIdentifierType patientIdentifierType) throws DAOException;
 	
 	String getPatientIdentifierByPatientsId(Integer patientId, Integer identifierType) throws DAOException;
+	
+	List<Integer> getPatientIdsByIdentifiersByType(String identifier, Integer identifierType) throws DAOException;
 }
