@@ -153,19 +153,17 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		return sql.list();
 	}
-
+	
 	@Override
-	public List<Integer> getPatientIdsByIdentifiersByType(String identifier, Integer identifierType)
-			throws DAOException {
-		String query = "SELECT patient.patient_id from patient, patient_identifier " +
-				"WHERE patient.patient_id = patient_identifier.patient_id " +
-				"AND patient_identifier.identifier = :identifier " +
-				"AND patient_identifier.identifier_type = :identifierType " +
-				"AND patient.voided is false";
+	public List<Integer> getPatientIdsByIdentifiersByType(String identifier, Integer identifierType) throws DAOException {
+		String query = "SELECT patient.patient_id from patient, patient_identifier "
+		        + "WHERE patient.patient_id = patient_identifier.patient_id "
+		        + "AND patient_identifier.identifier = :identifier "
+		        + "AND patient_identifier.identifier_type = :identifierType " + "AND patient.voided is false";
 		SQLQuery sql = getSession().createSQLQuery(query);
 		sql.setString("identifier", identifier);
 		sql.setInteger("identifierType", identifierType);
-
+		
 		return sql.list();
 	}
 	

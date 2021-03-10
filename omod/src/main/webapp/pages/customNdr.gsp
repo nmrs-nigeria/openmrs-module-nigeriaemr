@@ -18,7 +18,7 @@
                     <input style="background-color: #E8F0FE; border-radius: 25px; margin-top: 15px" type="checkbox" id="custom" name="custom" value="custom" onclick="checkBoxCheck()">
                     <label for="custom" style="color: white;">Custom</label><br>
                     <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display: none" type="text" value="comma separated patient identifiers or Ids" id="identifiers" onfocus=this.value='' name="identifiers"><br>
-                    <input style="background-color: #E8F0FE; margin-left: 52px; border-radius: 25px; margin-top: 15px; display: none" type="checkbox" id="customStart" name="customStart" value="customStart" onclick="checkBoxStartCheck()">
+                    <input  style="background-color: #E8F0FE; margin-left: 52px; border-radius: 25px; margin-top: 15px; display: none" type="checkbox" id="customStart" name="customStart" value="customStart" onclick="checkBoxStartCheck()">
                     <label for="customStart" id="labelCustomStart" style=" color: white; width: 70%; height: 45px; margin-top: 15px; display: none">Initial</label><br>
                     <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display:none" id="from" type="date"  />
                     <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px" type="button" value="Export" onclick="exportData()" class="btn btn-primary" />
@@ -73,12 +73,11 @@
     {
         const checkBox = document.getElementById("custom");
         if (checkBox.checked === true){
-
             document.getElementById('identifiers').style.display =  'inline';
             document.getElementById('from').style.display =  'inline';
             document.getElementById('btnClear').style.display =  'inline';
             document.getElementById('customStart').style.display =  'inline';
-            document.getElementById("customStart").checked = false;
+            checkBoxStartCheck()
             document.getElementById('labelCustomStart').style.display =  'inline';
             jq("#tb_commtester tbody tr").remove();
         }else{
@@ -86,14 +85,12 @@
             document.getElementById('from').style.display =  'none';
             document.getElementById('btnClear').style.display =  'none';
             document.getElementById('customStart').style.display =  'none';
-            document.getElementById("customStart").checked = false;
             document.getElementById('labelCustomStart').style.display =  'none';
             jq("#tb_commtester tbody tr").remove();
         }
         loadFileListDefault(true);
     }
 
-    checkBoxStartCheck()
     function checkBoxStartCheck()
     {
         const checkBox = document.getElementById("customStart");
