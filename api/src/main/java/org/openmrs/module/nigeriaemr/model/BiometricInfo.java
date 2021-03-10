@@ -14,7 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Blob;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * Please note that a corresponding table schema must be created in liquibase.xml.
@@ -88,6 +88,7 @@ public class BiometricInfo {
 			Blob blob = getNewTemplate();
 			try {
 				byte[] blobData = blob.getBytes(1, (int) blob.length());
+				setNewTemplate(null);
 				return new String(blobData);
 			}
 			catch (Exception ex) {}

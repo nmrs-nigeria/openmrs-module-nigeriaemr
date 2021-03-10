@@ -22,6 +22,7 @@ import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -204,5 +205,45 @@ public class NigeriaemrDao {
 	public String getSqlVersion() {
 		SQLQuery sql = getSession().createSQLQuery("Select version() as version");
 		return (String) sql.uniqueResult();
+	}
+	
+	public void saveBiometricInfo(BiometricInfo biometricInfo) throws APIException {
+		Criteria criteria = getSession().createCriteria(BiometricInfo.class);
+		criteria.add(Restrictions.eq("patientId", biometricInfo.getPatientId()));
+		criteria.add(Restrictions.eq("fingerPosition", biometricInfo.getFingerPosition()));
+		
+		List<BiometricInfo> biometricInfos = criteria.list();
+		String sqlString = "insert into  biometricinfo (patient_Id, imageWidth, imageHeight, imageDPI,  "
+		        + "imageQuality, fingerPosition, serialNumber, model, manufacturer, creator, date_created, new_template, template)"
+		        + "Values(:patientId,:imageWidth,:imageHeight,:imageDPI,:imageQuality,:fingerPosition,:serialNumber,:model,:manufacturer,:creator,:dateCreated,:newTemplate,:template)";
+		if (biometricInfos.size() > 0) {
+			sqlString = "UPDATE biometricinfo SET " + "patient_Id = :patientId, " + "imageWidth = :imageWidth, "
+			        + "imageHeight = :imageHeight, " + "imageDPI = :imageDPI, " + "imageQuality = :imageQuality, "
+			        + "fingerPosition = :fingerPosition, " + "serialNumber = :serialNumber, " + "model = :model, "
+			        + "manufacturer = :manufacturer, " + "creator = :creator, " + "date_created = :dateCreated, "
+			        + "new_template = :newTemplate, "
+			        + "template = :template WHERE patient_id = :patientId AND fingerPosition = :fingerPosition ";
+		}
+		SQLQuery sql = getSession().createSQLQuery(sqlString);
+		sql.setInteger("patientId", biometricInfo.getPatientId());
+		sql.setInteger("imageWidth", biometricInfo.getImageWidth());
+		sql.setInteger("imageHeight", biometricInfo.getImageHeight());
+		sql.setInteger("imageDPI", biometricInfo.getImageDPI());
+		sql.setInteger("imageQuality", biometricInfo.getImageQuality());
+		sql.setString("fingerPosition", biometricInfo.getFingerPosition());
+		sql.setString("serialNumber", biometricInfo.getSerialNumber());
+		sql.setString("manufacturer", biometricInfo.getManufacturer());
+		sql.setDate("dateCreated", biometricInfo.getDateCreated());
+		sql.setBinary("newTemplate", biometricInfo.getTemplate().getBytes());
+		sql.setString("template", null);
+		sql.setString("model", biometricInfo.getModel());
+		sql.setInteger("creator", 1);
+		sql.executeUpdate();
+	}
+	
+	public void deleteBiometricInfo(Integer patientId) {
+		SQLQuery sql = getSession().createSQLQuery("delete from biometricinfo where patient_id = :patientId ");
+		sql.setInteger("patientId", patientId);
+		sql.executeUpdate();
 	}
 }
