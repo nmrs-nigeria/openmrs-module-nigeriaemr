@@ -26,44 +26,44 @@ import java.util.Date;
 public class NDRConverter {
 
     Utils utils = new Utils();
-	
-	private Patient patient;
 
-	private Map<Integer, List<Encounter>> groupedEncounters = new HashMap<>();
+    private Patient patient;
+
+    private Map<Integer, List<Encounter>> groupedEncounters = new HashMap<>();
 
     private Map<String, List<Encounter>> groupedEncountersByUUID = new HashMap<>();
 
-	private Map<Object, List<Obs>> groupedObsByConceptIds = new HashMap<>();
-	
-	private Map<Object, List<Obs>> groupedObsByEncounterTypes = new HashMap<>();
-	
-	private Map<Object, List<Obs>> groupedObsByVisitDate = new HashMap<>();
-	
-	private Encounter lastEncounter;
-	
-	private final DBConnection openmrsConn;
-	
-	private Map<Object, List<Obs>> groupedpatientBaselineObsByConcept = new HashMap<>();
-	
-	private Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType = new HashMap<>();
-	
-	private final NigeriaEncounterService nigeriaEncounterService;
+    private Map<Object, List<Obs>> groupedObsByConceptIds = new HashMap<>();
+
+    private Map<Object, List<Obs>> groupedObsByEncounterTypes = new HashMap<>();
+
+    private Map<Object, List<Obs>> groupedObsByVisitDate = new HashMap<>();
+
+    private Encounter lastEncounter;
+
+    private final DBConnection openmrsConn;
+
+    private Map<Object, List<Obs>> groupedpatientBaselineObsByConcept = new HashMap<>();
+
+    private Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType = new HashMap<>();
+
+    private final NigeriaEncounterService nigeriaEncounterService;
 
     private final NigeriaObsService nigeriaObsService;
-	
-	private final Date fromDate;
-	
-	private final Date toDate;
+
+    private final Date fromDate;
+
+    private final Date toDate;
 
     public NDRConverter(DBConnection _openmrsConn, Date fromDate, Date toDate) {
-		this.openmrsConn = _openmrsConn;
-		this.nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
-		this.fromDate = fromDate;
-		this.toDate = toDate;
-		this.nigeriaObsService = Context.getService(NigeriaObsService.class);
-	}
-	
-	public Container createContainer(Patient pts) throws Exception {
+        this.openmrsConn = _openmrsConn;
+        this.nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+        this.nigeriaObsService = Context.getService(NigeriaObsService.class);
+    }
+
+    public Container createContainer(Patient pts) throws Exception {
         String facilityName = Utils.getFacilityName();
         String DATIMID = Utils.getFacilityDATIMId();
         String FacilityType = "FAC";
@@ -95,19 +95,19 @@ public class NDRConverter {
                     this.groupedpatientBaselineObsByEncounterType = groupedPatientBaseLine.get("groupedByEncounterTypes");
 
                     if (filteredEncounters.size() > 0)
-                    for(Encounter enc: filteredEncounters){
-                        Date newToDate = this.toDate;
-                        if(newToDate == null) newToDate = new Date();
-                        int dateCreatedComp = enc.getDateCreated().compareTo(newToDate);
-                        int dateModifiedComp = -1;
-                        if (enc.getDateChanged() != null) {
-                            dateModifiedComp = enc.getDateChanged().compareTo(newToDate);
+                        for(Encounter enc: filteredEncounters){
+                            Date newToDate = this.toDate;
+                            if(newToDate == null) newToDate = new Date();
+                            int dateCreatedComp = enc.getDateCreated().compareTo(newToDate);
+                            int dateModifiedComp = -1;
+                            if (enc.getDateChanged() != null) {
+                                dateModifiedComp = enc.getDateChanged().compareTo(newToDate);
+                            }
+                            if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
+                                hasUpdate = true;
+                                break;
+                            }
                         }
-                        if(dateCreatedComp <= -1 && dateModifiedComp <= -1){
-                            hasUpdate = true;
-                            break;
-                        }
-                    }
                 }
             }
 
@@ -140,8 +140,8 @@ public class NDRConverter {
             throw ex;
         }
     }
-	
-	private IndividualReportType createIndividualReportType() {
+
+    private IndividualReportType createIndividualReportType() {
 
         IndividualReportType individualReport = new IndividualReportType();
         String facilityName = Utils.getFacilityName();
@@ -373,7 +373,7 @@ public class NDRConverter {
 
     }
 
-	private ConditionType createHIVCondition() {
+    private ConditionType createHIVCondition() {
 
         ConditionType condition = new ConditionType();
 
@@ -400,7 +400,7 @@ public class NDRConverter {
                 }
 
 
-                ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(this.groupedpatientBaselineObsByConcept, this.groupedpatientBaselineObsByEncounterType);
+                ConditionSpecificQuestionsType hivSpecs = mainDictionary.createCommConditionSpecificQuestionsType(this.patient,this.groupedpatientBaselineObsByConcept, this.groupedpatientBaselineObsByEncounterType);
 
 
                 if (hivSpecs.getHIVQuestions() != null) {
@@ -468,7 +468,7 @@ public class NDRConverter {
                 //set ordered date
                 if(sampleLaboratoryReportType.getLaboratoryOrderAndResult().size() > 0 &&
                         labLaboratoryReportType.getLaboratoryOrderAndResult().size() > 0 ){
-                        List<LaboratoryOrderAndResult> newLaboratoryOrderAndResults = new ArrayList<>();
+                    List<LaboratoryOrderAndResult> newLaboratoryOrderAndResults = new ArrayList<>();
                     for(LaboratoryOrderAndResult laboratoryOrderAndResult : labLaboratoryReportType.getLaboratoryOrderAndResult()){
                         for(LaboratoryOrderAndResult laboratoryOrderAndResult2: sampleLaboratoryReportType.getLaboratoryOrderAndResult()){
                             if(laboratoryOrderAndResult.getLaboratoryTestTypeCode().equalsIgnoreCase(laboratoryOrderAndResult2.getLaboratoryTestTypeCode())){
@@ -515,141 +515,141 @@ public class NDRConverter {
     }
 
     /**
-	 * Create PatientDemographicsType for pts Create CommonQuestionType for pts Create
-	 * HIVQuestionsType for pts Get all Pharmacy visits for patients For each Pharmacy visit create
-	 * RegimenType Get all Clinical visits for patients // For each Clinical visits create
-	 * HIVEncounter // Get all Lab visits for patients // For each of Lab visit create LabReportType
-	 */
-	//
-	private ProgramAreaType createProgramArea() {
-		ProgramAreaType p = new ProgramAreaType();
-		p.setProgramAreaCode("HIV");
-		return p;
-	}
-	
-	private AddressType createPatientAddress() {
-		AddressType p = new AddressType();
-		p.setAddressTypeCode("H");
-		p.setCountryCode("NGA");
-		Connection connection = null;
-		Statement statement = null;
-		
-		PersonAddress pa = patient.getPersonAddress();
-		if (pa != null) {
-			//p.setTown(pa.getAddress1());
-			String lga = pa.getCityVillage();
-			String state = pa.getStateProvince();
-			
-			try {
-				String sql = String
-				        .format(
-				            "SELECT `name`, user_generated_id, 'STATE' AS 'Location' "
-				                    + "FROM address_hierarchy_entry WHERE level_id =2 AND NAME = '%s' "
-				                    + "UNION "
-				                    + "SELECT `name`, user_generated_id, 'LGA' AS 'Location' FROM address_hierarchy_entry "
-				                    + " WHERE level_id =3 AND NAME ='%s' AND parent_id = (SELECT address_hierarchy_entry_id FROM address_hierarchy_entry\n"
-				                    + " WHERE level_id =2 AND NAME = '%s')", state, lga, state);
-				
-				connection = DriverManager.getConnection(this.openmrsConn.getUrl(), this.openmrsConn.getUsername(),
-				    this.openmrsConn.getPassword());
-				statement = connection.createStatement();
-				ResultSet result = statement.executeQuery(sql);
-				while (result.next()) {
-					//String name = result.getString("name");
-					if (result.getString("Location").contains("STATE")) {
-						p.setStateCode(result.getString("user_generated_id"));
-					} else {
-						p.setLGACode(result.getString("user_generated_id"));
-					}
-				}
-			}
-			catch (SQLException e) {
-				e.printStackTrace();
-				LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
-				    LogLevel.live);
-			}
-			finally {
-				
-				try {
-					if (connection != null) {
-						connection.close();
-					}
-					
-					if (statement != null) {
-						statement.close();
-					}
-					
-				}
-				catch (SQLException ex) {
-					ex.printStackTrace();
-				}
-			}
-			
-		}
-		return p;
-	}
-	
-	private MessageHeaderType createMessageHeaderType(Patient pts, boolean hasUpdate) throws DatatypeConfigurationException {
-		MessageHeaderType header = new MessageHeaderType();
-		
-		Calendar cal = Calendar.getInstance();
-		
-		header.setMessageCreationDateTime(utils.getXmlDateTime(cal.getTime()));
-		Boolean isDeleted = pts.getPerson().getVoided();
-		String updatedORInitial = (hasUpdate) ? "UPDATED" : "INITIAL";
-		String messageStatus = (isDeleted) ? "REDACTED" : updatedORInitial;
-		header.setMessageStatusCode(messageStatus);
-		//header.setMessageStatusCode("INITIAL");
-		header.setMessageSchemaVersion(new BigDecimal("1.6"));
-		header.setMessageUniqueID(UUID.randomUUID().toString());
-		return header;
-	}
-	
-	public String getValidation(String id) {
+     * Create PatientDemographicsType for pts Create CommonQuestionType for pts Create
+     * HIVQuestionsType for pts Get all Pharmacy visits for patients For each Pharmacy visit create
+     * RegimenType Get all Clinical visits for patients // For each Clinical visits create
+     * HIVEncounter // Get all Lab visits for patients // For each of Lab visit create LabReportType
+     */
+    //
+    private ProgramAreaType createProgramArea() {
+        ProgramAreaType p = new ProgramAreaType();
+        p.setProgramAreaCode("HIV");
+        return p;
+    }
+
+    private AddressType createPatientAddress() {
+        AddressType p = new AddressType();
+        p.setAddressTypeCode("H");
+        p.setCountryCode("NGA");
+        Connection connection = null;
+        Statement statement = null;
+
+        PersonAddress pa = patient.getPersonAddress();
+        if (pa != null) {
+            //p.setTown(pa.getAddress1());
+            String lga = pa.getCityVillage();
+            String state = pa.getStateProvince();
+
+            try {
+                String sql = String
+                        .format(
+                                "SELECT `name`, user_generated_id, 'STATE' AS 'Location' "
+                                        + "FROM address_hierarchy_entry WHERE level_id =2 AND NAME = '%s' "
+                                        + "UNION "
+                                        + "SELECT `name`, user_generated_id, 'LGA' AS 'Location' FROM address_hierarchy_entry "
+                                        + " WHERE level_id =3 AND NAME ='%s' AND parent_id = (SELECT address_hierarchy_entry_id FROM address_hierarchy_entry\n"
+                                        + " WHERE level_id =2 AND NAME = '%s')", state, lga, state);
+
+                connection = DriverManager.getConnection(this.openmrsConn.getUrl(), this.openmrsConn.getUsername(),
+                        this.openmrsConn.getPassword());
+                statement = connection.createStatement();
+                ResultSet result = statement.executeQuery(sql);
+                while (result.next()) {
+                    //String name = result.getString("name");
+                    if (result.getString("Location").contains("STATE")) {
+                        p.setStateCode(result.getString("user_generated_id"));
+                    } else {
+                        p.setLGACode(result.getString("user_generated_id"));
+                    }
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                LoggerUtils.write(NDRMainDictionary.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
+                        LogLevel.live);
+            }
+            finally {
+
+                try {
+                    if (connection != null) {
+                        connection.close();
+                    }
+
+                    if (statement != null) {
+                        statement.close();
+                    }
+
+                }
+                catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        }
+        return p;
+    }
+
+    private MessageHeaderType createMessageHeaderType(Patient pts, boolean hasUpdate) throws DatatypeConfigurationException {
+        MessageHeaderType header = new MessageHeaderType();
+
+        Calendar cal = Calendar.getInstance();
+
+        header.setMessageCreationDateTime(utils.getXmlDateTime(cal.getTime()));
+        Boolean isDeleted = pts.getPerson().getVoided();
+        String updatedORInitial = (hasUpdate) ? "UPDATED" : "INITIAL";
+        String messageStatus = (isDeleted) ? "REDACTED" : updatedORInitial;
+        header.setMessageStatusCode(messageStatus);
+        //header.setMessageStatusCode("INITIAL");
+        header.setMessageSchemaVersion(new BigDecimal("1.6"));
+        header.setMessageUniqueID(UUID.randomUUID().toString());
+        return header;
+    }
+
+    public String getValidation(String id) {
         NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
         String sqlV = nigeriaemrService.getSqlVersion();
-		StringBuilder textToEnc = new StringBuilder();
-		textToEnc.append(System.getProperty("os.arch"));
-		textToEnc.append("|");
-		textToEnc.append(System.getProperty("os.name"));
-		textToEnc.append("|");
-		textToEnc.append(System.getProperty("os.version"));
-		textToEnc.append("|");
-		textToEnc.append(System.getProperty("OPENMRS_APPLICATION_DATA_DIRECTORY"));
-		textToEnc.append("|");
-		textToEnc.append(System.getProperty("java.version"));
-		textToEnc.append("|");
-		textToEnc.append(System.getProperty("user.home"));
+        StringBuilder textToEnc = new StringBuilder();
+        textToEnc.append(System.getProperty("os.arch"));
+        textToEnc.append("|");
+        textToEnc.append(System.getProperty("os.name"));
+        textToEnc.append("|");
+        textToEnc.append(System.getProperty("os.version"));
+        textToEnc.append("|");
+        textToEnc.append(System.getProperty("OPENMRS_APPLICATION_DATA_DIRECTORY"));
+        textToEnc.append("|");
+        textToEnc.append(System.getProperty("java.version"));
+        textToEnc.append("|");
+        textToEnc.append(System.getProperty("user.home"));
         textToEnc.append("|");
         textToEnc.append(sqlV);
-		textToEnc.append("|");
-		textToEnc.append(Utils.getModules()); // list of modules and versions
-		textToEnc.append("|");
-		textToEnc.append(id);
-		try {
-			Version version = Utils.getNmrsVersion();
-			if (version != null) {
-				textToEnc.append("|");
-				textToEnc.append(version.getPbs());
-				textToEnc.append("|");
-				textToEnc.append(version.getExport());
-			}
-			StringBuilder returnVar = new StringBuilder();
-			returnVar.append(Signer.encryptText(textToEnc.toString()));
-			String hashReturnVar = Base64.getEncoder().encodeToString(returnVar.toString().getBytes());
-			returnVar.append("||");
-			//add hash of encrpt string
-			returnVar.append(hashReturnVar);
-			if (version != null) {
-				returnVar.append("||");
-				returnVar.append(version.getValidator());
-			}
-			return returnVar.toString();
-		}
-		catch (Exception e) {
-			LoggerUtils.write(NDRConverter.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
-			e.printStackTrace();
-			return "";
-		}
-	}
+        textToEnc.append("|");
+        textToEnc.append(Utils.getModules()); // list of modules and versions
+        textToEnc.append("|");
+        textToEnc.append(id);
+        try {
+            Version version = Utils.getNmrsVersion();
+            if (version != null) {
+                textToEnc.append("|");
+                textToEnc.append(version.getPbs());
+                textToEnc.append("|");
+                textToEnc.append(version.getExport());
+            }
+            StringBuilder returnVar = new StringBuilder();
+            returnVar.append(Signer.encryptText(textToEnc.toString()));
+            String hashReturnVar = Base64.getEncoder().encodeToString(returnVar.toString().getBytes());
+            returnVar.append("||");
+            //add hash of encrpt string
+            returnVar.append(hashReturnVar);
+            if (version != null) {
+                returnVar.append("||");
+                returnVar.append(version.getValidator());
+            }
+            return returnVar.toString();
+        }
+        catch (Exception e) {
+            LoggerUtils.write(NDRConverter.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+            e.printStackTrace();
+            return "";
+        }
+    }
 }

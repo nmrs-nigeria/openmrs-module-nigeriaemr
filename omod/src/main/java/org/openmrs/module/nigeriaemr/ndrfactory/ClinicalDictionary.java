@@ -70,10 +70,14 @@ public class ClinicalDictionary {
         map.put(1207, "4");
 
         //pediatric
-        map.put(1220, "I");
+        map.put(165282, "1");
+        map.put(165283, "2");
+        map.put(165284, "3");
+        map.put(165285, "4");
+      /*  map.put(1220, "I");
         map.put(1221, "II");
         map.put(1222, "III");
-        map.put(1223, "IV");
+        map.put(1223, "IV");*/
 
         //Family planning
         map.put(190, "FP1");
@@ -270,10 +274,10 @@ public class ClinicalDictionary {
         HIVEncounterType hivEncounterType = null;
         //Turn these to class level constants letter
         Integer[] encounterTypeArr = {
-            Utils.ADULT_INITIAL_ENCOUNTER_TYPE,
-            Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE,
-            Utils.PHARMACY_ENCOUNTER_TYPE,
-            Utils.CARE_CARD_ENCOUNTER_TYPE};
+                Utils.ADULT_INITIAL_ENCOUNTER_TYPE,
+                Utils.LAB_ORDER_AND_RESULT_ENCOUNTER_TYPE,
+                Utils.PHARMACY_ENCOUNTER_TYPE,
+                Utils.CARE_CARD_ENCOUNTER_TYPE};
         List<Encounter> allPatientEncounterList = Utils.extractEncounterList(groupedEncounters, Arrays.asList(encounterTypeArr));
         Set<Date> visitDateSet = Utils.extractUniqueVisitsForEncounterTypes(allPatientEncounterList);
         List<Obs> obsPerVisitDate = null;
@@ -511,23 +515,23 @@ public class ClinicalDictionary {
             ndrCode = getMappedValue(valueCoded);
             hivEncounterType.setReasonForRegimenSwitchSubs(ndrCode);
         }
-        
-        
+
+
         obs = Utils.extractObs(Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT, obsListForOneVisit);
+        if (obs != null && obs.getValueCoded() != null) {
+            valueCoded = obs.getValueCoded().getConceptId();
+            if (valueCoded == Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT) {
+                hivEncounterType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
+            }
+        } else {
+            obs = Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForOneVisit);
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
-                if (valueCoded == Utils.MISSED_DOSES_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.MISSED_MEDICATION_POOR_ADHERENCE_CONCEPT) {
-                    hivEncounterType.setPoorAdherenceIndicator(Boolean.TRUE); //PoorAdherenceIndicator
-                }
-            } else {
-                obs = Utils.extractObs(Utils.ARV_ADHERENCE_CONCEPT, obsListForOneVisit);
-                if (obs != null && obs.getValueCoded() != null) {
-                    valueCoded = obs.getValueCoded().getConceptId();
-                    if (valueCoded == Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT) {
-                        hivEncounterType.setPoorAdherenceIndicator(Boolean.TRUE);
-                    }
+                if (valueCoded == Utils.ARV_ADHERENCE_FAIR_ADHERENCE_CONCEPT || valueCoded == Utils.ARV_ADHERENCE_POOR_ADHERENCE_CONCEPT) {
+                    hivEncounterType.setPoorAdherenceIndicator(Boolean.TRUE);
                 }
             }
+        }
 
 
         // }
