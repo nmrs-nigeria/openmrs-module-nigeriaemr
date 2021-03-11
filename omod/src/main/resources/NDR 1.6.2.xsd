@@ -2272,7 +2272,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="ImmunizationDate" type="xs:date">
+			<xs:element name="ImmunizationDate" type="xs:date" maxOccurs="1" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Vaccination
@@ -3423,7 +3423,7 @@
 				</xs:simpleType>
 			</xs:element>
 
-			<xs:element name="FirstTimeVisit" minOccurs="1"
+			<xs:element name="FirstTimeVisit" minOccurs="0"
 						maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
@@ -3634,7 +3634,7 @@
 
 	<xs:complexType name="RecencyTestingType">
 		<xs:sequence>
-			<xs:element name="TestName">
+			<xs:element name="TestName" maxOccurs="1" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Recency Test Name
@@ -3647,8 +3647,8 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="TestDate" type="xs:date"></xs:element>
-			<xs:element name="SampleType">
+			<xs:element name="TestDate" type="xs:date" maxOccurs="1" minOccurs="0"></xs:element>
+			<xs:element name="SampleType" maxOccurs="1" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
 						<xs:enumeration value="D" />
@@ -3657,7 +3657,7 @@
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="DateSampleCollected" type="xs:date"
-						minOccurs="1" maxOccurs="1">
+						minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Date Sample Collected
@@ -3665,15 +3665,15 @@
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="DateSampleSent" type="xs:date"
-						minOccurs="1" maxOccurs="1">
+						minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Date Sample Sent
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="PCRLab" type="xs:string"></xs:element>
-			<xs:element name="RapidRecencyAssay">
+			<xs:element name="PCRLab" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
+			<xs:element name="RapidRecencyAssay" maxOccurs="1" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						HIV recent infection testing algorithm
@@ -3693,7 +3693,7 @@
 			<xs:element name="ViralLoadConfirmationTestDate"
 						type="xs:date" minOccurs="0" maxOccurs="1">
 			</xs:element>
-			<xs:element name="FinalRecencyTestResult">
+			<xs:element name="FinalRecencyTestResult" maxOccurs="1" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">
 						Final HIV recent infection testing algorithm
@@ -3708,13 +3708,13 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="Consent" type="YNCodeType"></xs:element>
-			<xs:element name="RecencyNumber" type="xs:string"></xs:element>
+			<xs:element name="Consent" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
+			<xs:element name="RecencyNumber" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
 
-			<xs:element name="ControlLine" type="YNCodeType"></xs:element>
-			<xs:element name="VerificationLine" type="YNCodeType"></xs:element>
-			<xs:element name="LongTermLine" type="YNCodeType"></xs:element>
-			<xs:element name="RecencyInterpretation">
+			<xs:element name="ControlLine" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
+			<xs:element name="VerificationLine" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
+			<xs:element name="LongTermLine" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
+			<xs:element name="RecencyInterpretation" maxOccurs="1" minOccurs="0">
 				<xs:simpleType>
 					<xs:restriction base="CodeType">
 						<xs:enumeration value="R" />
@@ -3724,12 +3724,12 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element name="ViralLoadRequest" type="YNCodeType"></xs:element>
+			<xs:element name="ViralLoadRequest" type="YNCodeType" maxOccurs="1" minOccurs="0"></xs:element>
 
 			<xs:element name="SampleReferenceNumber"
-						type="xs:string">
+						type="xs:string" maxOccurs="1" minOccurs="0">
 			</xs:element>
-			<xs:element name="ViralLoadClassification" type="xs:string"></xs:element>
+			<xs:element name="ViralLoadClassification" type="xs:string" maxOccurs="1" minOccurs="0"></xs:element>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="TestResultType">

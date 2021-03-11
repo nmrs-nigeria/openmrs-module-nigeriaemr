@@ -135,4 +135,12 @@ public interface NigeriaemrService extends OpenmrsService {
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
 	String getSqlVersion() throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	void saveBiometricInfo(BiometricInfo biometricInfo);
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	public void deleteBiometricInfoByPatientId(Integer patientId) throws APIException;
 }

@@ -278,6 +278,12 @@ public class NDRCommonQuestionsDictionary {
                 return null;
             }
 
+            if(pts.isVoided() && pepfarid != null){
+                NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
+                List<Integer> patientIds = nigeriaPatientService.getPatientIdsByIdentifiersByType(pepfarid.getIdentifier(),4);
+                if(patientIds.size() > 0) return null;
+            }
+
             demo.setTreatmentFacility(facility);
 
             String gender = pts.getGender();
