@@ -255,6 +255,19 @@ public class ClinicalDictionary {
         map.put(163523, "7");
         map.put(160566, "8");
         map.put(160569, "9");
+
+        //reason for stopped regimen
+        map.put(1434, "2");
+        map.put(843, "3");
+        map.put(159598, "4");
+        map.put(5485, "5");
+        map.put(1754, "6");
+        map.put(819, "7");
+        map.put(164435, "8");
+        map.put(160016, "9");
+        map.put(5622, "10");
+
+
     }
 
     public String getMappedValue(int conceptID) {
@@ -293,7 +306,7 @@ public class ClinicalDictionary {
         return hivEncounterTypeList;
     }
 
-    public HIVEncounterType createHIVEncounterType(Patient patient, Date visitDate,  List<Obs> obsListForOneVisitList) throws DatatypeConfigurationException {
+    public HIVEncounterType createHIVEncounterType(Patient patient, Date visitDate, List<Obs> obsListForOneVisitList) throws DatatypeConfigurationException {
 
         List<Integer> obsCodeList = Arrays.asList(Utils.NEXT_APPOINTMENT_DATE_CONCEPT,Utils.WEIGHT_CONCEPT,Utils.CHILD_HEIGHT_CONCEPT,
                 Utils.BLOOD_PRESSURE_SYSTOLIC_CONCEPT, Utils.BLOOD_PRESSURE_DYSTOLIC_CONCEPT, Utils.PREGNANCY_BREASTFEEDING_CONCEPT,
@@ -331,6 +344,17 @@ public class ClinicalDictionary {
             nextAppointmentDate = new DateTime(obs.getValueDate());
             hivEncounterType.setNextAppointmentDate(utils.getXmlDate(nextAppointmentDate.toDate()));
 
+        }
+
+
+        hivEncounterType.setStoppedRegimen(retrieveStoppedRegimen(obsListForOneVisit));//Stopped Regimen
+        if (retrieveStoppedRegimen(obsListForOneVisit)) {
+            obs = Utils.extractObs(Utils.REASON_STOPPED_REGIMEN, obsListForOneVisit);//ReasonForRegimenStopped
+            if (obs != null && obs.getValueCoded() != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                ndrCode = getMappedValue(valueCoded);
+                hivEncounterType.setReasonForStoppedRegimen(ndrCode);
+            }
         }
 
         if (nextAppointmentDate != null) {
@@ -591,6 +615,21 @@ public class ClinicalDictionary {
                 if (valueCoded == Utils.PICKUP_REASON_CONCEPT_SWITCH_VALUE) {
                     return Boolean.TRUE;
                 }
+            }
+        }
+        return Boolean.FALSE;
+    }
+
+    private Boolean retrieveStoppedRegimen(Map<Object, List<Obs>> obsList) {
+        int valueCoded = 0;
+        List<Integer> obsCodeList = Arrays.asList(Utils.REGIMEN_MEDICATION_PLAN,
+                Utils.PICKUP_REASON_CONCEPT);
+
+        Obs obs = Utils.extractObs(Utils.REGIMEN_MEDICATION_PLAN,obsList);
+        if (obs != null && obs.getValueCoded() != null) {
+            valueCoded = obs.getValueCoded().getConceptId();
+            if (valueCoded == Utils.REGIMEN_MEDICATION_REASON_STOPPED_REGIMEN_VALUE) {
+                return Boolean.TRUE;
             }
         }
         return Boolean.FALSE;
