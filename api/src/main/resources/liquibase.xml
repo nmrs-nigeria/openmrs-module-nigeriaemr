@@ -240,5 +240,9 @@
             <column name="date_created"/>
         </createIndex>
     </changeSet>
+    
+    <changeSet id="lga_trailing_bracket_fix" author="wande">
+       <sql> UPDATE address_hierarchy_entry  SET user_generated_id = '73' WHERE uuid='12418a5d-c51c-4460-8651-6a34d6c9cc58'</sql>
+    </changeSet>
  
 </databaseChangeLog>
