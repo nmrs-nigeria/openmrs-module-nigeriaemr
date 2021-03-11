@@ -830,7 +830,7 @@ public class Utils {
 			return null;
 		}
 		return obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID &&
-				ele.getValueCoded().getId() == conceptID).findFirst().orElse(null);
+				ele.getValueCoded().getId() == valueCoded).findFirst().orElse(null);
 	}
 	
 	public static List<Integer> getCareCardObs(Patient patient, Date endDate) {
