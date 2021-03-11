@@ -5,34 +5,26 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.apache.commons.lang3.StringUtils;
-import org.openmrs.*;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
+import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.BiometricInfo;
-import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
-import org.openmrs.module.nigeriaemr.model.ndr.CommonQuestionsType;
-import org.openmrs.module.nigeriaemr.model.ndr.ConditionSpecificQuestionsType;
-import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
-import org.openmrs.module.nigeriaemr.model.ndr.FingerPrintType;
-import org.openmrs.module.nigeriaemr.model.ndr.HIVQuestionsType;
-import org.openmrs.module.nigeriaemr.model.ndr.IdentifierType;
-import org.openmrs.module.nigeriaemr.model.ndr.IdentifiersType;
-import org.openmrs.module.nigeriaemr.model.ndr.LeftHandType;
-import org.openmrs.module.nigeriaemr.model.ndr.PatientDemographicsType;
-import org.openmrs.module.nigeriaemr.model.ndr.RightHandType;
+import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import org.springframework.expression.spel.ast.Identifier;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -51,6 +43,8 @@ public class NDRCommonQuestionsDictionary {
         pharmacyDictionary = new PharmacyDictionary();
     }
     Utils utils = new Utils();
+
+    private Map<Integer, String> hivQuestionDictionary = new HashMap<>();
 
     private void loadDictionary() {
         //map.put(123, "PatientDeceasedIndicator");
@@ -135,6 +129,11 @@ public class NDRCommonQuestionsDictionary {
         map.put(5497, "2");
         map.put(730, "3");
         map.put(164427, "4");
+
+        hivQuestionDictionary.put(159492, "1");
+        hivQuestionDictionary.put(165889, "2");
+        hivQuestionDictionary.put(165916, "3");
+       // hivQuestionDictionary.put(5271, "4");
 
     }
 
@@ -374,12 +373,7 @@ public class NDRCommonQuestionsDictionary {
 
     }
 
-    private String getMappedValue(int conceptID) {
-        if (map.containsKey(conceptID)) {
-            return map.get(conceptID);
-        }
-        return "";
-    }
+
 
     public FingerPrintType getPatientsFingerPrint(int id) {
         try {
@@ -448,7 +442,7 @@ public class NDRCommonQuestionsDictionary {
         return null;
     }
 
-    public CommonQuestionsType createCommonQuestionType(Patient pts, Encounter lastEncounterDate,  Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
+    public CommonQuestionsType createCommonQuestionType(Patient pts, Encounter lastEncounterDate, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         Obs obs;
         Date valueDateTime;
         Boolean ndrBooleanCode;
@@ -532,9 +526,9 @@ public class NDRCommonQuestionsDictionary {
     }
 
     /*
-          
+
 HIVQuestionsType
- -CareEntryPoint (160540)  
+ -CareEntryPoint (160540)
  -FirstConfirmedHIVTestDate(160554)
  -FirstHIVTestMode(164947)
  -WhereFirstHIVTest
@@ -698,6 +692,13 @@ HIVQuestionsType
                 valueNumericInt = obs.getValueNumeric().intValue();
                 hivQuestionsType.setCD4AtStartOfART(String.valueOf(valueNumericInt));
             }
+
+            obs = Utils.extractLastObs(Utils.REASON_FOR_TERMINATION, obsNewList);
+            if (obs != null && obs.getValueCoded() != null) {
+                ndrCodedValue = getHIVQuestionMappedValue(obs.getValueCoded().getConceptId());
+                hivQuestionsType.setReasonForStoppedTreatment(ndrCodedValue);
+            }
+
             obs = Utils.extractObsByValues(Utils.REASON_FOR_TERMINATION_CONCEPT, Utils.TRANSFERRED_OUT_CONCEPT, obsList);
             if (obs != null) {
                 hivQuestionsType.setPatientTransferredOut(Boolean.TRUE);
@@ -770,7 +771,27 @@ HIVQuestionsType
         return hivQuestionsType;
     }
 
-    public ConditionSpecificQuestionsType createConditionSpecificQuestionType(Patient patient,Map<Object, List<Obs>> groupedpatientBaselineObsByConcept,
+    private String getMappedValue(int conceptID) {
+        try {
+            return map.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+
+    private String getHIVQuestionMappedValue(int conceptID) {
+        try {
+            return hivQuestionDictionary.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+
+    public ConditionSpecificQuestionsType createConditionSpecificQuestionType(Patient patient, Map<Object, List<Obs>> groupedpatientBaselineObsByConcept,
                                                                               Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType) throws DatatypeConfigurationException {
         ConditionSpecificQuestionsType conditionSpecificQuestion = new ConditionSpecificQuestionsType();
         HIVQuestionsType hivQuestionType = createHIVQuestionType(patient, groupedpatientBaselineObsByConcept,

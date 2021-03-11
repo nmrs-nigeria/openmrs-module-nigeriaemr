@@ -1,0 +1,27 @@
+[
+  {
+    "id": "customReport",
+    "description": "OpenMRS System Administration",
+    "order": 0,
+    "extensions": [
+      {
+        "id": "demoapp.homepageLink",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "NMRS Export",
+        "url": "nigeriaemr/customreport.page",
+        "icon": "icon-upload-alt ",
+        "requiredPrivilege": "Replace with a privilege name, or else remove"
+      },
+      {
+        "id": "demoapp.homepageLink",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "Database Backup",
+        "url": "module/databasebackup/backup.form",
+        "icon": "icon-download-alt ",
+        "requiredPrivilege": "App: reportingui.reports"
+      }
+    ]
+  }
+]

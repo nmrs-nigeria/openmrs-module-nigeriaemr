@@ -7,11 +7,7 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -196,6 +192,24 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="SubstitutionIndicator" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="SwitchIndicator" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="NextAppointmentDate" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
+ *         &lt;element name="StoppedRegimen" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="DateStoppedRegimen" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0"/>
+ *         &lt;element name="ReasonForStoppedRegimen" minOccurs="0">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{}CodeType">
+ *               &lt;enumeration value="1"/>
+ *               &lt;enumeration value="2"/>
+ *               &lt;enumeration value="3"/>
+ *               &lt;enumeration value="4"/>
+ *               &lt;enumeration value="5"/>
+ *               &lt;enumeration value="6"/>
+ *               &lt;enumeration value="7"/>
+ *               &lt;enumeration value="8"/>
+ *               &lt;enumeration value="9"/>
+ *               &lt;enumeration value="10"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -211,7 +225,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
         "cd4TestDate", "reasonForRegimenSwitchSubs", "prescribedRegimenInitialIndicator",
         "prescribedRegimenCurrentIndicator", "typeOfPreviousExposureCode", "poorAdherenceIndicator",
         "reasonForPoorAdherence", "reasonRegimenEndedCode", "substitutionIndicator", "switchIndicator",
-        "nextAppointmentDate" })
+        "nextAppointmentDate", "stoppedRegimen", "dateStoppedRegimen", "reasonForStoppedRegimen" })
 public class HIVEncounterType {
 	
 	@XmlElement(name = "VisitID", required = true)
@@ -321,6 +335,16 @@ public class HIVEncounterType {
 	@XmlElement(name = "NextAppointmentDate")
 	@XmlSchemaType(name = "date")
 	protected XMLGregorianCalendar nextAppointmentDate;
+	
+	@XmlElement(name = "StoppedRegimen")
+	protected Boolean stoppedRegimen;
+	
+	@XmlElement(name = "DateStoppedRegimen")
+	@XmlSchemaType(name = "date")
+	protected XMLGregorianCalendar dateStoppedRegimen;
+	
+	@XmlElement(name = "ReasonForStoppedRegimen")
+	protected String reasonForStoppedRegimen;
 	
 	/**
 	 * Gets the value of the visitID property.
@@ -950,6 +974,60 @@ public class HIVEncounterType {
 	 */
 	public void setNextAppointmentDate(XMLGregorianCalendar value) {
 		this.nextAppointmentDate = value;
+	}
+	
+	/**
+	 * Gets the value of the stoppedRegimen property.
+	 * 
+	 * @return possible object is {@link Boolean }
+	 */
+	public Boolean isStoppedRegimen() {
+		return stoppedRegimen;
+	}
+	
+	/**
+	 * Sets the value of the stoppedRegimen property.
+	 * 
+	 * @param value allowed object is {@link Boolean }
+	 */
+	public void setStoppedRegimen(Boolean value) {
+		this.stoppedRegimen = value;
+	}
+	
+	/**
+	 * Gets the value of the dateStoppedRegimen property.
+	 * 
+	 * @return possible object is {@link XMLGregorianCalendar }
+	 */
+	public XMLGregorianCalendar getDateStoppedRegimen() {
+		return dateStoppedRegimen;
+	}
+	
+	/**
+	 * Sets the value of the dateStoppedRegimen property.
+	 * 
+	 * @param value allowed object is {@link XMLGregorianCalendar }
+	 */
+	public void setDateStoppedRegimen(XMLGregorianCalendar value) {
+		this.dateStoppedRegimen = value;
+	}
+	
+	/**
+	 * Gets the value of the reasonForStoppedRegimen property.
+	 * 
+	 * @return possible object is {@link String }
+	 */
+	public String getReasonForStoppedRegimen() {
+		return reasonForStoppedRegimen;
+	}
+	
+	/**
+	 * Sets the value of the reasonForStoppedRegimen property.
+	 * 
+	 * @param value allowed object is {@link String }
+	 */
+	public void setReasonForStoppedRegimen(String value) {
+		this.reasonForStoppedRegimen = value;
 	}
 	
 }
