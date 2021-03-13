@@ -16,11 +16,14 @@
                         <br/> <br/>
                 <div>
                     <input style="background-color: #E8F0FE; border-radius: 25px; margin-top: 15px" type="checkbox" id="custom" name="custom" value="custom" onclick="checkBoxCheck()">
-                    <label for="custom" style="color: white;">Custom</label><br>
-                    <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display: none" type="text" value="comma separated patient identifiers or Ids" id="identifiers" onfocus=this.value='' name="identifiers"><br>
-                    <input  style="background-color: #E8F0FE; margin-left: 52px; border-radius: 25px; margin-top: 15px; display: none" type="checkbox" id="customStart" name="customStart" value="customStart" onclick="checkBoxStartCheck()">
-                    <label for="customStart" id="labelCustomStart" style=" color: white; width: 70%; height: 45px; margin-top: 15px; display: none">Initial</label><br>
-                    <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display:none" id="from" type="date"  />
+                    <label for="custom" style="color: white;">Custom</label><br id="br1">
+                    <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display: none" type="text" value="comma separated patient identifiers or Ids" id="identifiers" onfocus=this.value='' name="identifiers"><br id="br2">
+                    <input  style="background-color: #E8F0FE; margin-left: 52px; border-radius: 25px; margin-top: 15px; margin-bottom: 15px; display: none" type="checkbox" id="customStart" name="customStart" value="customStart" onclick="checkBoxStartCheck()">
+                    <label for="customStart" id="labelCustomStart" style=" color: white; width: 70%; height: 45px; margin-bottom: 15px; margin-top: 15px; display: none">Initial</label><br id="br3">
+                    <label id="lblfrom" for="from" style="color: white; margin-left: 50px; display:none;">Start Date</label><br id="br4">
+                    <input style="background-color: #E8F0FE; margin-left: 52px;margin-bottom: 15px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display:none" id="from" type="date"  /><br id="br5">
+                    <label id="lblto" for="to" style="color: white; margin-left: 50px; display:none;">End Date</label><br id="br6">
+                    <input disabled="disabled" style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display:none" id="to" type="date"  /><br id="br7">
                     <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px" type="button" value="Export" onclick="exportData()" class="btn btn-primary" />
                     <input style="background-color: #E8F0FE; margin-left: 52px; width: 70%; height: 45px; border-radius: 25px; margin-top: 15px; display: none" id="btnClear" type="button" value="Clear" onclick="clearData()" class="btn btn-primary" />
                 </div>
@@ -66,6 +69,7 @@
     
 <script>
     let lastNDRRunDate = '${lastNDRRunDate}'
+    console.log(lastNDRRunDate)
 
     jq = jQuery;
     checkBoxCheck();
@@ -75,17 +79,38 @@
         if (checkBox.checked === true){
             document.getElementById('identifiers').style.display =  'inline';
             document.getElementById('from').style.display =  'inline';
+            document.getElementById('to').style.display =  'inline';
+            document.getElementById('to').value  =  lastNDRRunDate;
             document.getElementById('btnClear').style.display =  'inline';
             document.getElementById('customStart').style.display =  'inline';
             checkBoxStartCheck()
             document.getElementById('labelCustomStart').style.display =  'inline';
+            document.getElementById('lblfrom').style.display =  'inline';
+            document.getElementById('lblto').style.display =  'inline';
+            document.getElementById('br1').style.display =  'inline';
+            document.getElementById('br2').style.display =  'inline';
+            document.getElementById('br3').style.display =  'inline';
+            document.getElementById('br4').style.display =  'inline';
+            document.getElementById('br5').style.display =  'inline';
+            document.getElementById('br6').style.display =  'inline';
+            document.getElementById('br7').style.display =  'inline';
             jq("#tb_commtester tbody tr").remove();
         }else{
             document.getElementById('identifiers').style.display =  'none';
             document.getElementById('from').style.display =  'none';
+            document.getElementById('to').style.display =  'none';
             document.getElementById('btnClear').style.display =  'none';
             document.getElementById('customStart').style.display =  'none';
             document.getElementById('labelCustomStart').style.display =  'none';
+            document.getElementById('lblfrom').style.display =  'none';
+            document.getElementById('lblto').style.display =  'none';
+            document.getElementById('br1').style.display =  'none';
+            document.getElementById('br2').style.display =  'none';
+            document.getElementById('br3').style.display =  'none';
+            document.getElementById('br4').style.display =  'none';
+            document.getElementById('br5').style.display =  'none';
+            document.getElementById('br6').style.display =  'none';
+            document.getElementById('br7').style.display =  'none';
             jq("#tb_commtester tbody tr").remove();
         }
         loadFileListDefault(true);
@@ -97,8 +122,14 @@
         if (checkBox.checked === true){
             document.getElementById('from').value =  '';
             document.getElementById('from').style.display =  'none';
+            document.getElementById('lblfrom').style.display =  'none';
+            document.getElementById('br4').style.display =  'none';
+            document.getElementById('br5').style.display =  'none';
         }else{
+            document.getElementById('lblfrom').style.display =  'inline';
             document.getElementById('from').style.display =  'inline';
+            document.getElementById('br4').style.display =  'inline';
+            document.getElementById('br5').style.display =  'inline';
         }
     }
 
