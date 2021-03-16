@@ -13,6 +13,7 @@ import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.api.db.hibernate.HibernateObsDAO;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaObsDAO;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -257,8 +258,11 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (from != null)
 			sql.setDate("from", from);
-		if (to != null)
-			sql.setDate("to", to);
+		if (to != null) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String strDate = dateFormat.format(to);
+			sql.setString("to", strDate);
+		}
 		if (patientIds != null && patientIds.size() > 0)
 			sql.setParameterList("patientIds", patientIds);
 		
@@ -327,8 +331,11 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (fromDate != null)
 			sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		if (toDate != null) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String strDate = dateFormat.format(toDate);
+			sql.setString("toDate", strDate);
+		}
 		if (id != null)
 			sql.setInteger("person_id", id);
 		

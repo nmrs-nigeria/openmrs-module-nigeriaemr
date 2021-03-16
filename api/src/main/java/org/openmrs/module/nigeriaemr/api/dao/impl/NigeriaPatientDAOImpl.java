@@ -14,6 +14,7 @@ import org.openmrs.api.db.hibernate.HibernatePatientDAO;
 import org.openmrs.api.db.hibernate.PatientSearchCriteria;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaPatientDAO;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -82,8 +83,12 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		sql.setParameterList("patientIds", patientIds);
 		if (fromDate != null)
 			sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		if (toDate != null){
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String strDate = dateFormat.format(toDate);
+			sql.setString("toDate", strDate);
+		}
+
 		return sql.list();
 	}
 	
@@ -103,8 +108,12 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		SQLQuery sql = getSession().createSQLQuery(query);
 		
 		sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		if (toDate != null){
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String strDate = dateFormat.format(toDate);
+			sql.setString("toDate", strDate);
+		}
+
 		
 		patientIds = sql.list();
 		
@@ -127,8 +136,12 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		if (fromDate != null)
 			sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		if (toDate != null){
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String strDate = dateFormat.format(toDate);
+			sql.setString("toDate", strDate);
+		}
+
 		
 		return sql.list();
 	}
@@ -148,8 +161,11 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		sql.setParameterList("identifiers", identifiers);
 		if (fromDate != null)
 			sql.setDate("fromDate", fromDate);
-		if (toDate != null)
-			sql.setDate("toDate", toDate);
+		if (toDate != null) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String strDate = dateFormat.format(toDate);
+			sql.setString("toDate", strDate);
+		}
 		
 		return sql.list();
 	}
@@ -183,8 +199,12 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		query += " AND patient.voided = false ";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
-		if (lastEncounterDate != null)
-			sql.setDate("toDate", lastEncounterDate);
+		if (lastEncounterDate != null){
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String strDate = dateFormat.format(lastEncounterDate);
+			sql.setString("toDate", strDate);
+		}
+
 		
 		patientIds = sql.list();
 		
