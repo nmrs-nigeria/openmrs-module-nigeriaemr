@@ -23,8 +23,6 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 	
 	DbSessionFactory sessionFactory;
 	
-	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
 	private DbSession getSession() {
 		return sessionFactory.getCurrentSession();
 	}
@@ -259,12 +257,10 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (from != null) {
-			String strDate = dateFormat.format(from);
-			sql.setString("from", strDate);
+			sql.setDate("from", from);
 		}
 		if (to != null) {
-			String strDate = dateFormat.format(to);
-			sql.setString("to", strDate);
+			sql.setDate("to", to);
 		}
 		if (patientIds != null && patientIds.size() > 0)
 			sql.setParameterList("patientIds", patientIds);
@@ -333,12 +329,10 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (fromDate != null) {
-			String strDate = dateFormat.format(fromDate);
-			sql.setString("fromDate", strDate);
+			sql.setDate("fromDate", fromDate);
 		}
 		if (toDate != null) {
-			String strDate = dateFormat.format(toDate);
-			sql.setString("toDate", strDate);
+			sql.setDate("toDate", toDate);
 		}
 		if (id != null)
 			sql.setInteger("person_id", id);
