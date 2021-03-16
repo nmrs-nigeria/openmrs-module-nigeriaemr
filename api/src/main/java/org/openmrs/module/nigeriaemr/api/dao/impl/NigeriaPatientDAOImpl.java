@@ -78,17 +78,17 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		if (fromDate != null)
 			query += " AND (patient.date_created >= :fromDate OR patient.date_changed >= :fromDate)";
 		if (toDate != null)
-			query += " AND (patient.date_created <= :toDate OR patient.date_changed <= :toDate)";
+			query += " AND (patient.date_created <= (:toDate  + INTERVAL 1 DAY) OR patient.date_changed <= (:toDate  + INTERVAL 1 DAY))";
 		SQLQuery sql = getSession().createSQLQuery(query);
 		sql.setParameterList("patientIds", patientIds);
 		if (fromDate != null)
 			sql.setDate("fromDate", fromDate);
-		if (toDate != null){
+		if (toDate != null) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			String strDate = dateFormat.format(toDate);
 			sql.setString("toDate", strDate);
 		}
-
+		
 		return sql.list();
 	}
 	
@@ -100,7 +100,7 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		String query = "SELECT distinct(patient.patient_id) FROM encounter encounter,patient patient  WHERE (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
 		if (toDate != null)
-			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
+			query += " AND (encounter.date_created <= (:toDate  + INTERVAL 1 DAY)  OR encounter.date_changed <= (:toDate  + INTERVAL 1 DAY) )";
 		query += " AND encounter.voided = false";
 		query += " AND patient.patient_id = encounter.patient_id ";
 		query += " AND patient.voided = false ";
@@ -108,12 +108,11 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		SQLQuery sql = getSession().createSQLQuery(query);
 		
 		sql.setDate("fromDate", fromDate);
-		if (toDate != null){
+		if (toDate != null) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			String strDate = dateFormat.format(toDate);
 			sql.setString("toDate", strDate);
 		}
-
 		
 		patientIds = sql.list();
 		
@@ -130,18 +129,17 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		if (fromDate != null)
 			query += " AND (encounter.date_created >= :fromDate OR encounter.date_changed >= :fromDate)";
 		if (toDate != null)
-			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
+			query += " AND (encounter.date_created <= (:toDate  + INTERVAL 1 DAY)  OR encounter.date_changed <= (:toDate  + INTERVAL 1 DAY) )";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		
 		if (fromDate != null)
 			sql.setDate("fromDate", fromDate);
-		if (toDate != null){
+		if (toDate != null) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			String strDate = dateFormat.format(toDate);
 			sql.setString("toDate", strDate);
 		}
-
 		
 		return sql.list();
 	}
@@ -156,7 +154,7 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		if (fromDate != null)
 			query += " AND (patient.date_created >= :fromDate OR patient.date_changed >= :fromDate)";
 		if (toDate != null)
-			query += " AND (patient.date_created <= :toDate OR patient.date_changed <= :toDate)";
+			query += " AND (patient.date_created <= (:toDate  + INTERVAL 1 DAY)  OR patient.date_changed <= (:toDate  + INTERVAL 1 DAY) )";
 		SQLQuery sql = getSession().createSQLQuery(query);
 		sql.setParameterList("identifiers", identifiers);
 		if (fromDate != null)
@@ -192,19 +190,18 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		String query = "SELECT distinct(patient.patient_id) FROM encounter encounter,patient patient, WHERE patient.patient_id in :";
 		if (lastEncounterDate != null)
-			query += " AND (encounter.date_created <= :toDate OR encounter.date_changed <= :toDate)";
+			query += " AND (encounter.date_created <= (:toDate  + INTERVAL 1 DAY)  OR encounter.date_changed <= (:toDate  + INTERVAL 1 DAY) )";
 		query += " AND encounter.voided = false";
 		query += " AND encounter.voided = false ";
 		query += " AND patient.patient_id = encounter.patient_id ";
 		query += " AND patient.voided = false ";
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
-		if (lastEncounterDate != null){
+		if (lastEncounterDate != null) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			String strDate = dateFormat.format(lastEncounterDate);
 			sql.setString("toDate", strDate);
 		}
-
 		
 		patientIds = sql.list();
 		

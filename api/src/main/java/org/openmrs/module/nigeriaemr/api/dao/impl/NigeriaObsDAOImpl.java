@@ -280,16 +280,16 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 			if (from != null)
 				query.append(" AND ").append(tableName).append(".date_created >= :from ");
 			if (to != null)
-				query.append(" AND ").append(tableName).append(".date_created <= :to ");
+				query.append(" AND ").append(tableName).append(".date_created <= (:to  + INTERVAL 1 DAY) ");
 		} else {
 			query.append("  SELECT ").append(tableName).append(".").append(fieldName).append(" AS patient_id FROM ")
 			        .append(tableName).append(" WHERE TRUE");
 			if (from != null)
 				query.append(" AND (").append(tableName).append(".date_created >= :from OR ").append(tableName)
-				        .append(".date_created >= :from) ");
+				        .append(".date_changed >= :from) ");
 			if (to != null)
-				query.append(" AND (").append(tableName).append(".date_changed <= :to OR ").append(tableName)
-				        .append(".date_changed <= :to) ");
+				query.append(" AND (").append(tableName).append(".date_created <= :to OR ").append(tableName)
+				        .append(".date_changed <= (:to  + INTERVAL 1 DAY)) ");
 		}
 		if (!includeVoided)
 			query.append(" AND ").append(tableName).append(".voided = FALSE ");
