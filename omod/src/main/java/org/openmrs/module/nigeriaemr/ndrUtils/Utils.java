@@ -439,7 +439,7 @@ public class Utils {
 			return null;
 		} else {
 			try {
-				return new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(lastRunDateString);
+				return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(lastRunDateString);
 			}
 			catch (Exception e) {
 				System.out.println("Last Date was not in the correct format");
@@ -506,7 +506,7 @@ public class Utils {
 	    return encounter;
 	}*/
 	public static void updateLast_NDR_Run_Date(Date date) {
-		String dateString = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
+		String dateString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
 		Context.getAdministrationService().updateGlobalProperty("ndr_last_run_date", dateString);
 	}
 	
