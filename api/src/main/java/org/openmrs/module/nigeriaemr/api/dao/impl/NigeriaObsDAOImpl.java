@@ -259,7 +259,7 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		if (from != null)
 			sql.setDate("from", from);
 		if (to != null) {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String strDate = dateFormat.format(to);
 			sql.setString("to", strDate);
 		}
@@ -280,7 +280,7 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 			if (from != null)
 				query.append(" AND ").append(tableName).append(".date_created >= :from ");
 			if (to != null)
-				query.append(" AND ").append(tableName).append(".date_created <= (:to  + INTERVAL 1 DAY) ");
+				query.append(" AND ").append(tableName).append(".date_created <= :to  ");
 		} else {
 			query.append("  SELECT ").append(tableName).append(".").append(fieldName).append(" AS patient_id FROM ")
 			        .append(tableName).append(" WHERE TRUE");
@@ -289,7 +289,7 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 				        .append(".date_changed >= :from) ");
 			if (to != null)
 				query.append(" AND (").append(tableName).append(".date_created <= :to OR ").append(tableName)
-				        .append(".date_changed <= (:to  + INTERVAL 1 DAY)) ");
+				        .append(".date_changed <= :to ) ");
 		}
 		if (!includeVoided)
 			query.append(" AND ").append(tableName).append(".voided = FALSE ");
@@ -332,7 +332,7 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		if (fromDate != null)
 			sql.setDate("fromDate", fromDate);
 		if (toDate != null) {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String strDate = dateFormat.format(toDate);
 			sql.setString("toDate", strDate);
 		}
