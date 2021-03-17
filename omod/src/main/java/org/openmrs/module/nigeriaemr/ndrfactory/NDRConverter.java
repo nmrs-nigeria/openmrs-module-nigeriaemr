@@ -607,7 +607,7 @@ public class NDRConverter {
         String messageStatus = (isDeleted) ? "REDACTED" : updatedORInitial;
         header.setMessageStatusCode(messageStatus);
         //header.setMessageStatusCode("INITIAL");
-        header.setMessageSchemaVersion(new BigDecimal("1.6"));
+        header.setMessageSchemaVersion(new BigDecimal("1.6.3"));
         header.setMessageUniqueID(UUID.randomUUID().toString());
         return header;
     }
