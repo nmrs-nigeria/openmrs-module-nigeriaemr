@@ -257,10 +257,10 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (from != null) {
-			sql.setDate("from", from);
+			sql.setTimestamp("from", from);
 		}
 		if (to != null) {
-			sql.setDate("to", to);
+			sql.setTimestamp("to", to);
 		}
 		if (patientIds != null && patientIds.size() > 0)
 			sql.setParameterList("patientIds", patientIds);
@@ -329,10 +329,10 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (fromDate != null) {
-			sql.setDate("fromDate", fromDate);
+			sql.setTimestamp("fromDate", fromDate);
 		}
 		if (toDate != null) {
-			sql.setDate("toDate", toDate);
+			sql.setTimestamp("toDate", toDate);
 		}
 		if (id != null)
 			sql.setInteger("person_id", id);

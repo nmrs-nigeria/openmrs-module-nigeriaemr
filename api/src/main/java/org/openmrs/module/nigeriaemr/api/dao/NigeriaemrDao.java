@@ -130,9 +130,9 @@ public class NigeriaemrDao {
 		if (exportId > 0)
 			sql.setInteger("exportId", exportId);
 		sql.setInteger("batchId", batchId);
-		sql.setDate("dateUpdated", new Date());
+		sql.setTimestamp("dateUpdated", new Date());
 		if (done)
-			sql.setDate("dateEnded", new Date());
+			sql.setTimestamp("dateEnded", new Date());
 		sql.executeUpdate();
 	}
 	
@@ -233,7 +233,7 @@ public class NigeriaemrDao {
 		sql.setString("fingerPosition", biometricInfo.getFingerPosition());
 		sql.setString("serialNumber", biometricInfo.getSerialNumber());
 		sql.setString("manufacturer", biometricInfo.getManufacturer());
-		sql.setDate("dateCreated", biometricInfo.getDateCreated());
+		sql.setTimestamp("dateCreated", biometricInfo.getDateCreated());
 		sql.setBinary("newTemplate", biometricInfo.getTemplate().getBytes());
 		sql.setString("template", null);
 		sql.setString("model", biometricInfo.getModel());

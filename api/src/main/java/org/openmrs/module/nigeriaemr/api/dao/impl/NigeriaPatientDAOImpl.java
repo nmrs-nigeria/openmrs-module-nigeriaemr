@@ -78,10 +78,10 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		SQLQuery sql = getSession().createSQLQuery(query);
 		sql.setParameterList("patientIds", patientIds);
 		if (fromDate != null) {
-			sql.setDate("fromDate", fromDate);
+			sql.setTimestamp("fromDate", fromDate);
 		}
 		if (toDate != null) {
-			sql.setDate("toDate", toDate);
+			sql.setTimestamp("toDate", toDate);
 		}
 		
 		return sql.list();
@@ -102,9 +102,9 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		
-		sql.setDate("fromDate", fromDate);
+		sql.setTimestamp("fromDate", fromDate);
 		if (toDate != null) {
-			sql.setDate("toDate", toDate);
+			sql.setTimestamp("toDate", toDate);
 		}
 		
 		patientIds = sql.list();
@@ -127,10 +127,10 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		SQLQuery sql = getSession().createSQLQuery(query);
 		
 		if (fromDate != null) {
-			sql.setDate("fromDate", fromDate);
+			sql.setTimestamp("fromDate", fromDate);
 		}
 		if (toDate != null) {
-			sql.setDate("toDate", toDate);
+			sql.setTimestamp("toDate", toDate);
 		}
 		
 		return sql.list();
@@ -150,10 +150,10 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		SQLQuery sql = getSession().createSQLQuery(query);
 		sql.setParameterList("identifiers", identifiers);
 		if (fromDate != null) {
-			sql.setDate("fromDate", fromDate);
+			sql.setTimestamp("fromDate", fromDate);
 		}
 		if (toDate != null) {
-			sql.setDate("toDate", toDate);
+			sql.setTimestamp("toDate", toDate);
 		}
 		
 		return sql.list();
@@ -189,7 +189,7 @@ public class NigeriaPatientDAOImpl extends HibernatePatientDAO implements Nigeri
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (lastEncounterDate != null) {
-			sql.setDate("toDate", lastEncounterDate);
+			sql.setTimestamp("toDate", lastEncounterDate);
 		}
 		
 		patientIds = sql.list();
