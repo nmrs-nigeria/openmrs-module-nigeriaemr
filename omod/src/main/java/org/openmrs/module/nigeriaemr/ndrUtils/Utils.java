@@ -313,7 +313,7 @@ public class Utils {
 	
 	public final static int REGIMEN_MEDICATION_REASON_STOPPED_REGIMEN_VALUE = 165770;
 	
-	public final static int DATE_STOPPED_REGIMEN = 1;
+	public final static int DATE_STOPPED_REGIMEN = 166303;
 	
 	public final static int REASON_STOPPED_REGIMEN = 1252;
 	

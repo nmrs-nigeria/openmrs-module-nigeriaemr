@@ -357,6 +357,15 @@ public class ClinicalDictionary {
             }
         }
 
+        DateTime dateStoppedRegimen = null;
+        //  nextAppointmentDate = Utils.extractMedicationDuration(visitDate, obsListForOneVisit);
+        obs = Utils.extractObs(Utils.DATE_STOPPED_REGIMEN, obsListForOneVisit);
+        if (obs != null) {
+            dateStoppedRegimen = new DateTime(obs.getValueDate());
+            hivEncounterType.setDateStoppedRegimen(utils.getXmlDate(dateStoppedRegimen.toDate()));
+
+        }
+
         if (nextAppointmentDate != null) {
             daysOnARV = Utils.getDateDiffInDays(visitDate, nextAppointmentDate.toDate());
             hivEncounterType.setDurationOnArt(daysOnARV);
