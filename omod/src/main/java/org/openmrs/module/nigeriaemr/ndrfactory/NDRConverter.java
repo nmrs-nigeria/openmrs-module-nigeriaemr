@@ -166,16 +166,12 @@ public class NDRConverter {
 
             //retrieve latest encounter for client intake form
             Encounter intakeEncounter = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE));
+            Encounter intakeEncounterV2 = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE_V2));
 
             if (intakeEncounter != null) {
-                List<Obs> intakeObs = new ArrayList<>(intakeEncounter.getAllObs());
-                Map<Object, List<Obs>> groupedintakeObsByConcept = Utils.groupedByConceptIdsOnly(intakeObs);
-                try {
-                    List<HIVTestingReportType> hivReportTypes = createHIVTestingReport(intakeEncounter, groupedintakeObsByConcept);
-                    individualReport.getHIVTestingReport().addAll(hivReportTypes);
-                } catch (Exception ex) {
-                    LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
-                }
+                retriveCreateHIVTestingReport(intakeEncounter, individualReport);
+            }else if (intakeEncounterV2 != null){
+                retriveCreateHIVTestingReport(intakeEncounterV2,  individualReport);
             }
 
             return individualReport;
@@ -187,6 +183,17 @@ public class NDRConverter {
         }
 
         return individualReport;
+    }
+
+    private void retriveCreateHIVTestingReport(Encounter intakeEncounter, IndividualReportType individualReport){
+        List<Obs> intakeObs = new ArrayList<>(intakeEncounter.getAllObs());
+        Map<Object, List<Obs>> groupedintakeObsByConcept = Utils.groupedByConceptIdsOnly(intakeObs);
+        try {
+            List<HIVTestingReportType> hivReportTypes = createHIVTestingReport(intakeEncounter, groupedintakeObsByConcept);
+            individualReport.getHIVTestingReport().addAll(hivReportTypes);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+        }
     }
 
     private PMTCTType createPmtctType() {

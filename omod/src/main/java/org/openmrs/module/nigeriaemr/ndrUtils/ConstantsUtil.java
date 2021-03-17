@@ -32,6 +32,8 @@ public class ConstantsUtil {
 	
 	public static final int ADMISSION_ENCOUNTER_TYPE = 2;
 	
+	public static final int ADMISSION_ENCOUNTER_TYPE_V2 = 20;
+	
 	public static final int PMTCT_ENCOUNTER_TYPE = 29;
 	
 	public static final int GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE = 10;
