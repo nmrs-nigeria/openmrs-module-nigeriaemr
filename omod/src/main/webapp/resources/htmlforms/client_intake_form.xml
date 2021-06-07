@@ -1,0 +1,477 @@
+<htmlform>
+    <macros>
+        paperFormId = (Fill this in)
+        headerColor =#2f1c55
+        fontOnHeaderColor = white
+    </macros>
+    <style>
+        .section {
+        border: 1px solid $headerColor;
+        padding: 2px;
+        text-align: left;
+        margin-bottom: 1em;
+        }
+        .sectionHeader {
+        background-color: #2f1c55;
+        color: white;
+        /* display: block; */
+        padding: 2px;
+        font-weight: bold;
+        }
+        table tr:nth-child(even) {
+        background: #ffffff;
+        }
+        .alnright{
+        text-align: right;
+        color:#000000;
+        width: 25%;
+        }
+        .alnright_s{
+        text-align: right;
+        color:#000000;
+        width: 13%;
+        }
+        .alnleft_s{
+        text-align: left;
+        color:#000000;
+        width: 13%;
+        }
+        .alnleft_f{
+        text-align: left;
+        color:#000000;
+        width: 20%;
+        }
+        .alnleft{
+        text-align: left;
+        color:#000000;
+        width: 25%;
+        }
+        td {
+        border: none;
+        }
+        table th, table td {
+        padding: 5px 10px;
+        border: None;
+        }
+        .legend_style {
+        max-width: 35%;
+        background: #FAFAFA;
+        <!--padding: 5px;-->
+        margin: 0px left;
+        box-shadow: 1px 1px 25px rgba(0,0,0,0.10);
+        border-radius: 2px;
+        border: 1px solid #305a72;
+        border-bottom-left-radius: 2px;
+        text-transform:initial;
+
+        }
+        form fieldset, .form fieldset {
+        min-width: 98%;
+        border: none;
+        border-top: 1px solid #305a72;
+
+        }
+        table th, table td {
+        padding: 5px 10px;
+        /* border: 1px solid #DDD; */
+        }
+        table tr {
+        border: None;
+        }
+        ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form input, form select, form textarea, form ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form select, .form select {
+        max-width: 200px;
+        min-width: 150px;
+        }
+        .standard {
+        max-width: 200px;
+        min-width: 150px;
+        }
+        body {
+        font-family: "OpenSans", Arial, sans-serif;
+        color: #363463;
+        font-size: 14px;
+        }
+        <!--table.baseline-aligned td {-->
+        <!--vertical-align: baseline;-->
+        <!--}-->
+    </style>
+    <div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+        <fieldset>
+            <legend class="legend_style">When?</legend>
+            <label>When?</label>
+            <encounterDate default="now" showTime="false" allowFutureDates="false"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Who?</legend>
+            <label>Who?</label>
+            <encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f"                                                     required="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Where?</legend>
+            <label>Where?</label>
+            <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+        </fieldset>
+    </div>
+    <table style="margin-bottom: 20px;">
+        <thead>
+            <tr><th  style="text-align: center">Client Intake Form</th></tr>
+        </thead>
+    </table>
+    <table class="table" width="100%">
+        <tr>
+            <td class="alnleft_s">Client Code</td>
+            <td class="alnleft_s"><patient field="identifier" identifierTypeId="8" required="true"/>  </td>
+            <td class="alnleft_s">Date of Visit</td>
+            <td class="alnleft_s"><encounterDate allowFutureDates="false" /></td>
+            <td class="alnleft_s">Setting</td>
+            <td class="alnleft_s">
+                <obs conceptId="165839" answerConceptIds="160539,160529,160546,5271,160542,161629,165788,165838,5622" answerLabels="CT,TB,STI,FP,OPD,Ward,Outreach program,Standalone HTS, Others"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="alnleft_s">First Time Visit</td>
+            <td class="alnleft_s"><obs conceptId="165790" /></td>
+            <td class="alnleft_s">Type of Session</td>
+            <td class="alnleft_s"><obs conceptId="165793" answerConceptIds="165792,165789,165885" answerLabels="Individual, Couple, Previously self tested"/></td>
+            <td class="alnleft_s">Referred from</td>
+            <td class="alnleft_s">
+                <obs conceptId="165480" answerConceptIds="978,160529,160546,5271,160542,161629,165788,5622" answerLabels="Self,TB,STI,FP,OPD,Ward,Blood Bank,Others"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="alnleft_s">Marital Status</td>
+            <td class="alnleft_s"><obs conceptId="1054" /></td>
+            <td class="alnleft_s">No. of own children &lt;5</td>
+            <td class="alnleft_s"><obs conceptId="160312" /></td>
+            <td class="alnleft_s">Numbers of wives/Co-wives</td>
+            <td class="alnleft_s"><obs conceptId="5557" /></td>
+        </tr>
+        <tr>
+            <td class="alnleft_s">Is client identified from an index client?</td>
+            <td class="alnleft_s"> <obs id="index" conceptId="165794">
+                <controls>
+                    <when value="1065" thenDisplay="#index_type_label,#index_type_name,#index_id_label,#index_id_text"/>
+                </controls></obs></td>
+            <td id="index_type_label" class="alnleft_s">Index Type</td>
+            <td id="index_type_name" class="alnleft_s"><obs conceptId="165798"/> </td>
+            <td id="index_id_label" class="alnleft_s">Index Client ID</td>
+            <td id="index_id_text" class="alnleft_s"><obs conceptId="165859"/> </td>
+        </tr>
+    </table>
+
+    <br/>
+
+    <fieldset>
+        <legend class="legend_style">Pre-Test Information</legend>
+        <table class="table" width="100%">
+            <tr>
+                <td colspan="2"><b>Knowledge Assesment</b></td>
+                <td colspan="2"><b>HIV Risk Assesment</b></td>
+            </tr>
+            <tr>
+                <td>Previously tested HIV negative</td>
+                <td><obs conceptId="165799"/></td>
+                <td>Ever had sexual intercourse</td>
+                <td><obs conceptId="165800"/></td>
+            </tr>
+
+            <tr>
+                <td>Client Pregnant (Test and ensure linkage to PMTCT Program)</td>
+                <td><obs conceptId="1434" style="yes_no_dropdown" /></td>
+
+                <td>Blood transfusion in last 3 months</td>
+                <td><obs conceptId="1063" style="yes_no_dropdown" /> </td>
+            </tr>
+
+            <tr>
+                <td>Client informed about HIV transmission routes</td>
+                <td><obs conceptId="165801"/></td>
+
+                <td>Unprotected sex with casual partner in last 3 months</td>
+                <td><obs conceptId="159218" style="yes_no_dropdown" /> </td>
+            </tr>
+
+            <tr>
+                <td>Client informed about risk factors for HIV transmission </td>
+                <td><obs conceptId="165802"/></td>
+                <td>Unprotected sex with regular partner in the last 3months </td>
+                <td><obs conceptId="165803"/></td>
+            </tr>
+
+            <tr>
+                <td>Client informed on preventing HIV transmission methods </td>
+                <td><obs conceptId="165804"/> </td>
+                <td>STI in last 3 months</td>
+                <td> <obs conceptId="164809"/></td>
+            </tr>
+
+            <tr>
+                <td>Client informed about possible test results</td>
+                <td><obs conceptId="165884"/> </td>
+                <td>More than 1 sex partner during last 3 months</td>
+                <td> <obs conceptId="165806"/></td>
+            </tr>
+
+            <tr>
+                <td>Informed consent for HIV testing given</td>
+                <td><obs conceptId="1710" style="yes_no_dropdown" /> </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="2"><b>Client TB Screening</b></td>
+                <td colspan="2"><b>Syndromic STI Screening</b></td>
+            </tr>
+            <tr>
+                <td>Current Cough</td>
+                <td><obs conceptId="143264" answerConceptIds="1066,1065" answerLabels="No,Yes"/></td>
+                <includeIf velocityTest="$patient.gender == 'F' ">
+                    <td>Complaints of vaginal discharge or burning when urinating?</td>
+                    <td> <obs conceptId="165809"/></td></includeIf>
+            </tr>
+
+            <tr>
+                <td>Weight Loss</td>
+                <td><obs conceptId="832" style="no_yes_dropdown"/></td>
+                <includeIf velocityTest="$patient.gender == 'F' ">
+                    <td>Complaints of lower abdominal pains with or without vaginal
+                        discharge?
+                    </td>
+                    <td><obs conceptId="165810"/></td>
+                </includeIf>
+            </tr>
+            <tr>
+                <td>Fever</td>
+                <td><obs conceptId="140238" answerConceptIds="1066,1065" answerLabels="No,Yes"/></td>
+                <includeIf velocityTest="$patient.gender == 'M' ">
+                    <td>Complaints of urethral discharge or burning when urinating?</td>
+                    <td><obs conceptId="165811"/> </td>
+                </includeIf>
+            </tr>
+            <tr>
+                <td>Night sweats</td>
+                <td><obs conceptId="133027" style="no_yes_dropdown"/></td>
+                <includeIf velocityTest="$patient.gender == 'M' ">
+                    <td>Complaints of scrotal swelling and pain</td>
+                    <td><obs conceptId="165812"/> </td>
+                </includeIf>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>Complaints of genital sore(s) or swollen inguinal lymph nodes with or without pains?</td>
+                <td><obs conceptId="165813"/> </td>
+            </tr>
+        </table>
+    </fieldset><br/>
+    <fieldset>
+        <legend class="legend_style">HIV Test Results</legend>
+        <table class="table" width="100%">
+            <tr>
+                <td class="alnleft"></td>
+                <td class="alnleft"><b>Screening test</b></td>
+                <td class="alnleft"><b>Confirmatory test</b></td>
+                <td class="alnleft"><b>Tie breaker</b></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><b>Test result</b></td>
+                <td class="alnleft"><obs conceptId="165840" answerConceptIds="1228,1229" answerLabels="Reactive,Non-reactive" /></td>
+                <td class="alnleft"><obs conceptId="165841"  answerConceptIds="1228,1229" answerLabels="Reactive,Non-reactive" /></td>
+                <td class="alnleft"><obs conceptId="165842"  answerConceptIds="1228,1229" answerLabels="Reactive,Non-reactive" /></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><b>Test date</b></td>
+                <td class="alnleft"><obs conceptId="165844" /></td>
+                <td class="alnleft"><obs conceptId="165845" /></td>
+                <td class="alnleft"><obs conceptId="165846" /></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><b>Final Result</b></td>
+                <td class="alnleft"><obs  id ="result" conceptId="165843" answerConceptIds="703,664" answerLabels="Positive,Negative">
+                    <controls>
+                        <when value="703" thenDisplay="#recency,#pns_details"/>
+                    </controls>
+                </obs></td>
+
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset id="recency">
+        <legend class="legend_style">HIV Recency Testing</legend>
+        <table class="table" width="100%">
+            <tr>
+                <td class="alnleft_s">Test name</td>
+                <td class="alnleft_s"><obs conceptId="165849" /></td>
+                <td class="alnleft_s">Test date</td>
+                <td class="alnleft_s"><obs conceptId="165850" /></td>
+                <td class="alnright_s"></td>
+                <td class="alnleft_s"></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td class="alnleft_f"><b>HIV recent infection testing algorithm results:</b></td>
+                <td class="alnleft_f">Rapid recency assay</td>
+                <td class="alnleft_f"><obs id="rapid" conceptId="165853" answerConceptIds="165852,165851" answerLabels="Recent,Long Term">
+                    <controls>
+                        <when value="165852" thenDisplay="#recenct"/>
+                    </controls>
+                </obs></td>
+                <td colspan="2"> </td>
+            </tr>
+        </table>
+        <table id="recenct">
+            <tr>
+                <td class="alnleft_f"><b>Viral load confirmation:</b></td>
+                <td class="alnleft_f">Sample test date</td>
+                <td class="alnleft_f"><obs conceptId="165854" /></td>
+                <td class="alnleft_f">Result (copies/ml)</td>
+                <td class="alnleft_f"><obs conceptId="165855" /></td>
+
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td class="alnleft_f"><b>Final HIV recent infection testing algorithm result</b></td>
+                <td class="alnleft_f"><obs conceptId="165856" /></td>
+                <td colspan="3"> </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend class="legend_style">Post Test Counseling</legend>
+        <table class="table" width="100%">
+            <!--<tr>-->
+            <!--<td colspan="1">Initial HIV Test:</td>-->
+            <!--<td><obs conceptId="1040" /></td>-->
+            <!--<td colspan="1">Confirmatory HIV Test:</td>-->
+            <!--<td><obs conceptId="1326" /></td>-->
+
+            <!--</tr>-->
+
+        </table>
+        <table class="table" width="100%">
+            <tr>
+                <tr>
+                    <td>Have you been tested for HIV before within this year</td>
+                    <td><obs conceptId="165881" /></td>
+                    <td>Risk reduction plan developed</td>
+                    <td><obs conceptId="165820" /></td>
+                </tr>
+                <tr>
+                    <td>HIV Request and Result form signed by tester(s)</td>
+                    <td><obs conceptId="165818" /></td>
+                    <td>Post test disclosure plan developed</td>
+                    <td><obs conceptId="165821" /></td>
+                </tr>
+                <tr>
+                    <td>HIV Request and Result form filled with CT Intake Form</td>
+                    <td><obs conceptId="165819" /></td>
+                    <td>Will bring partner(s) for HIV testing</td>
+                    <td><obs conceptId="165822" /></td>
+                </tr>
+                <tr>
+                    <td>Client received HIV test result</td>
+                    <td><obs conceptId="164848" answerConceptIds="1066,1065" answerLabels="No, Yes" /></td>
+                    <td>Will bring own children less than 5 years for HIV testing</td>
+                    <td><obs conceptId="165823" /></td>
+                </tr>
+                <tr>
+                    <td>Post test counseling done</td>
+                    <td><obs conceptId="159382" answerConceptIds="1066,1065" answerLabels="No, Yes" /></td>
+                    <td>Provided with information on FP and dual contracetrtion</td>
+                    <td><obs conceptId="1382" answerConceptIds="1066,1065" answerLabels="No, Yes"/></td>
+                </tr>
+                <tr>
+                    <td>Client/partner use FP methods (other than condom):</td>
+                    <td><obs conceptId="165883"/></td>
+                    <td>Correct condom use demonstrated</td>
+                    <td><obs conceptId="165823" /></td>
+                </tr>
+                <tr>
+                    <td>Client/partner use condoms as (one) FP method</td>
+                    <td><obs conceptId="5571" style="yes_no_dropdown"/></td>
+                    <td>Condoms provided to client</td>
+                    <td><obs conceptId="159777" answerConceptIds="1066,1065" answerLabels="No, Yes"/></td>
+                </tr>
+                <tr>
+                    <td>Client referred to other services</td>
+                    <td><obs conceptId="1648" style="yes_no_dropdown" /></td>
+                </tr>
+                <tr>
+                    <td>Comments</td>
+                    <td colspan="3"><obs conceptId="165045" rows="2"/>  </td>
+                </tr>
+
+            </tr>
+
+        </table>
+    </fieldset><br/>
+    <fieldset id="pns_details">
+        <legend class="legend_style">Partner Notification Services - Elicitation</legend>
+        <table class="table" width="100%">
+            <tr>
+                <td class="alnleft" colspan="3"><b>Partner Name:</b></td>
+                <td class="alnleft"><b>Partner Gender</b></td>
+            </tr>
+            <tr>
+                <obsgroup groupingConceptId="165858">
+                    <td class="alnleft" colspan="3"><obs conceptId="161135"/></td>
+                    <td class="alnleft"><obs conceptId="165857" answerConceptIds="165184,165185" answerLabels="Male,Female"/></td>
+                </obsgroup>
+            </tr>
+            <tr>
+                <obsgroup groupingConceptId="165858">
+                    <td class="alnleft" colspan="3"><obs conceptId="161135"/></td>
+                    <td class="alnleft"><obs conceptId="165857" answerConceptIds="165184,165185" answerLabels="Male,Female"/></td>
+                </obsgroup>
+            </tr>
+            <tr>
+                <obsgroup groupingConceptId="165858">
+                    <td class="alnleft" colspan="3"><obs conceptId="161135"/></td>
+                    <td class="alnleft"><obs conceptId="165857" answerConceptIds="165184,165185" answerLabels="Male,Female"/></td>
+                </obsgroup>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <table class="table" width="100%">
+            <tr>
+                <td class="alnleft_s">Syphilis test result:</td>
+                <td class="alnleft_s"><obs conceptId="299" answerConceptIds="703,664" answerLabels="Reactive,Non-reactive" /></td>
+                <td class="alnleft_s">Hepatitis B virus test result:</td>
+                <td class="alnleft_s"><obs conceptId="159430" answerConceptIds="703,664" answerLabels="Positive,Negative"/></td>
+                <td class="alnleft_s">Hepatitis C virus test result:</td>
+                <td class="alnleft_s"><obs conceptId="161471" answerConceptIds="703,664" answerLabels="Positive,Negative" /></td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend class="legend_style">Signature and date</legend>
+        <table class="table" width="100%">
+            <tr>
+                <td class="alnleft">Completed by:</td>
+                <td class="alnleft"><encounterProvider /></td>
+                <td class="alnleft">Date:</td>
+                <td class="alnleft"><encounterDate default="now" showTime="false" allowFutureDates="false"/></td>
+            </tr>
+        </table>
+    </fieldset>
+    <submit/>
+
+</htmlform>

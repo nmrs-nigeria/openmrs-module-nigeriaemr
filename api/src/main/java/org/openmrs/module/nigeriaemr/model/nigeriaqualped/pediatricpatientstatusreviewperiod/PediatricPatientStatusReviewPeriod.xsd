@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Data-set" type="Data-setType"/>
+  <xs:complexType name="Data-setType">
+    <xs:sequence>
+      <xs:element type="Pediatric_PatientStatus_RecordType" name="Pediatric_PatientStatus_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Pediatric_PatientStatus_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="Status"/>
+      <xs:element type="xs:string" name="DateOfStatusChange"/>
+      <xs:element type="xs:string" name="ReasonForStatusChange"/>
+      <xs:element type="xs:string" name="Transferred_Out"/>
+      <xs:element type="xs:string" name="Death"/>
+      <xs:element type="xs:string" name="Discontinued_Care"/>
+      <xs:element type="xs:string" name="Transferred_Out_Date"/>
+      <xs:element type="xs:string" name="Death_Date"/>
+      <xs:element type="xs:string" name="Discontinued_Care_Date"/>
+      <xs:element type="xs:string" name="Discontinued_Care_Reason"/>
+      <xs:element type="xs:string" name="Discontinued_Care_Reason_Other"/>
+      <xs:element type="xs:string" name="ID"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="ReviewPeriodID"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

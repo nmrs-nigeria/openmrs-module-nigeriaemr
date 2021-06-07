@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Data-set" type="Data-setType"/>
+  <xs:complexType name="Data-setType">
+    <xs:sequence>
+      <xs:element type="Pediatric_Tuberculosis_RecordType" name="Pediatric_Tuberculosis_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Pediatric_Tuberculosis_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="PatientOnTBTreatmentDuringReviewPeriod"/>
+      <xs:element name="PatientClinicallyScreenForTBDuringReviewPeriod">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="No"/>
+            <xs:enumeration value="Yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="TBClinicalScreeningCriteria"/>
+      <xs:element type="xs:string" name="BasedOnScreeningWasPatientedSuspectedToHaveTB"/>
+      <xs:element type="xs:string" name="PatientBeenEvaluatedInReviewPeriodForTBUsingSputumSmearOrCulture"/>
+      <xs:element type="xs:string" name="PatientHdChestXRay"/>
+      <xs:element type="xs:string" name="PatientDiagnosedOfTBInReviewPeriod"/>
+      <xs:element type="xs:string" name="PatientStartTBTreatment"/>
+      <xs:element type="xs:string" name="TB_TreatmentStartDate"/>
+      <xs:element type="xs:string" name="TBDiagnosis_Date"/>
+      <xs:element type="xs:string" name="TBScreeningCriteria_CurrentCough"/>
+      <xs:element type="xs:string" name="TBScreeningCriteria_ContactWithTBCase"/>
+      <xs:element type="xs:string" name="TBScreeningCriteria_PoorWeighGain"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="ReviewPeriodID"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Data-set" type="Data-setType"/>
+  <xs:complexType name="Pediatric_PatientDemographics_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="Lastname"/>
+      <xs:element type="xs:string" name="Firstname"/>
+      <xs:element type="xs:string" name="HospitalNo"/>
+      <xs:element name="Gender">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="MALE"/>
+            <xs:enumeration value="FEMALE"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="DateOfBirth"/>
+      <xs:element type="xs:string" name="Age"/>
+      <xs:element type="xs:string" name="UnitOfAgeMeasure"/>
+      <xs:element type="xs:string" name="DateEnrolledInCare"/>
+      <xs:element name="ClinicalVisit6MonthsPriorToReviewPeriod">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="NO"/>
+            <xs:enumeration value="YES"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="DeliveryLocation"/>
+      <xs:element type="xs:string" name="PrimaryCareGiver"/>
+      <xs:element name="StateOfResidence">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="NASARAWA"/>
+            <xs:enumeration value="FCT"/>
+            <xs:enumeration value="ENUGU"/>
+            <xs:enumeration value="NIGER"/>
+            <xs:enumeration value="PLATEAU"/>
+            <xs:enumeration value="KWOI"/>
+            <xs:enumeration value="KADUNA"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="LGAOfResidence"/>
+      <xs:element type="xs:string" name="StateOfOrigin"/>
+      <xs:element type="xs:string" name="Tribe"/>
+      <xs:element type="xs:string" name="DateOfLastVisit"/>
+      <xs:element type="xs:string" name="AdmissionDuringReviewPeriod"/>
+      <xs:element type="xs:string" name="RNL_SerialNo"/>
+      <xs:element type="xs:string" name="CareGiverOccupation"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="RecordCompletionPosition"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="ReviewPeriod"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Data-setType">
+    <xs:sequence>
+      <xs:element type="Pediatric_PatientDemographics_RecordType" name="Pediatric_PatientDemographics_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

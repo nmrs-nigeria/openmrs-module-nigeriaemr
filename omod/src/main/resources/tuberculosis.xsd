@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="data-set" type="data-setType"/>
+  <xs:complexType name="data-setType">
+    <xs:sequence>
+      <xs:element type="Tuberculosis_RecordType" name="Tuberculosis_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Tuberculosis_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element name="PatientOnTBTreatmentAtStartOfReviewPeriod">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="No"/>
+            <xs:enumeration value="Yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="PatientClinicallyScreenForTBDuringReviewPeriod"/>
+      <xs:element type="xs:string" name="TBClinicalScreeningCriteria"/>
+      <xs:element name="BasedOnScreeningWasPatientedSuspectedToHaveTB">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="No"/>
+            <xs:enumeration value="Yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="PatientHaveCRXPerformedDuringReviewPeriod"/>
+      <xs:element type="xs:string" name="PatientReferredToDOTsClinic"/>
+      <xs:element name="PatientBeenEvaluatedInReviewPeriodForTBUsingSputumSmearOrCulture">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="No"/>
+            <xs:enumeration value="Yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="PatientDiagnosedOfTBInReviewPeriod">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="No"/>
+            <xs:enumeration value="Yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="TBDiagnosis_Date">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value=""/>
+            <xs:enumeration value="18/11/2016"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="PatientStartTBTreatment">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value=""/>
+            <xs:enumeration value="12/08/2016"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="TB_TreatmentStartDate"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="ReviewPeriodID"/>
+      <xs:element type="xs:string" name="TBScreeningCriteria_CurrentCough"/>
+      <xs:element type="xs:string" name="TBScreeningCriteria_ContactHistoryWithTBCase"/>
+      <xs:element type="xs:string" name="TBScreeningCriteria_PoorWeightGain"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

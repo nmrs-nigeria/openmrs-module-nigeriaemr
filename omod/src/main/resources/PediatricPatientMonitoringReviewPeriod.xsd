@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Data-set" type="Data-setType"/>
+  <xs:complexType name="Pediatric_PatientMonitoringDuringReviewPeriod_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="PDG001_VALUE"/>
+      <xs:element name="PDG001_DATE">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="01/01/1900"/>
+            <xs:enumeration value="16/05/2017"/>
+            <xs:enumeration value="14/02/2017"/>
+            <xs:enumeration value="25/04/2017"/>
+            <xs:enumeration value="20/02/2017"/>
+            <xs:enumeration value="24/04/2017"/>
+            <xs:enumeration value="10/05/2017"/>
+            <xs:enumeration value="07/06/2017"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="PDG002_VALUE"/>
+      <xs:element type="xs:string" name="PDG002_DATE"/>
+      <xs:element type="xs:string" name="PDG003_VALUE"/>
+      <xs:element type="xs:string" name="PDG003_DATE"/>
+      <xs:element type="xs:string" name="PDG004_VALUE"/>
+      <xs:element type="xs:string" name="PDG004_DATE"/>
+      <xs:element type="xs:string" name="PDG005_VALUE"/>
+      <xs:element type="xs:string" name="PDG005_DATE"/>
+      <xs:element type="xs:string" name="PDG006_VALUE"/>
+      <xs:element type="xs:string" name="PDG006_DATE"/>
+      <xs:element type="xs:string" name="PDG007_VALUE"/>
+      <xs:element type="xs:string" name="PDG007_DATE"/>
+      <xs:element type="xs:string" name="PDG008_VALUE"/>
+      <xs:element type="xs:string" name="PDG008_DATE"/>
+      <xs:element type="xs:string" name="PDG009_VALUE"/>
+      <xs:element type="xs:string" name="PDG009_DATE"/>
+      <xs:element type="xs:string" name="PDG0010_VALUE"/>
+      <xs:element type="xs:string" name="PDG0010_DATE"/>
+      <xs:element type="xs:string" name="PDG0011_VALUE"/>
+      <xs:element type="xs:string" name="PDG0011_DATE"/>
+      <xs:element name="PDG0012_VALUE">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="0"/>
+            <xs:enumeration value="82"/>
+            <xs:enumeration value="20"/>
+            <xs:enumeration value="26"/>
+            <xs:enumeration value="29"/>
+            <xs:enumeration value="7"/>
+            <xs:enumeration value="17"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="PDG0012_DATE">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="01/01/1900"/>
+            <xs:enumeration value="23/05/2017"/>
+            <xs:enumeration value="16/05/2017"/>
+            <xs:enumeration value="04/04/2017"/>
+            <xs:enumeration value="25/04/2017"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="PDG0013_VALUE"/>
+      <xs:element type="xs:string" name="PDG0013_DATE"/>
+      <xs:element type="xs:string" name="PDG0014_VALUE"/>
+      <xs:element type="xs:string" name="PDG0014_DATE"/>
+      <xs:element type="xs:string" name="PDG0015_VALUE"/>
+      <xs:element type="xs:string" name="PDG0015_DATE"/>
+      <xs:element type="xs:string" name="PDG0016_VALUE"/>
+      <xs:element type="xs:string" name="PDG0016_DATE"/>
+      <xs:element type="xs:string" name="PDG0017_VALUE"/>
+      <xs:element type="xs:string" name="PDG0017_DATE"/>
+      <xs:element type="xs:string" name="PDG0018_VALUE"/>
+      <xs:element type="xs:string" name="PDG0018_DATE"/>
+      <xs:element type="xs:string" name="PDG0019_VALUE"/>
+      <xs:element type="xs:string" name="PDG0019_DATE"/>
+      <xs:element type="xs:string" name="PDG0020_VALUE"/>
+      <xs:element type="xs:string" name="PDG0020_DATE"/>
+      <xs:element type="xs:string" name="PDG0021_VALUE"/>
+      <xs:element type="xs:string" name="PDG0021_DATE"/>
+      <xs:element type="xs:string" name="PDG0022_VALUE"/>
+      <xs:element type="xs:string" name="PDG0022_DATE"/>
+      <xs:element type="xs:string" name="PDG0023_VALUE"/>
+      <xs:element type="xs:string" name="PDG0023_DATE"/>
+      <xs:element type="xs:string" name="PDG0024_VALUE"/>
+      <xs:element type="xs:string" name="PDG0024_DATE"/>
+      <xs:element name="HasThePatientReceivedViralLoadTesting">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="No"/>
+            <xs:enumeration value="Yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="ViralLoadTestResult"/>
+      <xs:element type="xs:string" name="ViralLoadTestDate"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="ReviewPeriodID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Data-setType">
+    <xs:sequence>
+      <xs:element type="Pediatric_PatientMonitoringDuringReviewPeriod_RecordType" name="Pediatric_PatientMonitoringDuringReviewPeriod_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

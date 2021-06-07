@@ -1,0 +1,701 @@
+{
+  "name": "Laboratory Order and Result Form",
+  "uuid": "ac995d47-a8db-4ea8-91b4-f080489e523f",
+  "processor": "EncounterFormProcessor",
+  "pages": [
+    {
+      "label": "Laboratory Order and Result Form",
+      "sections": [
+        {
+          "label": "",
+          "questions": [
+            {
+              "label": "CD4+ cell count (cells/mm3)",
+              "id": "cd4_cell_count",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "160103AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "CD4 (%)",
+              "id": "cd4_perc",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "730AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "WBC (x10^3/uL):",
+              "id": "wbc",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "678AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Polymorphs (x10^3)",
+              "id": "Polymorphs",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1022AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Polymorphs (%):",
+              "id": "Polymorphs_perc",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "f9a9acd9-50ba-420d-8a2e-433cf8b167dc",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Lymphocytes (/mm^3):",
+              "id": "Lymphocytes",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1021AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Lymphocytes (%):",
+              "id": "Lymphocytes_perce",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1338AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Monocytes:",
+              "id": "Monocytes",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1023AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Monocytes (%):",
+              "id": "Monocytes_perc",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1339AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sections": [
+        {
+          "label": "Laboratory Order and Result Form",
+          "questions": [
+            {
+              "label": "Eosinophils(/mm^3)",
+              "id": "Eosinophils",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1024AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Eosinophil (%)",
+              "id": "Eosinophil_perc",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1340AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Basophils (x10^3)",
+              "id": "Basophils",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1025AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Basophils (%):",
+              "id": "Basophils_perc",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1341AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Hb (PCV) (g/dl):",
+              "id": "hb_pcv",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "52a243ab-54da-4550-84af-b9f0218a4495",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Hb (PCV) (%):",
+              "id": "hb_pcv_perc",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "ff2e9dd2-e806-4da5-8897-11216e5f69fb",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Platelets (x 10^9 c/L):",
+              "id": "Platelets",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "729AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "HCV antibody:",
+              "type": "obs",
+
+              "id": "HCV_antibody",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "1325AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Positive"
+                  },
+                  {
+                    "concept": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Negative"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "HBsAG:",
+              "type": "obs",
+
+              "id": "HBsAG",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "159430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Positive"
+                  },
+                  {
+                    "concept": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Negative"
+                  }
+                ]
+              }
+            }
+
+          ]
+        }
+
+
+      ]
+    },
+    {
+      "sections": [
+        {
+          "label": "Laboratory Order and Result Form",
+          "questions": [
+            {
+              "label": "VDRL:",
+              "type": "obs",
+
+              "id": "VDRL",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "299AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "1228AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Reactive"
+                  },
+                  {
+                    "concept": "1229AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Non-Reactive"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Creatinine (µmol/l)",
+              "id": "Creatinine",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "164364AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "ALT/SGPT (U/I)",
+              "id": "ALT",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "654AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "ALT/SGPT (mmol/L):",
+              "id": "ALT_SGPT_mmol_L)",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "dd5bea86-e7f4-434d-bba1-5712e456d01f",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "AST/SGOT (µ/L):",
+              "id": "AST",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "653AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Alk. Phosphate (U/l):",
+              "id": "Alk_Phosphate",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "785AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Total Bilirubin (µmol/l):",
+              "id": "Total_Bilirubin",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "655AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Na+ (mmol/L):",
+              "id": "Na",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "K+ (mmol/L):",
+              "id": "K",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1133AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            }
+
+          ]
+        }
+
+
+      ]
+    },
+    {
+      "sections": [
+        {
+          "label": "Laboratory Order and Result Form",
+          "questions": [
+            {
+              "label": "Fasting Glucose (mmol/l)",
+              "id": "Fasting_Glucose",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "160053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Total Cholesterol (mmol/l)",
+              "id": "Total_Cholesterol",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1006AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "LDL (mmol/L)",
+              "id": "LDL",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1008AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "HDL (mmol/L):",
+              "id": "HDL",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1007AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Glucose:",
+              "id": "Glucose",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "160053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Protein:",
+              "id": "Protein",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "78efdba1-2598-4c0c-b94b-e69d45f6d0a7",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Cytology/Pap Smear:",
+              "id": "Cytology_Pap_Smear",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "921d5e09-ef3f-4b0f-a061-7955d854b7fa",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Triglyceride:",
+              "id": "Triglyceride",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1009AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Pregnancy:",
+              "type": "obs",
+
+              "id": "Pregnancy",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "45AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Positive"
+                  },
+                  {
+                    "concept": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Negative"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Malaria smear:",
+              "type": "obs",
+
+              "id": "Malaria_smear",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "32AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Positive"
+                  },
+                  {
+                    "concept": "664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Negative"
+                  }
+                ]
+              }
+            }
+
+          ]
+        }
+
+
+      ]
+    },
+    {
+      "sections": [
+        {
+          "label": "Viral Load",
+          "questions": [
+            {
+              "label": "PCR Lab Sample No",
+              "id": "PCR_Lab_Sample_No",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "34b689bd-eb24-4ad4-8642-fc3b4a9bdd44",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Sample Type:",
+              "type": "obs",
+
+              "id": "Sample_Type",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "162476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "1000AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Whole Blood/Plasma"
+                  },
+                  {
+                    "concept": "397afc02-f2d6-4436-895a-7ade17e76d6e",
+                    "label": "DBS"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Indication for Viral Load:",
+              "type": "obs",
+
+              "id": "Indication_for_Viral_Load",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "884f0b28-4287-42ad-b537-af1e11c35cbb",
+                "answers": [
+                  {
+                    "concept": "162080AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Baseline (6 months after ART initiation)"
+                  },
+                  {
+                    "concept": "161236AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Routine (every 12 months)"
+                  },
+                  {
+                    "concept": "162082AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Confirmation (3-6 months after intense adherence counselling)"
+                  },
+                  {
+                    "concept": "162081AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Repeat test"
+                  },
+                  {
+                    "concept": "163523AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Clinical failure"
+                  },
+                  {
+                    "concept": "160566AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Immunological failure"
+                  }
+
+                ]
+              }
+            },
+            {
+              "label": "If repeat? reason for Repeat:",
+              "id": "reason_fo_repeat",
+              "questionOptions": {
+                "rendering": "text",
+                "concept": "a667af53-ca79-4bdf-871c-9a97644e1cc3"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Collection Date",
+              "questionOptions": {
+                "rendering": "date",
+                "concept": "159951AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "type": "obs",
+              "validators": [
+                {
+                  "type": "date"
+                }
+              ]
+            },
+            {
+              "label": "Date Received at PCR Lab",
+              "questionOptions": {
+                "rendering": "date",
+                "concept": "467cb366-0c42-428d-a6ca-dc86900b3cf2"
+              },
+              "type": "obs",
+              "validators": [
+                {
+                  "type": "date"
+                }
+              ]
+            },
+            {
+              "label": "Viral Load test result(copies/ml):",
+              "id": "Viral_Load_test_result",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            }
+
+          ]
+        }
+
+
+      ]
+    }
+  ]
+}

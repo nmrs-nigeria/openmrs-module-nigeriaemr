@@ -1,0 +1,19 @@
+<div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+				<fieldset>
+						<legend class="legend_style">When?</legend>
+						<label>When?</label>
+						<encounterDate default="now" showTime="false" allowFutureDates="false"/>
+				</fieldset>
+
+				<fieldset>
+						<legend>Who?</legend>
+						<label>Who?</label>
+		<encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f"                                                     required="true"/>
+				</fieldset>
+
+				<fieldset>
+						<legend>Where?</legend>
+						<label>Where?</label>
+						<encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+				</fieldset>
+</div>

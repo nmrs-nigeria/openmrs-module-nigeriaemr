@@ -1,0 +1,283 @@
+{
+  "name": "Delivery Information",
+  "uuid": "ac995d47-a8db-4ea8-91b4-f080489e523f",
+  "processor": "EncounterFormProcessor",
+  "pages": [
+    {
+      "label": "Delivery Information",
+      "sections": [
+        {
+          "label": "Delivery Information",
+          "questions": [
+            {
+              "label": "Time of HIV diagnosis:",
+              "type": "obs",
+
+              "id": "timeofHIVdiagnosis",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "164851AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "164850AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "During labor and delivery"
+                  },
+                  {
+                    "concept": "1180AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Postpartum"
+                  },
+                  {
+                    "concept": "1622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Antenatal care services"
+                  },
+                  {
+                    "concept": "5a6f8782-f3f0-46a9-b224-90770f57807a",
+                    "label": "Previously known HIV+"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "If during labor and delivery:",
+              "type": "obs",
+
+              "id": "labour",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "5630AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "77e710b5-ec47-4b0c-8e0b-de5837a48aae",
+                    "label": "Booked"
+                  },
+                  {
+                    "concept": "820b93f4-5caa-4acc-8167-a479ac68ee4e",
+                    "label": "Unbooked"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Gestational Age (in Weeks) at birth:",
+              "id": "gestational_age",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1409AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Hepatitis B status:",
+              "type": "obs",
+
+              "id": "hep_B_status",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "159430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Positive"
+                  },
+                  {
+                    "concept": "	664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Negative"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Hepatitis C status:",
+              "type": "obs",
+
+              "id": "hep_c_status",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "159430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Positive"
+                  },
+                  {
+                    "concept": "	664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Negative"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Currently taking ARV:",
+              "type": "obs",
+
+              "id": "currentlytakingARV",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "160119AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes"
+                  },
+                  {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "ART started in labour and delivery ward:",
+              "type": "obs",
+
+              "id": "aRT_started_in_labour",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "1b848d1d-74b7-4dad-9d8f-db2354426f76",
+                "answers": [
+                  {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes"
+                  },
+                  {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "ROM delivery interval",
+              "type": "obs",
+
+              "id": "rom_delivery_interval",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "f6cf0fd3-592e-4849-a138-cf02ab111179",
+                "answers": [
+                  {
+                    "concept": "7b845369-cb72-4100-a907-f472cfd1d86d",
+                    "label": "Less than 4 hrs"
+                  },
+                  {
+                    "concept": "b54e57fe-c562-4d9c-9784-ec6975331d2b",
+                    "label": "Greater than 4 hrs"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Mode of delivery",
+              "type": "obs",
+
+              "id": "mode_of_delivery",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "5630AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "1170AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Vaginal"
+                  },
+                  {
+                    "concept": "1171AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Elective CS"
+                  }
+                ,
+                  {
+                    "concept": "159739AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Emergency CS"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Episiotomy done:",
+              "type": "obs",
+
+              "id": "episiotomy_done",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "5577AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes"
+                  },
+                  {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Vaginal tear:",
+              "type": "obs",
+
+              "id": "vaginal_tear",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "65e3c425-8446-4a1f-acc4-18fb37985b76",
+                "answers": [
+                  {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes"
+                  },
+                  {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Feeding decision:",
+              "type": "obs",
+
+              "id": "feeding_decision",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "985AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "5526AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "EBF"
+                  },
+                  {
+                    "concept": "164857AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "ERF"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Maternal outcome:",
+              "type": "obs",
+
+              "id": "maternal_outcome",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "160085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "160429AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Alive"
+                  },
+                  {
+                    "concept": "134612AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Dead"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

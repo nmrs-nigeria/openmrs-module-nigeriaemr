@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+  		    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+  		    http://www.springframework.org/schema/context
+  		    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:component-scan base-package="org.openmrs.module.nigeriaemr.web.controller" />
+
+    <bean id="ctService" class="org.openmrs.module.nigeriaemr.service.CommunityTesters"/>
+
+    <bean id="pcService" class="org.openmrs.module.nigeriaemr.service.PatientContacts"/>
+
+    <bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
+        <property name="moduleId" value="${project.parent.artifactId}"/>
+    </bean>
+
+
+    <!-- Activemq connection factory -->
+    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <constructor-arg index="0" value="vm://localhost?broker.deleteAllMessagesOnStartup=true"/>
+    </bean>
+
+    <!-- ConnectionFactory Definition -->
+    <bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory" />
+        <property name="reconnectOnException" value="true" />
+        <property name="cacheConsumers" value="false"/>
+        <property name="cacheProducers" value="false"/>
+    </bean>
+
+    <!--  Default Destination Queue Definition-->
+    <bean id="defaultDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg index="0" value="ndrExportQueue"/>
+    </bean>
+
+    <!-- JmsTemplate Definition -->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="defaultDestination" ref="defaultDestination" />
+    </bean>
+
+<!--     Message Sender Definition -->
+    <bean id="ndrEvent" class="org.openmrs.module.nigeriaemr.NDREvent">
+        <constructor-arg index="0" ref="jmsTemplate" />
+    </bean>
+
+    <!-- Message Receiver Definition -->
+    <bean id="consumer" class="org.openmrs.module.nigeriaemr.Consumer">
+    </bean>
+
+    <bean class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="destinationName" value="ndrExportQueue" />
+        <property name="messageListener" ref="consumer" />
+        <property name="concurrentConsumers" value="2"/>
+        <property name="sessionAcknowledgeMode" value="1" />
+    </bean>
+
+</beans>

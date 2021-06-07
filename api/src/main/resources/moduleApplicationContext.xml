@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Beans to add to the current Application context definition -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+  		    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+    <bean id="nigeriaemrConfig" class="org.openmrs.module.nigeriaemr.NigeriaemrConfig"/>
+
+    <bean id="nigeriaemrDao" class="org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory" />
+        </property>
+    </bean>
+
+    <bean id="nigeriaPatientDAO" class="org.openmrs.module.nigeriaemr.api.dao.impl.NigeriaPatientDAOImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory"/>
+        </property>
+    </bean>
+
+    <bean id="nigeriaEncounterDAO" class="org.openmrs.module.nigeriaemr.api.dao.impl.NigeriaEncounterDAOImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory"/>
+        </property>
+    </bean>
+
+    <bean id="nigeriaObsDAO" class="org.openmrs.module.nigeriaemr.api.dao.impl.NigeriaObsDAOImpl">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory"/>
+        </property>
+    </bean>
+
+    <!-- Wraps nigeriaPatientService methods in DB transactions and OpenMRS interceptors,
+    which set audit info like dateCreated, changedBy, etc.-->
+    <bean id="nigeriaPatientService"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.nigeriaemr.api.service.impl.NigeriaPatientServiceImpl">
+                <property name="dao" ref="nigeriaPatientDAO" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+
+    <bean id="nigeriaEncounterService"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.nigeriaemr.api.service.impl.NigeriaEncounterServiceImpl">
+                <property name="dao" ref="nigeriaEncounterDAO" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+
+    <bean id="nigeriaObsService"
+          class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.nigeriaemr.api.service.impl.NigeriaObsServiceImpl">
+                <property name="dao" ref="nigeriaObsDAO" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService</value>
+                <ref bean="nigeriaPatientService" />
+            </list>
+        </property>
+    </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService</value>
+                <ref bean="nigeriaEncounterService" />
+            </list>
+        </property>
+    </bean>
+
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.nigeriaemr.api.service.NigeriaObsService</value>
+                <ref bean="nigeriaObsService" />
+            </list>
+        </property>
+    </bean>
+
+
+
+    <!-- Wraps NigeriaemrService methods in DB transactions and OpenMRS interceptors,
+    which set audit info like dateCreated, changedBy, etc.-->
+    <bean id="nigeriaemrService"
+            class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.nigeriaemr.api.service.impl.NigeriaemrServiceImpl">
+                <property name="dao" ref="nigeriaemrDao" />
+            </bean>
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+
+
+    <!-- Adds NigeriaemrService to OpenMRS context so it can be accessed
+    calling Context.getService(NigeriaemrService.class) -->
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.nigeriaemr.api.service.NigeriaemrService</value>
+                <ref bean="nigeriaemrService" />
+            </list>
+        </property>
+    </bean>
+</beans>

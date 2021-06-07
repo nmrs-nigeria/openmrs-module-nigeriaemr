@@ -1,0 +1,147 @@
+<htmlform formUuid="3595782a-1cdc-44f1-84cc-5682fd405f46" formName="Partner Register" formEncounterType="15a98ee7-0e8d-4ee8-8aaa-99b28c7083ee" formVersion="2018">
+    <!-- Partner Register 11-Apr-2018 -->
+
+    <macros>
+        paperFormId = (Fill this in)
+        headerColor =#2f1c55
+        fontOnHeaderColor = white
+    </macros>
+    <style>
+        .section {
+        border: 1px solid $headerColor;
+        padding: 2px;
+        text-align: left;
+        margin-bottom: 1em;
+        }
+        .sectionHeader {
+        background-color: #2f1c55;
+        color: white;
+        /* display: block; */
+        padding: 2px;
+        font-weight: bold;
+        }
+        table tr:nth-child(even) {
+        background: #ffffff;
+        }
+        .alnright{
+        text-align: right;
+        color:#000000;
+        width: 25%;
+        }
+        td {
+        border: none;
+        }
+        table th, table td {
+        padding: 5px 10px;
+        border: None;
+        }
+        .legend_style {
+        max-width: 35%;
+        background: #FAFAFA;
+        <!--padding: 5px;-->
+        margin: 0px left;
+        box-shadow: 1px 1px 25px rgba(0,0,0,0.10);
+        border-radius: 2px;
+        border: 1px solid #305a72;
+        border-bottom-left-radius: 2px;
+        text-transform:initial;
+
+        }
+        form fieldset, .form fieldset {
+        min-width: 98%;
+        border: none;
+        border-top: 1px solid #305a72;
+
+        }
+        table th, table td {
+        padding: 5px 10px;
+        /* border: 1px solid #DDD; */
+        }
+        table tr {
+        border: None;
+        }
+        ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form input, form select, form textarea, form ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form select, .form select {
+        max-width: 200px;
+        }
+
+    </style>
+    <div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+        <fieldset>
+            <legend class="legend_style">When?</legend>
+            <label>When?</label>
+            <encounterDate default="now" showTime="false" allowFutureDates="false"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Who?</legend>
+            <label>Who?</label>
+            <encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f"                                                     required="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Where?</legend>
+            <label>Where?</label>
+            <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+        </fieldset>
+    </div>
+
+    <table style="margin-bottom: 20px;">
+        <thead>
+            <tr><th colspan='5' style="text-align: center">Partner Information</th></tr>
+        </thead>
+    </table>
+    <fieldset>
+        <table>
+            <tr>
+                <td>Partner Age:</td>
+                <td><obs conceptId="164955"/></td>
+                <td>Pre-test counseled:</td>
+                <td><obs conceptId="164956" /></td>
+            </tr>
+            <tr>
+                <td>Partner accepts HIV test:</td>
+                <td><obs conceptId="164957" /></td>
+                <td>Partner HIV status:</td>
+                <td><obs conceptId="1436" answerConceptIds="703,664" answerLabels="Positive,Negative"/></td>
+            </tr>
+            <tr>
+                <td>Post-test counseled/recieved test result:</td>
+                <td><obs conceptId="164959"/></td>
+                <td>HBV status:</td>
+                <td><obs conceptId="165561" answerConceptIds="703,664" answerLabels="Positive,Negative"/></td>
+            </tr>
+            <tr>
+                <td>HCV status:</td>
+                <td><obs conceptId="165562" answerConceptIds="703,664" answerLabels="Positive,Negative"/></td>
+                <td>Syphilis status:</td>
+                <td><obs conceptId="299" answerConceptIds="1228,1229" answerLabels="Reactive,Non-reactive"/></td>
+            </tr>
+            <tr>
+                <td>Referred to:</td>
+                <td><obs conceptId="164960" answerConceptIds="1382,1610,5622" answerLabels="Family planning counselling,Antiretroviral therapy, Others"/></td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend class="legend_style">Signature</legend>
+        <table class="table" width="100%">
+            <tr>
+                <td class="alnright_s">Facility:</td>
+                <td>
+                    <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+                </td>
+                <td>Clinician's name </td>
+                <td><encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f" required="true"/></td>
+            </tr>
+
+        </table>
+
+    </fieldset><br/>
+    <submit/>
+</htmlform>

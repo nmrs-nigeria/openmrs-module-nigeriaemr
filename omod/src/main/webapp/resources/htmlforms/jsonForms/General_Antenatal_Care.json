@@ -1,0 +1,221 @@
+{
+  "name": "General Antenatal Care",
+  "uuid": "ac995d47-a8db-4ea8-91b4-f080489e523f",
+  "processor": "EncounterFormProcessor",
+  "pages": [
+    {
+      "label": "Antenatal booking details",
+      "sections": [
+        {
+          "label": "Antenatal booking details",
+          "questions": [
+            {
+              "label": "Last Menstral Period",
+              "questionOptions": {
+                "rendering": "date",
+                "concept": "1427AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "type": "obs",
+              "validators": [
+                {
+                  "type": "date"
+                }
+              ]
+            },
+            {
+              "label": "Gestational Age (in Weeks):",
+              "id": "gestational_age",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1438AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Gravidity:",
+              "id": "gravidity",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "5624AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Expected Delivery Date",
+              "questionOptions": {
+                "rendering": "date",
+                "concept": "5596AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "type": "obs",
+              "validators": [
+                {
+                  "type": "date"
+                }
+              ]
+            },
+            {
+              "label": "Parity:",
+              "id": "parity",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            },
+            {
+              "label": "Losses:",
+              "id": "losses",
+              "questionOptions": {
+                "rendering": "number",
+                "concept": "1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "max": "350",
+                "min": "0"
+              },
+              "type": "obs",
+              "validators": [
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sections": [
+        {
+          "label": "Syphilis Screening",
+          "questions": [
+            {
+              "label": "Woman tested for Syphilis:",
+              "type": "obs",
+
+              "id": "womansyphilisScreening",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "fa3ad944-864c-4cf6-938e-e3099f847c22",
+                "answers": [
+                  {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes"
+                  },
+                  {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "If Yes, Syphilis test date",
+              "questionOptions": {
+                "rendering": "date",
+                "concept": "9eceae3d-d129-451e-93e6-c16677a93fa9"
+              },
+              "type": "obs",
+              "validators": [
+                {
+                  "type": "date"
+                }
+              ]
+            },
+            {
+              "label": "If Yes, Syphilis test result:",
+              "type": "obs",
+
+              "id": "sph_test_result",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "299AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "1228AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Positive"
+                  },
+                  {
+                    "concept": "1229AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Negative"
+                  },
+                  {
+                    "concept": "1304AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Indeterminant"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "Treated for syphilis:",
+              "type": "obs",
+
+              "id": "treatedforsyphilis",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "160733AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "answers": [
+                  {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes"
+                  },
+                  {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No"
+                  },
+                  {
+                    "concept": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Unknown"
+                  }
+                ]
+              }
+            },
+            {
+              "label": "If Yes, Syphilis treatment date",
+              "questionOptions": {
+                "rendering": "date",
+                "concept": "549c3b03-8459-4083-a301-1923430637f2"
+              },
+              "type": "obs",
+              "validators": [
+                {
+                  "type": "date"
+                }
+              ]
+            },
+            {
+              "label": "Referred Syphilis +ve client:",
+              "type": "obs",
+
+              "id": "referredyphilis",
+              "questionOptions": {
+                "rendering": "select",
+                "concept": "2c5b3461-ec1f-4194-8700-bf13cadd760e",
+                "answers": [
+                  {
+                    "concept": "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "Yes"
+                  },
+                  {
+                    "concept": "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                    "label": "No"
+                  }
+                ]
+              }
+            }
+
+          ]
+        }
+
+
+      ]
+    }
+  ]
+}

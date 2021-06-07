@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="data-set" type="data-setType"/>
+  <xs:complexType name="ART_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element type="xs:string" name="PatientEverStartedOnART"/>
+      <xs:element type="xs:string" name="ART_Start_Date"/>
+      <xs:element type="xs:string" name="TreatmentPrepCompletedBeforeStartOfART"/>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploadDt"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="ReviewPeriodID"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="data-setType">
+    <xs:sequence>
+      <xs:element type="ART_RecordType" name="ART_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

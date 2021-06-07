@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="data-set" type="data-setType"/>
+  <xs:complexType name="ARTRegimenDuringReviewPeriod_RecordType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="PatientID"/>
+      <xs:element name="PatientOnARTFirstDayOFReviewPeriod">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="No"/>
+            <xs:enumeration value="Yes"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="PatientOnARTAnytimeDuringReviewPeriod"/>
+      <xs:element name="_1ST_Regimen">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="6"/>
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="25"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="_1st_Regimen_StartDate"/>
+      <xs:element type="xs:string" name="_1st_Regimen_Change_Date"/>
+      <xs:element type="xs:string" name="_2nd_Regimen"/>
+      <xs:element type="xs:string" name="_2nd_Regimen_Start_Date"/>
+      <xs:element type="xs:string" name="_2nd_Regimen_Change_Date"/>
+      <xs:element type="xs:string" name="_3rd_Regimen"/>
+      <xs:element type="xs:string" name="_3rd_Regimen_Start_Date"/>
+      <xs:element type="xs:string" name="_3rd_Regimen_Change_Date"/>
+      <xs:element type="xs:string" name="OtherRegimenSpecify"/>
+      <xs:element type="xs:string" name="DateofLastDrugPickup"/>
+      <xs:element name="DurationOfMedicationCoverageInMonths">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="2"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="FacilityID"/>
+      <xs:element type="xs:string" name="UploaderId"/>
+      <xs:element type="xs:string" name="UploaderDT"/>
+      <xs:element type="xs:string" name="webUploadFlag"/>
+      <xs:element type="xs:string" name="ReviewPeriod"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="data-setType">
+    <xs:sequence>
+      <xs:element type="ARTRegimenDuringReviewPeriod_RecordType" name="ARTRegimenDuringReviewPeriod_Record" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

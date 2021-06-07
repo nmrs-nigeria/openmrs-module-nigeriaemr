@@ -1,0 +1,374 @@
+<htmlform formUuid="e1590b71-ff4b-4092-9778-b40c22a602db" formName="AdultCS"
+          formEncounterType="4635d9a9-ca8f-4451-ba27-47e5bb57cf11 " formVersion="2016">
+
+
+    <style>
+        .section {
+        border: 1px solid $headerColor;
+        padding: 2px;
+        text-align: left;
+        margin-bottom: 1em;
+        }
+        .sectionHeader {
+        background-color: #2f1c55;
+        color: white;
+        /* display: block; */
+        padding: 2px;
+        font-weight: bold;
+        }
+        table tr:nth-child(even) {
+        background: #ffffff;
+        }
+        .alnright{
+        text-align: right;
+        color:#000000;
+        width: 25%;
+        }
+        .alnright_s{
+        text-align: right;
+        color:#000000;
+        width: 13%;
+        }
+        .alnleft_s{
+        text-align: left;
+        color:#000000;
+        width: 13%;
+        }
+        .alnleft{
+        text-align: left;
+        color:#000000;
+        width: 25%;
+        }
+        td {
+        border: none;
+        }
+        table th, table td {
+        padding: 5px 10px;
+        border: None;
+        }
+        .legend_style {
+        max-width: 35%;
+        background: #FAFAFA;
+        <!--padding: 5px;-->
+        margin: 0px left;
+        box-shadow: 1px 1px 25px rgba(0,0,0,0.10);
+        border-radius: 2px;
+        border: 1px solid #305a72;
+        border-bottom-left-radius: 2px;
+        text-transform:initial;
+
+        }
+        form fieldset, .form fieldset {
+        min-width: 98%;
+        border: none;
+        border-top: 1px solid #305a72;
+
+        }
+        table th, table td {
+        padding: 5px 10px;
+        /* border: 1px solid #DDD; */
+        }
+        table tr {
+        border: None;
+        }
+        ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form input, form select, form textarea, form ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form select, .form select {
+        max-width: 200px;
+        min-width: 50px;
+        }
+
+        body {
+        font-family: "OpenSans", Arial, sans-serif;
+        color: #363463;
+        font-size: 14px;
+        }
+        .alnVertical{
+        vertical-align: top;
+        }
+
+    </style>
+    <div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+        <fieldset>
+            <legend class="legend_style">When?</legend>
+            <label>When?</label>
+            <encounterDate default="now" showTime="false" allowFutureDates="false"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Who?</legend>
+            <label>Who?</label>
+            <encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f"                                                     required="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Where?</legend>
+            <label>Where?</label>
+            <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+        </fieldset>
+    </div>
+    <script type="text/javascript">
+        <!--jQuery(function() {-->
+        <!--&lt;!&ndash;Hide the following questions when the form loads&ndash;&gt;-->
+        <!--htmlForm.simpleUi.hideField('familyr'); htmlForm.simpleUi.hideField('familyro');-->
+        <!--});-->
+    </script>
+    <table style="margin-bottom: 20px;">
+        <thead>
+            <tr><th style="text-align: center">HIV Treatment Follow up form (Care Card - Center Spread)</th></tr>
+        </thead>
+    </table>
+    <table>
+        <tr>
+            <td class="alnright">Visit Date</td>
+            <td>
+                <encounterDate default="now" showTime="false" allowFutureDates="false"/>
+            </td>
+            <td>
+
+            </td>
+        </tr>
+    </table>
+
+    <fieldset>
+        <legend class="legend_style">Vital Signs</legend>
+        <table>
+            <tr>
+                <includeIf velocityTest="$patient.gender == 'F' ">
+                    <td class="alnright_s">Is Woman Pregnant</td>
+                    <td>
+                        <obs id="woman_pregnant" style="yes_no_dropdown" conceptId="1434" >
+                            <controls>
+                                <when value="true" thenDisplay="#woman_pregnant_result"/>
+                                <when value="false" thenDisplay="#woman_Breastfeeding_result"/>
+                            </controls>
+                        </obs>
+                    </td>
+
+                    <td id="woman_pregnant_result">
+                        <table>
+                            <tr>
+                                <td class="alnright_s">Expected Date of Delivery</td>
+                                <td><obs conceptId="5596"/></td>
+                                <td class="alnright_s"></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td id="woman_Breastfeeding_result">
+                        <table>
+                            <tr>
+
+                                <td class="alnright_s">Is Woman Breastfeeding</td>
+                                <td><obs conceptId="5632"/></td>
+                                <td class="alnright_s"></td>
+
+                            </tr>
+                        </table>
+                    </td>
+                </includeIf>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td class="alnright_s">Weight (kg)</td>
+                <td><obs conceptId="5089"/></td>
+                <td class="alnright_s">Height (cm)</td>
+                <td><obs conceptId="5090"/></td>
+                <td class="alnright_s">Length (cm)</td>
+                <td><obs conceptId="5090"/></td>
+                <td class="alnright_s">Blood Pressure (mmHg)</td>
+                <td>
+                    <table>
+                        <tr>
+                            <td><obs conceptId="5085"/></td>
+                            <td>/</td>
+                            <td><obs conceptId="5086"/></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="alnright_s">Body Mass Index (BMI)</td>
+                <td><obs conceptId="1342"/></td>
+                <td class="alnright_s">MUAC (cm)</td>
+                <td><obs conceptId="1343"/></td>
+                <td class="alnright">Is Patient on Family Planning</td>
+                <td>
+                    <obs id="family_planning" style="yes_no_dropdown" conceptId="5271" >
+                        <controls>
+                            <when value="true" thenDisplay="#family_planning_result"/>
+                        </controls>
+                    </obs>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td id="family_planning_result">
+                    <table>
+                        <tr>
+                            <td>Family planning Method: </td>
+                            <td><obs conceptId="374" answerConceptIds="190,780,5279,5278,5275,1489"/></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+    </fieldset>
+    <fieldset>
+        <legend class="legend_style">Clinical Information</legend>
+        <table>
+            <tr>
+                <td class="alnleft_s">Functional Status</td>
+                <td class="alnleft_s">
+                    <obs conceptId="165039" answerConceptIds="162750,162752,160026"
+                         answerLabels="1. Working,2. Bedridden,3. Patient Ambulatory"/>
+                </td>
+                <td class="alnleft_s">WHO Clinical stage</td>
+                <td class="alnleft_s">
+                    <obs conceptId="5356" answerConceptIds="1204,1205,1206,1207" answerLabels="1,2,3,4"/>
+                </td>
+                <td class="alnleft_s">TB Status</td>
+                <td class="alnleft_s">
+                    <obs conceptId="1659" answerConceptIds="1660,142177,1662,1661"
+                         answerLabels="1. No Signs,2. Presumptive TB,3. IPT, 4. Confirmed TB"/>
+                </td>
+            </tr>
+        </table>
+        <br/>
+        <table>
+            <tr>
+                <th style="width:50%; text-align: left;">Other OIs/Other problems</th>
+                <th style="width:50%; text-align: left;">Noted Side Effects</th>
+            </tr>
+            <tr>
+
+                <td style="width:50%" class="alnVertical">
+                    <obs conceptId="160170" answerConceptId="117543" answerLabel="Herpes Zoster"/> <br/>
+                    <obs conceptId="160170" answerConceptId="114100" answerLabel="Pneumonia"/><br/>
+                    <obs conceptId="160170" answerConceptId="119566" answerLabel="Dementia / Encephalitis"/><br/>
+                    <obs conceptId="160170" answerConceptId="5334" answerLabel="Thrush, Oral/Virginal"/><br/>
+                    <obs conceptId="160170" answerConceptId="140238" answerLabel="Fever"/><br/>
+                    <obs conceptId="160170" answerConceptId="143264" answerLabel="Cough"/>
+                </td>
+                <td style="width:50%">
+                    <table>
+                        <tr>
+                            <td class="alnVertical">
+                                <obs conceptId="159935" answerConceptId="133473" answerLabel="Nausea and Vomiting"/> <br/>
+                                <obs conceptId="159935" answerConceptId="139084" answerLabel="Headache"/><br/>
+                                <obs conceptId="159935" answerConceptId="119566" answerLabel="Insomnia"/><br/>
+                                <obs conceptId="159935" answerConceptId="5226" answerLabel="Weakness"/><br/>
+                                <obs conceptId="159935" answerConceptId="512" answerLabel="PV Bleeding / Discharge "/><br/>
+                                <obs conceptId="159935" answerConceptId="165052" answerLabel="Fat changes"/>
+                            </td>
+                            <td class="alnVertical">
+                                <obs conceptId="159935" answerConceptId="121629" answerLabel="Anaemia"/><br/>
+                                <obs conceptId="159935" answerConceptId="165053" answerLabel="Drainage of liquor"/><br/>
+                                <obs conceptId="159935" answerConceptId="125886" answerLabel="Stevens-Johnson Syndrome"/><br/>
+                                <obs conceptId="159935" answerConceptId="138291" answerLabel="Hyperglycemia"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+
+            </tr>
+        </table>
+
+    </fieldset>
+    <fieldset>
+        <legend class="legend_style">Medication Plan</legend>
+        <table>
+            <tr>
+                <td>ARV Medication Plan</td>
+                <td>
+                    <obs id="reg_plan"  conceptId="165771"  answerConceptIds="1257,165769,165768,165770" answerLabels="Continue regimen, Substitute regimen, Switch regimen, Stop regimen">
+                        <controls>
+                            <when value="165769" thenDisplay="#reg_plan_response"/>
+                            <when value="165768" thenDisplay="#reg_plan_response2"/>
+                            <when value="165770" thenDisplay="#reg_plan_response3"/>
+                        </controls>
+                    </obs>
+                </td>
+                <td id ="reg_plan_response">
+                    <table>
+                        <tr>
+                            <td class="alnright">Regimen substitution reason</td>
+                            <td>
+                                <obs conceptId="165056" answerLabel="Reason"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td id ="reg_plan_response2">
+                    <table>
+                        <tr>
+                            <td class="alnright">Regimen switch reasons</td>
+                            <td>
+                                <obs conceptId="165056" answerLabel="Reason"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td id ="reg_plan_response3">
+                    <table>
+                        <tr>
+                            <td class="alnright">Regimen stop reasons</td>
+                            <td>
+                                <obs conceptId="165056" answerLabel="Reason"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend class="legend_style">Medication Adherence</legend>
+        <table>
+            <tr>
+                <td>ARV Adherence</td>
+                <td>
+                    <obs conceptId="165290" id="ARV Drugs Adherence" answerLabels="G(Good),P(Poor),F(Fair) "
+                         answerConceptIds="165287,165288,165289"/>
+                </td>
+
+                <td class="alnright">Cotrimoxazole Adherence</td>
+                <td>
+                    <obs conceptId="161652" id="Cotrimoxazole Adherence" answerConceptIds="165287,165288,165289"/>
+                </td>
+                <td class="alnright">INH Adherence</td>
+                <td>
+                    <obs conceptId="161653" id="INH Adherence"/>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend class="legend_style">Appointment and Signatures</legend>
+        <table>
+            <tr>
+                <td>Next Appointment Date:</td>
+                <td>
+                    <obs conceptId="5096"/>
+                </td>
+                <td>Signature:</td>
+                <td>
+                    <encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f" required="true"/>
+                </td>
+                <td>Facility:</td>
+                <td>
+                    <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+                </td>
+            </tr>
+
+        </table>
+    </fieldset>
+
+    <submit/>
+</htmlform>

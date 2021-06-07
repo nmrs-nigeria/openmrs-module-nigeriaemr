@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+ 
+    <!--
+    	See http://wiki.openmrs.org/display/docs/Module+liquibase+File for 
+    	documentation on this file.
+    
+        See http://www.liquibase.org/manual/home#available_database_refactorings
+        for a list of supported elements and attributes
+    -->
+ 
+ 	<!-- Uncomment the changeset below if you want to make the Item class persistable, see also Item and NigeriaemrDaoTest -->
+
+	<changeSet id="nigeriaemr-2020-07-06" author="wande">
+		<comment>
+			Creating the nigeriaemr_ndr export table
+		</comment>
+		<createTable tableName="nigeriaemr_ndr_export">
+			<column name="nigeriaemr_ndr_export_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="owner" type="int" />
+            <column name="total_number_of_patients" type="int" />
+            <column name="total_number_of_patients_processed" type="int" defaultValue="0" />
+            <column name="date_started" type="TIMESTAMP" />
+            <column name="date_ended" type="TIMESTAMP"  defaultValueDate="now()"/>
+			<column name="path" type="varchar(255)"/>
+			<column name="status" type="varchar(25)"/>
+			<column name="voided" type="BIT(1)"/>
+			<column name="name" type="varchar(255)"/>
+			<column name="report_folder" type="varchar(255)"/>
+			<column name="context_path" type="varchar(255)"/>
+		</createTable>
+    </changeSet>
+    <changeSet id="nigeriaemr-2020-07-06-01" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="last_date" type="TIMESTAMP" defaultValueDate="now()"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="nigeriaemr-2020-07-06-02" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="patients" type="LONGTEXT"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="nigeriaemr-2020-07-06-03" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="date_updated" type="TIMESTAMP" defaultValueDate="now()"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353" author="wande">
+        <comment>
+            Creating the nigeriaemr_ndr export table
+        </comment>
+        <createTable tableName="nigeriaemr_ndr_batch_export">
+            <column name="nigeriaemr_ndr_batch_export_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="owner" type="int" />
+            <column name="total_number_of_patients" type="int" />
+            <column name="total_number_of_patients_processed" type="int" defaultValue="0" />
+            <column name="date_started" type="TIMESTAMP" defaultValueDate="now()"/>
+            <column name="date_created" type="TIMESTAMP" defaultValueDate="now()"/>
+            <column name="date_updated" type="TIMESTAMP" defaultValueDate="now()"/>
+            <column name="last_export_date" type="TIMESTAMP" defaultValueDate="now()"/>
+            <column name="status" type="varchar(25)"/>
+        </createTable>
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="batch_id" type="int"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353-012" author="wande">
+        <modifyColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="status" type="varchar(250)"/>
+        </modifyColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353-014" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_export">
+            <column name="error_patients" type="LONGTEXT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353-015" author="wande">
+        <sql> ALTER TABLE nigeriaemr_ndr_export CHANGE COLUMN last_date last_date TIMESTAMP NULL ; </sql>
+        <sql> ALTER TABLE nigeriaemr_ndr_export CHANGE COLUMN date_started date_started TIMESTAMP NULL ;</sql>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353-01" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="name" type="varchar(100)"/>
+            <column name="path" type="varchar(250)"/>
+            <column name="report_folder" type="varchar(255)"/>
+            <column name="context_path" type="varchar(255)"/>
+            <column name="date_ended" type="TIMESTAMP" defaultValueDate="now()"/>
+            <column name="voided" type="BIT(1)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353-02" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="error_path" type="varchar(250)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-202008241353-03" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="error_list" type="varchar(250)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="nigeriaemr-202008241353-04" author="wande">
+        <addColumn tableName="nigeriaemr_ndr_batch_export">
+            <column name="automatic" type="BIT(1)"/>
+        </addColumn>
+        <sql> ALTER TABLE nigeriaemr_ndr_export CHANGE COLUMN last_date last_date TIMESTAMP NULL ; </sql>
+        <sql> ALTER TABLE nigeriaemr_ndr_export CHANGE COLUMN date_started date_started TIMESTAMP NULL ;</sql>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-2016-07-28-21-201404091129" author="temiye">
+        <comment>
+            Updating state and lga code
+        </comment>
+
+        <insert tableName="global_property">
+            <column name="property" value="partner_reporting_lga_code"></column>
+            <column name="property_value" value="UNKNOWN"></column>
+            <column name="description" value="Facility Lga Code"></column>
+            <column name="uuid" value="24d5d903-bc66-4131-8e85-31067c29f0b5"></column>
+            <column name="datatype" value="NULL"></column>
+            <column name="datatype_config" value="NULL"></column>
+            <column name="preferred_handler" value="NULL"></column>
+            <column name="handler_config" value="NULL"></column>
+        </insert>
+        <insert tableName="global_property">
+            <column name="property" value="partner_reporting_state"></column>
+            <column name="property_value" value="UNKNOWN"></column>
+            <column name="description" value="Facility State Name"></column>
+            <column name="uuid" value="83a459f6-8765-4743-97ab-e8920944208b"></column>
+            <column name="datatype" value="NULL"></column>
+            <column name="datatype_config" value="NULL"></column>
+            <column name="preferred_handler" value="NULL"></column>
+            <column name="handler_config" value="NULL"></column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-2020-08-24-172600" author="wande">
+    <sqlFile path="sql/dataim_map.sql"
+             stripComments="true"
+             splitStatements="true"
+             endDelimiter=";"/>
+    </changeSet>
+
+    <changeSet id="nigeriaemr-2021-03-24-17260099" author="wande">
+        <sqlFile path="sql/dataim_map.sql"
+                 stripComments="true"
+                 splitStatements="true"
+                 endDelimiter=";"/>
+    </changeSet>
+
+    <changeSet id="create_pbs_table_2021021103267" author="wande">
+        <sql>
+            CREATE TABLE IF NOT EXISTS `biometricinfo` (`biometricInfo_Id` INT(11) NOT NULL AUTO_INCREMENT,
+            `patient_Id` INT(11) NOT NULL,`template` TEXT ,
+            `imageWidth` INT(11) DEFAULT NULL,`imageHeight` INT(11) DEFAULT NULL,
+            `imageDPI` INT(11) DEFAULT NULL,
+            `imageQuality` INT(11) DEFAULT NULL,
+            `fingerPosition` VARCHAR(50) DEFAULT NULL,
+            `serialNumber` VARCHAR(255) DEFAULT NULL,
+            `model` VARCHAR(255) DEFAULT NULL,
+            `manufacturer` VARCHAR(255) DEFAULT NULL,
+            `creator` INT(11) DEFAULT NULL,
+            `date_created` DATETIME DEFAULT NULL,
+            PRIMARY KEY(`biometricInfo_Id`),
+            FOREIGN KEY(patient_Id) REFERENCES patient(patient_Id),
+            FOREIGN KEY(creator) REFERENCES patient(creator)) AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8;
+        </sql>
+    </changeSet>
+
+    <changeSet id="update_biometric_table_20201022350" author="wande">
+        <dropNotNullConstraint tableName="biometricinfo" columnName="template" columnDataType="text"/>
+        <addColumn tableName="biometricinfo">
+            <column name="new_template" type="blob"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="update_biometric_table_longblob_20201022350" author="wande">
+        <sql>
+            ALTER TABLE biometricinfo
+            CHANGE COLUMN new_template new_template LONGBLOB NULL DEFAULT NULL ;
+        </sql>
+    </changeSet>
+
+    <changeSet id="biometric_flag_231020201243" author="wande">
+        <insert tableName="patientflags_flag">
+            <column name="name" value="Has low quality fingerprints"/>
+            <column name="criteria" value="select distinct b.patient_id from biometricinfo b where b.imageQuality &lt; 60 "/>
+            <column name="message" value="Patient biometrics needs to be recaptured because of low quality data"/>
+            <column name="enabled" valueNumeric="1"/>
+            <column name="evaluator" value="org.openmrs.module.patientflags.evaluator.SQLFlagEvaluator"/>
+            <column name="creator" valueNumeric="1"/>
+            <column name="changed_by" valueNumeric="1"/>
+            <column name="retired" valueNumeric="0"/>
+            <column name="uuid" value="3c1da44a-1f23-4ea2-823a-083a40817b37"/>
+            <column name="priority_id" valueNumeric="1"/>
+            <column name="date_created" valueDate="now()"/>
+            <column name="date_changed" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="biometric_flag_231020201243_2" author="wande">
+        <sql>
+            select  @var_name := flag_id from patientflags_flag where uuid = '3c1da44a-1f23-4ea2-823a-083a40817b37';
+            INSERT INTO patientflags_flag_tag (`flag_id`,`tag_id`) VALUES (@var_name,1);
+        </sql>
+    </changeSet>
+
+    <changeSet id="biometric_flag_231020201243_3" author="wande">
+        <insert tableName="patientflags_flag">
+            <column name="name" value="Has Invalid fingerprints"/>
+            <column name="criteria" value="select distinct b.patient_id from biometricinfo b where template not like 'RK1SA%' "/>
+            <column name="message" value="Patient biometrics needs to be recaptured because it contains invalid data"/>
+            <column name="enabled" valueNumeric="1"/>
+            <column name="evaluator" value="org.openmrs.module.patientflags.evaluator.SQLFlagEvaluator"/>
+            <column name="creator" valueNumeric="1"/>
+            <column name="changed_by" valueNumeric="1"/>
+            <column name="retired" valueNumeric="0"/>
+            <column name="uuid" value="c09ba9bd-6c2e-415b-83d5-6ec9a2571c17"/>
+            <column name="priority_id" valueNumeric="1"/>
+            <column name="date_created" valueDate="now()"/>
+            <column name="date_changed" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="biometric_flag_231020201243_4" author="wande">
+        <sql>
+            select  @var_name := flag_id from patientflags_flag where uuid = 'c09ba9bd-6c2e-415b-83d5-6ec9a2571c17';
+            INSERT INTO patientflags_flag_tag (`flag_id`,`tag_id`) VALUES (@var_name,1);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="obs_index_2020_10_111057" author="wande">
+        <createIndex  tableName="obs" indexName="index_obs_date_created">
+            <column name="date_created"/>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet id="lga_trailing_bracket_fix_202111031017" author="wande">
+       <sql> UPDATE address_hierarchy_entry  SET user_generated_id = '73' WHERE uuid='12418a5d-c51c-4460-8651-6a34d6c9cc58'</sql>
+    </changeSet>
+
+    <changeSet id="lga_map_fix_202111031017" author="wande">
+        <sql>
+            update address_hierarchy_entry set name = 'AWKA NORTH', user_generated_id = 74 where address_hierarchy_entry_id=945;
+            update address_hierarchy_entry set name = 'AWKA SOUTH',  user_generated_id = 75 where address_hierarchy_entry_id=960;
+            update address_hierarchy_entry set user_generated_id = 438 where address_hierarchy_entry_id=1644;
+            update address_hierarchy_entry set user_generated_id = 58 where address_hierarchy_entry_id=1734;
+            update address_hierarchy_entry set user_generated_id = 440 where address_hierarchy_entry_id=1854;
+            update address_hierarchy_entry set user_generated_id = 515 where address_hierarchy_entry_id=3902;
+            update address_hierarchy_entry set user_generated_id = 733 where address_hierarchy_entry_id=4403;
+            update address_hierarchy_entry set user_generated_id = 276 where address_hierarchy_entry_id=4672;
+            update address_hierarchy_entry set name = 'FAKAI', user_generated_id = 223 where address_hierarchy_entry_id=6215;
+            update address_hierarchy_entry set name = 'ISIN', user_generated_id = 366 where address_hierarchy_entry_id=6730;
+            update address_hierarchy_entry set user_generated_id = 462 where address_hierarchy_entry_id=7045;
+            update address_hierarchy_entry set user_generated_id = 179 where address_hierarchy_entry_id=7860;
+            update address_hierarchy_entry set user_generated_id = 180 where address_hierarchy_entry_id=7872;
+            update address_hierarchy_entry set user_generated_id = 174 where address_hierarchy_entry_id=8218;
+            update address_hierarchy_entry set user_generated_id = 175 where address_hierarchy_entry_id=8230;
+            update address_hierarchy_entry set user_generated_id = 176 where address_hierarchy_entry_id=8241;
+            update address_hierarchy_entry set user_generated_id = 177 where address_hierarchy_entry_id=8252;
+            update address_hierarchy_entry set  name = 'YORRO', user_generated_id = 766 where address_hierarchy_entry_id=9908;
+            update address_hierarchy_entry set name = 'DANGE SHUNI', user_generated_id = 148 where address_hierarchy_entry_id=9550;
+            update address_hierarchy_entry set user_generated_id = 213 where address_hierarchy_entry_id=3244;
+            update address_hierarchy_entry set user_generated_id = 213 where address_hierarchy_entry_id=3244;
+            update address_hierarchy_entry set user_generated_id = 305 where address_hierarchy_entry_id=8275;
+            update address_hierarchy_entry set user_generated_id = 356 where address_hierarchy_entry_id=8323;
+            update address_hierarchy_entry set user_generated_id = 357 where address_hierarchy_entry_id=3533;
+            update address_hierarchy_entry set user_generated_id = 548 where address_hierarchy_entry_id=7289;
+            update address_hierarchy_entry set user_generated_id = 695 where address_hierarchy_entry_id=8835;
+            update address_hierarchy_entry set user_generated_id = 755 where address_hierarchy_entry_id=9782;
+            update address_hierarchy_entry set user_generated_id = 94 where address_hierarchy_entry_id=8868;
+        </sql>
+    </changeSet>
+
+    <changeSet id="Resolve_INHB6_Wrong_TB_Maping_202104241156" author="temiye" runOnChange="true">
+        <sql>
+            UPDATE obs  SET value_coded = 656 WHERE concept_id =165304  AND value_coded  =1679;
+        </sql>
+    </changeSet>
+
+    <changeSet id="correct_facility_despensing_202104261156" author="temiye" runOnChange="true">
+        <sql>
+            UPDATE concept  SET datatype_id = 2 WHERE concept_id =166276;
+        </sql>
+    </changeSet>
+
+    <changeSet id="clean_obs_without_encounter_202105201156" author="temiye" runOnChange="true">
+        <sql>
+            UPDATE  obs SET  voided = 1,  voided_by  =  1 , date_voided  = NOW()
+            WHERE encounter_id  NOT IN (SELECT encounter_id FROM encounter);
+        </sql>
+    </changeSet>
+
+
+</databaseChangeLog>

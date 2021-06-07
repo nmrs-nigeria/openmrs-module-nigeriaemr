@@ -1,0 +1,256 @@
+<htmlform formUuid="d4a727c5-1532-40cb-ae4a-1a5c66e8271f" formName="Antenatal Care Details" formEncounterType="15a98ee7-0e8d-4ee8-8aaa-99b28c7083ee" formVersion="2018">
+    <!-- General Antenatal Register 10-Apr-2018 -->
+    <macros>
+        paperFormId = (Fill this in)
+        headerColor =#2f1c55
+        fontOnHeaderColor = white
+    </macros>
+    <style>
+        .section {
+        border: 1px solid $headerColor;
+        padding: 2px;
+        text-align: left;
+        margin-bottom: 1em;
+        }
+        .sectionHeader {
+        background-color: #2f1c55;
+        color: white;
+        /* display: block; */
+        padding: 2px;
+        font-weight: bold;
+        }
+        table tr:nth-child(even) {
+        background: #ffffff;
+        }
+        .alnright{
+        text-align: right;
+        color:#000000;
+        width: 25%;
+        }
+        .alnright_s{
+        text-align: right;
+        color:#000000;
+        width: 13%;
+        }
+        .alnleft_s{
+        text-align: left;
+        color:#000000;
+        width: 13%;
+        }
+        .alnleft{
+        text-align: left;
+        color:#000000;
+        width: 25%;
+        }
+        td {
+        border: none;
+        }
+        table th, table td {
+        padding: 5px 10px;
+        border: None;
+        }
+        .legend_style {
+        max-width: 35%;
+        background: #FAFAFA;
+        <!--padding: 5px;-->
+        margin: 0px left;
+        box-shadow: 1px 1px 25px rgba(0,0,0,0.10);
+        border-radius: 2px;
+        border: 1px solid #305a72;
+        border-bottom-left-radius: 25px;
+        text-transform:initial;
+
+        }
+        form fieldset, .form fieldset {
+        min-width: 98%;
+        border: none;
+        border-top: 1px solid #305a72;
+
+        }
+        table th, table td {
+        padding: 5px 10px;
+        /* border: 1px solid #DDD; */
+        }
+        table tr {
+        border: None;
+        }
+        ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form input, form select, form textarea, form ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form select, .form select, .standard {
+        max-width: 200px;
+        min-width: 150px;
+        }
+        form select, .form select {
+        max-width: 200px;
+        min-width: auto;
+        }
+
+        body {
+        font-family: "OpenSans", Arial, sans-serif;
+        color: #363463;
+        font-size: 14px;
+        }
+        <!--table.baseline-aligned td {-->
+        <!--vertical-align: baseline;-->
+        <!--}-->
+    </style>
+    <div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+        <fieldset>
+            <legend class="legend_style">When?</legend>
+            <label>When?</label>
+            <encounterDate default="now" showTime="false" allowFutureDates="false"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Who?</legend>
+            <label>Who?</label>
+            <encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f"                                                     required="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Where?</legend>
+            <label>Where?</label>
+            <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+        </fieldset>
+    </div>
+    <table style="margin-bottom: 20px;">
+        <thead>
+            <tr><th colspan='5' style="text-align: center">General Antenatal Care Form</th></tr>
+        </thead>
+    </table>
+
+    <fieldset>
+        <legend class="legend_style">Antenatal booking details</legend>
+        <table>
+
+            <tr>
+                <td class="alnright">ANC No.</td>
+                <td class="alnleft"><patient field="identifier" identifierTypeId="6" required="true"/>   </td>
+
+            </tr>
+
+            <tr>
+                <td class="alnright">Antenatal registration date</td>
+                <td class="alnleft"><encounterDate default="now" showTime="false"/></td>
+                <td class="alnright">Last Menstral Period</td>
+                <td class="alnleft"><obs conceptId="1427" id="LMP" /></td>
+            </tr>
+
+            <tr>
+                <td class="alnright">Gestational Age (in Weeks)</td>
+                <td class="alnleft"><obs conceptId="1438"/></td>
+                <td class="alnright">Gravidity</td>
+                <td class="alnleft"><obs conceptId="5624"/></td>
+            </tr>
+            <tr>
+                <td class="alnright">Expected Delivery Date</td>
+                <td class="alnleft"><obs conceptId="5596" id="EDD"/></td>
+                <td class="alnright">Parity</td>
+                <td class="alnleft"><obs conceptId="1053"/></td>
+            </tr>
+            <tr>
+                <td class="alnright">Losses</td>
+                <td class="alnleft"><obs conceptId="1053"/></td>
+            </tr>
+            <tr>
+                <td class="alnright_s">Gynaecological history</td>
+                <td class="alnleft_s"></td>
+                <td class="alnright_s">Source of referral</td>
+                <td class="alnleft_s"></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend class="legend_style">Syphilis Screening</legend>
+        <table>
+            <tr>
+                <td class="alnright_s" >Woman tested for Syphilis</td>
+                <td class="alnleft_s standard" ><obs conceptId="165280"/></td>
+            </tr>
+            <tr>
+                <td class="alnright_s">Syphilis test date</td>
+                <td class="alnleft_s"><obs conceptId="164952"/></td>
+                <td class="alnright_s">Syphilis test result</td>
+                <td class="alnleft_s"><obs conceptId="299" answerConceptIds="1228,1229,1304" answerLabels="Positive,Negative,Indeterminant"/></td>
+            </tr>
+            <tr>
+                <td class="alnright_s">Treated for syphilis</td>
+                <td class="alnleft_s"><obs conceptId="160733"/></td>
+            </tr>
+            <tr>
+                <td class="alnright_s">Syphilis treatment date</td>
+                <td class="alnleft_s"><obs conceptId="164953"/></td>
+                <td class="alnright_s">Referred Syphilis +ve client</td>
+                <td class="alnleft_s"><obs conceptId="165517"/></td>
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend class="legend_style">Hepatitis Testing</legend>
+        <table class="table" width="100%">
+
+            <tr>
+
+                <td>Hepatitis B Test:</td>
+                <td><obs conceptId="159430" /></td>
+                <td>Hepatitis C Test:</td>
+                <td><obs conceptId="161471" /></td>
+
+
+            </tr>
+        </table>
+
+    </fieldset>
+
+
+    <div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+        <section headerLabel="Encounter Details" style="width: 40%; margin-left: 30%;">
+            <fieldset>
+                <legend class="legend_style">ANC Enrollment Date</legend>
+                <label>ANC Enrollment Date</label>
+                <encounterDate default="now" showTime="false" allowFutureDates="false"/>
+            </fieldset>
+            <fieldset>
+                <legend class="legend_style">Facility</legend>
+                <label>Facility</label>
+                <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+            </fieldset>
+            <fieldset>
+                <legend class="legend_style">Service Provider</legend>
+                <label>Service Provider</label>
+                <encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f" required="true"/>
+            </fieldset>
+        </section>
+    </div>
+
+
+    <fieldset>
+        <legend class="legend_style">Signature</legend>
+        <p class="left">
+            <table class='left'>
+                <tr>
+                    <td>Provider Name</td>
+                    <td><encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f" required="true"/></td>
+                    <td>Facility Name</td><td><p class='left'><encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/></p></td>
+                </tr>
+            </table>
+        </p>
+
+    </fieldset>
+    <ifMode mode="VIEW" include="false">
+        <div id="buttons">
+            <submit submitClass="confirm right" submitCode="general.save" />
+            <button type="button" class="cancel">
+                <uimessage code="general.cancel" />
+            </button>
+        </div>
+    </ifMode>
+
+
+
+</htmlform>

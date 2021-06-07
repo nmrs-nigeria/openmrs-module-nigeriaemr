@@ -1,0 +1,349 @@
+<htmlform>
+    <style>
+        .section {
+        border: 1px solid $headerColor;
+        padding: 2px;
+        text-align: left;
+        margin-bottom: 1em;
+        }
+        .sectionHeader {
+        background-color: #2f1c55;
+        color: white;
+        /* display: block; */
+        padding: 2px;
+        font-weight: bold;
+        }
+        table tr:nth-child(even) {
+        background: #ffffff;
+        }
+        .alnleft_s{
+        text-align: left;
+        color:#000000;
+        width: 13%;
+        }
+        .alnright_s{
+        text-align: right;
+        color:#000000;
+        width: 13%;
+        }
+        .alnright{
+        text-align: right;
+        color:#000000;
+        width: 25%;
+        }
+        .alnright_i{
+        text-align: right;
+        color:#000000;
+        width: 40%;
+        }
+        .alnleft{
+        text-align: left;
+        color:#000000;
+        width: 25%;
+        }
+        td {
+        border: none;
+        }
+        table th, table td {
+        padding: 5px 10px;
+        border: None;
+        }
+        .legend_style {
+        max-width: 35%;
+        background: #FAFAFA;
+        <!--padding: 5px;-->
+        margin: 0px left;
+        box-shadow: 1px 1px 25px rgba(0,0,0,0.10);
+        border-radius: 2px;
+        border: 1px solid #305a72;
+        border-bottom-left-radius: 2px;
+        text-transform:initial;
+
+        }
+        form fieldset, .form fieldset {
+        min-width: 98%;
+        border: none;
+        border-top: 1px solid #305a72;
+
+        }
+        table th, table td {
+        padding: 5px 10px;
+        /* border: 1px solid #DDD; */
+        }
+        table tr {
+        border: None;
+        }
+        ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form input, form select, form textarea, form ul.select, .form input, .form select, .form textarea, .form ul.select {
+        padding: 2px 10px;
+        }
+        form select, .form select {
+        max-width: 200px;
+        }
+        body {
+        font-family: "OpenSans", Arial, sans-serif;
+        color: #363463;
+        font-size: 14px;
+        }
+    </style>
+    <div class="hidden" id="encounter-details" sectionTag="section" headerStyle="title" headerLabel="Encounter Details">
+        <fieldset>
+            <legend class="legend_style">When?</legend>
+            <label>When?</label>
+            <encounterDate default="now" showTime="false" allowFutureDates="false"/>
+        </fieldset>
+
+
+
+        <fieldset>
+            <legend>Who?</legend>
+            <label>Who?</label>
+            <encounterProviderAndRole default="currentUser" encounterRole="240b26f9-dd88-4172-823d-4a8bfeb7841f"                                                     required="true"/>
+        </fieldset>
+
+        <fieldset>
+            <legend>Where?</legend>
+            <label>Where?</label>
+            <encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/>
+        </fieldset>
+    </div>
+
+    <table style="margin-bottom: 20px;">
+        <thead>
+            <tr><th colspan='5' style="text-align: center">Laboratory Order &amp; Result Form</th></tr>
+        </thead>
+    </table>
+
+    <table class="table" width="100%">
+        <tbody>
+            <tr>
+                <td class="alnright">Visit Date</td>
+                <td class="alnleft"><encounterDate default="now" showTime="false"/></td>
+                <td class="alnright"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <fieldset>
+        <table>
+            <tr>
+                <th class="alnleft"><label>Order</label></th>
+                <th><label>Results</label></th>
+                <th class="alnleft"><label>Order</label></th>
+                <th><label>Results</label></th>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165731" style="checkbox" value="false" />CD4+ cell count (cells/mm3)</td>
+                <td><obs conceptId="5497"/></td>
+                <td class="alnleft"><obs conceptId="165748" style="checkbox" value="false" />CD4 (%)</td>
+                <td><obs conceptId="730"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165732" style="checkbox" value="false" />WBC (x10<sup>9</sup> c/L)</td>
+                <td><obs conceptId="678"/></td>
+                <td colspan="2"> </td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165749" style="checkbox" value="false" />Polymorphs (/mm<sup>3</sup>)</td>
+                <td><obs conceptId="1022"/></td>
+                <td class="alnleft"><obs conceptId="165918" style="checkbox" value="false" />Polymorphs (%)</td>
+                <td><obs conceptId="165919"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165733" style="checkbox" value="false" />Lymphocytes (/mm<sup>3</sup>)</td>
+                <td><obs conceptId="1319"/></td>
+                <td class="alnleft"><obs conceptId="165750" style="checkbox" value="false" />Lymphocytes (%)</td>
+                <td><obs conceptId="1338"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165734" style="checkbox" value="false" />Monocytes (/mm<sup>3</sup>)</td>
+                <td><obs conceptId="1023" /></td>
+                <td class="alnleft"><obs conceptId="165751" style="checkbox" value="false" />Monocytes (%)</td>
+                <td><obs conceptId="1339" /></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165735" style="checkbox" value="false" />Eosinophils (/mm<sup>3</sup>)</td>
+                <td><obs conceptId="1024" /></td>
+                <td class="alnleft"><obs conceptId="165752" style="checkbox" value="false" />Eosinophil (%)</td>
+                <td><obs conceptId="1340" /></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165736" style="checkbox" value="false" />Basophils (/mm<sup>3</sup>)</td>
+                <td><obs conceptId="1025" /></td>
+                <td class="alnleft"><obs conceptId="165753" style="checkbox" value="false" />Basophils (%)</td>
+                <td><obs conceptId="1341" /></td>
+            </tr>
+
+            <tr>
+                <td class="alnleft"><obs conceptId="165737" style="checkbox" value="false" />PCV/Hb (%)</td>
+                <td><obs conceptId="165395" /></td>
+                <td class="alnleft"><obs conceptId="165921" style="checkbox" value="false" />PCV/Hb (g/dl)</td>
+                <td><obs conceptId="165920" /></td>
+
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165754" style="checkbox" value="false" />Platelets (x 10<sup>9</sup> c/L)</td>
+                <td><obs conceptId="729" /></td>
+                <td colspan="2"> </td>
+            </tr>
+
+            <tr>
+                <td class="alnleft"><obs conceptId="165738" style="checkbox" value="false" />HCV antibody </td>
+                <td><obs conceptId="1325" answerConceptIds="703,664" answerLabels="Positive,Negative"/></td>
+                <td class="alnleft"><obs conceptId="165755" style="checkbox" value="false" />HBsAG </td>
+                <td><obs conceptId="159430" answerConceptIds="703,664" answerLabels="Positive,Negative"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165739" style="checkbox" value="false" />VDRL </td>
+                <td><obs conceptId="299" answerConceptIds="1228,1229" answerLabels="Reactive,Non-Reactive"/></td>
+                <td class="alnleft"><obs conceptId="165756" style="checkbox" value="false" />Creatinine (µmol/l)</td>
+                <td><obs conceptId="164364"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165740" style="checkbox" value="false" />ALT/SGPT (U/I)</td>
+                <td><obs conceptId="654"/></td>
+                <td class="alnleft"><obs conceptId="165922" style="checkbox" value="false" />ALT/SGPT (mmol/L)</td>
+                <td><obs conceptId="165923"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165757" style="checkbox" value="false" />AST/SGOT (µ/L)</td>
+                <td><obs conceptId="653"/></td>
+                <td colspan="2"> </td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165741" style="checkbox" value="false" />Alk. Phosphate (U/l)</td>
+                <td><obs conceptId="785"/></td>
+                <td class="alnleft"><obs conceptId="165758" style="checkbox" value="false" />Total Bilirubin (µmol/l)</td>
+                <td><obs conceptId="655"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165742" style="checkbox" value="false" />Na+ (mmol/L)</td>
+                <td><obs conceptId="1132"/></td>
+                <td class="alnleft"><obs conceptId="165759" style="checkbox" value="false" />K+ (mmol/L)</td>
+                <td><obs conceptId="1133"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165743" style="checkbox" value="false" />Fasting Glucose (mmol/l)</td>
+                <td><obs conceptId="160053"/></td>
+                <td class="alnleft"><obs conceptId="165760" style="checkbox" value="false" />Total Cholesterol (mmol/l)</td>
+                <td><obs conceptId="1006"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165744" style="checkbox" value="false" />LDL (mmol/L)</td>
+                <td><obs conceptId="1008"/></td>
+                <td class="alnleft"><obs conceptId="165761" style="checkbox" value="false" />HDL (mmol/L)</td>
+                <td><obs conceptId="1007"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165745" style="checkbox" value="false" />Glucose</td>
+                <td><obs conceptId="160053"/></td>
+
+                <td class="alnleft"><obs conceptId="165762" style="checkbox" value="false" />Protein</td>
+                <td><obs conceptId="165926"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft"><obs conceptId="165746" style="checkbox" value="false" />Cytology/Pap Smear: </td>
+                <td><obs conceptId="165927"/></td>
+                <td class="alnleft"><obs conceptId="165763" style="checkbox" value="false" />Triglyceride</td>
+                <td><obs conceptId="1009"/></td>
+            </tr>
+
+            <tr>
+                <excludeIf velocityTest="$patient.gender == 'M' ">
+                    <td  class="alnleft"><obs conceptId="165747" style="checkbox" value="false" />Pregnancy</td>
+
+
+
+                    <td><obs conceptId="45" answerConceptIds="703,664"
+                             answerLabels="Positive,Negative"/></td>
+
+                </excludeIf>
+                <td class="alnleft"><obs conceptId="165764" style="checkbox" value="false" />Malaria smear</td>
+                <td><obs conceptId="32" answerConceptIds="664,703"
+                         answerLabels="Positive,Negative" /></td>
+            </tr>
+        </table>
+    </fieldset>
+
+    <fieldset>
+        <legend class="legend_style">Viral Load</legend>
+        <table>
+            <tr>
+                <td class="alnright">
+                    <obs conceptId="165765" style="checkbox" value="false" labelText="Viral Load Test" toggle="viralLoad"/>
+                </td>
+            </tr>
+        </table>
+        <table id="viralLoad">
+            <tr>
+                <td class="alnleft_s">PCR Lab Sample No.</td>
+                <td><obs conceptId="165715"/></td>
+                <td class="alnleft_s">Sample Type</td>
+                <td><obs conceptId="162476" answerConceptIds="1000,165568" answerLabels="Whole Blood/Plasma,DBS"/></td>
+                <td class="alnleft_s">Indication for Viral Load</td>
+                <td><obs id="viral_load" conceptId="164980" answerConceptIds="162080,161236,162082,162081,163523,160566" answerLabels="Baseline (6 months after ART initiation), Routine (every 12 months), Confirmation (3-6 months after intense adherence counselling), Repeat test, Clinical failure, Immunological failure">
+                    <controls>
+                        <when value="162081" thenDisplay="#repeat_id"/>
+                    </controls>
+                </obs>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" id="repeat_id">
+                    <table>
+                        <tr>
+                            <td class="alnleft_s">Reason for Repeat</td>
+                            <td><obs conceptId="165831"/></td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="alnleft_s">Collection Date</td>
+                <td><obs conceptId="159951"/></td>
+                <td class="alnleft_s">Date Received at PCR Lab</td>
+                <td><obs conceptId="165716"/></td>
+            </tr>
+            <tr>
+                <td class="alnleft_s">Viral Load test result</td>
+                <td><obs conceptId="856" labelText=""/>copies/ml</td>
+
+            </tr>
+        </table>
+    </fieldset>
+    <fieldset>
+        <legend class="legend_style">Signatures</legend>
+        <table>
+            <tr>
+                <td class="alnleft_s">Name of Clinician</td>
+                <td><encounterProvider role="Provider"/></td>
+                <td class="alnleft_s">Date Ordered</td>
+                <td><obs conceptId="164989" required="true" allowFutureDates="false"/></td>
+                <td class="alnleft_s"></td>
+                <td class="alnleft_s"></td>
+            </tr>
+            <tr>
+                <td class="alnleft_s">Reported By</td>
+                <td><obs conceptId="164982" style="person" /></td>
+                <td class="alnleft_s">Date Reported</td>
+                <td><obs conceptId="165414" allowFutureDates="false"/></td>
+                <td class="alnleft_s"></td>
+                <td class="alnleft_s"></td>
+            </tr>
+            <tr>
+                <td class="alnleft_s">Checked By</td>
+                <td><obs conceptId="164983" labelText="" style="person" /></td>
+                <td class="alnleft_s">Date checked</td>
+                <td><obs conceptId="164984" allowFutureDates="false"/></td>
+                <td class="alnleft_s"></td>
+                <td class="alnleft_s"></td>
+            </tr>
+            <tr>
+                <td class="alnleft_s">Facility</td>
+                <td><encounterLocation default="SessionAttribute:emrContext.sessionLocationId"/></td>
+            </tr>
+        </table>
+    </fieldset>
+    <submit/>
+
+</htmlform>
