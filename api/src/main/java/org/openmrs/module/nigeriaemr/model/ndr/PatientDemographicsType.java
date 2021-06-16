@@ -7,11 +7,7 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -115,7 +111,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
         "patientMaritalStatusCode", "stateOfNigeriaOriginCode", "patientNotes", "fingerPrints" })
 public class PatientDemographicsType {
 	
-	@XmlElement(name = "PatientIdentifier", required = true)
+	@XmlElement(name = "PatientIdentifier")
 	protected String patientIdentifier;
 	
 	@XmlElement(name = "IdentifierChange")
