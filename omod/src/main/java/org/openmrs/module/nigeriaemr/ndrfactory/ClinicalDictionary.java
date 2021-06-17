@@ -317,8 +317,8 @@ public class ClinicalDictionary {
                 Utils.WHO_CLINICAL_STAGE_CONCEPT,Utils.TB_STATUS_CONCEPT, Utils.CURRENT_REGIMEN_LINE_CONCEPT,
                 Utils.OI_DRUGS_GROUPING_CONCEPT_SET,Utils.ARV_DRUG_STRENGTH_CONCEPT,
                 Utils.COTRIMOXAZOLE_ADHERENCE_CONCEPT, Utils.INH_ADHERENCE_CONCEPT,Utils.CD4_COUNT_CONCEPT,Utils.VISIT_TYPE_CONCEPT,
-                Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT,Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT,
-                Utils.ARV_ADHERENCE_CONCEPT);
+                Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT,Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT,Utils.REASON_STOPPED_REGIMEN,
+                Utils.ARV_ADHERENCE_CONCEPT,Utils.DATE_STOPPED_REGIMEN);
 
         Map<Object, List<Obs>> obsListForOneVisit = Utils.groupedByConceptIdsOnly(obsListForOneVisitList);
 
@@ -349,7 +349,7 @@ public class ClinicalDictionary {
 
         }
 
-/*
+
         hivEncounterType.setStoppedRegimen(retrieveStoppedRegimen(obsListForOneVisit));//Stopped Regimen
         if (retrieveStoppedRegimen(obsListForOneVisit)) {
             obs = Utils.extractObs(Utils.REASON_STOPPED_REGIMEN, obsListForOneVisit);//ReasonForRegimenStopped
@@ -367,7 +367,7 @@ public class ClinicalDictionary {
             dateStoppedRegimen = new DateTime(obs.getValueDate());
             hivEncounterType.setDateStoppedRegimen(utils.getXmlDate(dateStoppedRegimen.toDate()));
 
-        }*/
+        }
 
         if (nextAppointmentDate != null) {
             daysOnARV = Utils.getDateDiffInDays(visitDate, nextAppointmentDate.toDate());
