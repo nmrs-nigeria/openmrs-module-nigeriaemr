@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
         "countryCode", "postalCode", "otherAddressInformation" })
 public class AddressType {
 	
-	@XmlElement(name = "AddressTypeCode", required = true)
+	@XmlElement(name = "AddressTypeCode")
 	protected String addressTypeCode;
 	
 	@XmlElement(name = "WardVillage")
