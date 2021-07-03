@@ -268,6 +268,10 @@ public class ClinicalDictionary {
         map.put(160016, "9");
         map.put(5622, "10");
 
+        //Method of TB Diagnosis
+        map.put(165990, "M1");
+        map.put(165991, "M2");
+
 
     }
 
@@ -318,7 +322,7 @@ public class ClinicalDictionary {
                 Utils.OI_DRUGS_GROUPING_CONCEPT_SET,Utils.ARV_DRUG_STRENGTH_CONCEPT,
                 Utils.COTRIMOXAZOLE_ADHERENCE_CONCEPT, Utils.INH_ADHERENCE_CONCEPT,Utils.CD4_COUNT_CONCEPT,Utils.VISIT_TYPE_CONCEPT,
                 Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT,Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT,
-                Utils.ARV_ADHERENCE_CONCEPT);
+                Utils.ARV_ADHERENCE_CONCEPT, Utils.DATE_STOPPED_REGIMEN, Utils.REASON_STOPPED_REGIMEN, Utils.METHOD_OF_DIAGNOSIS);
 
         Map<Object, List<Obs>> obsListForOneVisit = Utils.groupedByConceptIdsOnly(obsListForOneVisitList);
 
@@ -349,7 +353,6 @@ public class ClinicalDictionary {
 
         }
 
-/*
         hivEncounterType.setStoppedRegimen(retrieveStoppedRegimen(obsListForOneVisit));//Stopped Regimen
         if (retrieveStoppedRegimen(obsListForOneVisit)) {
             obs = Utils.extractObs(Utils.REASON_STOPPED_REGIMEN, obsListForOneVisit);//ReasonForRegimenStopped
@@ -367,7 +370,7 @@ public class ClinicalDictionary {
             dateStoppedRegimen = new DateTime(obs.getValueDate());
             hivEncounterType.setDateStoppedRegimen(utils.getXmlDate(dateStoppedRegimen.toDate()));
 
-        }*/
+        }
 
         if (nextAppointmentDate != null) {
             daysOnARV = Utils.getDateDiffInDays(visitDate, nextAppointmentDate.toDate());
@@ -435,6 +438,16 @@ public class ClinicalDictionary {
             ndrCode = getMappedValue(valueCoded);
             hivEncounterType.setTBStatus(ndrCode);
         }
+
+        // Method of TB Diagnosis
+        obs = Utils.extractObs(Utils.METHOD_OF_DIAGNOSIS, obsListForOneVisit);
+        if (obs != null && obs.getValueCoded() != null) {
+            valueCoded = obs.getValueCoded().getConceptId();
+            ndrCode = getMappedValue(valueCoded);
+            hivEncounterType.setMethodofTBDiagnosis(ndrCode);
+        }
+
+
         //How do we extract multiple OIs per encounter
         obsL = obsListForOneVisit.get(Utils.OTHER_OI_OTHER_PROBLEMS);
         if (obsL != null && !obsL.isEmpty()) {

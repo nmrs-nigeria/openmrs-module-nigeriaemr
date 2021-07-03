@@ -244,6 +244,8 @@ public class Utils {
 	public final static int INH_ADHERENCE_CONCEPT = 161653;
 	
 	public final static int ESTIMATED_DATE_OF_DELIVERY = 5596;
+
+	public final static int METHOD_OF_DIAGNOSIS = 165995;
 	
 	/* PREGNANCY STATUS CONCEPTS */
 	public final static int CURRENTLY_PREGNANT_CONCEPT = 1434;
