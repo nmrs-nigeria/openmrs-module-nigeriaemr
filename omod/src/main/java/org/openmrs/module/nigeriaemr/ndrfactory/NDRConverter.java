@@ -381,7 +381,7 @@ public class NDRConverter {
     }
 
     private ConditionType createHIVCondition() {
-
+System.out.println("Hello inside condition!");
         ConditionType condition = new ConditionType();
 
         try {
@@ -447,6 +447,12 @@ public class NDRConverter {
                 List<RegimenType> arvRegimenTypeList = mainDictionary.createRegimenTypeList(patient, this.groupedEncounters);
                 if (arvRegimenTypeList != null && arvRegimenTypeList.size() > 0) {
                     condition.getRegimen().addAll(arvRegimenTypeList);
+                }
+
+                //EACType
+                List<EACType> EACTypeList = mainDictionary.createEACTypeList(patient, this.groupedEncounters);
+                if (EACTypeList != null && EACTypeList.size() > 0) {
+                    condition.getEAC().addAll(EACTypeList);
                 }
 
                 return condition;

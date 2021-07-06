@@ -57,6 +57,7 @@ public class NDRMainDictionary {
     private PharmacyDictionary pharmDictionary;
     private NDRCommonQuestionsDictionary commonQuestionDictionary;
     private NigeriaEncounterService nigeriaEncounterService;
+    private EACDictionary eacDictionary;
 
     public NDRMainDictionary() {
         loadDictionary();
@@ -67,6 +68,7 @@ public class NDRMainDictionary {
         pharmDictionary = new PharmacyDictionary();
         commonQuestionDictionary = new NDRCommonQuestionsDictionary();
         nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
+        eacDictionary = new EACDictionary();
 
     }
 
@@ -219,6 +221,16 @@ public class NDRMainDictionary {
         return allRegimenTypeList;
 
     }
+    public List<EACType> createEACTypeList(Patient patient, Map<Integer,List<Encounter>> groupedEncounters)throws DatatypeConfigurationException {
+        List<EACType> allEACTypeList = new ArrayList<EACType>();
+        try{
+            allEACTypeList.addAll(eacDictionary.createEACTypeList(patient, groupedEncounters));
+        }catch(Exception ex){
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+        }
+        return allEACTypeList;
+    }
 
     public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList)
             throws DatatypeConfigurationException {
@@ -358,4 +370,7 @@ public class NDRMainDictionary {
         }
         return partnerDetailsTypes;
     }
+
+
+
 }
