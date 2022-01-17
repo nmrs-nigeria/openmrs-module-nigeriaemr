@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * <p>
@@ -38,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "messageHeader", "individualReport", "validation" })
 @XmlRootElement(name = "Container")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Container {
 	
 	@XmlElement(name = "MessageHeader", required = true)

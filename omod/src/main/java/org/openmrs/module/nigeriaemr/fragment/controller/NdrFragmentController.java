@@ -2,6 +2,7 @@ package org.openmrs.module.nigeriaemr.fragment.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiResponse;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.Consumer;
@@ -11,10 +12,8 @@ import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
-import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
-import org.openmrs.module.nigeriaemr.omodmodels.LocationModel;
-import org.openmrs.module.nigeriaemr.omodmodels.Version;
+import org.openmrs.module.nigeriaemr.ndrfactory.NDRApiUtils;
+import org.openmrs.module.nigeriaemr.omodmodels.*;
 import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
 import org.openmrs.module.nigeriaemr.service.NdrExtractionService;
 import org.openmrs.ui.framework.page.PageModel;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -58,7 +58,8 @@ public class NdrFragmentController {
 	}
 	
 	public String generateNDRFileByLocation(HttpServletRequest request,
-	        @RequestParam(value = "locationId") Integer locationId) throws Exception {
+	        @RequestParam(value = "locationId") Integer locationId, @RequestParam(value = "opt") String opt)
+	        throws Exception {
 		// get date that's bounds to the date the export is kicked off
 		Date currentDate = new Date();
 		
@@ -75,13 +76,13 @@ public class NdrFragmentController {
 			return "";
 		
 		return startGenerateFile(request, filteredPatientByLocation, facilityLocation.getDatimCode(), null, currentDate,
-		    true);
+		    true, opt);
 	}
 	
 	public String generateCustomNDRFile(HttpServletRequest request,
 	        @RequestParam(value = "identifiers", required = false) String identifiers,
 	        @RequestParam(value = "to", required = false) String to,
-	        @RequestParam(value = "from", required = false) String from) throws Exception {
+	        @RequestParam(value = "from", required = false) String from, @RequestParam(value = "opt") String opt) throws Exception {
 		try {
 			// get date that's bounds to the date the export is kicked off
 			Date lastDate = null;
@@ -118,13 +119,13 @@ public class NdrFragmentController {
 			LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
 
 			String DATIMID = Utils.getFacilityDATIMId();
-			return startGenerateFile(request, patients, DATIMID, lastDate, currentDate, false);
+			return startGenerateFile(request, patients, DATIMID, lastDate, currentDate, false, opt);
 		}catch (Exception ex){
 			return ex.getMessage();
 		}
 	}
 	
-	public String generateNDRFile(HttpServletRequest request) throws Exception {
+	public String generateNDRFile(HttpServletRequest request, @RequestParam(value = "opt") String opt) throws Exception {
 		// get date that's bounds to the date the export is kicked off
 		Date currentDate = new Date();
 		DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
@@ -135,11 +136,11 @@ public class NdrFragmentController {
 		Date lastDate = Utils.getLastNDRDate();
 		List<Integer> patients = ndrExtractionService.getPatientIds(lastDate, currentDate, null, true);
 		String DATIMID = Utils.getFacilityDATIMId();
-		return startGenerateFile(request, patients, DATIMID, lastDate, currentDate, true);
+		return startGenerateFile(request, patients, DATIMID, lastDate, currentDate, true, opt);
 	}
 	
 	private String startGenerateFile(HttpServletRequest request, List<Integer> filteredPatients,
-									 String DATIMID,Date lastDate, Date currentDate, boolean updateNdrLastRun) throws Exception {
+									 String DATIMID,Date lastDate, Date currentDate, boolean updateNdrLastRun, String opt) throws Exception {
 
 		// Check that no export is in progress
 		Map<String, Object> condition = new HashMap<>();
@@ -149,11 +150,14 @@ public class NdrFragmentController {
 		if(filteredPatients == null || filteredPatients.size() <= 0) return "no new patient record found";
 		String contextPath = request.getContextPath();
 		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		System.out.println("\n");
+		System.out.println(fullContextPath);
+		System.out.println("\n");
 		UserContext userContext =  Context.getUserContext();
 		Thread thread = new Thread(() -> {
 			try {
-				Consumer.initialize(userContext);
-				ndrExtractionService.saveExport(fullContextPath,contextPath,filteredPatients,DATIMID,lastDate,currentDate, updateNdrLastRun);
+				Consumer.initialize(userContext, opt);
+				ndrExtractionService.saveExport(fullContextPath,contextPath,filteredPatients,DATIMID,lastDate,currentDate, updateNdrLastRun, opt);
 			} catch (Exception e) {
 				LoggerUtils.write(NdrFragmentController.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
 						LoggerUtils.LogLevel.live);
@@ -305,5 +309,44 @@ public class NdrFragmentController {
 			e.printStackTrace();
 		}
 		return response;
+	}
+	
+	public NDRApiResponse auth(HttpServletRequest request, @RequestParam(value = "email", required = true) String email,
+	        @RequestParam(value = "password", required = true) String password) throws Exception {
+		NDRApiResponse apiRes = new NDRApiResponse();
+		try {
+			if (email == null || email.isEmpty()) {
+				apiRes.message = "The email address is empty";
+			}
+			if (password == null || password.isEmpty()) {
+				apiRes.message = "The Password address is empty";
+			}
+			NDRApiUtils ndrApiUtils = new NDRApiUtils();
+			apiRes = ndrApiUtils.auth(email, password);
+			return apiRes;
+		}
+		catch (Exception ex) {
+			System.out.println(ex.getMessage());
+			apiRes.code = -1;
+			apiRes.message = ex.getMessage();
+			return apiRes;
+		}
+	}
+	
+	public NDRApiResponse checkAuth(HttpServletRequest request) {
+		NDRApiUtils ndrApiUtils = new NDRApiUtils();
+		NDRApiResponse apiRes = ndrApiUtils.checkAuth();
+		return apiRes;
+	}
+	
+	public NDRApiHandshakeSummary pushData(HttpServletRequest request) {
+		//Henry: This is needfully done here so that the folder can be retrieved for enumerating the files
+		String contextPath = request.getContextPath();
+		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		String downloadFolder = Utils.getDownloadFolder(fullContextPath);
+		String reportFolder = Paths.get(downloadFolder, "NDR").toString();
+		NDRApiUtils ndrApiUtils = new NDRApiUtils();
+		NDRApiHandshakeSummary summary = ndrApiUtils.pushData(reportFolder);
+		return summary;
 	}
 }

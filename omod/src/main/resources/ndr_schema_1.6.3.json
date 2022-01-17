@@ -1,0 +1,5013 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Container",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "MessageHeader": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/MessageHeaderType"
+        }
+      ]
+    },
+    "IndividualReport": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/definitions/IndividualReportType"
+        }
+      ]
+    },
+    "Validation": {
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  },
+  "definitions": {
+    "MessageHeaderType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "MessageStatusCode": {
+          "$ref": "#/definitions/MessageHeaderTypeMessageStatusCode"
+        },
+        "MessageCreationDateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "MessageSchemaVersion": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "MessageUniqueID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "MessageSendingOrganization": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/FacilityType"
+            }
+          ]
+        }
+      }
+    },
+    "MessageHeaderTypeMessageStatusCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "INITIAL",
+        "UPDATED",
+        "REDACTED"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "FacilityType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "FacilityName": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "FacilityID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "FacilityTypeCode": {
+          "$ref": "#/definitions/FacilityTypeFacilityTypeCode"
+        }
+      }
+    },
+    "FacilityTypeFacilityTypeCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "IP",
+        "FAC",
+        "LGA",
+        "SGA",
+        "FGA",
+        "OTH"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "IndividualReportType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "PatientDemographics": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/PatientDemographicsType"
+            }
+          ]
+        },
+        "Condition": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/ConditionType"
+          }
+        },
+        "HIVTestingReport": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/HIVTestingReportType"
+          }
+        },
+        "PMTCT": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/PMTCTType"
+          }
+        }
+      }
+    },
+    "PatientDemographicsType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "PatientIdentifier": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "IdentifierChange": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/IdentifierChangeType"
+            }
+          ]
+        },
+        "TreatmentFacility": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/FacilityType"
+            }
+          ]
+        },
+        "OtherPatientIdentifiers": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/IdentifierType"
+          }
+        },
+        "PatientDateOfBirth": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "PatientSexCode": {
+          "$ref": "#/definitions/PatientDemographicsTypePatientSexCode"
+        },
+        "PatientDeceasedIndicator": {
+          "type": "boolean"
+        },
+        "PatientDeceasedIndicatorSpecified": {
+          "type": "boolean"
+        },
+        "PatientDeceasedDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "PatientDeceasedDateSpecified": {
+          "type": "boolean"
+        },
+        "PatientPrimaryLanguageCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PatientEducationLevelCode": {
+          "$ref": "#/definitions/PatientDemographicsTypePatientEducationLevelCode"
+        },
+        "PatientEducationLevelCodeSpecified": {
+          "type": "boolean"
+        },
+        "PatientOccupationCode": {
+          "$ref": "#/definitions/PatientDemographicsTypePatientOccupationCode"
+        },
+        "PatientOccupationCodeSpecified": {
+          "type": "boolean"
+        },
+        "PatientMaritalStatusCode": {
+          "$ref": "#/definitions/PatientDemographicsTypePatientMaritalStatusCode"
+        },
+        "PatientMaritalStatusCodeSpecified": {
+          "type": "boolean"
+        },
+        "StateOfNigeriaOriginCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PatientNotes": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/NoteType"
+            }
+          ]
+        },
+        "FingerPrints": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/FingerPrintType"
+            }
+          ]
+        }
+      }
+    },
+    "IdentifierChangeType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "PatientIdentifierChange": {
+          "type": "boolean"
+        },
+        "PatientIdentifierChangeSpecified": {
+          "type": "boolean"
+        },
+        "OldPatientIdentifier": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "IdentifierType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "IDNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "IDTypeCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "PatientDemographicsTypePatientSexCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "F",
+        "M",
+        "A",
+        "N",
+        "O",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "PatientDemographicsTypePatientEducationLevelCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5",
+        "Item6",
+        "Item7"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "PatientDemographicsTypePatientOccupationCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "UNE",
+        "EMP",
+        "RET",
+        "STU",
+        "NA",
+        "UNK"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "PatientDemographicsTypePatientMaritalStatusCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "N",
+        "C",
+        "D",
+        "P",
+        "I",
+        "E",
+        "G",
+        "M",
+        "O",
+        "R",
+        "A",
+        "S",
+        "U",
+        "B",
+        "T",
+        "W"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    "NoteType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Note": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "FingerPrintType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "dateCaptured": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dateCapturedSpecified": {
+          "type": "boolean"
+        },
+        "rightHand": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/RightHandType"
+            }
+          ]
+        },
+        "leftHand": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/LeftHandType"
+            }
+          ]
+        }
+      }
+    },
+    "RightHandType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "RightThumb": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "RightThumbQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "RightThumbQualitySpecified": {
+          "type": "boolean"
+        },
+        "RightIndex": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "RightIndexQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "RightIndexQualitySpecified": {
+          "type": "boolean"
+        },
+        "RightMiddle": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "RightMiddleQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "RightMiddleQualitySpecified": {
+          "type": "boolean"
+        },
+        "RightWedding": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "RightWeddingQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "RightWeddingQualitySpecified": {
+          "type": "boolean"
+        },
+        "RightSmall": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "RightSmallQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "RightSmallQualitySpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "LeftHandType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "LeftThumb": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "LeftThumbQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "LeftThumbQualitySpecified": {
+          "type": "boolean"
+        },
+        "LeftIndex": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "LeftIndexQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "LeftIndexQualitySpecified": {
+          "type": "boolean"
+        },
+        "LeftMiddle": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "LeftMiddleQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "LeftMiddleQualitySpecified": {
+          "type": "boolean"
+        },
+        "LeftWedding": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "LeftWeddingQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "LeftWeddingQualitySpecified": {
+          "type": "boolean"
+        },
+        "LeftSmall": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "LeftSmallQuality": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "LeftSmallQualitySpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ConditionType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "ConditionCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ProgramArea": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/ProgramAreaType"
+            }
+          ]
+        },
+        "PatientAddress": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/AddressType"
+            }
+          ]
+        },
+        "CommonQuestions": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CommonQuestionsType"
+            }
+          ]
+        },
+        "ConditionSpecificQuestions": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/ConditionSpecificQuestionsType"
+            }
+          ]
+        },
+        "Encounters": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/HIVEncounterType"
+          }
+        },
+        "LaboratoryReport": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/LaboratoryReportType"
+          }
+        },
+        "Regimen": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/RegimenType"
+          }
+        },
+        "EAC": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/EACType"
+          }
+        }
+      }
+    },
+    "ProgramAreaType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "ProgramAreaCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "AddressType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "AddressTypeCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "WardVillage": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "Town": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "LGACode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "StateCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "CountryCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PostalCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "OtherAddressInformation": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "CommonQuestionsType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "HospitalNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "DiagnosisFacility": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/FacilityType"
+            }
+          ]
+        },
+        "DateOfFirstReport": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateOfFirstReportSpecified": {
+          "type": "boolean"
+        },
+        "DateOfLastReport": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateOfLastReportSpecified": {
+          "type": "boolean"
+        },
+        "DiagnosisDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "PatientDieFromThisIllness": {
+          "type": "boolean"
+        },
+        "PatientDieFromThisIllnessSpecified": {
+          "type": "boolean"
+        },
+        "PatientPregnancyStatusCode": {
+          "$ref": "#/definitions/CommonQuestionsTypePatientPregnancyStatusCode"
+        },
+        "PatientPregnancyStatusCodeSpecified": {
+          "type": "boolean"
+        },
+        "EstimatedDeliveryDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "EstimatedDeliveryDateSpecified": {
+          "type": "boolean"
+        },
+        "PatientAge": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "PatientAgeSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "CommonQuestionsTypePatientPregnancyStatusCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "P",
+        "PMTCT",
+        "NP",
+        "NK"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "ConditionSpecificQuestionsType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Item": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/HIVQuestionsType"
+            }
+          ]
+        }
+      }
+    },
+    "HIVQuestionsType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "CareEntryPoint": {
+          "$ref": "#/definitions/HIVQuestionsTypeCareEntryPoint"
+        },
+        "CareEntryPointSpecified": {
+          "type": "boolean"
+        },
+        "FirstConfirmedHIVTestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "FirstConfirmedHIVTestDateSpecified": {
+          "type": "boolean"
+        },
+        "FirstHIVTestMode": {
+          "$ref": "#/definitions/HIVQuestionsTypeFirstHIVTestMode"
+        },
+        "FirstHIVTestModeSpecified": {
+          "type": "boolean"
+        },
+        "WhereFirstHIVTest": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PriorArt": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "MedicallyEligibleDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "MedicallyEligibleDateSpecified": {
+          "type": "boolean"
+        },
+        "ReasonMedicallyEligible": {
+          "$ref": "#/definitions/HIVQuestionsTypeReasonMedicallyEligible"
+        },
+        "ReasonMedicallyEligibleSpecified": {
+          "type": "boolean"
+        },
+        "InitialAdherenceCounselingCompletedDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "InitialAdherenceCounselingCompletedDateSpecified": {
+          "type": "boolean"
+        },
+        "PatientTransferredIn": {
+          "type": "boolean"
+        },
+        "PatientTransferredInSpecified": {
+          "type": "boolean"
+        },
+        "TransferredInDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "TransferredInDateSpecified": {
+          "type": "boolean"
+        },
+        "TransferredInFrom": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/FacilityType"
+            }
+          ]
+        },
+        "TransferredInFromPatId": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "FirstARTRegimen": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CodedSimpleType"
+            }
+          ]
+        },
+        "ARTStartDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ARTStartDateSpecified": {
+          "type": "boolean"
+        },
+        "WHOClinicalStageARTStart": {
+          "$ref": "#/definitions/HIVQuestionsTypeWHOClinicalStageARTStart"
+        },
+        "WHOClinicalStageARTStartSpecified": {
+          "type": "boolean"
+        },
+        "WeightAtARTStart": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "WeightAtARTStartSpecified": {
+          "type": "boolean"
+        },
+        "ChildHeightAtARTStart": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ChildHeightAtARTStartSpecified": {
+          "type": "boolean"
+        },
+        "FunctionalStatusStartART": {
+          "$ref": "#/definitions/HIVQuestionsTypeFunctionalStatusStartART"
+        },
+        "FunctionalStatusStartARTSpecified": {
+          "type": "boolean"
+        },
+        "CD4AtStartOfART": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PatientTransferredOut": {
+          "type": "boolean"
+        },
+        "PatientTransferredOutSpecified": {
+          "type": "boolean"
+        },
+        "TransferredOutStatus": {
+          "$ref": "#/definitions/HIVQuestionsTypeTransferredOutStatus"
+        },
+        "TransferredOutStatusSpecified": {
+          "type": "boolean"
+        },
+        "TransferredOutDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "TransferredOutDateSpecified": {
+          "type": "boolean"
+        },
+        "FacilityReferredTo": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/FacilityType"
+            }
+          ]
+        },
+        "PatientHasDied": {
+          "type": "boolean"
+        },
+        "PatientHasDiedSpecified": {
+          "type": "boolean"
+        },
+        "StatusAtDeath": {
+          "$ref": "#/definitions/HIVQuestionsTypeStatusAtDeath"
+        },
+        "StatusAtDeathSpecified": {
+          "type": "boolean"
+        },
+        "DeathDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DeathDateSpecified": {
+          "type": "boolean"
+        },
+        "SourceOfDeathInformation": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "CauseOfDeathHIVRelated": {
+          "$ref": "#/definitions/HIVQuestionsTypeCauseOfDeathHIVRelated"
+        },
+        "CauseOfDeathHIVRelatedSpecified": {
+          "type": "boolean"
+        },
+        "CauseOfDeath": {
+          "$ref": "#/definitions/HIVQuestionsTypeCauseOfDeath"
+        },
+        "CauseOfDeathSpecified": {
+          "type": "boolean"
+        },
+        "DrugAllergies": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "EnrolledInHIVCareDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "InitialTBStatus": {
+          "$ref": "#/definitions/HIVQuestionsTypeInitialTBStatus"
+        },
+        "InitialTBStatusSpecified": {
+          "type": "boolean"
+        },
+        "StoppedTreatment": {
+          "type": "boolean"
+        },
+        "StoppedTreatmentSpecified": {
+          "type": "boolean"
+        },
+        "DateStoppedTreatment": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateStoppedTreatmentSpecified": {
+          "type": "boolean"
+        },
+        "ReasonForStoppedTreatment": {
+          "$ref": "#/definitions/HIVQuestionsTypeReasonForStoppedTreatment"
+        },
+        "ReasonForStoppedTreatmentSpecified": {
+          "type": "boolean"
+        },
+        "TBTreatmentStartDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "TBTreatmentStartDateSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "HIVQuestionsTypeCareEntryPoint": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5",
+        "Item6",
+        "Item7",
+        "Item8",
+        "Item9",
+        "Item10",
+        "Item11",
+        "Item12",
+        "Item13",
+        "Item14"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    "HIVQuestionsTypeFirstHIVTestMode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "HIVAb",
+        "HIVPCR"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "HIVQuestionsTypeReasonMedicallyEligible": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "CodedSimpleType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Code": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "CodeDescTxt": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "HIVQuestionsTypeWHOClinicalStageARTStart": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "I",
+        "II",
+        "III",
+        "IV"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "HIVQuestionsTypeFunctionalStatusStartART": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "W",
+        "A",
+        "B"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HIVQuestionsTypeTransferredOutStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "A",
+        "P"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "HIVQuestionsTypeStatusAtDeath": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "A",
+        "P"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "HIVQuestionsTypeCauseOfDeathHIVRelated": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HIVQuestionsTypeCauseOfDeath": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "B24",
+        "A09",
+        "B54",
+        "O95",
+        "B99",
+        "J22",
+        "A16",
+        "I24",
+        "C50",
+        "J44",
+        "C53",
+        "K74",
+        "C18",
+        "E14",
+        "C15",
+        "C96",
+        "C34",
+        "I99",
+        "UU1",
+        "C61",
+        "N18",
+        "C16",
+        "I64",
+        "C76",
+        "X27",
+        "W74",
+        "W19",
+        "X09",
+        "Y09",
+        "X58",
+        "X49",
+        "V89",
+        "X84",
+        "G04",
+        "A99",
+        "B05",
+        "G03",
+        "A41",
+        "UU2",
+        "K92",
+        "P21",
+        "Q89",
+        "P36",
+        "P23",
+        "P07",
+        "P95",
+        "R99"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46
+      ]
+    },
+    "HIVQuestionsTypeInitialTBStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "HIVQuestionsTypeReasonForStoppedTreatment": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "HIVEncounterType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DurationOnArt": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "DurationOnArtSpecified": {
+          "type": "boolean"
+        },
+        "Weight": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "WeightSpecified": {
+          "type": "boolean"
+        },
+        "ChildHeight": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ChildHeightSpecified": {
+          "type": "boolean"
+        },
+        "BloodPressure": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "EDDandPMTCTLink": {
+          "$ref": "#/definitions/HIVEncounterTypeEDDandPMTCTLink"
+        },
+        "EDDandPMTCTLinkSpecified": {
+          "type": "boolean"
+        },
+        "PatientFamilyPlanningCode": {
+          "$ref": "#/definitions/HIVEncounterTypePatientFamilyPlanningCode"
+        },
+        "PatientFamilyPlanningCodeSpecified": {
+          "type": "boolean"
+        },
+        "PatientFamilyPlanningMethodCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "FunctionalStatus": {
+          "$ref": "#/definitions/HIVEncounterTypeFunctionalStatus"
+        },
+        "FunctionalStatusSpecified": {
+          "type": "boolean"
+        },
+        "WHOClinicalStage": {
+          "$ref": "#/definitions/HIVEncounterTypeWHOClinicalStage"
+        },
+        "WHOClinicalStageSpecified": {
+          "type": "boolean"
+        },
+        "TBStatus": {
+          "$ref": "#/definitions/HIVEncounterTypeTBStatus"
+        },
+        "TBStatusSpecified": {
+          "type": "boolean"
+        },
+        "OtherOIOtherProblems": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "NotedSideEffects": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ARVDrugRegimen": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CodedSimpleType"
+            }
+          ]
+        },
+        "ARVDrugAdherence": {
+          "$ref": "#/definitions/HIVEncounterTypeARVDrugAdherence"
+        },
+        "ARVDrugAdherenceSpecified": {
+          "type": "boolean"
+        },
+        "WhyPoorFairARVDrugAdherence": {
+          "$ref": "#/definitions/HIVEncounterTypeWhyPoorFairARVDrugAdherence"
+        },
+        "WhyPoorFairARVDrugAdherenceSpecified": {
+          "type": "boolean"
+        },
+        "CotrimoxazoleDose": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CodedSimpleType"
+            }
+          ]
+        },
+        "CotrimoxazoleAdherence": {
+          "$ref": "#/definitions/HIVEncounterTypeCotrimoxazoleAdherence"
+        },
+        "CotrimoxazoleAdherenceSpecified": {
+          "type": "boolean"
+        },
+        "WhyPoorFairCotrimoxazoleDrugAdherence": {
+          "$ref": "#/definitions/HIVEncounterTypeWhyPoorFairCotrimoxazoleDrugAdherence"
+        },
+        "WhyPoorFairCotrimoxazoleDrugAdherenceSpecified": {
+          "type": "boolean"
+        },
+        "INHDose": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CodedSimpleType"
+            }
+          ]
+        },
+        "INHAdherence": {
+          "$ref": "#/definitions/HIVEncounterTypeINHAdherence"
+        },
+        "INHAdherenceSpecified": {
+          "type": "boolean"
+        },
+        "WhyPoorFairINHDrugAdherence": {
+          "$ref": "#/definitions/HIVEncounterTypeWhyPoorFairINHDrugAdherence"
+        },
+        "WhyPoorFairINHDrugAdherenceSpecified": {
+          "type": "boolean"
+        },
+        "CD4": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "CD4Specified": {
+          "type": "boolean"
+        },
+        "CD4TestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "CD4TestDateSpecified": {
+          "type": "boolean"
+        },
+        "ReasonForRegimenSwitchSubs": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PrescribedRegimenInitialIndicator": {
+          "type": "boolean"
+        },
+        "PrescribedRegimenInitialIndicatorSpecified": {
+          "type": "boolean"
+        },
+        "PrescribedRegimenCurrentIndicator": {
+          "type": "boolean"
+        },
+        "PrescribedRegimenCurrentIndicatorSpecified": {
+          "type": "boolean"
+        },
+        "TypeOfPreviousExposureCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PoorAdherenceIndicator": {
+          "type": "boolean"
+        },
+        "PoorAdherenceIndicatorSpecified": {
+          "type": "boolean"
+        },
+        "ReasonForPoorAdherence": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ReasonRegimenEndedCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "SubstitutionIndicator": {
+          "type": "boolean"
+        },
+        "SubstitutionIndicatorSpecified": {
+          "type": "boolean"
+        },
+        "SwitchIndicator": {
+          "type": "boolean"
+        },
+        "SwitchIndicatorSpecified": {
+          "type": "boolean"
+        },
+        "NextAppointmentDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "NextAppointmentDateSpecified": {
+          "type": "boolean"
+        },
+        "StoppedRegimen": {
+          "type": "boolean"
+        },
+        "StoppedRegimenSpecified": {
+          "type": "boolean"
+        },
+        "DateStoppedRegimen": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateStoppedRegimenSpecified": {
+          "type": "boolean"
+        },
+        "ReasonForStoppedRegimen": {
+          "$ref": "#/definitions/HIVEncounterTypeReasonForStoppedRegimen"
+        },
+        "ReasonForStoppedRegimenSpecified": {
+          "type": "boolean"
+        },
+        "MethodofTBDiagnosis": {
+          "$ref": "#/definitions/HIVEncounterTypeMethodofTBDiagnosis"
+        },
+        "MethodofTBDiagnosisSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "HIVEncounterTypeEDDandPMTCTLink": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "P",
+        "PMTCT",
+        "NP",
+        "NK",
+        "BF"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "HIVEncounterTypePatientFamilyPlanningCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "FP",
+        "NOFP"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "HIVEncounterTypeFunctionalStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "W",
+        "A",
+        "B"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HIVEncounterTypeWHOClinicalStage": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "HIVEncounterTypeTBStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "HIVEncounterTypeARVDrugAdherence": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "G",
+        "F",
+        "P"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HIVEncounterTypeWhyPoorFairARVDrugAdherence": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5",
+        "Item6",
+        "Item7",
+        "Item8",
+        "Item9",
+        "Item10",
+        "Item11",
+        "Item12",
+        "Item13",
+        "Item14",
+        "Item15",
+        "Item16",
+        "Item17",
+        "Item18"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    "HIVEncounterTypeCotrimoxazoleAdherence": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "G",
+        "F",
+        "P"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HIVEncounterTypeWhyPoorFairCotrimoxazoleDrugAdherence": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5",
+        "Item6",
+        "Item7",
+        "Item8",
+        "Item9",
+        "Item10",
+        "Item11",
+        "Item12",
+        "Item13",
+        "Item14",
+        "Item15",
+        "Item16",
+        "Item17",
+        "Item18"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    "HIVEncounterTypeINHAdherence": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "G",
+        "F",
+        "P"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HIVEncounterTypeWhyPoorFairINHDrugAdherence": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5",
+        "Item6",
+        "Item7",
+        "Item8",
+        "Item9",
+        "Item10",
+        "Item11",
+        "Item12",
+        "Item13",
+        "Item14",
+        "Item15",
+        "Item16",
+        "Item17",
+        "Item18"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    "HIVEncounterTypeReasonForStoppedRegimen": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5",
+        "Item6",
+        "Item7",
+        "Item8",
+        "Item9",
+        "Item10"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "HIVEncounterTypeMethodofTBDiagnosis": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "M1",
+        "M2"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "LaboratoryReportType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "LaboratoryTestIdentifier": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "BaselineRepeatCode": {
+          "$ref": "#/definitions/LaboratoryReportTypeBaselineRepeatCode"
+        },
+        "BaselineRepeatCodeSpecified": {
+          "type": "boolean"
+        },
+        "ARTStatusCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "CollectionDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "LaboratoryOrderAndResult": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/LaboratoryOrderAndResult"
+          }
+        },
+        "Clinician": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ReportedBy": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "CheckedBy": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "LaboratoryReportTypeBaselineRepeatCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "B",
+        "R"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "LaboratoryOrderAndResult": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "LaboratoryTestTypeCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "OrderedTestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "LaboratoryOrderedTest": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CodedSimpleType"
+            }
+          ]
+        },
+        "LaboratoryResultedTest": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CodedSimpleType"
+            }
+          ]
+        },
+        "LaboratoryResult": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/AnswerType"
+            }
+          ]
+        },
+        "ResultedTestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "OtherLaboratoryInformation": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "AnswerType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "Item": {
+          "oneOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ItemElementName": {
+          "$ref": "#/definitions/ItemChoiceType"
+        }
+      }
+    },
+    "ItemChoiceType": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "AnswerCode",
+        "AnswerDate",
+        "AnswerDateTime",
+        "AnswerNumeric",
+        "AnswerText"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "RegimenType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "PrescribedRegimen": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CodedSimpleType"
+            }
+          ]
+        },
+        "PrescribedRegimenTypeCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PrescribedRegimenLineCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PrescribedRegimenDuration": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PrescribedRegimenDispensedDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateRegimenStarted": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateRegimenStartedSpecified": {
+          "type": "boolean"
+        },
+        "DateRegimenStartedDD": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "DateRegimenStartedMM": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "DateRegimenStartedYYYY": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "DateRegimenEnded": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateRegimenEndedSpecified": {
+          "type": "boolean"
+        },
+        "DateRegimenEndedDD": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "DateRegimenEndedMM": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "DateRegimenEndedYYYY": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "EACType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "AssessmentDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "AssessmentDateSpecified": {
+          "type": "boolean"
+        },
+        "EACSessionType": {
+          "$ref": "#/definitions/EACTypeEACSessionType"
+        },
+        "EACSessionTypeSpecified": {
+          "type": "boolean"
+        },
+        "ARVPlan": {
+          "$ref": "#/definitions/EACTypeARVPlan"
+        },
+        "ARVPlanSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "EACTypeEACSessionType": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "FS",
+        "SS",
+        "TS",
+        "OS"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "EACTypeARVPlan": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "AV1",
+        "AV2",
+        "AV3",
+        "AV4",
+        "AV5",
+        "AV6"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "HIVTestingReportType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "ClientCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "Setting": {
+          "$ref": "#/definitions/HIVTestingReportTypeSetting"
+        },
+        "FirstTimeVisit": {
+          "$ref": "#/definitions/HIVTestingReportTypeFirstTimeVisit"
+        },
+        "FirstTimeVisitSpecified": {
+          "type": "boolean"
+        },
+        "SessionType": {
+          "$ref": "#/definitions/HIVTestingReportTypeSessionType"
+        },
+        "SessionTypeSpecified": {
+          "type": "boolean"
+        },
+        "ReferredFrom": {
+          "$ref": "#/definitions/HIVTestingReportTypeReferredFrom"
+        },
+        "ReferredFromSpecified": {
+          "type": "boolean"
+        },
+        "MaritalStatus": {
+          "$ref": "#/definitions/HIVTestingReportTypeMaritalStatus"
+        },
+        "MaritalStatusSpecified": {
+          "type": "boolean"
+        },
+        "NoOfOwnChildrenLessThan5Years": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "NoOfOwnChildrenLessThan5YearsSpecified": {
+          "type": "boolean"
+        },
+        "NoOfAllWives": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "NoOfAllWivesSpecified": {
+          "type": "boolean"
+        },
+        "IsIndexClient": {
+          "$ref": "#/definitions/HIVTestingReportTypeIsIndexClient"
+        },
+        "IsIndexClientSpecified": {
+          "type": "boolean"
+        },
+        "IndexType": {
+          "$ref": "#/definitions/HIVTestingReportTypeIndexType"
+        },
+        "IndexTypeSpecified": {
+          "type": "boolean"
+        },
+        "IndexClientId": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ReTestingForResultVerification": {
+          "$ref": "#/definitions/HIVTestingReportTypeReTestingForResultVerification"
+        },
+        "ReTestingForResultVerificationSpecified": {
+          "type": "boolean"
+        },
+        "PreTestInformation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/PreTestInformationType"
+            }
+          ]
+        },
+        "HIVTestResult": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/HIVTestResultType"
+            }
+          ]
+        },
+        "PostTestCounselling": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/PostTestCounsellingType"
+            }
+          ]
+        },
+        "SyphilisTestResult": {
+          "$ref": "#/definitions/HIVTestingReportTypeSyphilisTestResult"
+        },
+        "SyphilisTestResultSpecified": {
+          "type": "boolean"
+        },
+        "HBVTestResult": {
+          "$ref": "#/definitions/HIVTestingReportTypeHBVTestResult"
+        },
+        "HBVTestResultSpecified": {
+          "type": "boolean"
+        },
+        "HCVTestResult": {
+          "$ref": "#/definitions/HIVTestingReportTypeHCVTestResult"
+        },
+        "HCVTestResultSpecified": {
+          "type": "boolean"
+        },
+        "CompletedBy": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "DateCompleted": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "HIVTestingReportTypeSetting": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5",
+        "Item6",
+        "Item7",
+        "Item8",
+        "Item9"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    "HIVTestingReportTypeFirstTimeVisit": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "N",
+        "Y"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "HIVTestingReportTypeSessionType": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HIVTestingReportTypeReferredFrom": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5",
+        "Item6",
+        "Item7",
+        "Item8"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "HIVTestingReportTypeMaritalStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "S",
+        "M",
+        "D",
+        "A",
+        "G",
+        "W"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "HIVTestingReportTypeIsIndexClient": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "N",
+        "Y"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "HIVTestingReportTypeIndexType": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HIVTestingReportTypeReTestingForResultVerification": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "N",
+        "Y"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PreTestInformationType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "KnowledgeAssessment": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/KnowledgeAssessmentType"
+            }
+          ]
+        },
+        "HIVRiskAssessment": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/HIVRiskAssessmentType"
+            }
+          ]
+        },
+        "ClinicalTBScreening": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/ClinicalTBScreeningType"
+            }
+          ]
+        },
+        "SyndromicSTIScreening": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/SyndromicSTIScreeningType"
+            }
+          ]
+        }
+      }
+    },
+    "KnowledgeAssessmentType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "PreviouslyTestedHIVNegative": {
+          "type": "boolean"
+        },
+        "PreviouslyTestedHIVNegativeSpecified": {
+          "type": "boolean"
+        },
+        "ClientInformedAboutHIVTransmissionRoutes": {
+          "type": "boolean"
+        },
+        "ClientInformedAboutHIVTransmissionRoutesSpecified": {
+          "type": "boolean"
+        },
+        "ClientPregnant": {
+          "type": "boolean"
+        },
+        "ClientPregnantSpecified": {
+          "type": "boolean"
+        },
+        "ClientInformedOfHIVTransmissionRiskFactors": {
+          "type": "boolean"
+        },
+        "ClientInformedOfHIVTransmissionRiskFactorsSpecified": {
+          "type": "boolean"
+        },
+        "ClientInformedAboutPreventingHIV": {
+          "type": "boolean"
+        },
+        "ClientInformedAboutPreventingHIVSpecified": {
+          "type": "boolean"
+        },
+        "ClientInformedAboutPossibleTestResults": {
+          "type": "boolean"
+        },
+        "ClientInformedAboutPossibleTestResultsSpecified": {
+          "type": "boolean"
+        },
+        "InformedConsentForHIVTestingGiven": {
+          "type": "boolean"
+        },
+        "InformedConsentForHIVTestingGivenSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "HIVRiskAssessmentType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "EverHadSexualIntercourse": {
+          "type": "boolean"
+        },
+        "EverHadSexualIntercourseSpecified": {
+          "type": "boolean"
+        },
+        "BloodTransfussionInLast3Months": {
+          "type": "boolean"
+        },
+        "BloodTransfussionInLast3MonthsSpecified": {
+          "type": "boolean"
+        },
+        "UnprotectedSexWithCasualPartnerinLast3Months": {
+          "type": "boolean"
+        },
+        "UnprotectedSexWithCasualPartnerinLast3MonthsSpecified": {
+          "type": "boolean"
+        },
+        "UnprotectedSexWithRegularPartnerInLast3Months": {
+          "type": "boolean"
+        },
+        "UnprotectedSexWithRegularPartnerInLast3MonthsSpecified": {
+          "type": "boolean"
+        },
+        "MoreThan1SexPartnerDuringLast3Months": {
+          "type": "boolean"
+        },
+        "MoreThan1SexPartnerDuringLast3MonthsSpecified": {
+          "type": "boolean"
+        },
+        "STIInLast3Months": {
+          "type": "boolean"
+        },
+        "STIInLast3MonthsSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ClinicalTBScreeningType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "CurrentlyCough": {
+          "type": "boolean"
+        },
+        "CurrentlyCoughSpecified": {
+          "type": "boolean"
+        },
+        "WeightLoss": {
+          "type": "boolean"
+        },
+        "WeightLossSpecified": {
+          "type": "boolean"
+        },
+        "Fever": {
+          "type": "boolean"
+        },
+        "FeverSpecified": {
+          "type": "boolean"
+        },
+        "NightSweats": {
+          "type": "boolean"
+        },
+        "NightSweatsSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "SyndromicSTIScreeningType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VaginalDischargeOrBurningWhenUrinating": {
+          "type": "boolean"
+        },
+        "VaginalDischargeOrBurningWhenUrinatingSpecified": {
+          "type": "boolean"
+        },
+        "LowerAbdominalPainsWithOrWithoutVaginalDischarge": {
+          "type": "boolean"
+        },
+        "LowerAbdominalPainsWithOrWithoutVaginalDischargeSpecified": {
+          "type": "boolean"
+        },
+        "UrethralDischargeOrBurningWhenUrinating": {
+          "type": "boolean"
+        },
+        "UrethralDischargeOrBurningWhenUrinatingSpecified": {
+          "type": "boolean"
+        },
+        "ScrotalSwellingAndPain": {
+          "type": "boolean"
+        },
+        "ScrotalSwellingAndPainSpecified": {
+          "type": "boolean"
+        },
+        "GenitalSoreOrSwollenInguinalLymphNodes": {
+          "type": "boolean"
+        },
+        "GenitalSoreOrSwollenInguinalLymphNodesSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "HIVTestResultType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "TestResult": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/TestResultType"
+            }
+          ]
+        },
+        "RecencyTesting": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/RecencyTestingType"
+            }
+          ]
+        }
+      }
+    },
+    "TestResultType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "ScreeningTestResult": {
+          "$ref": "#/definitions/TestResultTypeScreeningTestResult"
+        },
+        "ScreeningTestResultSpecified": {
+          "type": "boolean"
+        },
+        "ScreeningTestResultDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ScreeningTestResultDateSpecified": {
+          "type": "boolean"
+        },
+        "ConfirmatoryTestResult": {
+          "$ref": "#/definitions/TestResultTypeConfirmatoryTestResult"
+        },
+        "ConfirmatoryTestResultSpecified": {
+          "type": "boolean"
+        },
+        "ConfirmatoryTestResultDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ConfirmatoryTestResultDateSpecified": {
+          "type": "boolean"
+        },
+        "TieBreakerTestResult": {
+          "$ref": "#/definitions/TestResultTypeTieBreakerTestResult"
+        },
+        "TieBreakerTestResultSpecified": {
+          "type": "boolean"
+        },
+        "TieBreakerTestResultDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "TieBreakerTestResultDateSpecified": {
+          "type": "boolean"
+        },
+        "FinalTestResult": {
+          "$ref": "#/definitions/TestResultTypeFinalTestResult"
+        },
+        "FinalTestResultSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "TestResultTypeScreeningTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "R",
+        "NR"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "TestResultTypeConfirmatoryTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "R",
+        "NR"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "TestResultTypeTieBreakerTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "R",
+        "NR"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "TestResultTypeFinalTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "RecencyTestingType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "TestName": {
+          "$ref": "#/definitions/RecencyTestingTypeTestName"
+        },
+        "TestNameSpecified": {
+          "type": "boolean"
+        },
+        "TestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "TestDateSpecified": {
+          "type": "boolean"
+        },
+        "SampleType": {
+          "$ref": "#/definitions/RecencyTestingTypeSampleType"
+        },
+        "SampleTypeSpecified": {
+          "type": "boolean"
+        },
+        "DateSampleCollected": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateSampleCollectedSpecified": {
+          "type": "boolean"
+        },
+        "DateSampleSent": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateSampleSentSpecified": {
+          "type": "boolean"
+        },
+        "PCRLab": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "RapidRecencyAssay": {
+          "$ref": "#/definitions/RecencyTestingTypeRapidRecencyAssay"
+        },
+        "RapidRecencyAssaySpecified": {
+          "type": "boolean"
+        },
+        "ViralLoadConfirmationResult": {
+          "type": "number",
+          "format": "double"
+        },
+        "ViralLoadConfirmationResultSpecified": {
+          "type": "boolean"
+        },
+        "ViralLoadConfirmationTestDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ViralLoadConfirmationTestDateSpecified": {
+          "type": "boolean"
+        },
+        "FinalRecencyTestResult": {
+          "$ref": "#/definitions/RecencyTestingTypeFinalRecencyTestResult"
+        },
+        "FinalRecencyTestResultSpecified": {
+          "type": "boolean"
+        },
+        "Consent": {
+          "$ref": "#/definitions/YNCodeType"
+        },
+        "ConsentSpecified": {
+          "type": "boolean"
+        },
+        "RecencyNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ControlLine": {
+          "$ref": "#/definitions/YNCodeType"
+        },
+        "ControlLineSpecified": {
+          "type": "boolean"
+        },
+        "VerificationLine": {
+          "$ref": "#/definitions/YNCodeType"
+        },
+        "VerificationLineSpecified": {
+          "type": "boolean"
+        },
+        "LongTermLine": {
+          "$ref": "#/definitions/YNCodeType"
+        },
+        "LongTermLineSpecified": {
+          "type": "boolean"
+        },
+        "RecencyInterpretation": {
+          "$ref": "#/definitions/RecencyTestingTypeRecencyInterpretation"
+        },
+        "RecencyInterpretationSpecified": {
+          "type": "boolean"
+        },
+        "ViralLoadRequest": {
+          "$ref": "#/definitions/YNCodeType"
+        },
+        "ViralLoadRequestSpecified": {
+          "type": "boolean"
+        },
+        "SampleReferenceNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ViralLoadClassification": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "RecencyTestingTypeTestName": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "AS",
+        "OTH"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "RecencyTestingTypeSampleType": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "D",
+        "P"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "RecencyTestingTypeRapidRecencyAssay": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "R",
+        "L"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "RecencyTestingTypeFinalRecencyTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "RR",
+        "RL",
+        "RI"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "YNCodeType": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Yes",
+        "No"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "RecencyTestingTypeRecencyInterpretation": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "R",
+        "L",
+        "Neg",
+        "Inv"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "PostTestCounsellingType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "TestedForHIVBeforeWithinThisYear": {
+          "$ref": "#/definitions/PostTestCounsellingTypeTestedForHIVBeforeWithinThisYear"
+        },
+        "TestedForHIVBeforeWithinThisYearSpecified": {
+          "type": "boolean"
+        },
+        "HIVRequestAndResultFormSignedByTester": {
+          "type": "boolean"
+        },
+        "HIVRequestAndResultFormSignedByTesterSpecified": {
+          "type": "boolean"
+        },
+        "HIVRequestAndResultFormFilledWithCTIForm": {
+          "type": "boolean"
+        },
+        "HIVRequestAndResultFormFilledWithCTIFormSpecified": {
+          "type": "boolean"
+        },
+        "ClientRecievedHIVTestResult": {
+          "type": "boolean"
+        },
+        "ClientRecievedHIVTestResultSpecified": {
+          "type": "boolean"
+        },
+        "PostTestCounsellingDone": {
+          "type": "boolean"
+        },
+        "PostTestCounsellingDoneSpecified": {
+          "type": "boolean"
+        },
+        "RiskReductionPlanDeveloped": {
+          "type": "boolean"
+        },
+        "RiskReductionPlanDevelopedSpecified": {
+          "type": "boolean"
+        },
+        "PostTestDisclosurePlanDeveloped": {
+          "type": "boolean"
+        },
+        "PostTestDisclosurePlanDevelopedSpecified": {
+          "type": "boolean"
+        },
+        "WillBringPartnerForHIVTesting": {
+          "type": "boolean"
+        },
+        "WillBringPartnerForHIVTestingSpecified": {
+          "type": "boolean"
+        },
+        "WillBringOwnChildrenForHIVTesting": {
+          "type": "boolean"
+        },
+        "WillBringOwnChildrenForHIVTestingSpecified": {
+          "type": "boolean"
+        },
+        "ProvidedWithInformationOnFPandDualContraception": {
+          "type": "boolean"
+        },
+        "ProvidedWithInformationOnFPandDualContraceptionSpecified": {
+          "type": "boolean"
+        },
+        "ClientOrPartnerUseFPMethodsOtherThanCondoms": {
+          "type": "boolean"
+        },
+        "ClientOrPartnerUseFPMethodsOtherThanCondomsSpecified": {
+          "type": "boolean"
+        },
+        "ClientOrPartnerUseCondomsAsOneFPMethods": {
+          "type": "boolean"
+        },
+        "ClientOrPartnerUseCondomsAsOneFPMethodsSpecified": {
+          "type": "boolean"
+        },
+        "CorrectCondomUseDemonstrated": {
+          "type": "boolean"
+        },
+        "CorrectCondomUseDemonstratedSpecified": {
+          "type": "boolean"
+        },
+        "CondomsProvidedToClient": {
+          "type": "boolean"
+        },
+        "CondomsProvidedToClientSpecified": {
+          "type": "boolean"
+        },
+        "ClientReferredToOtherServices": {
+          "type": "boolean"
+        },
+        "ClientReferredToOtherServicesSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PostTestCounsellingTypeTestedForHIVBeforeWithinThisYear": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "HIVTestingReportTypeSyphilisTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "R",
+        "NR"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "HIVTestingReportTypeHBVTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "HIVTestingReportTypeHCVTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PMTCTType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "ANCNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "Immunization": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/ImmunizationType"
+          }
+        },
+        "DeliveryEncounter": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/DeliveryEncounterType"
+          }
+        },
+        "AntenatalRegistration": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/AntenatalRegistrationType"
+          }
+        },
+        "ChildBirthDetails": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/ChildBirthDetailsType"
+          }
+        },
+        "ChildFollowup": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/ChildFollowupType"
+          }
+        },
+        "InfantPCRTesting": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/InfantPCRTestingType"
+          }
+        },
+        "HealthFacilityVisits": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/HealthFacilityVisitsType"
+          }
+        },
+        "PartnerDetails": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/PartnerDetailsType"
+          }
+        },
+        "InfantRapidTest": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/InfantRapidTestType"
+          }
+        },
+        "MaternalCohort": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/MaternalCohortType"
+          }
+        },
+        "PMTCTHTS": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/PMTCTHTSType"
+          }
+        }
+      }
+    },
+    "ImmunizationType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ImmunizationIdentifier": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ImmunizationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ImmunizationDateSpecified": {
+          "type": "boolean"
+        },
+        "LotNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ExpirationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ExpirationDateSpecified": {
+          "type": "boolean"
+        },
+        "ManufacturerCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ImmunizationType1": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CodedSimpleType"
+            }
+          ]
+        },
+        "SiteCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "RouteCode": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "Dose": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "SelfReported": {
+          "type": "boolean"
+        },
+        "SelfReportedSpecified": {
+          "type": "boolean"
+        },
+        "Clinician": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "PerformedBy": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "CheckedBy": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "DeliveryEncounterType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "TimeOfHIVDiagnosis": {
+          "$ref": "#/definitions/DeliveryEncounterTypeTimeOfHIVDiagnosis"
+        },
+        "TimeOfHIVDiagnosisSpecified": {
+          "type": "boolean"
+        },
+        "GestationalAgeAtDelivery": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "GestationalAgeAtDeliverySpecified": {
+          "type": "boolean"
+        },
+        "HBVStatus": {
+          "$ref": "#/definitions/DeliveryEncounterTypeHBVStatus"
+        },
+        "HBVStatusSpecified": {
+          "type": "boolean"
+        },
+        "HCVStatus": {
+          "$ref": "#/definitions/DeliveryEncounterTypeHCVStatus"
+        },
+        "HCVStatusSpecified": {
+          "type": "boolean"
+        },
+        "WomanOnART": {
+          "$ref": "#/definitions/DeliveryEncounterTypeWomanOnART"
+        },
+        "WomanOnARTSpecified": {
+          "type": "boolean"
+        },
+        "ARTStartedInLDWard": {
+          "$ref": "#/definitions/DeliveryEncounterTypeARTStartedInLDWard"
+        },
+        "ARTStartedInLDWardSpecified": {
+          "type": "boolean"
+        },
+        "ROMDeliveryInterval": {
+          "$ref": "#/definitions/DeliveryEncounterTypeROMDeliveryInterval"
+        },
+        "ROMDeliveryIntervalSpecified": {
+          "type": "boolean"
+        },
+        "ModeOfDelivery": {
+          "$ref": "#/definitions/DeliveryEncounterTypeModeOfDelivery"
+        },
+        "ModeOfDeliverySpecified": {
+          "type": "boolean"
+        },
+        "Episiotomy": {
+          "$ref": "#/definitions/DeliveryEncounterTypeEpisiotomy"
+        },
+        "EpisiotomySpecified": {
+          "type": "boolean"
+        },
+        "VaginalTear": {
+          "$ref": "#/definitions/DeliveryEncounterTypeVaginalTear"
+        },
+        "VaginalTearSpecified": {
+          "type": "boolean"
+        },
+        "FeedingDecision": {
+          "$ref": "#/definitions/DeliveryEncounterTypeFeedingDecision"
+        },
+        "FeedingDecisionSpecified": {
+          "type": "boolean"
+        },
+        "MaternalOutcome": {
+          "$ref": "#/definitions/DeliveryEncounterTypeMaternalOutcome"
+        },
+        "MaternalOutcomeSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "DeliveryEncounterTypeTimeOfHIVDiagnosis": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "DeliveryEncounterTypeHBVStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "DeliveryEncounterTypeHCVStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "DeliveryEncounterTypeWomanOnART": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "DeliveryEncounterTypeARTStartedInLDWard": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "DeliveryEncounterTypeROMDeliveryInterval": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "DeliveryEncounterTypeModeOfDelivery": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "DeliveryEncounterTypeEpisiotomy": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "DeliveryEncounterTypeVaginalTear": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "DeliveryEncounterTypeFeedingDecision": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "EBF",
+        "ERF",
+        "Mixed"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "DeliveryEncounterTypeMaternalOutcome": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Alive",
+        "Dead"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "AntenatalRegistrationType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ANCNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "LastMenstralPeriod": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "LastMenstralPeriodSpecified": {
+          "type": "boolean"
+        },
+        "GestationalAgeAtANCRegistration": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "GestationalAgeAtANCRegistrationSpecified": {
+          "type": "boolean"
+        },
+        "Gravida": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "GravidaSpecified": {
+          "type": "boolean"
+        },
+        "Parity": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ParitySpecified": {
+          "type": "boolean"
+        },
+        "SourceOfReferral": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ExpectedDateOfDelivery": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ExpectedDateOfDeliverySpecified": {
+          "type": "boolean"
+        },
+        "Syphilis": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/AntenatalRegistrationTypeSyphilis"
+            }
+          ]
+        }
+      }
+    },
+    "AntenatalRegistrationTypeSyphilis": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "TestedForSyphilis": {
+          "$ref": "#/definitions/AntenatalRegistrationTypeSyphilisTestedForSyphilis"
+        },
+        "TestedForSyphilisSpecified": {
+          "type": "boolean"
+        },
+        "SyphilisTestResult": {
+          "$ref": "#/definitions/AntenatalRegistrationTypeSyphilisSyphilisTestResult"
+        },
+        "SyphilisTestResultSpecified": {
+          "type": "boolean"
+        },
+        "TreatedForSyphilis": {
+          "$ref": "#/definitions/AntenatalRegistrationTypeSyphilisTreatedForSyphilis"
+        },
+        "TreatedForSyphilisSpecified": {
+          "type": "boolean"
+        },
+        "SyphilisResult": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ReferredSyphilisPositiveClient": {
+          "$ref": "#/definitions/AntenatalRegistrationTypeSyphilisReferredSyphilisPositiveClient"
+        },
+        "ReferredSyphilisPositiveClientSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "AntenatalRegistrationTypeSyphilisTestedForSyphilis": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "AntenatalRegistrationTypeSyphilisSyphilisTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "AntenatalRegistrationTypeSyphilisTreatedForSyphilis": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "AntenatalRegistrationTypeSyphilisReferredSyphilisPositiveClient": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "ChildBirthDetailsType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "EnrollmentDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ChildHospitalNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ChildEIDNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "ChildDateOfBirth": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ChildSexCode": {
+          "$ref": "#/definitions/ChildBirthDetailsTypeChildSexCode"
+        },
+        "ChildGivenNVPWithin72hrs": {
+          "$ref": "#/definitions/ChildBirthDetailsTypeChildGivenNVPWithin72hrs"
+        },
+        "ChildGivenNVPWithin72hrsSpecified": {
+          "type": "boolean"
+        },
+        "ChildStatus": {
+          "$ref": "#/definitions/ChildBirthDetailsTypeChildStatus"
+        },
+        "ChildStatusSpecified": {
+          "type": "boolean"
+        },
+        "APGARScore": {
+          "type": "number",
+          "format": "float"
+        },
+        "APGARScoreSpecified": {
+          "type": "boolean"
+        },
+        "BirthMUAC": {
+          "$ref": "#/definitions/ChildBirthDetailsTypeBirthMUAC"
+        },
+        "BirthMUACSpecified": {
+          "type": "boolean"
+        },
+        "BirthLenght": {
+          "type": "number",
+          "format": "float"
+        },
+        "BirthLenghtSpecified": {
+          "type": "boolean"
+        },
+        "BirthWeight": {
+          "type": "number",
+          "format": "float"
+        },
+        "BirthWeightSpecified": {
+          "type": "boolean"
+        },
+        "HeadCircumferenceAtBirth": {
+          "type": "number",
+          "format": "float"
+        },
+        "HeadCircumferenceAtBirthSpecified": {
+          "type": "boolean"
+        },
+        "ImmunizationReceived": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "HBVExposedInfantGivenHepBIg": {
+          "$ref": "#/definitions/ChildBirthDetailsTypeHBVExposedInfantGivenHepBIg"
+        },
+        "HBVExposedInfantGivenHepBIgSpecified": {
+          "type": "boolean"
+        },
+        "NonHBVExposedInfantGivenHBV": {
+          "$ref": "#/definitions/ChildBirthDetailsTypeNonHBVExposedInfantGivenHBV"
+        },
+        "NonHBVExposedInfantGivenHBVSpecified": {
+          "type": "boolean"
+        },
+        "ARVProphylaxis": {
+          "$ref": "#/definitions/ChildBirthDetailsTypeARVProphylaxis"
+        },
+        "ARVProphylaxisSpecified": {
+          "type": "boolean"
+        },
+        "TimingOfARVProphylaxis": {
+          "$ref": "#/definitions/ChildBirthDetailsTypeTimingOfARVProphylaxis"
+        },
+        "TimingOfARVProphylaxisSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ChildBirthDetailsTypeChildSexCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "F",
+        "M",
+        "A",
+        "N",
+        "O",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "ChildBirthDetailsTypeChildGivenNVPWithin72hrs": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "ChildBirthDetailsTypeChildStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Alive",
+        "SB",
+        "NND"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "ChildBirthDetailsTypeBirthMUAC": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "LT",
+        "GT"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "ChildBirthDetailsTypeHBVExposedInfantGivenHepBIg": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "ChildBirthDetailsTypeNonHBVExposedInfantGivenHBV": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "ChildBirthDetailsTypeARVProphylaxis": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "AP1",
+        "AP2",
+        "AP3"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "ChildBirthDetailsTypeTimingOfARVProphylaxis": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "ChildFollowupType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "InfantARVType": {
+          "$ref": "#/definitions/ChildFollowupTypeInfantARVType"
+        },
+        "InfantARVTypeSpecified": {
+          "type": "boolean"
+        },
+        "AgeAtCTXInitiation": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "AgeAtCTXInitiationSpecified": {
+          "type": "boolean"
+        },
+        "InfantOutcomeAt18Months": {
+          "$ref": "#/definitions/ChildFollowupTypeInfantOutcomeAt18Months"
+        },
+        "InfantOutcomeAt18MonthsSpecified": {
+          "type": "boolean"
+        },
+        "DateLinkedToARTClinic": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateLinkedToARTClinicSpecified": {
+          "type": "boolean"
+        },
+        "ARTEnrollmentNumber": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "ChildFollowupTypeInfantARVType": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "ChildFollowupTypeInfantOutcomeAt18Months": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5",
+        "Item6",
+        "Item7"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "InfantPCRTestingType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "AgeAtTest": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "AgeAtTestSpecified": {
+          "type": "boolean"
+        },
+        "DateSampleCollected": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateSampleCollectedSpecified": {
+          "type": "boolean"
+        },
+        "DateSampleSent": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateSampleSentSpecified": {
+          "type": "boolean"
+        },
+        "DateResultReceivedAtFacility": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateResultReceivedAtFacilitySpecified": {
+          "type": "boolean"
+        },
+        "DateCaregiverGivenResult": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateCaregiverGivenResultSpecified": {
+          "type": "boolean"
+        },
+        "PCRTestResult": {
+          "$ref": "#/definitions/InfantPCRTestingTypePCRTestResult"
+        },
+        "PCRTestResultSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "InfantPCRTestingTypePCRTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg",
+        "NP"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HealthFacilityVisitsType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "VisitStatus": {
+          "$ref": "#/definitions/HealthFacilityVisitsTypeVisitStatus"
+        },
+        "VisitStatusSpecified": {
+          "type": "boolean"
+        },
+        "Cotrimoxazole": {
+          "$ref": "#/definitions/HealthFacilityVisitsTypeCotrimoxazole"
+        },
+        "CotrimoxazoleSpecified": {
+          "type": "boolean"
+        },
+        "Weight": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "WeightSpecified": {
+          "type": "boolean"
+        },
+        "BreastFeeding": {
+          "$ref": "#/definitions/HealthFacilityVisitsTypeBreastFeeding"
+        },
+        "BreastFeedingSpecified": {
+          "type": "boolean"
+        },
+        "PrescribedRegimen": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/CodedSimpleType"
+            }
+          ]
+        },
+        "PrescribedRegimenLineCode": {
+          "$ref": "#/definitions/HealthFacilityVisitsTypePrescribedRegimenLineCode"
+        },
+        "PrescribedRegimenLineCodeSpecified": {
+          "type": "boolean"
+        },
+        "MaternalOutcome": {
+          "$ref": "#/definitions/HealthFacilityVisitsTypeMaternalOutcome"
+        },
+        "MaternalOutcomeSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "HealthFacilityVisitsTypeVisitStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "A",
+        "TI",
+        "TO",
+        "L",
+        "DC",
+        "X",
+        "LTFU",
+        "D"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "HealthFacilityVisitsTypeCotrimoxazole": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HealthFacilityVisitsTypeBreastFeeding": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "HealthFacilityVisitsTypePrescribedRegimenLineCode": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item10",
+        "Item11",
+        "Item20",
+        "Item21",
+        "Item30"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "HealthFacilityVisitsTypeMaternalOutcome": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Alive",
+        "Dead",
+        "A",
+        "TO",
+        "TP",
+        "TA",
+        "LTFU"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "PartnerDetailsType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "PartnerAge": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "PartnerAgeSpecified": {
+          "type": "boolean"
+        },
+        "PartnerPreTestCounseled": {
+          "$ref": "#/definitions/PartnerDetailsTypePartnerPreTestCounseled"
+        },
+        "PartnerPreTestCounseledSpecified": {
+          "type": "boolean"
+        },
+        "PartnerPostTestCounseled": {
+          "$ref": "#/definitions/PartnerDetailsTypePartnerPostTestCounseled"
+        },
+        "PartnerPostTestCounseledSpecified": {
+          "type": "boolean"
+        },
+        "PartnerAcceptsHIVTest": {
+          "$ref": "#/definitions/PartnerDetailsTypePartnerAcceptsHIVTest"
+        },
+        "PartnerAcceptsHIVTestSpecified": {
+          "type": "boolean"
+        },
+        "PartnerHIVTestResult": {
+          "$ref": "#/definitions/PartnerDetailsTypePartnerHIVTestResult"
+        },
+        "PartnerHIVTestResultSpecified": {
+          "type": "boolean"
+        },
+        "PartnerHBVStatus": {
+          "$ref": "#/definitions/PartnerDetailsTypePartnerHBVStatus"
+        },
+        "PartnerHBVStatusSpecified": {
+          "type": "boolean"
+        },
+        "PartnerHCVStatus": {
+          "$ref": "#/definitions/PartnerDetailsTypePartnerHCVStatus"
+        },
+        "PartnerHCVStatusSpecified": {
+          "type": "boolean"
+        },
+        "PartnerSyphilisStatus": {
+          "$ref": "#/definitions/PartnerDetailsTypePartnerSyphilisStatus"
+        },
+        "PartnerSyphilisStatusSpecified": {
+          "type": "boolean"
+        },
+        "PartnerReferredTo": {
+          "$ref": "#/definitions/PartnerDetailsTypePartnerReferredTo"
+        },
+        "PartnerReferredToSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PartnerDetailsTypePartnerPreTestCounseled": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "PartnerDetailsTypePartnerPostTestCounseled": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "PartnerDetailsTypePartnerAcceptsHIVTest": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N",
+        "U"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "PartnerDetailsTypePartnerHIVTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PartnerDetailsTypePartnerHBVStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PartnerDetailsTypePartnerHCVStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PartnerDetailsTypePartnerSyphilisStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "R",
+        "NR"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PartnerDetailsTypePartnerReferredTo": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "FP",
+        "ART",
+        "Other"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "InfantRapidTestType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "AgeAtTest": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "AgeAtTestSpecified": {
+          "type": "boolean"
+        },
+        "DateOfTest": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateOfTestSpecified": {
+          "type": "boolean"
+        },
+        "RapidTestResult": {
+          "$ref": "#/definitions/InfantRapidTestTypeRapidTestResult"
+        },
+        "RapidTestResultSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "InfantRapidTestTypeRapidTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg",
+        "Indet"
+      ],
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "MaternalCohortType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ViralLoadPeriod": {
+          "$ref": "#/definitions/MaternalCohortTypeViralLoadPeriod"
+        },
+        "ViralLoadPeriodSpecified": {
+          "type": "boolean"
+        },
+        "SampleCollectionDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "SampleCollectionDateSpecified": {
+          "type": "boolean"
+        },
+        "ViralLoadResult": {
+          "type": "number",
+          "format": "double"
+        },
+        "ViralLoadResultSpecified": {
+          "type": "boolean"
+        },
+        "PMTCTEntryPoint": {
+          "$ref": "#/definitions/MaternalCohortTypePMTCTEntryPoint"
+        },
+        "PMTCTEntryPointSpecified": {
+          "type": "boolean"
+        },
+        "GestationalAgeAtSampleCollection": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "GestationalAgeAtSampleCollectionSpecified": {
+          "type": "boolean"
+        },
+        "GestationalAge": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "GestationalAgeSpecified": {
+          "type": "boolean"
+        },
+        "TimingOfArtInitiation": {
+          "$ref": "#/definitions/MaternalCohortTypeTimingOfArtInitiation"
+        },
+        "TimingOfArtInitiationSpecified": {
+          "type": "boolean"
+        },
+        "TBStatus": {
+          "$ref": "#/definitions/MaternalCohortTypeTBStatus"
+        },
+        "TBStatusSpecified": {
+          "type": "boolean"
+        },
+        "Gravida": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "GravidaSpecified": {
+          "type": "boolean"
+        },
+        "ARTStartDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ARTStartDateSpecified": {
+          "type": "boolean"
+        },
+        "DateOfDelivery": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "DateOfDeliverySpecified": {
+          "type": "boolean"
+        },
+        "FamilyPlanningCounselling": {
+          "$ref": "#/definitions/MaternalCohortTypeFamilyPlanningCounselling"
+        },
+        "FamilyPlanningCounsellingSpecified": {
+          "type": "boolean"
+        },
+        "FamilyPlanningMethod": {
+          "$ref": "#/definitions/MaternalCohortTypeFamilyPlanningMethod"
+        },
+        "FamilyPlanningMethodSpecified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "MaternalCohortTypeViralLoadPeriod": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "MaternalCohortTypePMTCTEntryPoint": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "MaternalCohortTypeTimingOfArtInitiation": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "AIT1",
+        "AIT2",
+        "AIT3",
+        "AIT4",
+        "AIT5"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "MaternalCohortTypeTBStatus": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "MaternalCohortTypeFamilyPlanningCounselling": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Y",
+        "N"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "MaternalCohortTypeFamilyPlanningMethod": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "FP1",
+        "FP2",
+        "FP3",
+        "FP4",
+        "FP5",
+        "FP6",
+        "FP7",
+        "FP8"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "PMTCTHTSType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "VisitID": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "VisitDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "PMTCTEntryPoint": {
+          "$ref": "#/definitions/PMTCTHTSTypePMTCTEntryPoint"
+        },
+        "PMTCTEntryPointSpecified": {
+          "type": "boolean"
+        },
+        "PreviouslyKnownHIVPositive": {
+          "type": "boolean"
+        },
+        "AcceptedHIVTesting": {
+          "type": "boolean"
+        },
+        "AcceptedHIVTestingSpecified": {
+          "type": "boolean"
+        },
+        "HIVTestResult": {
+          "$ref": "#/definitions/PMTCTHTSTypeHIVTestResult"
+        },
+        "HIVTestResultSpecified": {
+          "type": "boolean"
+        },
+        "ReceivedHIVTestResult": {
+          "type": "boolean"
+        },
+        "ReceivedHIVTestResultSpecified": {
+          "type": "boolean"
+        },
+        "HIVRetesting": {
+          "$ref": "#/definitions/PMTCTHTSTypeHIVRetesting"
+        },
+        "HIVRetestingSpecified": {
+          "type": "boolean"
+        },
+        "TestedForHepB": {
+          "type": "boolean"
+        },
+        "TestedForHepBSpecified": {
+          "type": "boolean"
+        },
+        "HepBTestResult": {
+          "$ref": "#/definitions/PMTCTHTSTypeHepBTestResult"
+        },
+        "HepBTestResultSpecified": {
+          "type": "boolean"
+        },
+        "TestedForHepC": {
+          "type": "boolean"
+        },
+        "TestedForHepCSpecified": {
+          "type": "boolean"
+        },
+        "HepCTestResult": {
+          "$ref": "#/definitions/PMTCTHTSTypeHepCTestResult"
+        },
+        "HepCTestResultSpecified": {
+          "type": "boolean"
+        },
+        "HIVHBVCoInfected": {
+          "type": "boolean"
+        },
+        "HIVHBVCoInfectedSpecified": {
+          "type": "boolean"
+        },
+        "HIVHCVCoInfected": {
+          "type": "boolean"
+        },
+        "HIVHCVCoInfectedSpecified": {
+          "type": "boolean"
+        },
+        "AgreedToPartnerNotification": {
+          "type": "boolean"
+        },
+        "AgreedToPartnerNotificationSpecified": {
+          "type": "boolean"
+        },
+        "ClinicalTBScreening": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/PMTCTClinicalTBScreeningType"
+            }
+          ]
+        }
+      }
+    },
+    "PMTCTHTSTypePMTCTEntryPoint": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Item1",
+        "Item2",
+        "Item3",
+        "Item4",
+        "Item5"
+      ],
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "PMTCTHTSTypeHIVTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PMTCTHTSTypeHIVRetesting": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "RHN",
+        "SHP"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PMTCTHTSTypeHepBTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PMTCTHTSTypeHepCTestResult": {
+      "type": "integer",
+      "description": "",
+      "x-enumNames": [
+        "Pos",
+        "Neg"
+      ],
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "PMTCTClinicalTBScreeningType": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "CurrentlyCough": {
+          "type": "boolean"
+        },
+        "WeightLoss": {
+          "type": "boolean"
+        },
+        "Fever": {
+          "type": "boolean"
+        },
+        "NightSweats": {
+          "type": "boolean"
+        },
+        "ContactWithTBPositivePatient": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

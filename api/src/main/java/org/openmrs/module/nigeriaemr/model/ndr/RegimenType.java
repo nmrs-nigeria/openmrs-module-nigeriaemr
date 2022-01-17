@@ -7,6 +7,8 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -93,6 +95,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
         "prescribedRegimenLineCode", "prescribedRegimenDuration", "prescribedRegimenDispensedDate", "dateRegimenStarted",
         "dateRegimenStartedDD", "dateRegimenStartedMM", "dateRegimenStartedYYYY", "dateRegimenEnded", "dateRegimenEndedDD",
         "dateRegimenEndedMM", "dateRegimenEndedYYYY" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RegimenType {
 	
 	@XmlElement(name = "VisitID", required = true)

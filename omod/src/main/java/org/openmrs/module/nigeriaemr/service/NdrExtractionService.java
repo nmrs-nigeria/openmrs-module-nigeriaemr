@@ -67,8 +67,7 @@ public class NdrExtractionService {
 	}
 	
 	public void saveExport(String fullContextPath, String contextPath, List<Integer> filteredPatients, String DATIMID,
-	        Date lastDate, Date currentDate, boolean automatic) throws Exception {
-		
+	        Date lastDate, Date currentDate, boolean automatic, String opt) throws Exception {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		int patientSize = filteredPatients.size();
 		int batch = Utils.getBatchSize();
@@ -140,7 +139,7 @@ public class NdrExtractionService {
 		}
 	}
 	
-	public void export(NDRExport ndrExport) {
+	public void export(NDRExport ndrExport, String opt) {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		//check if batch is still valid
 		NDRExportBatch ndrExportBatch = nigeriaemrService.getNDRExportBatchById(ndrExport.getBatchId());
@@ -153,7 +152,6 @@ public class NdrExtractionService {
 			return;
 		}
 		Context.evictFromSession(ndrExportBatch);
-		
 		try {
 			String formattedDate = null;
 			String DATIMID = Utils.getFacilityDATIMId();
@@ -178,7 +176,7 @@ public class NdrExtractionService {
 					long startTime = System.currentTimeMillis();
 					
 					ndrExtractor.extract(patientId, DATIMID, ndrExport.getReportFolder(), formattedDate, jaxbContext,
-					    ndrExport.getLastDate(), ndrExport.getDateStarted(), ndrExportBatch.getId());
+					    ndrExport.getLastDate(), ndrExport.getDateStarted(), ndrExportBatch.getId(), opt);
 					
 					long endTime = System.currentTimeMillis();
 					LoggerUtils.write(NdrExtractionService.class.getName(), patientId + "  " + (endTime - startTime)

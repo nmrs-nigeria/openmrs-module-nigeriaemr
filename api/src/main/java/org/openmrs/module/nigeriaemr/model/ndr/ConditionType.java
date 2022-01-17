@@ -7,6 +7,8 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -49,6 +51,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ConditionType", propOrder = { "conditionCode", "programArea", "patientAddress", "commonQuestions",
         "conditionSpecificQuestions", "encounters", "laboratoryReport", "regimen", "childBirthDetails", "childFollowup",
         "infantPCRTesting", "healthFacilityVisits", "partnerDetails", "infantRapidTest" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ConditionType {
 	
 	@XmlElement(name = "ConditionCode", required = true)

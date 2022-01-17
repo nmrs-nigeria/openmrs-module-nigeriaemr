@@ -1031,6 +1031,11 @@ public class Utils {
 		return folder;
 	}
 	
+	public static String getDownloadFolder(String contextPath) {
+		String folder = Paths.get(new File(contextPath).getParentFile().toString(), "downloads").toString();
+		return folder;
+	}
+	
 	public static String ensureReportFolderExist(String contextPath, String reportType) {
 		String downloadFolder = ensureDownloadFolderExist(contextPath);
 		//old implementation
