@@ -5,164 +5,182 @@
 
 <div class="row wrapper  white-bg page-heading"  style="">
 
-        <h4 style="text-align: center">
-            NDR Export
-        </h4>
+    <h4 style="text-align: center">
+        NDR Export
+    </h4>
 </div>
 
-    <div class="container" style="padding-top: 10px;">
-         <div style="margin-left: 28%; width: 50%; height: 50%; background-color: #00463f; border-radius: 10px; " id="customDiv">
-             <br/> <br/>
-                <div style="padding-left: 38px">
-                    <label for="custom" style="font-weight: bold; color: white; cursor: pointer;">
-                        <input style="background-color: #E8F0FE; border-radius: 10px; margin-top: 15px; cursor: pointer" type="checkbox" id="custom" name="custom" value="custom" onclick="checkBoxCheck()">
-                        Custom
-                    </label>
-                    <br id="br1">
-                    <input style="background-color: #E8F0FE; width: 85%; height: 45px; border-radius: 10px; margin-top: 15px; padding-left: 18px; padding-right: 10px; display: none" type="text" value="comma separated patient identifiers or Ids" id="identifiers" onfocus=this.value='' name="identifiers"><br id="br2">
-                    <br/>
-                    <label for="customStart" id="labelCustomStart" style="font-weight: bold; cursor: pointer;color: white; width: 70%; height: 45px; margin-bottom: 15px; margin-top: 15px; display: none">
-                        <input  style="cursor: pointer;background-color: #E8F0FE; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; display: none" type="checkbox" id="customStart" name="customStart" value="customStart" onclick="checkBoxStartCheck()">
-                        Export from Inception
-                    </label>
-                    <br/>
-                    <br id="br3"/>
-                    <div style="display: flex;">
-                        <div>
-                            <label id="lblfrom" for="from" style="font-weight: bold; color: white; display:none;">Start Date</label><br id="br4">
-                            <input style="font-weight: bold;padding-left: 10px; padding-right: 10px; background-color: #E8F0FE; margin-bottom: 15px; width: 85%; height: 45px; border-radius: 10px; margin-top: 15px; display:none" id="from" type="date"  /><br id="br5">
-                        </div>
-                        <div style="margin-left: 30px;" id="endR">
-                            <label id="lblto" for="to" style="font-weight: bold; color: white;  display:none;">End Date</label><br id="br6">
-                            <input disabled="disabled" style="font-weight: bold;padding-left: 10px; padding-right: 10px; background-color: #E8F0FE; width: 87%; height: 45px; border-radius: 10px; margin-top: 15px; display:none" id="to" type="date"  /><br id="br7">
-                        </div>
-                    </div>
-                    <br/>
-                    <div style="display: flex;">
-                        <div style="width: 45%">
-                            <input style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Export" onclick="exportData()" id="exportData" class="btn btn-primary" />
-                        </div>
-                        <div style="width: 48%; margin-left: 5%">
-                            <input style="font-weight: bold; background-color: #E8F0FE; width: 88%; height: 45px; border-radius: 10px; margin-top: 15px; display: none" id="btnClear" type="button" value="Clear" onclick="clearData()" class="btn btn-primary" />
-                        </div>
-                    </div>
-                </div>
-                <br/>
-                <br/>
-
+<!--- NDR AUTHENTICATION FOR API  HANDSHAKE --->
+<div id="ndrAuth" class="dialog" style="display: none; padding: 20px; position: absolute; z-index: 999; margin-left: 16.2%; margin-right: 15%;">
+    <div style="padding: 20px; position: absolute; z-index: 999; margin-top: -6%; width: 440px;">
+        <button type="button" class="close" aria-label="Close" style="background: #dddddd !important; float: right;" title="Close" onclick="cancelAuth()">
+            <span aria-hidden="true" style="font-size: 20px; font-weight: bold;">&times;</span>
+        </button>
+    </div>
+    <div id="waitDiv">
+        <div class="col-md-7 col-xs-7 " style="text-align:center; padding-top: 4%; padding-bottom: 3%">
+            <div class="col-md-3 col-xs-3 offset-2" id="waitGif" style="display: none">
+                <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:40px">
+            </div>
+            <h4 id="apiInfo" style="overflow: auto; font-size: 1em !important; color: #000 !important; margin-top: 30px;">Please wait, Checking if NDR API credentials already exists...</h4>
         </div>
-
-        <!--- NDR AUTHENTICATION FOR API  HANDSHAKE --->
-        <div id="ndrAuth" class="dialog" style="display: none; padding: 20px; position: absolute; z-index: 999; margin-left: 16.2%; margin-right: 15%; margin-top: -14%;">
-
-            <div style="padding: 20px; position: absolute; z-index: 999; margin-top: -6%; width: 440px;">
-                <button type="button" class="close" aria-label="Close" style="background: #dddddd !important; float: right;" title="Close" onclick="cancelAuth()">
-                    <span aria-hidden="true" style="font-size: 20px; font-weight: bold;">&times;</span>
-                </button>
-            </div>
-            <div id="waitDiv">
-                <div class="col-md-7 col-xs-7 " style="text-align:center; padding-top: 4%; padding-bottom: 3%">
-                    <div class="col-md-3 col-xs-3 offset-2" id="waitGif" style="display: none">
-                        <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:40px">
-                    </div>
-                    <h4 id="apiInfo" style="overflow: auto; font-size: 1em !important; color: #000 !important; margin-top: 30px;">Please wait, Checking if NDR API credentials already exists...</h4>
-                </div>
-                <div style="width: 45%; display: none" id="pushData">
-                    <input id="btnPushData" style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Push failed Data" onclick="pushData()" class="btn btn-primary" />
-                </div>
-                <br/>
-            </div>
-            <div style="display: none" id="login">
-                <div id="authHeader" style="border-bottom: #6c757d 1px solid; margin-bottom: 12px;">
-                    <div class="col-md-7 col-xs-7 " style="text-align:left;">
-                        <h5>Authenticate with the NDR</h5>
-                    </div>
-                </div>
-                <br/>
-                <div>
-                    <label style="color: #000; font-size: 14px">NDR Login Email</label><br/>
-                    <input autocomplete="off" style="background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px; padding-left: 18px; padding-right: 10px" type="email" id="email"><br/>
-                </div>
-                <br/>
-                <div>
-                    <label style="color: #000; font-size: 14px">NDR Login Password</label><br/>
-                    <input autocomplete="off" style="font-weight: bold;padding-left: 10px; padding-right: 10px; background-color: #E8F0FE; width: 95%; height: 45px; border-radius: 10px; margin-top: 15px;" id="password" type="password"  /><br/>
-                </div>
-                <br/>
-                <div style="display: flex">
-                    <div style="width: 50%">
-                        <input style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 94%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Submit" onclick="authApi()" id="authBtn" class="btn btn-primary" />
-                    </div>
-                    <div style="width: 50%;">
-                        <input style="font-weight: bold; background-color: #E8F0FE; width: 88%; height: 45px; border-radius: 10px; margin-top: 15px; float: right" id="btnCancel" type="button" value="Cancel" onclick="cancelAuth()" class="btn btn-cancel" />
-                    </div>
-                </div>
-            </div>
+        <div style="width: 45%; display: none" id="pushData">
+            <input id="btnPushData" style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Push failed Data" onclick="initNDRPush()" class="btn btn-primary" />
         </div>
-        <!--- END OF NDR AUTHENTICATION FOR API  HANDSHAKE --->
-
         <br/>
-        <div style="margin-left: 32%; width: 40%; height: 50%; display: flex; border-top: 1px #e0e0e0 solid; border-bottom: 1px #e0e0e0 solid; padding-top: 10px; padding-bottom: 10px" class="row">
-            <div class="col-md-3">
-                <label for="asXml" style="color: #000; font-weight: bold; cursor: pointer">
-                    <input style="cursor: pointer" type="radio" id="asXml" name="extOpt" value="Xml" onclick="setExtractionOpt('xml')"/>
-                    Extract as XML
-                </label>
-            </div>
-            <div class="col-md-3" style="margin-left: 18%">
-                <label for="asJson" style="color: #000; font-weight: bold; cursor: pointer">
-                    <input style="margin-left: 10px; cursor: pointer" type="radio" id="asJson" value="asJson" name="extOpt" onclick="setExtractionOpt('json')"/>
-                    Extract as JSON <i style="font-size: 20px;" id="json-hint" class="icon-info-sign" title="Please ensure you have an active internet connection"></i>
-                </label>
+    </div>
+    <div style="display: none" id="login">
+        <div id="authHeader" style="border-bottom: #6c757d 1px solid; margin-bottom: 12px;">
+            <div class="col-md-7 col-xs-7 " style="text-align:left;">
+                <h5>Authenticate with the NDR</h5>
             </div>
         </div>
         <br/>
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered  table-hover" id="tb_commtester">
-                <thead>
-                <tr>
-                    <th>${ ui.message("Created By") }</th>
-                    <th>${ ui.message("File Name") }</th>
-                    <th>${ ui.message("Date Started") }</th>
-                    <th>${ ui.message("Date Completed") }</th>
-                    <th>${ ui.message("Total No. of Patients") }</th>
-                    <th>${ ui.message("status") }</th>
-                    <th>${ ui.message("Actions") }</th>
-                </tr>
-                </thead>
-                <tbody id="TableBody">
-
-                </tbody>
-            </table>
+        <div>
+            <label style="color: #000; font-size: 14px">NDR Login Email</label><br/>
+            <input autocomplete="off" style="background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px; padding-left: 18px; padding-right: 10px" type="email" id="email"><br/>
         </div>
-        <div id="gen-wait" class="dialog" style="display: none; ">
-            <div class="row">
-                <div class="col-md-3 col-xs-3 offset-2" >
-                    <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:100px">
-                </div>
+        <br/>
+        <div>
+            <label style="color: #000; font-size: 14px">NDR Login Password</label><br/>
+            <input autocomplete="off" style="font-weight: bold;padding-left: 10px; padding-right: 10px; background-color: #E8F0FE; width: 95%; height: 45px; border-radius: 10px; margin-top: 15px;" id="password" type="password"  /><br/>
+        </div>
+        <br/>
+        <div style="display: flex">
+            <div style="width: 50%">
+                <input style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 94%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Submit" onclick="authApi()" id="authBtn" class="btn btn-primary" />
             </div>
-
-            <div>
-                <div class="col-md-7 col-xs-7 " style="text-align:center;">
-                    <h1>Please wait, operation in progress...</h1>
-                </div>
+            <div style="width: 50%;">
+                <input style="font-weight: bold; background-color: #E8F0FE; width: 88%; height: 45px; border-radius: 10px; margin-top: 15px; float: right" id="btnCancel" type="button" value="Cancel" onclick="cancelAuth()" class="btn btn-cancel" />
             </div>
         </div>
     </div>
-    
+</div>
+<!--- END OF NDR AUTHENTICATION FOR API  HANDSHAKE --->
+
+<div class="container" style="padding-top: 10px;">
+    <div style="margin-left: 28%; width: 50%; height: 50%; background-color: #00463f; border-radius: 10px; " id="customDiv">
+        <br/> <br/>
+        <div style="padding-left: 38px">
+            <label for="custom" style="font-weight: bold; color: white; cursor: pointer;">
+                <input style="background-color: #E8F0FE; border-radius: 10px; margin-top: 15px; cursor: pointer" type="checkbox" id="custom" name="custom" value="custom" onclick="checkBoxCheck()">
+                Custom
+            </label>
+            <br id="br1">
+            <input style="background-color: #E8F0FE; width: 85%; height: 45px; border-radius: 10px; margin-top: 15px; padding-left: 18px; padding-right: 10px; display: none" type="text" value="comma separated patient identifiers or Ids" id="identifiers" onfocus=this.value='' name="identifiers"><br id="br2">
+            <br/>
+            <label for="customStart" id="labelCustomStart" style="font-weight: bold; cursor: pointer;color: white; width: 70%; height: 45px; margin-bottom: 15px; margin-top: 15px; display: none">
+                <input  style="cursor: pointer;background-color: #E8F0FE; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; display: none" type="checkbox" id="customStart" name="customStart" value="customStart" onclick="checkBoxStartCheck()">
+                Export from Inception
+            </label>
+            <br/>
+            <br id="br3"/>
+            <div style="display: flex;">
+                <div>
+                    <label id="lblfrom" for="from" style="font-weight: bold; color: white; display:none;">Start Date</label><br id="br4">
+                    <input style="font-weight: bold;padding-left: 10px; padding-right: 10px; background-color: #E8F0FE; margin-bottom: 15px; width: 85%; height: 45px; border-radius: 10px; margin-top: 15px; display:none" id="from" type="date"  /><br id="br5">
+                </div>
+                <div style="margin-left: 30px;" id="endR">
+                    <label id="lblto" for="to" style="font-weight: bold; color: white;  display:none;">End Date</label><br id="br6">
+                    <input disabled="disabled" style="font-weight: bold;padding-left: 10px; padding-right: 10px; background-color: #E8F0FE; width: 87%; height: 45px; border-radius: 10px; margin-top: 15px; display:none" id="to" type="date"  /><br id="br7">
+                </div>
+            </div>
+            <br/>
+            <div style="display: flex;">
+                <div style="width: 45%">
+                    <input style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Export" onclick="exportData()" id="exportData" class="btn btn-primary" />
+                </div>
+                <div style="width: 48%; margin-left: 5%">
+                    <input style="font-weight: bold; background-color: #E8F0FE; width: 88%; height: 45px; border-radius: 10px; margin-top: 15px; display: none" id="btnClear" type="button" value="Clear" onclick="clearData()" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+        <br/>
+        <br/>
+    </div>
+    <br/>
+    <div style="margin-left: 32%; width: 40%; height: 50%; display: flex; border-top: 1px #e0e0e0 solid; border-bottom: 1px #e0e0e0 solid; padding-top: 10px; padding-bottom: 10px" class="row">
+        <div class="col-md-3">
+            <label for="asXml" style="color: #000; font-weight: bold; cursor: pointer">
+                <input style="cursor: pointer" type="radio" id="asXml" name="extOpt" value="Xml" onclick="setExtractionOpt('xml')"/>
+                Extract as XML
+            </label>
+        </div>
+        <div class="col-md-3" style="margin-left: 18%">
+            <label for="asJson" style="color: #000; font-weight: bold; cursor: pointer">
+                <input style="margin-left: 10px; cursor: pointer" type="radio" id="asJson" value="asJson" name="extOpt" onclick="setExtractionOpt('json')"/>
+                Extract as JSON <i style="font-size: 20px;" id="json-hint" class="icon-info-sign" title="Please ensure you have an active internet connection"></i>
+            </label>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered  table-hover" id="tb_commtester">
+            <thead>
+            <tr>
+                <th>${ ui.message("Created By") }</th>
+                <th>${ ui.message("File Name") }</th>
+                <th>${ ui.message("Date Started") }</th>
+                <th>${ ui.message("Date Completed") }</th>
+                <th>${ ui.message("Total No. of Patients") }</th>
+                <th>${ ui.message("status") }</th>
+                <th>${ ui.message("Actions") }</th>
+            </tr>
+            </thead>
+            <tbody id="TableBody">
+
+            </tbody>
+        </table>
+    </div>
+    <div id="gen-wait" class="dialog" style="display: none; ">
+        <div class="row">
+            <div class="col-md-3 col-xs-3 offset-2" >
+                <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:100px">
+            </div>
+        </div>
+        <div>
+            <div class="col-md-7 col-xs-7 " style="text-align:center;">
+                <h1>Please wait, operation in progress...</h1>
+            </div>
+        </div>
+    </div>
+    <script src="../moduleResources/nigeriaemr/scripts/sockjs.min.js"></script>
+    <script src="../moduleResources/nigeriaemr/scripts/stomp.min.js"></script>
+</div>
+
 <script>
     let lastNDRRunDate = '${lastNDRRunDate}'
     console.log(lastNDRRunDate)
     let extractionOpt = 'xml';
     let exportTriggered = false;
     let apiPushDone = false;
+    let totalJSONFiles = 0;
+    let totalPushed = 0;
+    let isOnline = false;
     jq = jQuery;
 
     jq(document).ready(function ()
     {
         const rdo =  document.getElementById("asXml");
         rdo.checked = true;
+        checkPendingJsonFiles();
     });
+
+    const socket = new WebSocket("ws://localhost:8081/openmrs/nigeriaemr/websocket/realtime");
+    socket.binaryType = "arraybuffer";
+    console.log(socket);
+    socket.onopen = function (event)
+    {
+        console.log(event);
+        alert("Connected");
+    };
+
+    socket.onmessage = function (event)
+    {
+        alert("Received: " + event.data);
+        console.log(event.data);
+    };
+
 
     checkBoxCheck();
     function checkBoxCheck()
@@ -245,14 +263,14 @@
                     login.show();
                 }
             })
-            .error(function(xhr, status, err)
-            {
-                extractionOpt = 'xml';
-                const rdo =  document.getElementById("asXml");
-                rdo.checked = true;
-                alert(err);
-                ndrAuth.hide();
-            });
+                .error(function(xhr, status, err)
+                {
+                    extractionOpt = 'xml';
+                    const rdo =  document.getElementById("asXml");
+                    rdo.checked = true;
+                    alert(err);
+                    ndrAuth.hide();
+                });
         }
     }
 
@@ -281,7 +299,7 @@
             return;
         }
 
-        authBtn.attr('value', 'Please wait...').css('font-style', 'italic').attr('enabled', 'false');
+        authBtn.attr('value', 'Please wait...').css('font-style', 'italic').prop('disabled', true);
         btnCancel.attr('enabled', 'false');
 
         let url = "${ ui.actionLink("nigeriaemr", "ndr", "auth") }";
@@ -294,7 +312,7 @@
             }
         }).success(function(res)
         {
-            if (res !== undefined && res !== null && res.token.length > 0)
+            if (res !== undefined && res !== null  && res.token !== undefined && res.token !== null && res.token.length > 0)
             {
                 alert("Authentication with NDR successful!");
                 apiInfo.html('Please wait, Checking if NDR API credentials already exists...');
@@ -312,7 +330,7 @@
                 // waitGif.hide();
             }
 
-            authBtn.attr('value', 'Submit').css('font-style', 'normal').attr('enabled', 'true');
+            authBtn.attr('value', 'Submit').css('font-style', 'normal').prop('disabled', false);
             btnCancel.attr('enabled', 'true');
         })
             .error(function(xhr, status, err)
@@ -377,8 +395,8 @@
         document.getElementById('from').value = ''
         // document.getElementById('to').value = ''
     }
-    
-   function exportData() 
+
+    function exportData()
     {
         exportTriggered = true;
         apiPushDone = false;
@@ -395,424 +413,640 @@
         if(identifiers === "comma separated patient identifiers or Ids")
             identifiers = '';
 
-                jq('#gen-wait').show();
-                 
-                    jq.ajax({
-                    url: url,
-                dataType: "json",
-                 data: {
-                        'identifiers' : identifiers,
-                     // 'to' : to,
-                     'from' : from,
-                     'opt': extractionOpt
-                }
+        jq('#gen-wait').show();
 
-                }).success(function(filename) {
-                        //Old implementation
-                        if (filename.endsWith(".zip")){
-                            jq('#gen-wait').hide();
-                            window.location = filename;
-                            loadFileList()
-                        }else{
-                            alert(filename)
-                            jq('#gen-wait').hide();
-                            loadFileList()
-                        }
-                        jq('#gen-wait').hide();
-                })
-                .error(function(xhr, status, err) {
-                    console.log(status);
-                    if(status === 'timeout'){
-                        alert("the export will take a while, the list will be updated when it's done");
-                        loadFileList();
-                    }else {
-                        alert('There was an error generating all NDR files, check generated files at downloads directory in the application root folder ' + err);
-                        loadFileList();
-                    }//popupDialog.close();
-                    jq('#gen-wait').hide();
+        jq.ajax({
+            url: url,
+            dataType: "json",
+            data: {
+                'identifiers' : identifiers,
+                // 'to' : to,
+                'from' : from,
+                'opt': extractionOpt
+            }
 
-                });
-        
+        }).success(function(filename) {
+            //Old implementation
+            if (filename.endsWith(".zip")){
+                jq('#gen-wait').hide();
+                window.location = filename;
+                loadFileList()
+            }else{
+                alert(filename)
+                jq('#gen-wait').hide();
+                loadFileList()
+            }
+            jq('#gen-wait').hide();
+        })
+            .error(function(xhr, status, err) {
+                console.log(status);
+                if(status === 'timeout'){
+                    alert("the export will take a while, the list will be updated when it's done");
+                    loadFileList();
+                }else {
+                    alert('There was an error generating all NDR files, check generated files at downloads directory in the application root folder ' + err);
+                    loadFileList();
+                }//popupDialog.close();
+                jq('#gen-wait').hide();
+
+            });
+
     }
 
-
-   jq = jQuery;
-   jq('#wait').hide();
-   jq(function() {
-       loadFileList()
-   });
-
-   function loadFileList()
-   {
-       if(loadFileListDefault(true))
-       {
-           refresher
-       }
-   }
-
-   function loadFileListDefault(showProgressDialog)
-   {
-       processing = false
-       if (showProgressDialog) jq('#gen-wait').show();
-       const checkBox = document.getElementById("custom");
-       let url = "${ ui.actionLink("nigeriaemr", "ndr", "getFileList") }"
-       if (checkBox.checked === true){
-           url = "${ ui.actionLink("nigeriaemr", "ndr", "getManualFileList") }"
-       }
-       //load all file generated
-
-       jq.getJSON(url).success(function (fileList)
-       {
-           jq("#TableBody").empty();
-           const fileListObj = jq.parseJSON(fileList);
-           for (let i = 0; i < fileListObj.length; i++)
-           {
-               var success = (fileListObj[i].status).includes('Completed');
-               var Paused = (fileListObj[i].status) === 'Paused';
-               if(fileListObj[i].active)
-               {
-                   if(success)
-                   {
-                       if(fileListObj[i].hasError)
-                       {
-                           jq('#TableBody')
-                               .append("<tr>" +
-                                   "<td>" + fileListObj[i].owner + "</td>" +
-                                   "<td>" + fileListObj[i].name + "</td>" +
-                                   "<td>" + fileListObj[i].dateStarted + "</td>" +
-                                   "<td>" + fileListObj[i].dateEnded + "</td>" +
-                                   "<td>" + fileListObj[i].total + "</td>" +
-                                   "<td>" + fileListObj[i].status + "</td>" +
-                                   "<td>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download valid files\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-download-alt edit-action\" title=\"download error files\" onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-cloud-download edit-action\" title=\"download error file list\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Failed Files\" onclick=\"restartErrorFile('" + fileListObj[i].number + "')\"></i>" +
-                                   "</td>" +
-                                   "</tr>");
-                       }else {
-                           jq('#TableBody')
-                               .append("<tr>" +
-                                   "<td>" + fileListObj[i].owner + "</td>" +
-                                   "<td>" + fileListObj[i].name + "</td>" +
-                                   "<td>" + fileListObj[i].dateStarted + "</td>" +
-                                   "<td>" + fileListObj[i].dateEnded + "</td>" +
-                                   "<td>" + fileListObj[i].total + "</td>" +
-                                   "<td>" + fileListObj[i].status + "</td>" +
-                                   "<td>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Files\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
-                                   "</td>" +
-                                   "</tr>");
-                       }
-                   }else{
-                       if(Paused) {
-                           jq('#TableBody')
-                               .append("<tr>" +
-                                   "<td>" + fileListObj[i].owner + "</td>" +
-                                   "<td>" + fileListObj[i].name + "</td>" +
-                                   "<td>" + fileListObj[i].dateStarted + "</td>" +
-                                   "<td>" + fileListObj[i].dateEnded + "</td>" +
-                                   "<td>" + fileListObj[i].total + "</td>" +
-                                   "<td>" + fileListObj[i].status + "</td>" +
-                                   "<td>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-play edit-action\" title=\"resume\" onclick=\"resumeFile('" + fileListObj[i].number + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
-                                   "</td>" +
-                                   "</tr>");
-                       }else {
-                           jq('#TableBody')
-                               .append("<tr>" +
-                                   "<td>" + fileListObj[i].owner + "</td>" +
-                                   "<td>" + fileListObj[i].name + "</td>" +
-                                   "<td>" + fileListObj[i].dateStarted + "</td>" +
-                                   "<td>" + fileListObj[i].dateEnded + "</td>" +
-                                   "<td>" + fileListObj[i].total + "</td>" +
-                                   "<td>" + fileListObj[i].status + "</td>" +
-                                   "<td>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-download-alt edit-action\" title=\"download error files\" onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-cloud-download edit-action\" title=\"download error file list\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
-                                   "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
-                                   "</td>" +
-                                   "</tr>");
-                       }
-                   }
-               }else{
-                   processing = true
-
-                   jq('#TableBody')
-                       .append("<tr style=\"opacity:0.6;filter: alpha(opacity = 60)\">" +
-                           "<td>" + fileListObj[i].owner + "</td>" +
-                           "<td>" + fileListObj[i].name + "</td>" +
-                           "<td>" + fileListObj[i].dateStarted + "</td>" +
-                           "<td>" + fileListObj[i].dateEnded + "</td>" +
-                           "<td>" + fileListObj[i].total + "</td>" +
-                           "<td>" + fileListObj[i].status + "</td>" +
-                           "<td>" +
-                           "<img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p>"+fileListObj[i].progress+"</p>" +
-                           "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"refreshList()\"></i>" +
-                           "<i style=\"font-size: 20px;\" class=\"icon-pause edit-action\" title=\"pause\" onclick=\"pauseFile('" + fileListObj[i].number + "')\"></i>" +
-                           "</td>" +
-                           "</tr>");
-               }
-           }
-           jq('#gen-wait').hide();
-
-           //push data to the NDR via API calls
-           if(!apiPushDone && exportTriggered && !processing && extractionOpt === 'json')
-           {
-               apiPushDone = true;
-               pushData();
-           }
-       }).error(function (xhr, status, err)
-       {
-           if (showProgressDialog) alert('There was an error loading file list ' + err);
-           jq('#gen-wait').hide();
-       });
-       return processing
-   }
-
-    function pushData()
+    jq = jQuery;
+    jq('#wait').hide();
+    jq(function()
     {
+        loadFileList();
+    });
+
+    function loadFileList()
+    {
+        if(loadFileListDefault(true))
+        {
+            refresher
+        }
+        // loadFileListDefault(true);
+    }
+
+    function loadFileListDefault(showProgressDialog)
+    {
+        processing = false
+        if (showProgressDialog) jq('#gen-wait').show();
+        const checkBox = document.getElementById("custom");
+        let url = "${ ui.actionLink("nigeriaemr", "ndr", "getFileList") }"
+        if (checkBox.checked === true){
+            url = "${ ui.actionLink("nigeriaemr", "ndr", "getManualFileList") }"
+        }
+        //load all file generated
+
+        jq.getJSON(url).success(function (fileList)
+        {
+            jq("#TableBody").empty();
+            const fileListObj = jq.parseJSON(fileList);
+            for (let i = 0; i < fileListObj.length; i++)
+            {
+                var success = (fileListObj[i].status).includes('Completed');
+                var Paused = (fileListObj[i].status) === 'Paused';
+                if(fileListObj[i].active)
+                {
+                    if(success)
+                    {
+                        if(fileListObj[i].hasError)
+                        {
+                            jq('#TableBody')
+                                .append("<tr>" +
+                                    "<td>" + fileListObj[i].owner + "</td>" +
+                                    "<td>" + fileListObj[i].name + "</td>" +
+                                    "<td>" + fileListObj[i].dateStarted + "</td>" +
+                                    "<td>" + fileListObj[i].dateEnded + "</td>" +
+                                    "<td>" + fileListObj[i].total + "</td>" +
+                                    "<td>" + fileListObj[i].status + "</td>" +
+                                    "<td>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download valid files\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download-alt edit-action\" title=\"download error files\" onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-cloud-download edit-action\" title=\"download error file list\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Failed Files\" onclick=\"restartErrorFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "</td>" +
+                                    "</tr>");
+                        }else {
+                            jq('#TableBody')
+                                .append("<tr>" +
+                                    "<td>" + fileListObj[i].owner + "</td>" +
+                                    "<td>" + fileListObj[i].name + "</td>" +
+                                    "<td>" + fileListObj[i].dateStarted + "</td>" +
+                                    "<td>" + fileListObj[i].dateEnded + "</td>" +
+                                    "<td>" + fileListObj[i].total + "</td>" +
+                                    "<td>" + fileListObj[i].status + "</td>" +
+                                    "<td>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Files\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "</td>" +
+                                    "</tr>");
+                        }
+                    }else{
+                        if(Paused) {
+                            jq('#TableBody')
+                                .append("<tr>" +
+                                    "<td>" + fileListObj[i].owner + "</td>" +
+                                    "<td>" + fileListObj[i].name + "</td>" +
+                                    "<td>" + fileListObj[i].dateStarted + "</td>" +
+                                    "<td>" + fileListObj[i].dateEnded + "</td>" +
+                                    "<td>" + fileListObj[i].total + "</td>" +
+                                    "<td>" + fileListObj[i].status + "</td>" +
+                                    "<td>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-play edit-action\" title=\"resume\" onclick=\"resumeFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "</td>" +
+                                    "</tr>");
+                        }else {
+                            jq('#TableBody')
+                                .append("<tr>" +
+                                    "<td>" + fileListObj[i].owner + "</td>" +
+                                    "<td>" + fileListObj[i].name + "</td>" +
+                                    "<td>" + fileListObj[i].dateStarted + "</td>" +
+                                    "<td>" + fileListObj[i].dateEnded + "</td>" +
+                                    "<td>" + fileListObj[i].total + "</td>" +
+                                    "<td>" + fileListObj[i].status + "</td>" +
+                                    "<td>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-download-alt edit-action\" title=\"download error files\" onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-cloud-download edit-action\" title=\"download error file list\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
+                                    "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    "</td>" +
+                                    "</tr>");
+                        }
+                    }
+                }else{
+                    processing = true
+
+                    jq('#TableBody')
+                        .append("<tr style=\"opacity:0.6;filter: alpha(opacity = 60)\">" +
+                            "<td>" + fileListObj[i].owner + "</td>" +
+                            "<td>" + fileListObj[i].name + "</td>" +
+                            "<td>" + fileListObj[i].dateStarted + "</td>" +
+                            "<td>" + fileListObj[i].dateEnded + "</td>" +
+                            "<td>" + fileListObj[i].total + "</td>" +
+                            "<td>" + fileListObj[i].status + "</td>" +
+                            "<td>" +
+                            "<img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p>"+fileListObj[i].progress+"</p>" +
+                            "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"refreshList()\"></i>" +
+                            "<i style=\"font-size: 20px;\" class=\"icon-pause edit-action\" title=\"pause\" onclick=\"pauseFile('" + fileListObj[i].number + "')\"></i>" +
+                            "</td>" +
+                            "</tr>");
+                }
+            }
+            jq('#gen-wait').hide();
+
+            //push data to the NDR via API calls
+            if(!apiPushDone && exportTriggered && !processing && extractionOpt === 'json')
+            {
+                apiPushDone = true;
+                initNDRPush();
+            }
+        }).error(function (xhr, status, err)
+        {
+            if (showProgressDialog) alert('There was an error loading file list ' + err);
+            jq('#gen-wait').hide();
+        });
+        return processing
+    }
+
+    //Check for internet connectivity by pinging the NDR API Endpoint
+    //to ensure data push is not initiated when offline
+    const checkOnlineStatus = async () =>
+    {
+        try {
+            const ping = await fetch("http://ndrstaging.phis3project.org.ng:8087/v1/utils/ping");
+            return ping.status >= 200 && ping.status < 300; // either true or false
+        } catch (err)
+        {
+            alert("You do not have an active internet connection");
+            return false;
+        }
+    };
+
+    async function checkPendingJsonFiles()
+    {
+        totalJSONFiles = 0;
+        totalPushed = 0;
+        let url = "${ ui.actionLink("nigeriaemr", "ndr", "getTotalFiles") }";
+        jq.ajax({
+            url: url,
+            dataType: "json"
+        }).success(function(res)
+        {
+            if (res !== undefined && res !== null && res > 0)
+            {
+                totalJSONFiles = res;
+                let message = "<br/><span>Found some files yet to be pushed to the NDR.</span>" +
+                    "<br/><span>Total Patient (s) To be pushed: " +  totalJSONFiles + "</span>" +
+                    "<br/><span>Total Patient(s) pushed: <span id='totalPushed'>" + totalPushed + "</span></span>";
+
+                jq('#ndrAuth').show();
+                jq('#btnPushData').prop('disabled', false);
+                jq('#waitDiv').show();
+                jq('#apiInfo').html(message);
+                jq('#btnPushData').val('Push Data');
+                jq('#pushData').show();
+            }
+        })
+            .error(function(xhr, status, err)
+            {
+                //handle error
+            });
+    }
+
+    async function initNDRPush()
+    {
+        totalJSONFiles = 0;
+        totalPushed = 0;
+        isOnline = await checkOnlineStatus();
+        if(!isOnline)
+        {
+            alert("You do not have an active internet connectivity");
+            extractionOpt = 'xml';
+            const rdo =  document.getElementById("asXml");
+            return;
+        }
+
         let ndrAuth = jq('#ndrAuth');
         let apiInfo = jq('#apiInfo')
         let waitGif = jq('#waitGif');
         let pushData = jq('#pushData');
         let btnPushData = jq('#btnPushData');
-        jq('#apiInfo').html('Pushing data to the NDR. Please wait...');
+        btnPushData.val('Please wait...');
+        btnPushData.prop('disabled', true);
+        jq('#apiInfo').html('Evaluating data to be pushed to the NDR. Please wait...');
         jq('#login').hide();
         jq('#waitDiv').show();
         waitGif.show();
         ndrAuth.show();
 
-        let url = "${ ui.actionLink("nigeriaemr", "ndr", "pushData") }";
+        let url = "${ ui.actionLink("nigeriaemr", "ndr", "getTotalFiles") }";
         jq.ajax({
             url: url,
             dataType: "json"
         }).success(function(res)
         {
             apiPushDone = true;
-            console.log(res);
+            if (res !== undefined && res !== null && res > 0)
+            {
+                totalJSONFiles = res;
+                let message = "<span>Total Patient (s) Extracted: " +  totalJSONFiles + "</span>" +
+                    "<br/><span>Total Patient(s) pushed: <span id='totalPushed'>" + totalPushed + "</span></span>"
+                apiInfo.html(message);
+                pushD();
+            }
+            else
+            {
+                let message = "<br/><span>There are no patient data to be pushed to the NDR</span>";
+                apiInfo.html(message);
+                waitGif.css('display', 'none');
+                apiInfo.html("There no valid JSON data to be pushed to the NDR");
+            }
+        })
+            .error(function(xhr, status, err)
+            {
+                apiPushDone = true;
+                waitGif.css('display', 'none');
+                apiInfo.html("An error was encountered " + err);
+                btnPushData.val('Push Data');
+                btnPushData.prop('disabled', false);
+                pushData.show();
+            });
+    }
+
+    async function pushD()
+    {
+        let apiInfo = jq('#apiInfo')
+        let waitGif = jq('#waitGif');
+        let pushData = jq('#pushData');
+        let btnPushData = jq('#btnPushData');
+        isOnline = await checkOnlineStatus();
+        if(!isOnline)
+        {
+            alert("You do not have an active internet connectivity");
+            if (totalPushed < totalJSONFiles)
+            {
+                let message = "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
+                btnPushData.val('Push Data');
+                pushData.show();
+                waitGif.css('display', 'none');
+                apiInfo.append(message);
+                btnPushData.prop('disabled', false);
+            }
+            return;
+        }
+        let url = "${ ui.actionLink("nigeriaemr", "ndr", "pushBatchData") }";
+        jq.ajax({
+            url: url,
+            dataType: "json"
+        }).success(function(res)
+        {
             if (res !== undefined && res !== null && res.code > 0)
             {
                 let message = "";
-                if (res.totalPushed == res.totalFiles)
+
+                if (res.totalPushed > 0)
                 {
-                    message = "<span>All Patient data has been successfully pushed to the NDR.</span>";
-                    btnPushData.val('Push Data');
-                    pushData.hide();
+                    totalPushed += res.totalPushed;
+                    jq('#totalPushed').html(totalPushed);
+
+                    if (totalPushed == totalJSONFiles)
+                    {
+                        message = "<br/><br/><span>All Patient data has been successfully pushed to the NDR.</span>";
+                        waitGif.css('display', 'none');
+                        apiInfo.append(message);
+                        btnPushData.prop('disabled', false);
+                        pushData.hide();
+                    }
+                    else
+                    {
+                        if (totalPushed > totalJSONFiles)
+                        {
+                            message = "<br/><br/><span>All Patient data has been successfully pushed to the NDR.</span>";
+                            waitGif.css('display', 'none');
+                            apiInfo.append(message);
+                            btnPushData.prop('disabled', false);
+                            pushData.hide();
+                        }
+                        else{
+                            //continue the pushing data to the NDR
+                            pushD();
+                        }
+                    }
                 }
-                if (res.totalPushed > 0 && res.totalPushed < res.totalFiles)
+                else
                 {
-                    message = "<br/><span>Some Patient(s)' data were successfully pushed to the NDR while some failed.</span>" +
-                        "<br/><span> You might consider initiating the handshake again by clicking the button bellow.</span>";
-                    btnPushData.val('Push remaining Data');
-                    pushData.show();
+                    waitGif.css('display', 'none');
+                    btnPushData.prop('disabled', false);
+
+                    if (totalPushed == totalJSONFiles)
+                    {
+                        message = "<br/><br/><span>All Patient data has been successfully pushed to the NDR.</span>";
+                        pushData.hide();
+                    }
+                    else
+                    {
+                        if (totalPushed < totalJSONFiles)
+                        {
+                            message = "<br/><span style=" + "font-size: 0.96em !important;" + ">Some Patients data were not successfully pushed to the NDR.</span>" +
+                                "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
+                            btnPushData.val('Push remaining Data');
+                            pushData.show();
+                        }
+                    }
+                    apiInfo.append(message);
                 }
-                message = message + "<br/><span>Total Patient (s) Extracted: " +  res.totalFiles + "</span>" +
-                    "<br/><span>Total Patient (s) pushed: " + res.totalPushed + "</span>"
-                waitGif.css('display', 'none');
-                apiInfo.html(message);
             }
             else
             {
                 waitGif.css('display', 'none');
-                apiInfo.html(res.message);
+                btnPushData.prop('disabled', false);
+                let message = "";
+                if (totalPushed == totalJSONFiles)
+                {
+                    message = "<br/><br/><span>All Patient data has been successfully pushed to the NDR.</span>";
+                    apiInfo.append(message);
+                    pushData.hide();
+                }
+                else
+                {
+                    if(totalPushed < 1)
+                    {
+                        message = (res.message !== null && res.message.length > 0)? "<br/><span style=" + "font-size: 0.96em !important;" + ">" + res.message + "</span>": "<br/><span>An unknown error was encountered. Patients' data could not be pushed to the NDR.</span>";
+                        message += "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
+                        btnPushData.val('Push Data');
+                    }
+                    else
+                    {
+                        message = "<br/><span style=" + "font-size: 0.96em !important;" + ">Some Patients data were not successfully pushed to the NDR.</span>" +
+                            "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
+                        btnPushData.val('Push remaining Data');
+                    }
+                    apiInfo.append(message);
+                    pushData.show();
+                }
             }
         })
-        .error(function(xhr, status, err)
-        {
-            apiPushDone = true;
-            waitGif.css('display', 'none');
-            apiInfo.html("An error was encountered " + err);
-            btnPushData.val('Push Data');
-            pushData.show();
-        });
+            .error(function(xhr, status, err)
+            {
+                apiPushDone = true;
+                let message = "";
+                waitGif.css('display', 'none');
+                if(totalPushed < 1)
+                {
+                    message = (err !== null && err.length > 0)? "<br/><span style=" + "font-size: 0.96em !important;" + ">" + err + "</span>": "<br/><span>An unknown error was encountered. Patients' data could not be pushed to the NDR.</span>";
+                    message += "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
+                    btnPushData.val('Push Data');
+                }
+                else
+                {
+                    message = "<br/><span style=" + "font-size: 0.96em !important;" + ">Some Patients data were not successfully pushed to the NDR.</span>" +
+                        "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
+                    btnPushData.val('Push remaining Data');
+                }
+                apiInfo.append(message);
+                pushData.show();
+            });
     }
 
-   function refreshList(){
-       loadFileList();
-   }
+    function refreshList()
+    {
+        loadFileList();
+    }
 
-   const refresher = setInterval(function ()
-   {
-       loadFileListDefault(false);
-   }, 10000);
+    const refresher = setInterval(function ()
+    {
+        loadFileListDefault(false);
+    }, 10000);
 
-   function restartErrorFile(id){
-       if (confirm("Are you sure you want to restart ? this will rerun failed files?") === true) {
-           jq('#gen-wait').show();
-           if(id)
-           {
-               console.log(id);
-               jq.ajax({
-                   url: "${ ui.actionLink("nigeriaemr", "ndr", "restartFile") }",
-                   dataType: "json",
-                   data: {
-                       'id' : id,
-                       'action' : 'failed'
-                   }
+    function restartErrorFile(id){
+        if (confirm("Are you sure you want to restart ? this will rerun failed files?") === true) {
+            jq('#gen-wait').show();
+            if(id)
+            {
+                jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "restartFile") }",
+                    dataType: "json",
+                    data: {
+                        'id' : id,
+                        'action' : 'failed'
+                    }
 
-               }).success(function(data) {
-                   jq('#gen-wait').hide();
-                   if(data){
-                       alert('restart');
-                       loadFileList()
-                   }else{
-                       alert('There was an error restarting');
-                       loadFileList()
-                   }
+                }).success(function(data) {
+                    jq('#gen-wait').hide();
+                    if(data){
+                        alert('restart');
+                        loadFileList()
+                    }else{
+                        alert('There was an error restarting');
+                        loadFileList()
+                    }
 
-               })
-                   .error(function(xhr, status, err) {
-                       jq('#gen-wait').hide();
-                       alert('There was an error restarting');
-                       loadFileList()
-                   });
-           }
-       }
-   }
+                })
+                    .error(function(xhr, status, err) {
+                        jq('#gen-wait').hide();
+                        alert('There was an error restarting');
+                        loadFileList()
+                    });
+            }
+        }
+    }
 
-   function restartFile(id){
-       if (confirm("Are you sure you want to restart ? this will delete your previous file and restart the export from the beginning") === true) {
-           jq('#gen-wait').show();
-           if(id)
-           {
-               console.log(id);
-               jq.ajax({
-                   url: "${ ui.actionLink("nigeriaemr", "ndr", "restartFile") }",
-                   dataType: "json",
-                   data: {
-                       'id' : id,
-                       'action' : 'none'
-                   }
+    function restartFile(id){
+        if (confirm("Are you sure you want to restart ? this will delete your previous file and restart the export from the beginning") === true) {
+            jq('#gen-wait').show();
+            if(id)
+            {
+                jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "restartFile") }",
+                    dataType: "json",
+                    data: {
+                        'id' : id,
+                        'action' : 'none'
+                    }
 
-               }).success(function(data) {
-                   jq('#gen-wait').hide();
-                   if(data){
-                       alert('restart');
-                       loadFileList()
-                   }else{
-                       alert('There was an error restarting');
-                       loadFileList()
-                   }
+                }).success(function(data) {
+                    jq('#gen-wait').hide();
+                    if(data){
+                        alert('restart');
+                        loadFileList()
+                    }else{
+                        alert('There was an error restarting');
+                        loadFileList()
+                    }
 
-               })
-                   .error(function(xhr, status, err) {
-                       jq('#gen-wait').hide();
-                       alert('There was an error restarting');
-                       loadFileList()
-                   });
-           }
-       }
-   }
+                })
+                    .error(function(xhr, status, err) {
+                        jq('#gen-wait').hide();
+                        alert('There was an error restarting');
+                        loadFileList()
+                    });
+            }
+        }
+    }
 
-   function resumeFile(id){
-       if (confirm("Are you sure you want to resume ?") === true) {
-           jq('#gen-wait').show();
-           if(id)
-           {
-               console.log(id);
-               jq.ajax({
-                   url: "${ ui.actionLink("nigeriaemr", "ndr", "resumeFile") }",
-                   dataType: "json",
-                   data: {
-                       'id' : id
-                   }
+    function resumeFile(id){
+        if (confirm("Are you sure you want to resume ?") === true) {
+            jq('#gen-wait').show();
+            if(id)
+            {
+                jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "resumeFile") }",
+                    dataType: "json",
+                    data: {
+                        'id' : id
+                    }
 
-               }).success(function(data) {
-                   jq('#gen-wait').hide();
-                   if(data){
-                       alert('resumed');
-                       loadFileList()
-                   }else{
-                       alert('There was an error restarting');
-                       loadFileList()
-                   }
+                }).success(function(data) {
+                    jq('#gen-wait').hide();
+                    if(data){
+                        alert('resumed');
+                        loadFileList()
+                    }else{
+                        alert('There was an error restarting');
+                        loadFileList()
+                    }
 
-               })
-                   .error(function(xhr, status, err) {
-                       jq('#gen-wait').hide();
-                       alert('There was an error restarting');
-                       loadFileList()
-                   });
-           }
-       }
-   }
+                })
+                    .error(function(xhr, status, err) {
+                        jq('#gen-wait').hide();
+                        alert('There was an error restarting');
+                        loadFileList()
+                    });
+            }
+        }
+    }
 
-   function deleteFile(id){
-       if (confirm("Are you sure you want to delete this file ?") === true) {
-           jq('#gen-wait').show();
-           if(id)
-           {
-               console.log(id);
-               jq.ajax({
-                   url: "${ ui.actionLink("nigeriaemr", "ndr", "deleteFile") }",
-                   dataType: "json",
-                   data: {
-                       'id' : id
-                   }
+    function deleteFile(id){
+        if (confirm("Are you sure you want to delete this file ?") === true) {
+            jq('#gen-wait').show();
+            if(id)
+            {
+                jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "deleteFile") }",
+                    dataType: "json",
+                    data: {
+                        'id' : id
+                    }
 
-               }).success(function(data) {
-                   jq('#gen-wait').hide();
-                   if(data){
-                       alert('file deleted');
-                       loadFileList()
-                   }else{
-                       alert('There was an error deleting file');
-                       loadFileList()
-                   }
+                }).success(function(data) {
+                    jq('#gen-wait').hide();
+                    if(data){
+                        alert('file deleted');
+                        loadFileList()
+                    }else{
+                        alert('There was an error deleting file');
+                        loadFileList()
+                    }
 
-               })
-                   .error(function(xhr, status, err) {
-                       jq('#gen-wait').hide();
-                       alert('There was an error deleting file');
-                       loadFileList()
-                   });
-           }
-       }
-   }
+                })
+                    .error(function(xhr, status, err) {
+                        jq('#gen-wait').hide();
+                        alert('There was an error deleting file');
+                        loadFileList()
+                    });
+            }
+        }
+    }
 
-   function pauseFile(id){
-       if (confirm("Are you sure you want to pause the process ?") === true) {
-           jq('#gen-wait').show();
-           if(id)
-           {
-               console.log(id);
-               jq.ajax({
-                   url: "${ ui.actionLink("nigeriaemr", "ndr", "pauseFile") }",
-                   dataType: "json",
-                   data: {
-                       'id' : id
-                   }
+    function pauseFile(id){
+        if (confirm("Are you sure you want to pause the process ?") === true) {
+            jq('#gen-wait').show();
+            if(id)
+            {;
+                jq.ajax({
+                    url: "${ ui.actionLink("nigeriaemr", "ndr", "pauseFile") }",
+                    dataType: "json",
+                    data: {
+                        'id' : id
+                    }
 
-               }).success(function(data) {
-                   jq('#gen-wait').hide();
-                   if(data){
-                       alert('paused');
-                       loadFileList()
-                   }else{
-                       alert('There was an error pausing the process');
-                       loadFileList()
-                   }
+                }).success(function(data) {
+                    jq('#gen-wait').hide();
+                    if(data){
+                        alert('paused');
+                        loadFileList()
+                    }else{
+                        alert('There was an error pausing the process');
+                        loadFileList()
+                    }
 
-               })
-                   .error(function(xhr, status, err) {
-                       jq('#gen-wait').hide();
-                       alert('There was an error stopping the process');
-                       loadFileList()
-                   });
-           }
-       }
-   }
+                })
+                    .error(function(xhr, status, err) {
+                        jq('#gen-wait').hide();
+                        alert('There was an error stopping the process');
+                        loadFileList()
+                    });
+            }
+        }
+    }
 
-   function downloadFile(file){
-       window.location = file
-   }
+    function downloadFile(file){
+        window.location = file
+    }
 
+    let stompClient = null;
 
+    function setConnected(connected)
+    {
+        console.log("WebSocket Connected: " + connected);
+    }
 
+    function connect()
+    {
+        var socket = new SockJS('/gs-guide-websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame)
+        {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/realtime/updates', function (realtime)
+            {
+                console.log('Realtime: ' + realtime);
+                //Update API handshake progress
+                //showGreeting(JSON.parse(realtime.body).content);
+            });
+            stompClient.subscribe('/realtime/refresh', function (ackPing)
+            {
+                console.log('Extraction done: ' + ackPing);
+                //This means that Extraction is completed.
+                //Refresh the Index table
+                loadFileListDefault(true);
+            });
+        });
+    }
+    function disconnect()
+    {
+        if (stompClient !== null)
+        {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+        console.log("Disconnected");
+    }
 </script>

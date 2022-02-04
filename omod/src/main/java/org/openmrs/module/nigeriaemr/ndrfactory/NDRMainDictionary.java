@@ -213,8 +213,8 @@ public class NDRMainDictionary {
         try{
             allRegimenTypeList.addAll(pharmDictionary.createRegimenTypeList(patient, groupedEncounters));
         }catch(Exception ex){
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
+                    LogLevel.live);
         }
         return allRegimenTypeList;
 

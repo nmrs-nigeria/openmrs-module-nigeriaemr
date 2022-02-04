@@ -20,8 +20,8 @@ import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 
 public class NDRConverter {
 
@@ -178,7 +178,7 @@ public class NDRConverter {
 
         } catch (Exception ex) {
             LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
+                    LogLevel.live);
             // throw ex;
         }
 
@@ -454,7 +454,7 @@ public class NDRConverter {
 
         } catch (Exception ex) {
             LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
+                    LogLevel.live);
             // throw ex;
         }
 

@@ -1,10 +1,8 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import javax.xml.bind.Unmarshaller;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
@@ -16,6 +14,7 @@ import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -23,7 +22,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
 
 public class NDRExtractor {
 	
@@ -125,25 +124,32 @@ public class NDRExtractor {
 			
 			if (opt.equalsIgnoreCase("xml")) {
 				jaxbMarshaller.marshal(container, file);
-			}
-			
-			if (opt.equalsIgnoreCase("json")) {
-				//First convert the data to xml using StringWriter
-				//so as to leverage the already pre-defined xml schema validations
-				java.io.StringWriter sw = new StringWriter();
-				jaxbMarshaller.marshal(container, sw);
-				
-				//re-convert to the pojo class
-				String xmlString = sw.toString();
-				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-				StringReader reader = new StringReader(xmlString);
-				Container cnt = (Container) unmarshaller.unmarshal(reader);
-				
-				//Convert object to JSON string and save the output into the JSON file
-				ObjectMapper mapper = new ObjectMapper();
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				mapper.setDateFormat(df);
-				mapper.writeValue(file, cnt);
+			} else {
+				if (opt.equalsIgnoreCase("json")) {
+					//First convert the data to xml using StringWriter
+					//to leverage the already pre-defined xml schema validations
+					StringWriter sw = new StringWriter();
+					jaxbMarshaller.marshal(container, sw);
+					
+					//re-convert to the pojo class
+					String xmlString = sw.toString();
+					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+					StringReader reader = new StringReader(xmlString);
+					Container cnt = (Container) unmarshaller.unmarshal(reader);
+					
+					//Convert object to JSON string and save the output into the JSON file
+					//THIS IS VERY NECESSARY SO THAT MAPPING TO C# CLASS ON THE NDR WILL NOT FAIL
+					ObjectMapper mapper = new ObjectMapper();
+					DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					mapper.setDateFormat(df);
+					
+					//mysteriously, mapper.writeValue(file, cnt) was inconsistently truncating the JSON string it writes to the file
+					//FileWriter has to be utilised to avoid such
+					String data = mapper.writeValueAsString(cnt);
+					FileWriter writer = new FileWriter(file);
+					writer.write(data);
+					writer.close();
+				}
 			}
 			
 		}
