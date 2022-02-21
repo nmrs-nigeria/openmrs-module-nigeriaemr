@@ -1,26 +1,37 @@
 package org.openmrs.module.nigeriaemr;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import groovy.lang.Singleton;
+import org.glassfish.tyrus.server.Server;
 import org.openmrs.module.nigeriaemr.omodmodels.Realtime;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @Configuration
-@ServerEndpoint("/realtime")
+@ServerEndpoint(value = "/realtime")
+@ComponentScan
 public class SocketServer
 {
 	private Session session;
 	private static Set<SocketServer> chatEndpoints = new CopyOnWriteArraySet<>();
 	private static HashMap<String, String> users = new HashMap<>();
-	public SocketServer()
+
+	public SocketServer() throws DeploymentException
 	{
-		System.out.println("\nSocketServer Init Called\n");
+		System.out.println("\nSocket Server Called!!!!\n");
+		//new Server("localhost", 8081, "/openmrs", null, SocketServer.class).start();
 	}
 
 	@OnOpen
@@ -48,10 +59,12 @@ public class SocketServer
 	}
 
 	@OnMessage
-	public void onMessage(Session session, Realtime message)
+	public void onMessage(Session session, Integer code)
 			throws IOException, EncodeException
 	{
-		broadcast(message);
+		Realtime realtime = new Realtime();
+		realtime.code = code;
+		broadcast(realtime);
 	}
 
 	@OnClose

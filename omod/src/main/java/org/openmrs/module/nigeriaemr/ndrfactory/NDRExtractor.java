@@ -1,8 +1,10 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
@@ -143,9 +145,11 @@ public class NDRExtractor {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					mapper.setDateFormat(df);
 					
+					// to enable pretty print
+					mapper.enable(SerializationFeature.INDENT_OUTPUT);
 					//mysteriously, mapper.writeValue(file, cnt) was inconsistently truncating the JSON string it writes to the file
 					//FileWriter has to be utilised to avoid such
-					String data = mapper.writeValueAsString(cnt);
+					String data = mapper.writeValueAsString(cnt);//.writerWithDefaultPrettyPrinter()
 					FileWriter writer = new FileWriter(file);
 					writer.write(data);
 					writer.close();

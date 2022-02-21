@@ -25,6 +25,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -340,12 +342,23 @@ public class NDRApiUtils {
 				try
 				{
 					Container container = mapper.readValue(new File(path.toFile().getPath()), Container.class);
-					String data = mapper.writeValueAsString(container);
-					if(data != null && !data.isEmpty())
+					//Somehow, for some JSON file, fileMapper fail to handle the read string from the files
+					if(container == null || container.getMessageHeader() == null || container.getIndividualReport() == null || container.getValidation() == null)
 					{
+						String t = new String(Files.readAllBytes(path));
+						json.add(t);
+						validFiles.add(path);
+					}
+					else if(container != null && container.getMessageHeader() != null && container.getIndividualReport() != null && container.getValidation() != null)
+					{
+						String data = mapper.writeValueAsString(container);
 						json.add(data);
 						validFiles.add(path);
 					}
+//					else
+//					{
+//						System.out.println("\nMapped Data is empty\n");
+//					}
 				}
 				catch (Exception ex)
 				{
@@ -355,18 +368,13 @@ public class NDRApiUtils {
 				}
 			}
 
-			if (json.isEmpty())
+			if (json.isEmpty() || json.isEmpty())
 			{
 				summary.code = -1;
 				summary.message = "No Patient data to be pushed to the NDR";
 				return summary;
 			}
-			if (json == null || json.isEmpty())
-			{
-				summary.code = -1;
-				summary.message = "No Patient data to be pushed to the NDR";
-				return summary;
-			}
+
 			totalFiles = json.size();
 			summary.totalFiles = totalFiles;
 			System.out.println("\nPatient(s) to be pushed: " + totalFiles);

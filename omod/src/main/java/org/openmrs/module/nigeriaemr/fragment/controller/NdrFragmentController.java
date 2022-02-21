@@ -2,7 +2,6 @@ package org.openmrs.module.nigeriaemr.fragment.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.ApiResponse;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.Consumer;
@@ -16,9 +15,7 @@ import org.openmrs.module.nigeriaemr.ndrfactory.NDRApiUtils;
 import org.openmrs.module.nigeriaemr.omodmodels.*;
 import org.openmrs.module.nigeriaemr.service.FacilityLocationService;
 import org.openmrs.module.nigeriaemr.service.NdrExtractionService;
-import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import java.io.IOException;
@@ -32,8 +29,6 @@ import java.util.stream.Collectors;
 public class NdrFragmentController {
 	
 	NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
-	
-	NigeriaObsService nigeriaObsService = Context.getService(NigeriaObsService.class);
 	
 	NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 	
@@ -80,9 +75,9 @@ public class NdrFragmentController {
 	}
 	
 	public String generateCustomNDRFile(HttpServletRequest request,
-	        @RequestParam(value = "identifiers", required = false) String identifiers,
-	        @RequestParam(value = "to", required = false) String to,
-	        @RequestParam(value = "from", required = false) String from, @RequestParam(value = "opt") String opt) throws Exception {
+										@RequestParam(value = "identifiers", required = false) String identifiers,
+										@RequestParam(value = "to", required = false) String to,
+										@RequestParam(value = "from", required = false) String from, @RequestParam(value = "opt") String opt) throws Exception {
 		try {
 			// get date that's bounds to the date the export is kicked off
 			Date lastDate = null;
@@ -268,22 +263,22 @@ public class NdrFragmentController {
 	}
 	
 	public String getAllLocation() {
-        List<LocationModel> locationModels = new ArrayList<>();
-        String locationString = "";
+		List<LocationModel> locationModels = new ArrayList<>();
+		String locationString = "";
 
-        try {
+		try {
 
-            Context.getLocationService().getAllLocations().stream().forEach(a -> {
-                locationModels.add(new LocationModel(a.getName(), a.getLocationId()));
-            });
+			Context.getLocationService().getAllLocations().stream().forEach(a -> {
+				locationModels.add(new LocationModel(a.getName(), a.getLocationId()));
+			});
 
-            locationString = mapper.writeValueAsString(locationModels);
-        } catch (JsonProcessingException ex) {
-            Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+			locationString = mapper.writeValueAsString(locationModels);
+		} catch (JsonProcessingException ex) {
+			Logger.getLogger(NdrFragmentController.class.getName()).log(Level.SEVERE, null, ex);
+		}
 
-        return locationString;
-    }
+		return locationString;
+	}
 	
 	public String getPatientLocationAggregate() {
 		String responseString = "";
@@ -348,5 +343,27 @@ public class NdrFragmentController {
 		NDRApiUtils ndrApiUtils = new NDRApiUtils();
 		NDRApiHandshakeSummary summary = ndrApiUtils.pushData(reportFolder);
 		return summary;
+	}
+	
+	public NDRApiHandshakeSummary pushBatchData(HttpServletRequest request) {
+		//Henry: This is needfully done here so that the folder can be retrieved for enumerating the files
+		String contextPath = request.getContextPath();
+		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		String downloadFolder = Utils.getDownloadFolder(fullContextPath);
+		String reportFolder = Paths.get(downloadFolder, "NDR").toString();
+		NDRApiUtils ndrApiUtils = new NDRApiUtils();
+		NDRApiHandshakeSummary summary = ndrApiUtils.pushBatchData(reportFolder);
+		return summary;
+	}
+	
+	public Integer getTotalFiles(HttpServletRequest request) {
+		//Henry: This is needfully done here so that the folder can be retrieved for enumerating the files
+		String contextPath = request.getContextPath();
+		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		String downloadFolder = Utils.getDownloadFolder(fullContextPath);
+		String reportFolder = Paths.get(downloadFolder, "NDR").toString();
+		NDRApiUtils ndrApiUtils = new NDRApiUtils();
+		Integer totalFiles = ndrApiUtils.getTotalFiles(reportFolder);
+		return totalFiles;
 	}
 }

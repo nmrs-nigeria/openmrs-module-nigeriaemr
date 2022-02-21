@@ -23,23 +23,23 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Consumer implements MessageListener {
-
+	
 	JAXBContext jaxbContext;
-
+	
 	NDRExtractor ndrExtractor;
-
+	
 	static String opt;
-
+	
 	public Consumer() {
 		try {
 			jaxbContext = JAXBContext.newInstance("org.openmrs.module.nigeriaemr.model.ndr");
 		}
 		catch (Exception e) {
 			LoggerUtils.write(Consumer.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
-					LoggerUtils.LogLevel.live);
+			    LoggerUtils.LogLevel.live);
 		}
 	}
-
+	
 	public static void initialize(UserContext userContext, String extractionOpt) {
 		Context.openSession();
 		opt = extractionOpt;
@@ -60,7 +60,7 @@ public class Consumer implements MessageListener {
 		Context.addProxyPrivilege("Get Identifier Types");
 		Context.addProxyPrivilege("Manage Global Properties");
 	}
-
+	
 	public void checkIfExportIsComplete() {
 		try {
 			NdrExtractionService ndrExtractionService = new NdrExtractionService(jaxbContext);
@@ -71,10 +71,10 @@ public class Consumer implements MessageListener {
 		}
 		catch (Exception e) {
 			LoggerUtils.write(Consumer.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
-					LoggerUtils.LogLevel.live);
+			    LoggerUtils.LogLevel.live);
 		}
 	}
-
+	
 	@Override
 	public void onMessage(Message message) {
 		try {
@@ -84,13 +84,13 @@ public class Consumer implements MessageListener {
 			NDRExport ndrExport = (NDRExport) msg.getObject();
 			initialize(null, opt);
 			LoggerUtils.write(Consumer.class.getName(),
-					"processing " + ndrExport.getId() + "with batchID " + ndrExport.getPatientsList(),
-					LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
+			    "processing " + ndrExport.getId() + "with batchID " + ndrExport.getPatientsList(),
+			    LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
 			System.out.println("executing export" + ndrExport.getId());
 			ndrExtractionService.export(ndrExport, opt);
 			Context.clearSession();
 			Context.closeSession();
-
+			
 			//System.gc();
 		}
 		catch (JMSException e) {
@@ -100,7 +100,7 @@ public class Consumer implements MessageListener {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void stopAllExports() {
 		try {
 			NdrExtractionService ndrExtractionService = new NdrExtractionService(jaxbContext);

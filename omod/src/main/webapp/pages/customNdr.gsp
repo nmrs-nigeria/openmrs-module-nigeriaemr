@@ -2,7 +2,6 @@
 
 <%= ui.resourceLinks() %>
 
-
 <div class="row wrapper  white-bg page-heading"  style="">
 
     <h4 style="text-align: center">
@@ -56,6 +55,20 @@
         </div>
     </div>
 </div>
+
+<div id="gen-wait" class="dialog" style="display: none; padding: 20px; position: absolute; z-index: 999; margin-left: 16.2%; margin-right: 15%;">
+    <div class="row">
+        <div class="col-md-3 col-xs-3 offset-2" >
+            <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:100px">
+        </div>
+    </div>
+    <div>
+        <div class="col-md-7 col-xs-7 " style="text-align:center;">
+            <h1>Please wait, operation in progress...</h1>
+        </div>
+    </div>
+</div>
+
 <!--- END OF NDR AUTHENTICATION FOR API  HANDSHAKE --->
 
 <div class="container" style="padding-top: 10px;">
@@ -132,18 +145,6 @@
             </tbody>
         </table>
     </div>
-    <div id="gen-wait" class="dialog" style="display: none; ">
-        <div class="row">
-            <div class="col-md-3 col-xs-3 offset-2" >
-                <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:100px">
-            </div>
-        </div>
-        <div>
-            <div class="col-md-7 col-xs-7 " style="text-align:center;">
-                <h1>Please wait, operation in progress...</h1>
-            </div>
-        </div>
-    </div>
     <script src="../moduleResources/nigeriaemr/scripts/sockjs.min.js"></script>
     <script src="../moduleResources/nigeriaemr/scripts/stomp.min.js"></script>
 </div>
@@ -157,6 +158,8 @@
     let totalJSONFiles = 0;
     let totalPushed = 0;
     let isOnline = false;
+    let processingFile = 0;
+    let processing = false;
     jq = jQuery;
 
     jq(document).ready(function ()
@@ -165,22 +168,6 @@
         rdo.checked = true;
         checkPendingJsonFiles();
     });
-
-    const socket = new WebSocket("ws://localhost:8081/openmrs/nigeriaemr/websocket/realtime");
-    socket.binaryType = "arraybuffer";
-    console.log(socket);
-    socket.onopen = function (event)
-    {
-        console.log(event);
-        alert("Connected");
-    };
-
-    socket.onmessage = function (event)
-    {
-        alert("Received: " + event.data);
-        console.log(event.data);
-    };
-
 
     checkBoxCheck();
     function checkBoxCheck()
@@ -400,6 +387,9 @@
     {
         exportTriggered = true;
         apiPushDone = false;
+        processingFile = 0;
+        processing = true;
+
         const checkBox = document.getElementById("custom");
         let url = "${ ui.actionLink("nigeriaemr", "ndr", "generateNDRFile") }"
         if (checkBox.checked === true){
@@ -425,16 +415,19 @@
                 'opt': extractionOpt
             }
 
-        }).success(function(filename) {
+        }).success(function(filename)
+        {
             //Old implementation
             if (filename.endsWith(".zip")){
                 jq('#gen-wait').hide();
                 window.location = filename;
-                loadFileList()
+                loadFileList();
+                checkUp();
             }else{
                 alert(filename)
                 jq('#gen-wait').hide();
-                loadFileList()
+                loadFileList();
+                checkUp();
             }
             jq('#gen-wait').hide();
         })
@@ -471,7 +464,6 @@
 
     function loadFileListDefault(showProgressDialog)
     {
-        processing = false
         if (showProgressDialog) jq('#gen-wait').show();
         const checkBox = document.getElementById("custom");
         let url = "${ ui.actionLink("nigeriaemr", "ndr", "getFileList") }"
@@ -484,10 +476,28 @@
         {
             jq("#TableBody").empty();
             const fileListObj = jq.parseJSON(fileList);
+
+            //check to see if there is a processing file
+            //This check is very important for data push directly to the NDR via API
+            let processingFiles = fileListObj.filter(function(p)
+            {
+                return !p.active || p.status === "Processing";
+            });
+
+            if(processingFiles.length > 0)
+            {
+                processingFile = processingFiles.length;
+                processing = true;
+            }
+            else
+            {
+                processing = false;
+            }
+
             for (let i = 0; i < fileListObj.length; i++)
             {
-                var success = (fileListObj[i].status).includes('Completed');
-                var Paused = (fileListObj[i].status) === 'Paused';
+                let success = (fileListObj[i].status).includes('Completed');
+                let Paused = (fileListObj[i].status) === 'Paused';
                 if(fileListObj[i].active)
                 {
                     if(success)
@@ -559,9 +569,8 @@
                                     "</tr>");
                         }
                     }
-                }else{
-                    processing = true
-
+                }else
+                {
                     jq('#TableBody')
                         .append("<tr style=\"opacity:0.6;filter: alpha(opacity = 60)\">" +
                             "<td>" + fileListObj[i].owner + "</td>" +
@@ -580,12 +589,6 @@
             }
             jq('#gen-wait').hide();
 
-            //push data to the NDR via API calls
-            if(!apiPushDone && exportTriggered && !processing && extractionOpt === 'json')
-            {
-                apiPushDone = true;
-                initNDRPush();
-            }
         }).error(function (xhr, status, err)
         {
             if (showProgressDialog) alert('There was an error loading file list ' + err);
@@ -594,14 +597,37 @@
         return processing
     }
 
+    //This function is very important in determining whe extraction competes
+    //so that Data push to the NDR can commence if JSON option was selected
+    function checkUp()
+    {
+        const checkPending = setInterval(function()
+        {
+            if(processingFile > 0 && exportTriggered && extractionOpt === 'json')
+            {
+                if(!apiPushDone && !processing)
+                {
+                    processingFile = 0;
+                    apiPushDone = true;
+                    exportTriggered = false;
+                    initNDRPush(checkPending);
+                }
+            }
+
+        }, 5000);
+    }
+
     //Check for internet connectivity by pinging the NDR API Endpoint
     //to ensure data push is not initiated when offline
     const checkOnlineStatus = async () =>
     {
-        try {
+        try
+        {
             const ping = await fetch("http://ndrstaging.phis3project.org.ng:8087/v1/utils/ping");
+            // const ping = await fetch("https://localhost:44351/v1/utils/ping");
             return ping.status >= 200 && ping.status < 300; // either true or false
-        } catch (err)
+        }
+        catch (err)
         {
             alert("You do not have an active internet connection");
             return false;
@@ -622,8 +648,8 @@
             {
                 totalJSONFiles = res;
                 let message = "<br/><span>Found some files yet to be pushed to the NDR.</span>" +
-                    "<br/><span>Total Patient (s) To be pushed: " +  totalJSONFiles + "</span>" +
-                    "<br/><span>Total Patient(s) pushed: <span id='totalPushed'>" + totalPushed + "</span></span>";
+                    "<br/><span>Total Patient (s) To be pushed: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
+                    "<br/><span>Total Patient(s) pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>";
 
                 jq('#ndrAuth').show();
                 jq('#btnPushData').prop('disabled', false);
@@ -639,11 +665,12 @@
             });
     }
 
-    async function initNDRPush()
+    async function initNDRPush(checkPending)
     {
         totalJSONFiles = 0;
         totalPushed = 0;
         isOnline = await checkOnlineStatus();
+        clearInterval(checkPending);
         if(!isOnline)
         {
             alert("You do not have an active internet connectivity");
@@ -675,8 +702,8 @@
             if (res !== undefined && res !== null && res > 0)
             {
                 totalJSONFiles = res;
-                let message = "<span>Total Patient (s) Extracted: " +  totalJSONFiles + "</span>" +
-                    "<br/><span>Total Patient(s) pushed: <span id='totalPushed'>" + totalPushed + "</span></span>"
+                let message = "<span>Total Extracted Valid Patient Data: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "/span>" +
+                    "<br/><span>Total Patient Data pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>"
                 apiInfo.html(message);
                 pushD();
             }
@@ -911,7 +938,12 @@
     }
 
     function resumeFile(id){
-        if (confirm("Are you sure you want to resume ?") === true) {
+        if (confirm("Are you sure you want to resume ?") === true)
+        {
+            exportTriggered = true;
+            apiPushDone = false;
+            processing = true;
+
             jq('#gen-wait').show();
             if(id)
             {
@@ -926,7 +958,8 @@
                     jq('#gen-wait').hide();
                     if(data){
                         alert('resumed');
-                        loadFileList()
+                        loadFileList();
+                        checkUp();
                     }else{
                         alert('There was an error restarting');
                         loadFileList()
@@ -1008,45 +1041,5 @@
 
     function downloadFile(file){
         window.location = file
-    }
-
-    let stompClient = null;
-
-    function setConnected(connected)
-    {
-        console.log("WebSocket Connected: " + connected);
-    }
-
-    function connect()
-    {
-        var socket = new SockJS('/gs-guide-websocket');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, function (frame)
-        {
-            setConnected(true);
-            console.log('Connected: ' + frame);
-            stompClient.subscribe('/realtime/updates', function (realtime)
-            {
-                console.log('Realtime: ' + realtime);
-                //Update API handshake progress
-                //showGreeting(JSON.parse(realtime.body).content);
-            });
-            stompClient.subscribe('/realtime/refresh', function (ackPing)
-            {
-                console.log('Extraction done: ' + ackPing);
-                //This means that Extraction is completed.
-                //Refresh the Index table
-                loadFileListDefault(true);
-            });
-        });
-    }
-    function disconnect()
-    {
-        if (stompClient !== null)
-        {
-            stompClient.disconnect();
-        }
-        setConnected(false);
-        console.log("Disconnected");
     }
 </script>
