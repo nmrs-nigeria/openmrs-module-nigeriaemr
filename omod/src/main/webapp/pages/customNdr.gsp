@@ -702,7 +702,7 @@
             if (res !== undefined && res !== null && res > 0)
             {
                 totalJSONFiles = res;
-                let message = "<span>Total Extracted Valid Patient Data: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "/span>" +
+                let message = "<span>Total Extracted Valid Patient Data: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
                     "<br/><span>Total Patient Data pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>"
                 apiInfo.html(message);
                 pushD();
@@ -800,7 +800,7 @@
                     {
                         if (totalPushed < totalJSONFiles)
                         {
-                            message = "<br/><span style=" + "font-size: 0.96em !important;" + ">Some Patients data were not successfully pushed to the NDR.</span>" +
+                            message = "<br/><span style=\"font-size: 0.96em !important;\">Some Patients data were not successfully pushed to the NDR.</span>" +
                                 "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
                             btnPushData.val('Push remaining Data');
                             pushData.show();
@@ -824,7 +824,7 @@
                 {
                     if(totalPushed < 1)
                     {
-                        message = (res.message !== null && res.message.length > 0)? "<br/><span style=" + "font-size: 0.96em !important;" + ">" + res.message + "</span>": "<br/><span>An unknown error was encountered. Patients' data could not be pushed to the NDR.</span>";
+                        message = (res.message !== null && res.message.length > 0)? "<br/><span style=\"font-size: 0.96em !important;\">" + res.message + "</span>": "<br/><span>An unknown error was encountered. Patients' data could not be pushed to the NDR.</span>";
                         message += "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
                         btnPushData.val('Push Data');
                     }

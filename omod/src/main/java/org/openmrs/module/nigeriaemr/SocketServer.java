@@ -21,7 +21,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @Configuration
 @ServerEndpoint(value = "/realtime")
-@ComponentScan
 public class SocketServer
 {
 	private Session session;
