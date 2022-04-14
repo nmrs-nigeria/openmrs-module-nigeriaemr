@@ -6,6 +6,8 @@ public class NDRApiHandshakeSummary {
 	
 	public String message;
 	
+	public String batchNumber;
+	
 	public Integer totalFiles;
 	
 	public Integer totalPushed;

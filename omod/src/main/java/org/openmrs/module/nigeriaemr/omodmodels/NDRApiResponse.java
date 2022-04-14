@@ -12,5 +12,9 @@ public class NDRApiResponse {
 	
 	public String token;
 	
+	public String batchNumber;
+	
 	public boolean isAuthenticated;
+	
+	public boolean credentialsProvided;
 }

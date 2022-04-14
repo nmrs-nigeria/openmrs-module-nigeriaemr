@@ -11,17 +11,21 @@
 
 <!--- NDR AUTHENTICATION FOR API  HANDSHAKE --->
 <div id="ndrAuth" class="dialog" style="display: none; padding: 20px; position: absolute; z-index: 999; margin-left: 16.2%; margin-right: 15%;">
-    <div style="padding: 20px; position: absolute; z-index: 999; margin-top: -6%; width: 440px;">
-        <button type="button" class="close" aria-label="Close" style="background: #dddddd !important; float: right;" title="Close" onclick="cancelAuth()">
+    <div style="padding: 20px; position: absolute; z-index: 999; margin-top: -4%; width: 450px; background-color: #e8e8e8; height: 15px; margin-left: -20px;">
+        <button type="button" class="close" aria-label="Close" style="background: #e8e8e8 !important; float: right; margin-top: -13px; margin-right: -18px;" title="Close" onclick="cancelAuth()">
             <span aria-hidden="true" style="font-size: 20px; font-weight: bold;">&times;</span>
         </button>
     </div>
     <div id="waitDiv">
-        <div class="col-md-7 col-xs-7 " style="text-align:center; padding-top: 4%; padding-bottom: 3%">
+        <div class="col-md-12 col-xs-12" style="text-align:center; padding-top: 6%; padding-bottom: 3%">
             <div class="col-md-3 col-xs-3 offset-2" id="waitGif" style="display: none">
-                <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:40px">
+                <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:40px; margin-top: 35px;">
             </div>
-            <h4 id="apiInfo" style="overflow: auto; font-size: 1em !important; color: #000 !important; margin-top: 30px;">Please wait, Checking if NDR API credentials already exists...</h4>
+            <h4 id="apiInfo" style="overflow: auto; font-size: 1em !important; font-weight: bold; margin-top: 25px;">Please wait, Checking if NDR API credentials already exists...</h4>
+            <br/>
+            <span id="batchesHeader" style="font-weight: bold !important;">The resulting Data Batches are: </span>
+            <br/><br/>
+            <div id="batchSpan" style="overflow-y: scroll; height: 250px; max-height: 250px; display: none"></div>
         </div>
         <div style="width: 45%; display: none" id="pushData">
             <input id="btnPushData" style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Push failed Data" onclick="initNDRPush()" class="btn btn-primary" />
@@ -160,6 +164,8 @@
     let isOnline = false;
     let processingFile = 0;
     let processing = false;
+    let credentialsProvided = false;
+    let batches = [];
     jq = jQuery;
 
     jq(document).ready(function ()
@@ -216,6 +222,7 @@
     function setExtractionOpt(opt)
     {
         extractionOpt = opt;
+        jq('#btnPushData').hide();
         if(opt === 'json')
         {
             let url = "${ ui.actionLink("nigeriaemr", "ndr", "checkAuth") }";
@@ -225,6 +232,7 @@
             let waitDiv = jq('#waitDiv');
             let apiInfo = jq('#apiInfo');
             let login = jq('#login');
+            jq('#batchSpan').hide().html('');
 
             apiInfo.html('Please wait, Checking if NDR API credentials already exists...');
             waitDiv.show();
@@ -238,16 +246,29 @@
                 console.log(res);
                 if (res.code > 0 && (res.token !== null && res.token.length > 0))
                 {
-                    apiInfo.html('Please wait, Checking if NDR API credentials already exists...');
+                    apiInfo.html('');
                     ndrAuth.hide();
                     waitDiv.show();
                     login.hide();
                     enableControls();
                 }
-                else{
-                    alert(res.message);
-                    waitDiv.hide();
-                    login.show();
+                else
+                {
+                    if (res.credentialsProvided !== null && res.credentialsProvided === true)
+                    {
+                        credentialsProvided = true;
+                        apiInfo.html('Existing Auth token has expired or is empty. Authenticating with the NDR using credentials found in the Global properties...');
+                        ndrAuth.show();
+                        waitDiv.show();
+                        login.hide();
+                        authApi();
+                    }
+                    else
+                    {
+                        alert(res.message);
+                        waitDiv.hide();
+                        login.show();
+                    }
                 }
             })
                 .error(function(xhr, status, err)
@@ -275,15 +296,18 @@
 
         // let waitGif = jq('#waitGif');
 
-        if(email === null || email.length < 1)
+        if (credentialsProvided === false)
         {
-            alert('Please provide your NDR log in Email');
-            return;
-        }
-        if(password === null || password.length < 1)
-        {
-            alert('Please provide your NDR log in Password');
-            return;
+            if(email === null || email.length < 1)
+            {
+                alert('Please provide your NDR log in Email');
+                return;
+            }
+            if(password === null || password.length < 1)
+            {
+                alert('Please provide your NDR log in Password');
+                return;
+            }
         }
 
         authBtn.attr('value', 'Please wait...').css('font-style', 'italic').prop('disabled', true);
@@ -294,8 +318,8 @@
             url: url,
             dataType: "json",
             data: {
-                'email' : email,
-                'password': password
+                'email' : (email === null || email.length < 1)? '' : email,
+                'password': (password === null || password.length < 1)? '' : password
             }
         }).success(function(res)
         {
@@ -597,7 +621,7 @@
         return processing
     }
 
-    //This function is very important in determining whe extraction competes
+    //This function is very important in determining when extraction competes
     //so that Data push to the NDR can commence if JSON option was selected
     function checkUp()
     {
@@ -638,6 +662,9 @@
     {
         totalJSONFiles = 0;
         totalPushed = 0;
+        let apiInfo = jq('#apiInfo');
+        apiInfo.css('color', '#000 !important');
+        jq('#batchesHeader').hide();
         let url = "${ ui.actionLink("nigeriaemr", "ndr", "getTotalFiles") }";
         jq.ajax({
             url: url,
@@ -647,14 +674,14 @@
             if (res !== undefined && res !== null && res > 0)
             {
                 totalJSONFiles = res;
-                let message = "<br/><span>Found some files yet to be pushed to the NDR.</span>" +
-                    "<br/><span>Total Patient (s) To be pushed: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
-                    "<br/><span>Total Patient(s) pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>";
+                let message = "<br/><span style=\"color: #000 !important;\">Found some files yet to be pushed to the NDR.</span>" +
+                    "<br/><span style=\"color: #000 !important;\">Total Patient (s) To be pushed: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
+                    "<br/><span style=\"color: #000 !important;\">Total Patient(s) pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>";
 
                 jq('#ndrAuth').show();
                 jq('#btnPushData').prop('disabled', false);
                 jq('#waitDiv').show();
-                jq('#apiInfo').html(message);
+                apiInfo.html(message);
                 jq('#btnPushData').val('Push Data');
                 jq('#pushData').show();
             }
@@ -669,13 +696,19 @@
     {
         totalJSONFiles = 0;
         totalPushed = 0;
+        batches = [];
+        let batchSpan = jq('#batchSpan');
+        batchSpan.html('');
+        batchSpan.hide();
+        jq('#batchesHeader').hide();
+
         isOnline = await checkOnlineStatus();
         clearInterval(checkPending);
         if(!isOnline)
         {
             alert("You do not have an active internet connectivity");
             extractionOpt = 'xml';
-            const rdo =  document.getElementById("asXml");
+            // const rdo =  document.getElementById("asXml");
             return;
         }
 
@@ -686,7 +719,7 @@
         let btnPushData = jq('#btnPushData');
         btnPushData.val('Please wait...');
         btnPushData.prop('disabled', true);
-        jq('#apiInfo').html('Evaluating data to be pushed to the NDR. Please wait...');
+        apiInfo.css('color', '#000 !important').html('Evaluating data to be pushed to the NDR. Please wait...');
         jq('#login').hide();
         jq('#waitDiv').show();
         waitGif.show();
@@ -704,7 +737,7 @@
                 totalJSONFiles = res;
                 let message = "<span>Total Extracted Valid Patient Data: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
                     "<br/><span>Total Patient Data pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>"
-                apiInfo.html(message);
+                apiInfo.css('color', '#000 !important').html(message);
                 pushD();
             }
             else
@@ -712,14 +745,14 @@
                 let message = "<br/><span>There are no patient data to be pushed to the NDR</span>";
                 apiInfo.html(message);
                 waitGif.css('display', 'none');
-                apiInfo.html("There no valid JSON data to be pushed to the NDR");
+                apiInfo.css('color', '#000 !important').html("There no valid JSON data to be pushed to the NDR");
             }
         })
             .error(function(xhr, status, err)
             {
                 apiPushDone = true;
                 waitGif.css('display', 'none');
-                apiInfo.html("An error was encountered " + err);
+                apiInfo.css('color', '#000 !important').html("An error was encountered " + err);
                 btnPushData.val('Push Data');
                 btnPushData.prop('disabled', false);
                 pushData.show();
@@ -742,8 +775,9 @@
                 btnPushData.val('Push Data');
                 pushData.show();
                 waitGif.css('display', 'none');
-                apiInfo.append(message);
+                apiInfo.css('color', '#000 !important').append(message);
                 btnPushData.prop('disabled', false);
+                compileBatches();
             }
             return;
         }
@@ -753,32 +787,37 @@
             dataType: "json"
         }).success(function(res)
         {
+            console.log(res);
             if (res !== undefined && res !== null && res.code > 0)
             {
                 let message = "";
-
+                if(res.batchNumber !== null && res.batchNumber.length > 0)
+                {
+                    batches.push(res.batchNumber);
+                }
                 if (res.totalPushed > 0)
                 {
                     totalPushed += res.totalPushed;
                     jq('#totalPushed').html(totalPushed);
-
                     if (totalPushed == totalJSONFiles)
                     {
-                        message = "<br/><br/><span>All Patient data has been successfully pushed to the NDR.</span>";
+                        message = "<br/><br/><span style=\"color: green !important;\">All Patient data has been successfully pushed to the NDR.</span>";
                         waitGif.css('display', 'none');
                         apiInfo.append(message);
                         btnPushData.prop('disabled', false);
                         pushData.hide();
+                        compileBatches();
                     }
                     else
                     {
                         if (totalPushed > totalJSONFiles)
                         {
-                            message = "<br/><br/><span>All Patient data has been successfully pushed to the NDR.</span>";
+                            message = "<br/><br/><span style=\"color: green !important;\">All Patient data has been successfully pushed to the NDR.</span>";
                             waitGif.css('display', 'none');
                             apiInfo.append(message);
                             btnPushData.prop('disabled', false);
                             pushData.hide();
+                            compileBatches();
                         }
                         else{
                             //continue the pushing data to the NDR
@@ -793,8 +832,10 @@
 
                     if (totalPushed == totalJSONFiles)
                     {
-                        message = "<br/><br/><span>All Patient data has been successfully pushed to the NDR.</span>";
+                        message = "<br/><br/><span style=\"color: green !important;\">All Patient data has been successfully pushed to the NDR.</span>";
                         pushData.hide();
+                        apiInfo.append(message);
+                        compileBatches();
                     }
                     else
                     {
@@ -804,9 +845,10 @@
                                 "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
                             btnPushData.val('Push remaining Data');
                             pushData.show();
+                            compileBatches();
+                            apiInfo.css('color', '#000 !important').append(message);
                         }
                     }
-                    apiInfo.append(message);
                 }
             }
             else
@@ -816,9 +858,11 @@
                 let message = "";
                 if (totalPushed == totalJSONFiles)
                 {
-                    message = "<br/><br/><span>All Patient data has been successfully pushed to the NDR.</span>";
+                    message = "<br/><br/><span style=\"color: green !important;\">All Patient data has been successfully pushed to the NDR.</span>";
                     apiInfo.append(message);
                     pushData.hide();
+                    apiInfo.append(message);
+                    compileBatches();
                 }
                 else
                 {
@@ -834,8 +878,9 @@
                             "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
                         btnPushData.val('Push remaining Data');
                     }
-                    apiInfo.append(message);
+                    apiInfo.css('color', '#000 !important').append(message);
                     pushData.show();
+                    compileBatches();
                 }
             }
         })
@@ -856,9 +901,26 @@
                         "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
                     btnPushData.val('Push remaining Data');
                 }
-                apiInfo.append(message);
+                apiInfo.css('color', '#000 !important').append(message);
                 pushData.show();
             });
+    }
+
+    function compileBatches()
+    {
+        let batchHeader = jq('#batchesHeader');
+        let batchSpan = jq('#batchSpan');
+        if(batches.length > 0)
+        {
+            let batchStr = "";
+            batches.forEach(function (b, i)
+            {
+                batchStr += "<span>" + b + "</span><br/>";
+            });
+            batchSpan.append(batchStr);
+            batchHeader.show();
+            batchSpan.show();
+        }
     }
 
     function refreshList()

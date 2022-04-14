@@ -50,6 +50,10 @@ public class NDRApiUtils {
 	
 	private String beepSize = Context.getAdministrationService().getGlobalProperty("beep_size");
 	
+	private String beepUser = Context.getAdministrationService().getGlobalProperty("beep_user");
+	
+	private String beepPass = Context.getAdministrationService().getGlobalProperty("beep_pass");
+	
 	Integer totalFiles = 0;
 	
 	Integer pushedFiles = 0;
@@ -94,7 +98,22 @@ public class NDRApiUtils {
 	
 	public NDRApiResponse auth(String email, String password) {
 		NDRApiResponse apiRes = new NDRApiResponse();
+		NDRAuth auth = new NDRAuth();
 		try {
+			if ((beepUser != null && !beepUser.isEmpty()) && (beepPass != null && !beepPass.isEmpty())) {
+				auth.email = beepUser;
+				auth.password = beepPass;
+			} else {
+				if ((email != null && !email.isEmpty()) && (password != null && !password.isEmpty())) {
+					auth.email = email;
+					auth.password = password;
+				} else {
+					apiRes.code = -1;
+					apiRes.message = "Log in credentials are either empty or incorrect";
+					return apiRes;
+				}
+			}
+			
 			Unirest unirest = new Unirest();
 			//UniRest client to accept self-signed SSL certificates
 			setUniRestClient(unirest);
@@ -102,10 +121,7 @@ public class NDRApiUtils {
 			String api = StringUtils.removeEnd(host, "/").trim() + "/auth";
 			System.out.println("Authenticating with the NDR...");
 			System.out.println("\n");
-			//convert to json
-			NDRAuth auth = new NDRAuth();
-			auth.email = email;
-			auth.password = password;
+			
 			String json = new Gson().toJson(auth);
 			
 			//Post request
@@ -119,6 +135,12 @@ public class NDRApiUtils {
 				c.add(Calendar.DATE, 7);
 				Context.getAdministrationService().setGlobalProperty("ndr_beep_date", dateFormat.format(c.getTime()));
 				System.out.println("\nAuthentication with the NDR was successful\n");
+				
+				if (((beepUser == null || beepUser.isEmpty()) && (beepPass == null || beepPass.isEmpty()))
+				        && ((email != null && !email.isEmpty()) && (password != null && !password.isEmpty()))) {
+					Context.getAdministrationService().setGlobalProperty("beep_user", email);
+					Context.getAdministrationService().setGlobalProperty("beep_pass", password);
+				}
 				
 			} else {
 				//pass error message to view
@@ -141,6 +163,12 @@ public class NDRApiUtils {
 		try {
 			String token = Context.getAdministrationService().getGlobalProperty("ndr_beep");
 			String tokenDateStr = Context.getAdministrationService().getGlobalProperty("ndr_beep_date");
+			
+			if ((beepUser != null && !beepPass.isEmpty()) && (beepPass != null && !beepPass.isEmpty())) {
+				apiRes.credentialsProvided = true;
+			} else {
+				apiRes.credentialsProvided = false;
+			}
 			
 			if (token != null && !token.isEmpty()) {
 				apiRes.token = token;
@@ -398,6 +426,7 @@ public class NDRApiUtils {
 					Files.delete( path );
 				}
 				summary.code = 5;
+				summary.batchNumber = apiResponse.batchNumber;
 			}
 			else
 			{

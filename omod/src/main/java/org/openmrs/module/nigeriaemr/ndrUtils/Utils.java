@@ -326,7 +326,8 @@ public class Utils {
 		return Context.getAdministrationService().getGlobalProperty(LoggerUtils.PATIENT_LIMIT_PROPERTY);
 	}
 	
-	public static List<Obs> extractObsfromEncounter(List<Encounter> encs) {
+	public static List<Obs> extractObsfromEncounter(List<Encounter> encs)
+	{
         List<Obs> responseObs = new ArrayList<>();
 
         encs.forEach(a -> {
