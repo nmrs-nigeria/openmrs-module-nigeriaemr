@@ -501,6 +501,8 @@
             jq("#TableBody").empty();
             const fileListObj = jq.parseJSON(fileList);
 
+            console.log(fileListObj[0]);
+
             //check to see if there is a processing file
             //This check is very important for data push directly to the NDR via API
             let processingFiles = fileListObj.filter(function(p)

@@ -60,7 +60,6 @@ public class NdrExtractionService {
 		Context.addProxyPrivilege("Get Observations");
 		Context.addProxyPrivilege("Get Encounters");
 		Context.addProxyPrivilege("Get Concepts");
-		
 	}
 	
 	public NdrExtractionService(JAXBContext jaxbContext, boolean b) throws Exception {
