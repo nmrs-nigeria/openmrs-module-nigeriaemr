@@ -2,7 +2,7 @@
 
 <%= ui.resourceLinks() %>
 
-<div class="row wrapper  white-bg page-heading"  style="">
+<div class="wrapper  white-bg page-heading">
 
     <h4 style="text-align: center">
         NDR Export
@@ -28,7 +28,7 @@
             <div id="batchSpan" style="overflow-y: scroll; height: 250px; max-height: 250px; display: none"></div>
         </div>
         <div style="width: 45%; display: none" id="pushData">
-            <input id="btnPushData" style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Push failed Data" onclick="initNDRPush()" class="btn btn-primary" />
+            <input id="btnPushData" style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Push failed Data" onclick="initNDRPush(null)" class="btn btn-primary" />
         </div>
         <br/>
     </div>
@@ -61,7 +61,7 @@
 </div>
 
 <div id="gen-wait" class="dialog" style="display: none; padding: 20px; position: absolute; z-index: 999; margin-left: 16.2%; margin-right: 15%;">
-    <div class="row">
+    <div>
         <div class="col-md-3 col-xs-3 offset-2" >
             <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:100px">
         </div>
@@ -75,7 +75,29 @@
 
 <!--- END OF NDR AUTHENTICATION FOR API  HANDSHAKE --->
 
-<div class="container" style="padding-top: 10px;">
+<div id="errorLogs" class="dialog" style="display: none; width: 100% !important; margin-top: 1%;  box-shadow: 1px 1px 1px #999999, -1px -1px 1px #999999 !important;">
+    <div style="padding: 15px; background-color: #e8e8e8; height: 15px;"  class="row">
+        <div class="col-md-2">
+            <label style="font-weight: bold">File Name: </label>
+        </div>
+        <div class="col-md-8">
+           <label id="exportHeadr" style="font-weight: bold;font-size: 18px;"></label>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="close" aria-label="Close" style="background: #e8e8e8 !important; float: right; margin-top: -10px; margin-right: -1px; padding: 4px 8px !important;" title="Close" onclick="closeLogs()">
+                <span aria-hidden="true" style="font-size: 20px; font-weight: bold;">&times;</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="box white-background with-shadow" style="padding: 5px;">
+        <div class="box-heading" id="tabContainer">
+
+        </div>
+    </div>
+</div>
+
+<div class="container" id="container" style="padding-top: 10px;">
     <div style="margin-left: 28%; width: 50%; height: 50%; background-color: #00463f; border-radius: 10px; " id="customDiv">
         <br/> <br/>
         <div style="padding-left: 38px">
@@ -116,18 +138,31 @@
         <br/>
     </div>
     <br/>
-    <div style="margin-left: 32%; width: 40%; height: 50%; display: flex; border-top: 1px #e0e0e0 solid; border-bottom: 1px #e0e0e0 solid; padding-top: 10px; padding-bottom: 10px" class="row">
-        <div class="col-md-3">
+    <div style="margin-left: 32%; width: 40%; height: 50%; display: flex; border-top: 1px #e0e0e0 solid; border-bottom: 1px #e0e0e0 solid; padding-top: 10px; padding-bottom: 10px">
+        <div>
             <label for="asXml" style="color: #000; font-weight: bold; cursor: pointer">
                 <input style="cursor: pointer" type="radio" id="asXml" name="extOpt" value="Xml" onclick="setExtractionOpt('xml')"/>
                 Extract as XML
             </label>
         </div>
-        <div class="col-md-3" style="margin-left: 18%">
+        <div style="margin-left: 18%">
             <label for="asJson" style="color: #000; font-weight: bold; cursor: pointer">
                 <input style="margin-left: 10px; cursor: pointer" type="radio" id="asJson" value="asJson" name="extOpt" onclick="setExtractionOpt('json')"/>
                 Extract as JSON <i style="font-size: 20px;" id="json-hint" class="icon-info-sign" title="Please ensure you have an active internet connection"></i>
             </label>
+        </div>
+    </div>
+    <br/>
+    <div id="dvGetLogs">
+        <div class="col-md-8" style="width: 65%">
+            <label style="font-weight: bold">
+                The error logs of some batches sent to the NDR via API are yet to be pulled from the NDR
+            </label>
+        </div>
+        <div class="col-md-4" style="width: 35%">
+            <a class="button-13" style="float: right" onclick="getNdrErrorLogs()" class="button-13">
+                Get NDR Error Logs
+            </a>
         </div>
     </div>
     <br/>
@@ -152,10 +187,173 @@
     <script src="../moduleResources/nigeriaemr/scripts/sockjs.min.js"></script>
     <script src="../moduleResources/nigeriaemr/scripts/stomp.min.js"></script>
 </div>
+<style>
+.row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    /*margin-right: -15px;*/
+    /*margin-left: -15px;*/
+}
+.col-md-3
+{
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+.col-md-4 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 33.333333%;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+}
+.col-md-8 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 66.666667%;
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+}
+.col-md-2 {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 16.666667%;
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+}
+#dvGetLogs{
+    margin-left: 27%;
+    width: 55%;
+    height: 50%;
+    display: none;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    justify-content: center;
+}
+.button-13 {
+    background-color: #fff;
+    border: 1px solid #d5d9d9;
+    border-radius: 8px;
+    box-shadow: rgb(213 217 217 / 50%) 0 0 0 0;
+    color: #0f1111 !important;
+    cursor: pointer;
+    font-family: "Amazon Ember",sans-serif;
+    font-size: 13px;
+    text-decoration: none !important;;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    text-align: center;
+    padding: 10px 8px;
+    white-space: nowrap;
+    font-weight: bold;
+}
+.button-13:hover {
+    background-color: #fff;
+    box-shadow: rgb(213 217 217 / 50%) 0 2px 5px 0;
+}
+.text-danger {
+    color: #E85137 !important;
+}
+.list-group {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+.list-group-item:first-child {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+}
+.list-group-item {
+    padding: 0.15rem 0.15rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc !important;
+}
+
+/* Style the tab content */
+.tabcontent
+{
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.w3-btn, .w3-btn:link, .w3-btn:visited
+{
+    color: #FFFFFF;
+    background-color: #4CAF50;
+}
+.w3-btn, .ws-btn
+{
+    background-color: #f5f5f5 !important;
+    border-radius: 5px;
+    font-size: 17px;
+    font-family: 'Source Sans Pro', sans-serif;
+    padding: 6px 18px;
+}
+.w3-margin-bottom
+{
+    margin-bottom: 16px!important;
+}
+.w3-btn, .w3-button
+{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.w3-btn, .w3-button
+{
+    border: thin solid #000;
+    text-decoration: none !important;
+    display: inline-block;
+    padding: 8px 6px;
+    vertical-align: middle;
+    overflow: hidden;
+    text-decoration: none;
+    color: #000 !important;
+    background-color: inherit;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap;
+}
+</style>
 
 <script>
     let lastNDRRunDate = '${lastNDRRunDate}'
-    console.log(lastNDRRunDate)
     let extractionOpt = 'xml';
     let exportTriggered = false;
     let apiPushDone = false;
@@ -166,6 +364,7 @@
     let processing = false;
     let credentialsProvided = false;
     let batches = [];
+    let batchExport = 0;
     jq = jQuery;
 
     jq(document).ready(function ()
@@ -174,6 +373,42 @@
         rdo.checked = true;
         checkPendingJsonFiles();
     });
+
+    function openTab(obj)
+    {
+        let batchId = jq(obj).attr('id').replace('_btn', '');
+        // Declare all variables
+        let i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++)
+        {
+            jq(tabcontent[i]).css('display', 'none');
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++)
+        {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        jq('#' + batchId).css('display', 'block');
+        jq(obj).addClass('active')
+    }
+
+    function openLogs()
+    {
+        jq('#container').hide();
+        jq('#errorLogs').show();
+    }
+    function closeLogs()
+    {
+        jq('#errorLogs').hide();
+        jq('#container').show();
+    }
 
     checkBoxCheck();
     function checkBoxCheck()
@@ -346,6 +581,8 @@
         })
             .error(function(xhr, status, err)
             {
+                console.log(status);
+                console.log(err);
                 alert("Authentication with NDR failed. Please ensure your credentials are correct. " + err);
                 authBtn.attr('value', 'Submit').css('font-style', 'normal').attr('enabled', 'true');
                 btnCancel.attr('enabled', 'true');
@@ -501,8 +738,6 @@
             jq("#TableBody").empty();
             const fileListObj = jq.parseJSON(fileList);
 
-            console.log(fileListObj[0]);
-
             //check to see if there is a processing file
             //This check is very important for data push directly to the NDR via API
             let processingFiles = fileListObj.filter(function(p)
@@ -530,6 +765,11 @@
                     {
                         if(fileListObj[i].hasError)
                         {
+                            let logSnip = '';
+                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                            {
+                                logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                            }
                             jq('#TableBody')
                                 .append("<tr>" +
                                     "<td>" + fileListObj[i].owner + "</td>" +
@@ -544,9 +784,15 @@
                                     "<i style=\"font-size: 20px;\" class=\"icon-cloud-download edit-action\" title=\"download error file list\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Failed Files\" onclick=\"restartErrorFile('" + fileListObj[i].number + "')\"></i>" +
+                                    logSnip +
                                     "</td>" +
                                     "</tr>");
                         }else {
+                            let logSnip = '';
+                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                            {
+                                logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                            }
                             jq('#TableBody')
                                 .append("<tr>" +
                                     "<td>" + fileListObj[i].owner + "</td>" +
@@ -559,11 +805,20 @@
                                     "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Files\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
+                                    logSnip +
                                     "</td>" +
                                     "</tr>");
                         }
-                    }else{
-                        if(Paused) {
+                    }
+                    else
+                    {
+                        if(Paused)
+                        {
+                            let logSnip = '';
+                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                            {
+                                logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                            }
                             jq('#TableBody')
                                 .append("<tr>" +
                                     "<td>" + fileListObj[i].owner + "</td>" +
@@ -575,9 +830,17 @@
                                     "<td>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-play edit-action\" title=\"resume\" onclick=\"resumeFile('" + fileListObj[i].number + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    logSnip +
                                     "</td>" +
                                     "</tr>");
-                        }else {
+                        }
+                        else
+                        {
+                            let logSnip = '';
+                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                            {
+                                logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                            }
                             jq('#TableBody')
                                 .append("<tr>" +
                                     "<td>" + fileListObj[i].owner + "</td>" +
@@ -591,12 +854,22 @@
                                     "<i style=\"font-size: 20px;\" class=\"icon-download-alt edit-action\" title=\"download error files\" onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-cloud-download edit-action\" title=\"download error file list\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    logSnip +
                                     "</td>" +
                                     "</tr>");
                         }
                     }
                 }else
                 {
+                    if(exportTriggered === true && extractionOpt === 'json' && batchExport < 1)
+                    {
+                        batchExport = fileListObj[i].number;
+                    }
+                    let logSnip = '';
+                    if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                    {
+                        logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                    }
                     jq('#TableBody')
                         .append("<tr style=\"opacity:0.6;filter: alpha(opacity = 60)\">" +
                             "<td>" + fileListObj[i].owner + "</td>" +
@@ -608,7 +881,7 @@
                             "<td>" +
                             "<img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p>"+fileListObj[i].progress+"</p>" +
                             "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"refreshList()\"></i>" +
-                            "<i style=\"font-size: 20px;\" class=\"icon-pause edit-action\" title=\"pause\" onclick=\"pauseFile('" + fileListObj[i].number + "')\"></i>" +
+                            "<i style=\"font-size: 20px;\" class=\"icon-pause edit-action\" title=\"pause\" onclick=\"pauseFile('" + fileListObj[i].number + "')\"></i>" + logSnip +                        +
                             "</td>" +
                             "</tr>");
                 }
@@ -673,25 +946,89 @@
             dataType: "json"
         }).success(function(res)
         {
-            if (res !== undefined && res !== null && res > 0)
+            checkPendingNdrErrorLogs();
+            if (res !== undefined && res !== null && res.length > 0)
             {
-                totalJSONFiles = res;
-                let message = "<br/><span style=\"color: #000 !important;\">Found some files yet to be pushed to the NDR.</span>" +
-                    "<br/><span style=\"color: #000 !important;\">Total Patient (s) To be pushed: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
-                    "<br/><span style=\"color: #000 !important;\">Total Patient(s) pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>";
+                let tt = res.split(',');
+                batchExport = parseInt(tt[0]);
+                totalJSONFiles = parseInt(tt[1]);
+                if (batchExport > 0 && totalJSONFiles > 0)
+                {
+                    let message = "<br/><span style=\"color: #000 !important;\">Found some files yet to be pushed to the NDR.</span>" +
+                        "<br/><span style=\"color: #000 !important;\">Total Patient (s) To be pushed: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
+                        "<br/><span style=\"color: #000 !important;\">Total Patient(s) pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>";
 
-                jq('#ndrAuth').show();
-                jq('#btnPushData').prop('disabled', false);
-                jq('#waitDiv').show();
-                apiInfo.html(message);
-                jq('#btnPushData').val('Push Data');
-                jq('#pushData').show();
+                    jq('#ndrAuth').show();
+                    jq('#btnPushData').prop('disabled', false);
+                    jq('#waitDiv').show();
+                    apiInfo.html(message);
+                    jq('#btnPushData').val('Push Data');
+                    jq('#pushData').show();
+                }
             }
         })
-            .error(function(xhr, status, err)
+        .error(function(xhr, status, err)
+        {
+            checkPendingNdrErrorLogs();
+            //handle error
+        });
+    }
+
+    async function checkPendingNdrErrorLogs()
+    {
+        let url = "${ ui.actionLink("nigeriaemr", "ndr", "checkApiExportsWithPendingNdrErrorLogs") }";
+        jq.ajax({
+            url: url,
+            dataType: "json"
+        }).success(function(res)
+        {
+            if(res !== undefined && res !== null && res > 0)
             {
-                //handle error
-            });
+                jq('#dvGetLogs').css('display', 'flex');
+            }
+            else
+            {
+                jq('#dvGetLogs').hide();
+            }
+        })
+        .error(function(xhr, status, err)
+        {
+            jq('#dvGetLogs').hide();
+        });
+    }
+
+    async function getNdrErrorLogs()
+    {
+        isOnline = await checkOnlineStatus();
+        if(!isOnline)
+        {
+            alert("You do not have an active internet connectivity");
+            extractionOpt = 'xml';
+            // const rdo =  document.getElementById("asXml");
+            return;
+        }
+        jq('#gen-wait').show();
+        let url = "${ ui.actionLink("nigeriaemr", "ndr", "getLogs") }";
+        jq.ajax({
+            url: url,
+            dataType: "json"
+        }).success(function(res)
+        {
+            jq('#gen-wait').hide();
+            if(res !== undefined && res !== null && res > 0)
+            {
+                jq('#dvGetLogs').hide();
+                alert("Some Error Logs were successfully pulled from the NDR. You can view them by clicking the 'View NDR Error Logs' under 'Actions'");
+            }
+            else
+            {
+                alert('No error logs could be pulled from the NDR yet');
+            }
+        })
+        .error(function(xhr, status, err)
+        {
+            alert(err);
+        });
     }
 
     async function initNDRPush(checkPending)
@@ -703,9 +1040,7 @@
         batchSpan.html('');
         batchSpan.hide();
         jq('#batchesHeader').hide();
-
         isOnline = await checkOnlineStatus();
-        clearInterval(checkPending);
         if(!isOnline)
         {
             alert("You do not have an active internet connectivity");
@@ -713,6 +1048,9 @@
             // const rdo =  document.getElementById("asXml");
             return;
         }
+
+        if(checkPending!== null)
+            clearInterval(checkPending);
 
         let ndrAuth = jq('#ndrAuth');
         let apiInfo = jq('#apiInfo')
@@ -734,9 +1072,12 @@
         }).success(function(res)
         {
             apiPushDone = true;
-            if (res !== undefined && res !== null && res > 0)
+            if (res !== undefined && res !== null && res.length > 0)
             {
-                totalJSONFiles = res;
+                let tt = res.split(',');
+                batchExport = parseInt(tt[0]);
+                totalJSONFiles = parseInt(tt[1]);
+
                 let message = "<span>Total Extracted Valid Patient Data: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
                     "<br/><span>Total Patient Data pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>"
                 apiInfo.css('color', '#000 !important').html(message);
@@ -922,6 +1263,27 @@
             batchSpan.append(batchStr);
             batchHeader.show();
             batchSpan.show();
+            jq('#batchesHeader').hide();
+            if(batchExport > 0)
+            {
+                let batchIds = batches.join(",");
+                let url = "${ ui.actionLink("nigeriaemr", "ndr", "saveNDRBatchIds") }";
+                jq.ajax({
+                    url: url,
+                    dataType: "json",
+                    data: {
+                        "batchIds": batchIds,
+                        "exportId": batchExport
+                    }
+                }).success(function()
+                {
+                    console.log('Batch Ids saved');
+                })
+                .error(function(xhr, status, err)
+                {
+                    console.log(err);
+                });
+            }
         }
     }
 
@@ -1075,7 +1437,7 @@
         if (confirm("Are you sure you want to pause the process ?") === true) {
             jq('#gen-wait').show();
             if(id)
-            {;
+            {
                 jq.ajax({
                     url: "${ ui.actionLink("nigeriaemr", "ndr", "pauseFile") }",
                     dataType: "json",
@@ -1105,5 +1467,80 @@
 
     function downloadFile(file){
         window.location = file
+    }
+
+    function viewErrorLogs(id, expName)
+    {
+        if(id)
+        {
+            jq('#gen-wait').show();
+            jq.ajax({
+                url: "${ ui.actionLink("nigeriaemr", "ndr", "viewErrorLogs") }",
+                dataType: "json",
+                data: {
+                    'id' : id
+                }
+            }).success(function(data)
+            {
+                if(data)
+                {
+                    let errGrp = groupArrayByKey(data, 'batchNumber');
+                    let tts = Object.keys(errGrp);
+                    let tbl = '';
+                    let tabs = '<div class="tab col-md-12" style="margin-top: 1%;" id="tabs">';
+                    tts.forEach(function(u, i)
+                    {
+                        //<h3 style="font-weight: bold;">'+ u +'</h3>'
+                        let t = errGrp[u];
+                        tabs += '<button id="'+ u +'_btn" class="tablinks" onclick="openTab(this)" style="background: none;border-radius: 0px;">'+ u +'</button>';
+                       tbl += '<div id="'+ u +'" class="tabcontent"><h5 style="font-weight: bold;">NDR Error Messages</h5>' +
+                           '<table class="table table-bordered table-striped table-hover"><thead><tr><th>S/No.</th><th>Filename</th><th>Patient ID</th>' +
+                           '<th>Error Messages</th></tr></thead><tbody>';
+                        let tr = '';
+                        t.forEach(function(o, j)
+                        {
+                            let idntifier = 'N/A';
+                            if(o.patientIdentifier)
+                            {
+                                idntifier = o.patientIdentifier;
+                            }
+                            tr += '<tr style="font-size: 15px;"> <td>' + (j + 1) +'</td><td>' + o.fileName + '</td><td>'
+                                + idntifier + '</td><td><label>' + o.message + '</label></td></tr>';
+                        });
+
+                        tbl += tr + '</tbody></table></div>';
+                    });
+
+                    tabs +=  '</div>';
+                    let altt = tabs + tbl;
+                    jq('#tabContainer').html(altt);
+                    jq('#gen-wait').hide();
+                    jq('#' + tts[0]).css('display', 'block');
+                    jq('#' + tts[0] + '_btn').addClass('active')
+                    jq('#exportHeadr').html(expName);
+                    openLogs();
+                }
+                else
+                {
+                    jq('#gen-wait').hide();
+                    alert('An error was encountered while trying to retrieve NDR Error logs');
+                }
+            })
+            .error(function(xhr, status, err)
+            {
+                jq('#gen-wait').hide();
+                console.log(err);
+                alert('There was an error fetching the error logs. Please try again later');
+            });
+        }
+    }
+
+    function groupArrayByKey(array, key)
+    {
+        return array.reduce((hash, obj) =>
+        {
+            if(obj[key] === undefined) return hash;
+            return Object.assign(hash, { [obj[key]]:( hash[obj[key]] || [] ).concat(obj)})
+        }, {});
     }
 </script>

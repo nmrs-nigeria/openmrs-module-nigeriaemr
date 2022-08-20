@@ -12,21 +12,28 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao;
+import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
+import org.openmrs.module.nigeriaemr.model.ApiLog;
+import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 import org.openmrs.module.nigeriaemr.model.ndr.Container;
+import org.openmrs.module.nigeriaemr.model.MessageLog;
+import org.openmrs.module.nigeriaemr.model.ndrMessageLog;
 import org.openmrs.module.nigeriaemr.omodmodels.NDRApiHandshakeSummary;
 import org.openmrs.module.nigeriaemr.omodmodels.NDRApiResponse;
 import org.openmrs.module.nigeriaemr.omodmodels.NDRAuth;
 import org.openmrs.module.nigeriaemr.service.NdrExtractionService;
+import org.openmrs.module.nigeriaemr.util.LoggerUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,10 +42,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -447,11 +451,110 @@ public class NDRApiUtils {
 		}
 	}
 	
+	public Integer getErrorLogs() {
+		Integer logsPulled = 0;
+		try {
+			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+			//set endpoint
+			String api = StringUtils.removeEnd(host, "/").trim() + "/errorLogs";
+			Unirest unirest = new Unirest();
+			//configure UniRest to use Gson Object mapper
+			configureUnirest(unirest);
+			//UniRest client to accept self-signed SSL certificates
+			setUniRestClient(unirest);
+			
+			NDRApiResponse apiRes = checkAuth();
+			System.out.println("\napiRes.code: " + apiRes.code);
+			if (apiRes.code < 1) {
+				System.out
+				        .println("\n\"Your are not authorized to make API calls to the NDR or your Auth token has expired. Please authenticate your account again.");
+				return 0;
+			}
+			
+			List<NDRExportBatch> ndrExportBatches = nigeriaemrService.getBatchExports();
+			if (ndrExportBatches == null || ndrExportBatches.size() < 1)
+				return 0;
+			
+			for (NDRExportBatch ndrExportBatch : ndrExportBatches) {
+				String batchIds = ndrExportBatch.getNdrBatchIds();
+				
+				if (batchIds.isEmpty())
+					continue;
+				
+				List<String> batchSrs = Arrays.asList(batchIds.split(","));
+				
+				if (batchSrs.isEmpty())
+					continue;
+				
+				for (String batch : batchSrs) {
+					System.out.println("\nreading Error logs for " + batch);
+					String apiQur = api + "?batchId=" + batch;
+					HttpResponse<JsonNode> response = unirest.get(apiQur).header("token", apiRes.token).asJson();
+					String res = response.getBody().toString();
+					ApiLog apiLog = new ObjectMapper().readValue(res, ApiLog.class);
+					if (apiLog == null)
+						continue;
+					if (apiLog.code < 1) {
+						System.out.println(apiLog.message);
+						continue;
+					}
+					List<MessageLog> logs = apiLog.messageLogs;
+					if (logs.size() > 0) {
+						logsPulled += logs.size();
+						for (MessageLog log : logs) {
+							//Add to database
+							ndrMessageLog messageLog = new ndrMessageLog();
+							messageLog.setExportId(ndrExportBatch.getId());
+							messageLog.setMessage(log.message);
+							messageLog.setPatientIdentifier(log.patientIdentifier);
+							messageLog.setFileName(log.fileName);
+							messageLog.setDateCreated(log.dateCreated);
+							messageLog.setBatchNumber(batch);
+							nigeriaemrService.saveNdrApiErrorLog(messageLog);
+						}
+					} else {
+						System.out.println("\nNo Error logs available for " + batch);
+					}
+				}
+				nigeriaemrService.updateBatchExport(ndrExportBatch.getId(), "yes");
+			}
+			
+			return logsPulled;
+		}
+		catch (Exception e) {
+			Logger.getLogger(NdrExtractionService.class.getName()).log(Level.SEVERE, null, e);
+			String msg = e.getMessage();
+			if (msg == null || msg.isEmpty())
+				msg = "\nAn unknown error was encountered. Please try again or contact the admin for Technical Assistance";
+			System.out.println(msg);
+			return logsPulled;
+		}
+	}
+	
+	public void saveNDRBatchIds(String batchIds, Integer exportId) {
+		try {
+			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+			nigeriaemrService.setBatchIdsFromNdr(exportId, batchIds);
+			return;
+		}
+		catch (Exception e) {
+			Logger.getLogger(NdrExtractionService.class.getName()).log(Level.SEVERE, null, e);
+			String msg = e.getMessage();
+			if (msg == null || msg.isEmpty())
+				msg = "\nAn unknown error was encountered. Please try again or contact the admin for Technical Assistance";
+			System.out.println(msg);
+			return;
+		}
+	}
+	
 	public void generateJSONFileList(File node, List<File> fileList) {
 		// add json files only
-		if (node.isFile() && node.getName().endsWith("json") && node.length() > 0) {
-			fileList.add(node);
-			//Filter out files from the error folder
+		if (node.isFile() && node.length() > 0) {
+			String fileN = node.getName();
+			if (fileN.endsWith("json")) {
+				fileList.add(node);
+				//Filter out files from the error folder
+			}
 		} else if (node.isDirectory() && !node.getName().contains("error")) {
 			String[] subNote = node.list();
 			for (String filename : subNote) {
@@ -460,17 +563,53 @@ public class NDRApiUtils {
 		}
 	}
 	
-	public Integer getTotalFiles(String jsonFolder) {
-		Integer totalFiles = 0;
-		List<File> fileList = new ArrayList<File>();
-		File folder = new File(jsonFolder);
-		//Generate list of the JSON files
-		generateJSONFileList(folder, fileList);
-		if (fileList == null || fileList.isEmpty()) {
-			return totalFiles;
+	public String getZippedFile(String folder) {
+		File f = new File(folder);
+		FilenameFilter f2 = new FilenameFilter() {
+			
+			public boolean accept(File dir, String filename) {
+				String fn = filename.toLowerCase(Locale.ROOT);
+				return (fn.endsWith("zip") && !fn.contains("error"));
+			}
+		};
+		if (f.list(f2).length > 0) {
+			return f.list(f2)[0];
 		}
-		totalFiles = fileList.size();
-		return totalFiles;
+		
+		return "";
+	}
+	
+	public String getTotalFiles(String jsonFolder, String contextPath) {
+		try {
+			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
+			Integer totalFiles = 0;
+			Integer batchExportId = 0;
+			List<File> fileList = new ArrayList<File>();
+			File folder = new File(jsonFolder);
+			//Generate list of the JSON files
+			generateJSONFileList(folder, fileList);
+			if (fileList == null || fileList.isEmpty()) {
+				return totalFiles.toString();
+			}
+			String zipFileName = getZippedFile(jsonFolder);
+			if (zipFileName.length() > 0) {
+				String cntxtPth = contextPath.replace("/", "");
+				String path = Paths.get(cntxtPth, "downloads", "NDR", zipFileName).toString();
+				path = "\\" + path;
+				NDRExportBatch batchExport = nigeriaemrService.getNDRExportByZipFileName(path);
+				if (batchExport != null) {
+					batchExportId = batchExport.getId();
+				}
+			}
+			totalFiles = fileList.size();
+			String res = batchExportId.toString() + "," + totalFiles;
+			return res;
+		}
+		catch (APIException e) {
+			LoggerUtils.write(NigeriaemrDao.class.getName(), e.getMessage(), LoggerUtils.LogFormat.INFO,
+			    LoggerUtils.LogLevel.live);
+			return "";
+		}
 	}
 	
 	public List<List<String>> BatchList(List<String> files) {

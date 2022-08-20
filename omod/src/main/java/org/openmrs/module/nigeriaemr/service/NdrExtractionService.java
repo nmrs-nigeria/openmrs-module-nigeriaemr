@@ -13,9 +13,11 @@ import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.DatimMap;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
 import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
+import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.ndrfactory.NDRExtractor;
+import org.openmrs.module.nigeriaemr.omodmodels.FacilityLocation;
 import org.openmrs.module.nigeriaemr.page.controller.CustomNdrPageController;
 import org.openmrs.module.nigeriaemr.util.FileUtils;
 import org.openmrs.module.nigeriaemr.util.Partition;
@@ -25,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import java.io.*;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -67,7 +71,7 @@ public class NdrExtractionService {
 		this.ndrExtractor = new NDRExtractor();
 	}
 	
-	public void saveExport(String fullContextPath, String contextPath, List<Integer> filteredPatients, String DATIMID,
+	public Integer saveExport(String fullContextPath, String contextPath, List<Integer> filteredPatients, String DATIMID,
 	        Date lastDate, Date currentDate, boolean automatic, String opt) throws Exception {
 		NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 		int patientSize = filteredPatients.size();
@@ -138,6 +142,8 @@ public class NdrExtractionService {
 			NDRExport ndrExport1 = nigeriaemrService.saveNdrExportItem(ndrExport);
 			ndrEvent.send(ndrExport1);
 		}
+		
+		return ndrExportBatch.getId();
 	}
 	
 	public void export(NDRExport ndrExport, String opt) {
@@ -203,11 +209,16 @@ public class NdrExtractionService {
 		List<Map<String, Object>> fileMaps = new ArrayList<>();
 		String response = "";
 
-		try {
+		try
+		{
 			List<NDRExportBatch> ndrExportBatches  = nigeriaemrService.getExportBatchByStartMode(auto, false);
-			if (ndrExportBatches != null && ndrExportBatches.size() > 0) {
-				for (NDRExportBatch ndrExportBatch : ndrExportBatches) {
-					if ("Done".equalsIgnoreCase(ndrExportBatch.getStatus()) || "Restarted".equalsIgnoreCase(ndrExportBatch.getStatus())){
+
+			if (ndrExportBatches != null && ndrExportBatches.size() > 0)
+			{
+				for (NDRExportBatch ndrExportBatch : ndrExportBatches)
+				{
+					if ("Done".equalsIgnoreCase(ndrExportBatch.getStatus()) || "Restarted".equalsIgnoreCase(ndrExportBatch.getStatus()))
+					{
 						ndrExportBatch.setStatus("Processing");
 					}
 					boolean active = !ndrExportBatch.getStatus().equalsIgnoreCase("Processing");
@@ -224,8 +235,12 @@ public class NdrExtractionService {
 					fileMap.put("total", ndrExportBatch.getPatients());
 					fileMap.put("processed", ndrExportBatch.getPatientsProcessed());
 					fileMap.put("number", ndrExportBatch.getId());
+					fileMap.put("ndrBatchIds", ndrExportBatch.getNdrBatchIds());
 					fileMap.put("status", ndrExportBatch.getStatus());
-					if(active){
+					fileMap.put("errorLogsPulled", ndrExportBatch.getErrorLogsPulled());
+
+					if(active)
+					{
 						if(ndrExportBatch.getPath() != null) {
 							fileMap.put("path", ndrExportBatch.getPath().replace("\\", "\\\\"));
 						}
@@ -254,7 +269,8 @@ public class NdrExtractionService {
 				}
 			}
 			response = mapper.writeValueAsString(fileMaps);
-		} catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex)
+		{
 			Logger.getLogger(NdrExtractionService.class.getName()).log(Level.SEVERE, null, ex);
 		}
 

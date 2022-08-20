@@ -9,6 +9,8 @@ import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaPatientService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.NDRExport;
+import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
+import org.openmrs.module.nigeriaemr.model.ndrMessageLog;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.ndrfactory.NDRApiUtils;
@@ -22,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -97,13 +100,13 @@ public class NdrFragmentController {
 					List<String> identifierList = new ArrayList<>(Arrays.asList(ary));
 					List<Integer> patientIdsFromIdentifiers = nigeriaPatientService.getPatientIdsByIdentifiers(identifierList, null, null);
 					identifierList.addAll(patientIdsFromIdentifiers.stream().map(String::valueOf).collect(Collectors.toList()));
-					List<Integer> patientIds = ndrExtractionService.getPatientIds(lastDate,currentDate,identifierList,true);
+					List<Integer> patientIds = ndrExtractionService.getPatientIds(lastDate, currentDate, identifierList, true);
 					Set<Integer> set = new HashSet<>(patientIds);
 					patients = new ArrayList<>(set);
 				}
 			} else {
-				List<Integer> patientIds = ndrExtractionService.getPatientIds(lastDate,currentDate,null,true);
-				if(patientIds != null && patientIds.size()>0) patients.addAll(patientIds);
+				List<Integer> patientIds = ndrExtractionService.getPatientIds(lastDate, currentDate, null, true);
+				if (patientIds != null && patientIds.size() > 0) patients.addAll(patientIds);
 			}
 
 			DBConnection openmrsConn = Utils.getNmrsConnectionDetails();
@@ -115,7 +118,7 @@ public class NdrFragmentController {
 
 			String DATIMID = Utils.getFacilityDATIMId();
 			return startGenerateFile(request, patients, DATIMID, lastDate, currentDate, false, opt);
-		}catch (Exception ex){
+		} catch (Exception ex) {
 			return ex.getMessage();
 		}
 	}
@@ -135,24 +138,23 @@ public class NdrFragmentController {
 	}
 	
 	private String startGenerateFile(HttpServletRequest request, List<Integer> filteredPatients,
-									 String DATIMID,Date lastDate, Date currentDate, boolean updateNdrLastRun, String opt) throws Exception {
+									 String DATIMID, Date lastDate, Date currentDate, boolean updateNdrLastRun, String opt) throws Exception {
 
 		// Check that no export is in progress
 		Map<String, Object> condition = new HashMap<>();
-		condition.put("status","Processing");
-		List<NDRExport> exports = nigeriaemrService.getExports(condition,1, false);
-		if(exports.size() > 0 ) return "You already have an export in process, Kindly wait for it to finish";
-		if(filteredPatients == null || filteredPatients.size() <= 0) return "no new patient record found";
+		condition.put("status", "Processing");
+		List<NDRExport> exports = nigeriaemrService.getExports(condition, 1, false);
+		if (exports.size() > 0) return "You already have an export in process, Kindly wait for it to finish";
+		if (filteredPatients == null || filteredPatients.size() <= 0) return "no new patient record found";
 		String contextPath = request.getContextPath();
 		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
-		System.out.println("\n");
-		System.out.println(fullContextPath);
-		System.out.println("\n");
-		UserContext userContext =  Context.getUserContext();
-		Thread thread = new Thread(() -> {
+		UserContext userContext = Context.getUserContext();
+
+		Thread thread = new Thread(() ->
+		{
 			try {
 				Consumer.initialize(userContext, opt);
-				ndrExtractionService.saveExport(fullContextPath,contextPath,filteredPatients,DATIMID,lastDate,currentDate, updateNdrLastRun, opt);
+				ndrExtractionService.saveExport(fullContextPath, contextPath, filteredPatients, DATIMID, lastDate, currentDate, updateNdrLastRun, opt);
 			} catch (Exception e) {
 				LoggerUtils.write(NdrFragmentController.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,
 						LoggerUtils.LogLevel.live);
@@ -356,14 +358,37 @@ public class NdrFragmentController {
 		return summary;
 	}
 	
-	public Integer getTotalFiles(HttpServletRequest request) {
+	public Integer getLogs(HttpServletRequest request) {
+		System.out.println("\nGet NDR Error Logs called!!!!\n");
+		NDRApiUtils ndrApiUtils = new NDRApiUtils();
+		Integer logSize = ndrApiUtils.getErrorLogs();
+		return logSize;
+	}
+	
+	public Integer checkApiExportsWithPendingNdrErrorLogs(HttpServletRequest request) {
+		List<NDRExportBatch> ndrExportBatches = nigeriaemrService.getBatchExports();
+		return ndrExportBatches.size();
+	}
+	
+	public String getTotalFiles(HttpServletRequest request) {
 		//Henry: This is needfully done here so that the folder can be retrieved for enumerating the files
 		String contextPath = request.getContextPath();
 		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
 		String downloadFolder = Utils.getDownloadFolder(fullContextPath);
 		String reportFolder = Paths.get(downloadFolder, "NDR").toString();
 		NDRApiUtils ndrApiUtils = new NDRApiUtils();
-		Integer totalFiles = ndrApiUtils.getTotalFiles(reportFolder);
-		return totalFiles;
+		String res = ndrApiUtils.getTotalFiles(reportFolder, contextPath);
+		return res;
+	}
+	
+	public void saveNDRBatchIds(HttpServletRequest request, @RequestParam(value = "batchIds") String batchIds,
+	        @RequestParam(value = "exportId") Integer exportId) {
+		NDRApiUtils ndrApiUtils = new NDRApiUtils();
+		ndrApiUtils.saveNDRBatchIds(batchIds, exportId);
+		return;
+	}
+	
+	public List<ndrMessageLog> viewErrorLogs(HttpServletRequest request, @RequestParam(value = "id") Integer id) {
+		return nigeriaemrService.getNdrMessageLogs(id);
 	}
 }
