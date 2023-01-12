@@ -191,8 +191,7 @@ public class NigeriaemrDao {
 		sql.executeUpdate();
 	}
 	
-	public void updateBatchExport(Integer exportId, String ndrErrorLogStatus)
-	{
+	public void updateBatchExport(Integer exportId, String ndrErrorLogStatus) {
 		SQLQuery sql = getSession()
 		        .createSQLQuery(
 		            "update nigeriaemr_ndr_batch_export set errorLogsPulled = :errorLogsPulled where nigeriaemr_ndr_batch_export_id = :exportId");

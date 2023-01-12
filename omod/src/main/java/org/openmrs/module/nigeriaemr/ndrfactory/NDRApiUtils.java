@@ -1,7 +1,9 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,6 +33,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.Console;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -369,15 +372,20 @@ public class NDRApiUtils {
 			{
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				mapper.setDefaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL,
+						JsonInclude.Include.ALWAYS));
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				mapper.setDateFormat(df);
 				try
 				{
 					Container container = mapper.readValue(new File(path.toFile().getPath()), Container.class);
+
 					//Somehow, for some JSON file, fileMapper fail to handle the read string from the files
 					if(container == null || container.getMessageHeader() == null || container.getIndividualReport() == null || container.getValidation() == null)
 					{
 						String t = new String(Files.readAllBytes(path));
+						System.out.println("From Read as String\n");
+						System.out.println(t);
 						json.add(t);
 						validFiles.add(path);
 					}
@@ -394,7 +402,7 @@ public class NDRApiUtils {
 				}
 				catch (Exception ex)
 				{
-					System.out.println("\nERROR:\n");
+					System.out.println("\nERROR EXCEPTION:\n");
 					System.out.println(path.toFile().getPath() + "\n");
 					System.out.println(ex.getMessage());
 				}
@@ -447,6 +455,10 @@ public class NDRApiUtils {
 			if(msg == null || msg.isEmpty())
 				msg = "An unknown error was encountered. Please try again or contact the admin for Technical Assistance";
 			summary.message = msg;
+
+			System.out.println("\nException in DATA PUSH" );
+			System.out.println(msg);
+
 			return summary;
 		}
 	}

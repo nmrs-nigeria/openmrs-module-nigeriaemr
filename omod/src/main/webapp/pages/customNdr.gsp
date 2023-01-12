@@ -22,9 +22,8 @@
                 <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:40px; margin-top: 35px;">
             </div>
             <h4 id="apiInfo" style="overflow: auto; font-size: 1em !important; font-weight: bold; margin-top: 25px;">Please wait, Checking if NDR API credentials already exists...</h4>
-            <br/>
             <span id="batchesHeader" style="font-weight: bold !important;">The resulting Data Batches are: </span>
-            <br/><br/>
+            <br/>
             <div id="batchSpan" style="overflow-y: scroll; height: 250px; max-height: 250px; display: none"></div>
         </div>
         <div style="width: 45%; display: none" id="pushData">
@@ -58,6 +57,17 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="viewBatches" class="dialog" style="display: none; padding: 20px; position: absolute; z-index: 999; margin-left: 16.2%; margin-right: 15%;">
+    <div style="padding: 20px; position: absolute; z-index: 999; margin-top: -4%; width: 450px; background-color: #e8e8e8; height: 15px; margin-left: -20px;">
+        <button type="button" class="close" aria-label="Close" style="background: #e8e8e8 !important; float: right; margin-top: -13px; margin-right: -18px;" title="Close" onclick="closeViewBatches()">
+            <span aria-hidden="true" style="font-size: 20px; font-weight: bold;">&times;</span>
+        </button>
+        NDR Batch IDs for <b id="batchName"></b>
+    </div>
+    <br/><br/>
+    <div id="batches" style="overflow-y: scroll; height: 250px; max-height: 250px;"></div>
 </div>
 
 <div id="gen-wait" class="dialog" style="display: none; padding: 20px; position: absolute; z-index: 999; margin-left: 16.2%; margin-right: 15%;">
@@ -196,6 +206,13 @@
     flex-wrap: wrap;
     /*margin-right: -15px;*/
     /*margin-left: -15px;*/
+}
+
+div#batches span {
+    border-top: 1px solid #e0e0e0;
+    width: 100%;
+    display: inline-flex;
+    padding: 5px !important;
 }
 .col-md-3
 {
@@ -766,10 +783,17 @@
                         if(fileListObj[i].hasError)
                         {
                             let logSnip = '';
-                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                            let batchView = '';
+                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0)
                             {
-                                logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                                batchView = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-eye-open batchXView edit-action edit-action\" title=\"View NDR Batch Ids\" onclick=\"viewBatchIds(event, '" + fileListObj[i].ndrBatchIds + "', '" + fileListObj[i].name +"')\"></i>";
+
+                                if(fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                                {
+                                    logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                                }
                             }
+
                             jq('#TableBody')
                                 .append("<tr>" +
                                     "<td>" + fileListObj[i].owner + "</td>" +
@@ -784,14 +808,23 @@
                                     "<i style=\"font-size: 20px;\" class=\"icon-cloud-download edit-action\" title=\"download error file list\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Failed Files\" onclick=\"restartErrorFile('" + fileListObj[i].number + "')\"></i>" +
+                                    batchView +
                                     logSnip +
                                     "</td>" +
                                     "</tr>");
-                        }else {
+                        }
+                        else
+                        {
                             let logSnip = '';
-                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                            let batchView = '';
+                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0)
                             {
-                                logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                                batchView = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-eye-open batchXView edit-action edit-action\" title=\"View NDR Batch Ids\" onclick=\"viewBatchIds(event, '" + fileListObj[i].ndrBatchIds + "', '" + fileListObj[i].name +"')\"></i>";
+
+                                if(fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                                {
+                                    logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                                }
                             }
                             jq('#TableBody')
                                 .append("<tr>" +
@@ -805,6 +838,7 @@
                                     "<i style=\"font-size: 20px;\" class=\"icon-download edit-action\" title=\"download file\" onclick=\"downloadFile('" + fileListObj[i].path + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"rerun Files\" onclick=\"restartFile('" + fileListObj[i].number + "')\"></i>" +
+                                    batchView +
                                     logSnip +
                                     "</td>" +
                                     "</tr>");
@@ -815,9 +849,15 @@
                         if(Paused)
                         {
                             let logSnip = '';
-                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                            let batchView = '';
+                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0)
                             {
-                                logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                                batchView = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-eye-open batchXView edit-action edit-action\" title=\"View NDR Batch Ids\" onclick=\"viewBatchIds(event, '" + fileListObj[i].ndrBatchIds + "', '" + fileListObj[i].name +"')\"></i>";
+
+                                if(fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                                {
+                                    logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                                }
                             }
                             jq('#TableBody')
                                 .append("<tr>" +
@@ -830,6 +870,7 @@
                                     "<td>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-play edit-action\" title=\"resume\" onclick=\"resumeFile('" + fileListObj[i].number + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    batchView +
                                     logSnip +
                                     "</td>" +
                                     "</tr>");
@@ -837,9 +878,15 @@
                         else
                         {
                             let logSnip = '';
-                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                            let batchView = '';
+                            if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0)
                             {
-                                logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                                batchView = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-eye-open batchXView edit-action edit-action\" title=\"View NDR Batch Ids\" onclick=\"viewBatchIds(event, '" + fileListObj[i].ndrBatchIds + "', '" + fileListObj[i].name +"')\"></i>";
+
+                                if(fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                                {
+                                    logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                                }
                             }
                             jq('#TableBody')
                                 .append("<tr>" +
@@ -854,6 +901,7 @@
                                     "<i style=\"font-size: 20px;\" class=\"icon-download-alt edit-action\" title=\"download error files\" onclick=\"downloadFile('" + fileListObj[i].errorPath + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-cloud-download edit-action\" title=\"download error file list\" onclick=\"downloadFile('" + fileListObj[i].errorList + "')\"></i>" +
                                     "<i style=\"font-size: 20px;\" class=\"icon-remove edit-action\" title=\"delete file\" onclick=\"deleteFile('" + fileListObj[i].number + "')\"></i>" +
+                                    batchView +
                                     logSnip +
                                     "</td>" +
                                     "</tr>");
@@ -866,9 +914,15 @@
                         batchExport = fileListObj[i].number;
                     }
                     let logSnip = '';
-                    if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0 && fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                    let batchView = '';
+                    if(fileListObj[i].ndrBatchIds !== undefined && fileListObj[i].ndrBatchIds !== null && fileListObj[i].ndrBatchIds.length > 0)
                     {
-                        logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                        batchView = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-eye-open batchXView edit-action edit-action\" title=\"View NDR Batch Ids\" onclick=\"viewBatchIds(event, '" + fileListObj[i].ndrBatchIds + "', '" + fileListObj[i].name +"')\"></i>";
+
+                        if(fileListObj[i].errorLogsPulled !== undefined && fileListObj[i].errorLogsPulled !== null && fileListObj[i].errorLogsPulled === 'yes')
+                        {
+                            logSnip = "<i style=\"font-size: 20px; cursor: pointer\" class=\"icon-list-alt edit-action edit-action\" title=\"View NDR Error Logs\" onclick=\"viewErrorLogs('" + fileListObj[i].number + "','" + fileListObj[i].name +"')\"></i>";
+                        }
                     }
                     jq('#TableBody')
                         .append("<tr style=\"opacity:0.6;filter: alpha(opacity = 60)\">" +
@@ -881,7 +935,7 @@
                             "<td>" +
                             "<img id=\"loadingImg"+i+"\" src=\"../moduleResources/nigeriaemr/images/Sa7X.gif\" alt=\"Loading Gif\"  style=\"width:25px\"> <p>"+fileListObj[i].progress+"</p>" +
                             "<i style=\"font-size: 20px;\" class=\"icon-refresh edit-action\" title=\"restart\" onclick=\"refreshList()\"></i>" +
-                            "<i style=\"font-size: 20px;\" class=\"icon-pause edit-action\" title=\"pause\" onclick=\"pauseFile('" + fileListObj[i].number + "')\"></i>" + logSnip +                        +
+                            "<i style=\"font-size: 20px;\" class=\"icon-pause edit-action\" title=\"pause\" onclick=\"pauseFile('" + fileListObj[i].number + "')\"></i>" + logSnip +
                             "</td>" +
                             "</tr>");
                 }
@@ -923,7 +977,8 @@
         try
         {
             const ping = await fetch("http://ndrstaging.phis3project.org.ng:8087/v1/utils/ping");
-            // const ping = await fetch("https://localhost:44351/v1/utils/ping");
+            // const ping = await fetch("https://localhost:44344/v1/utils/ping");
+            // const ping = await fetch("https://localhost:44344/v1/utils/ping");
             return ping.status >= 200 && ping.status < 300; // either true or false
         }
         catch (err)
@@ -1098,7 +1153,8 @@
                 apiInfo.css('color', '#000 !important').html("An error was encountered " + err);
                 btnPushData.val('Push Data');
                 btnPushData.prop('disabled', false);
-                pushData.show();
+                // pushData.show();
+                pushData.css('display', 'block');
             });
     }
 
@@ -1116,7 +1172,8 @@
             {
                 let message = "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
                 btnPushData.val('Push Data');
-                pushData.show();
+                // pushData.show();
+                pushData.css('display', 'block');
                 waitGif.css('display', 'none');
                 apiInfo.css('color', '#000 !important').append(message);
                 btnPushData.prop('disabled', false);
@@ -1155,7 +1212,7 @@
                     {
                         if (totalPushed > totalJSONFiles)
                         {
-                            message = "<br/><br/><span style=\"color: green !important;\">All Patient data has been successfully pushed to the NDR.</span>";
+                            message = "<br/><br/><span style=\"color: green !important;\">All Patient data have been successfully pushed to the NDR.</span>";
                             waitGif.css('display', 'none');
                             apiInfo.append(message);
                             btnPushData.prop('disabled', false);
@@ -1187,7 +1244,8 @@
                             message = "<br/><span style=\"font-size: 0.96em !important;\">Some Patients data were not successfully pushed to the NDR.</span>" +
                                 "<br/><span style=" + "font-size: 0.96em !important;" + "> You might consider initiating the data push again by clicking the button bellow.</span>";
                             btnPushData.val('Push remaining Data');
-                            pushData.show();
+                            // pushData.show();
+                            pushData.css('display', 'block');
                             compileBatches();
                             apiInfo.css('color', '#000 !important').append(message);
                         }
@@ -1222,7 +1280,8 @@
                         btnPushData.val('Push remaining Data');
                     }
                     apiInfo.css('color', '#000 !important').append(message);
-                    pushData.show();
+                    // pushData.show();
+                    pushData.css('display', 'block');
                     compileBatches();
                 }
             }
@@ -1245,7 +1304,8 @@
                     btnPushData.val('Push remaining Data');
                 }
                 apiInfo.css('color', '#000 !important').append(message);
-                pushData.show();
+                //pushData.show();
+                pushData.css('display', 'block');
             });
     }
 
@@ -1533,6 +1593,45 @@
                 alert('There was an error fetching the error logs. Please try again later');
             });
         }
+    }
+
+    function viewBatchIds(e, ndrBatchIds, bN)
+    {
+        console.log(e);
+        let rect = e.target.getBoundingClientRect(); // get some poition, scale,... properties of the item
+        let mousePos = {};
+        // mousePos.x = e.clientX - rect.left; // get the mouse position relative to the element
+        // mousePos.y = e.clientY - rect.top;
+
+        mousePos.x = e.clientX - (rect.left/2); // get the mouse position relative to the element
+        mousePos.y = e.clientY - (rect.top/2);
+
+        let viewBatches = jq('#viewBatches');
+        let batches = jq('#batches');
+        let batchName = jq('#batchName')
+        if(ndrBatchIds)
+        {
+            let ids = ndrBatchIds.split(',');
+            if(ids.length > 0)
+            {
+                let batchStr = "";
+                ids.forEach(function (b, i)
+                {
+                    batchStr += "<span>" + b + "</span><br/>";
+                });
+                batches.append(batchStr);
+                batchName.html(bN);
+                viewBatches.show();
+                viewBatches.css('left', mousePos.x + "px");
+                viewBatches.css('top', mousePos.y + "px");
+            }
+        }
+    }
+
+    function closeViewBatches()
+    {
+        jq('#viewBatches').hide();
+        jq('#batches').html('');
     }
 
     function groupArrayByKey(array, key)
