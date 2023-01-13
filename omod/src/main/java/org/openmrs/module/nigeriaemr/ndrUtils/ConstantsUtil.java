@@ -50,6 +50,52 @@ public class ConstantsUtil {
 	
 	public static final String PMTCT_HTS_FORM_UUID = "1b64c8bc-b289-45f7-943c-122be5de7274";
 	
+	public static final int MATERNAL_COHORT_TYPE = 45;
+	
+	public static final int PMTCT_REGISTRATION_ENCOUNTER = 44;
+	
+	public static final int OTZ_ENCOUNTER_TYPE = 36;
+	
+	public static final int TB_COMM_FAC_ENCOUNTER_TYPE = 55;
+	
+	public static final int TB_INDEX_CONTACT_ENCOUNTER_TYPE = 57;
+	
+	public static final int COVID19_CASE_INVESTIGATION_ENCOUNTER = 40;
+	
+	public static final int COVID19_CONTACT_ENCOUNTER_TYPE = 42;
+	
+	public static final int COVID19_CONTACT_INVESTIGATION_ENCOUNTER = 41;
+	
+	public static final int TB_SCREENING_ENCOUNTER_TYPE = 64;
+	
+	public static final int PRESUMPTIVE_TB_REGISTER_ENCOUNTER_TYPE = 58;
+	
+	public static final int DRTB_TREATMENT_ENCOUNTER_TYPE = 61;
+	
+	public static final int DRTB_DISCHARGE_ENCOUNTER_TYPE = 53;
+	
+	public static final int RECENCY_ENCOUNTER_TYPE = 39;
+	
+	public static final int TB_TRACKING_ENCOUNTER_TYPE = 47;
+	
+	public static final int TB_LAB_REGISTER_ENCOUNTER_TYPE = 62;
+	
+	public static final int TB_LGA_HEALTH_REGISTER_ENCOUNTER_TYPE = 52;
+	
+	public static final int MORTALITY_ENCOUNTER_TYPE = 15;
+	
+	public static final int SPECIMEN_REQUEST_ENCOUNTER_TYPE = 56;
+	
+	public static final int SPECIMEN_RESULT_ENCOUNTER_TYPE = 51;
+	
+	public static final int TB_MONITORING_ENCOUNTER_TYPE = 68;
+	
+	public static final int IPT_MONITORING_ENCOUNTER_TYPE = 23;
+	
+	public static final int TB_REFERRAL_ENCOUNTER_TYPE = 50;
+	
+	public static final int TB_TREATMENT_CARD_ENCOUNTER_TYPE = 54;
+	
 	//Endpoints
 	//public static final String BASE_URL = "https://hts.shieldnigeriaproject.com/api";
 	

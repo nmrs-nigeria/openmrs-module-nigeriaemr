@@ -84,9 +84,9 @@ public class LabDictionary {
         labTestDictionary.put(653, 4);//SERUM GLUTAMIC-OXALOACETIC TRANSAMINASE
         labTestDictionary.put(655, 7);//TOTAL BILIRUBIN
         labTestDictionary.put(CD4_Count_Concept_Id, 11);//CD4 COUNT
-        labTestDictionary.put(730, 11);//CD4%
+        //labTestDictionary.put(730, 11);//CD4%
         labTestDictionary.put(1319, 12);//LYMPHOCYTE COUNT
-        labTestDictionary.put(1338, 12);//LYMPHOCYTES (%) - MICROSCOPIC EXAM
+        //labTestDictionary.put(1338, 12);//LYMPHOCYTES (%) - MICROSCOPIC EXAM
         labTestDictionary.put(1007, 18);//HIGH-DENSITY LIPOPROTEIN CHOLESTEROL
         labTestDictionary.put(1008, 19);//LOW-DENSITY LIPOPROTEIN CHOLESTEROL
         labTestDictionary.put(164364, 21);//Serum creatinine (mg/dL)
@@ -106,15 +106,20 @@ public class LabDictionary {
         labTestDictionary.put(1009, 74);//TRIGLYCERIDES
         labTestDictionary.put(856, 80);//HIV VIRAL LOAD
         labTestDictionary.put(678, 82);//WHITE BLOOD CELLS
-        labTestDictionary.put(165398, 0);//Additional Lab Tests
-        labTestDictionary.put(1025, 0);//BASOPHILS
-        labTestDictionary.put(1341, 0);//BASOPHILS (%) - MICROSCOPIC EXAM
-        labTestDictionary.put(1024, 0);//EOSINOPHILS
-        labTestDictionary.put(1023, 0);//MONOCYTES
-        labTestDictionary.put(1339, 0);//MONOCYTES (%) - MICROSCOPIC EXAM
+        //labTestDictionary.put(165398, 0);//Additional Lab Tests
+        //labTestDictionary.put(1025, 0);//BASOPHILS
+        //labTestDictionary.put(1341, 0);//BASOPHILS (%) - MICROSCOPIC EXAM
+        //labTestDictionary.put(1024, 0);//EOSINOPHILS
+        //labTestDictionary.put(1023, 0);//MONOCYTES
+        //labTestDictionary.put(1339, 0);//MONOCYTES (%) - MICROSCOPIC EXAM
         labTestDictionary.put(1022, 13);//NEUTROPHILS
         labTestDictionary.put(45, 58);//URINE PREGNANCY TEST
         labTestDictionary.put(165765,80);//Viral Load Order
+        labTestDictionary.put(167088,83);//CD4 LFA RESULT
+        labTestDictionary.put(167090,84);//Serology for CrAg Result
+        labTestDictionary.put(166697,85);//Other Test (TB-LAM, LF-LAM,etc)
+        labTestDictionary.put(167082,86);//CSF for CrAg
+        labTestDictionary.put(167084,87);//CSF for MCS Result
     }
 
     private void loadOtherCodedValues() {

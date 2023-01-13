@@ -132,7 +132,7 @@ public class PMTCTDictionary {
     final static int weight = 5089;
     final static int breast_Feeding = 165047;
     final static int cotrimoxazole_conceptID = 0;
-//    final static int prescribedRegimen_conceptID = 165708;
+    //    final static int prescribedRegimen_conceptID = 165708;
     final static int prescribedRegimenLineCode_conceptID = 165708;
     final static int maternalOutcome_conceptID = 160085;
 
@@ -152,12 +152,21 @@ public class PMTCTDictionary {
     final static int rapid_test_result = 165026;
     final static int rapid_test_age = 0; //not available
 
+    //PMTCT Registration
+    final static int GeneralANCNumber = 165567;
+    final static int PmtctEntryPoint = 166508;
+    final static int HtsRegSetting = 166025;
+    final static int Infacility = 166509;
+    final static int CommunityBased = 166510;
+
+
     public PMTCTDictionary() {
         pharmacyDictionary = new PharmacyDictionary();
         loadDictionary();
     }
 
     private Map<Integer, String> pmtctDictionary = new HashMap<>();
+    private Map<Integer, String> pmtct2Dictionary = new HashMap<>();
     private Map<Integer, String> syphilis = new HashMap<>();
     private Map<Integer, String> maternalOutcome = new HashMap<>();
     private Map<Integer, Boolean> yesNoToggle = new HashMap<>();
@@ -206,6 +215,12 @@ public class PMTCTDictionary {
         pmtctDictionary.put(164850, "2");
         pmtctDictionary.put(1180, "4");
         pmtctDictionary.put(166121, "5");
+
+        pmtct2Dictionary.put(166026, "Prenatal");
+        pmtct2Dictionary.put(166027, "Perinatal");
+        pmtct2Dictionary.put(1180, "Postpartum_less_than_or_equal_72");
+        pmtct2Dictionary.put(166121, "Postpartum_greater_than_72");
+
         //Viral Load Period
         pmtctDictionary.put(166122, "1");
         pmtctDictionary.put(166123, "2");
@@ -234,6 +249,16 @@ public class PMTCTDictionary {
         //birth MUAC
         pmtctDictionary.put(165933, "LT");
         pmtctDictionary.put(165934, "GT");
+
+        //pmtctReg
+        pmtctDictionary.put(166509, "In_Facility");
+        pmtctDictionary.put(166510, "Community_Based");
+        pmtctDictionary.put(166511, "Spokes");
+
+        pmtctDictionary.put(166512, "Birth_center");
+        pmtctDictionary.put(166513, "Traditional_birth_center");
+        pmtctDictionary.put(166514, "PMTCT_CAP");
+        pmtctDictionary.put(166515, "Traditional_birth_attendant");
 
         //ARV
         arv = new HashMap<>();
@@ -465,7 +490,7 @@ public class PMTCTDictionary {
         } catch (Exception ex) {
             LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
         }
-        
+
         return deliveryEncounterTypes.isEmpty() ? null :  deliveryEncounterTypes;
     }
 
@@ -572,12 +597,12 @@ public class PMTCTDictionary {
         } catch (Exception ex) {
             LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
         }
-        
+
         return childBirthDetailsTypes.isEmpty() ? null :  childBirthDetailsTypes;
     }
 
     public List<ChildFollowupType> createChildFollowupType(List<Encounter> antenatalEncounters) {
-       List<ChildFollowupType> childFollowupTypes = new ArrayList<>();
+        List<ChildFollowupType> childFollowupTypes = new ArrayList<>();
         try {
             for(Encounter enc : antenatalEncounters) {
                 Set<Obs> obsSet = enc.getAllObs();
@@ -626,12 +651,12 @@ public class PMTCTDictionary {
             LoggerUtils.write(PMTCTDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
             //throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
-        
+
         return childFollowupTypes.isEmpty() ? null :  childFollowupTypes;
     }
 
     public List<ImmunizationType> createImmunizationType(List<Encounter> immunizationEncounters) {
-         List<ImmunizationType> immunizationTypes = new ArrayList<>();
+        List<ImmunizationType> immunizationTypes = new ArrayList<>();
         try {
             for(Encounter immunizationEncounter : immunizationEncounters) {
                 Set<Obs> obsSet = immunizationEncounter.getAllObs();
@@ -648,7 +673,7 @@ public class PMTCTDictionary {
 
                 Obs obs = extractObs(Immunization_Date, groupedObsByConcept);
                 if (obs == null) {
-                   continue;
+                    continue;
                 }
                 if (obs.getValueDatetime() != null) {
                     immunizationType.setImmunizationDate(utils.getXmlDate(obs.getValueDate()));
@@ -749,7 +774,7 @@ public class PMTCTDictionary {
     }
 
     public List<InfantPCRTestingType> createInfantPCRTestingType(List<Encounter> antenatalEncounters) {
-         List<InfantPCRTestingType> infantPCRTestingTypes = new ArrayList<>();
+        List<InfantPCRTestingType> infantPCRTestingTypes = new ArrayList<>();
         try {
             for(Encounter enc : antenatalEncounters) {
                 Set<Obs> obsSet = enc.getAllObs();
@@ -768,7 +793,7 @@ public class PMTCTDictionary {
 
                 Obs obs = extractObs(Date_Sample_Collected, antenatalObsList);
                 if (obs == null) {
-                   continue;
+                    continue;
                 }
                 if (obs.getValueDatetime() != null) {
                     infantPCRTestingType.setDateSampleCollected(utils.getXmlDate(obs.getValueDatetime()));
@@ -1013,7 +1038,7 @@ public class PMTCTDictionary {
 
                     int valueCodedPreviouslyKnownHIVPositive = obs.getValueCoded().getConceptId();
                     Boolean ndrCodePreviouslyKnownHIVPositive = getYesNoToggleValue(valueCodedPreviouslyKnownHIVPositive);
-                    pmtcttHTSType.setAcceptedHIVTesting(ndrCodePreviouslyKnownHIVPositive);
+                    pmtcttHTSType.setPreviouslyKnownHIVPositive(ndrCodePreviouslyKnownHIVPositive);
 
                     obs = extractObs(acceptedHIVTesting_ConceptID, groupedObsByConcept);
                     if (obs != null && obs.getValueCoded() != null) {
@@ -1182,6 +1207,16 @@ public class PMTCTDictionary {
     private String getMappedValue(int conceptID) {
         try {
             return pmtctDictionary.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+
+    private String get2MappedValue(int conceptID) {
+        try {
+            return pmtct2Dictionary.get(conceptID);
         } catch (Exception ex) {
             LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);

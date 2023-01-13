@@ -18,7 +18,7 @@ public class NDRUtils {
 		
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		
-		java.net.URL xsdFilePath = Thread.currentThread().getContextClassLoader().getResource("NDR 1.6.3.xsd");
+		java.net.URL xsdFilePath = Thread.currentThread().getContextClassLoader().getResource("NDR_beta_1_6_3.xsd");
 		
 		assert xsdFilePath != null;
 		

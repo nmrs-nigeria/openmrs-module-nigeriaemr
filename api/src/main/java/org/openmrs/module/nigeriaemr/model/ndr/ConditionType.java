@@ -35,7 +35,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConditionType", propOrder = { "conditionCode", "programArea", "patientAddress", "commonQuestions",
-        "conditionSpecificQuestions", "encounters", "laboratoryReport", "regimen", "eac" })
+        "conditionSpecificQuestions", "encounters", "laboratoryReport", "regimen" })
 public class ConditionType {
 	
 	@XmlElement(name = "ConditionCode", required = true)
@@ -61,9 +61,6 @@ public class ConditionType {
 	
 	@XmlElement(name = "Regimen")
 	protected List<RegimenType> regimen;
-	
-	@XmlElement(name = "EAC")
-	protected List<EACType> eac;
 	
 	/**
 	 * Gets the value of the conditionCode property.
@@ -215,28 +212,6 @@ public class ConditionType {
 			regimen = new ArrayList<RegimenType>();
 		}
 		return this.regimen;
-	}
-	
-	/**
-	 * Gets the value of the eac property.
-	 * <p>
-	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
-	 * modification you make to the returned list will be present inside the JAXB object. This is
-	 * why there is not a <CODE>set</CODE> method for the eac property.
-	 * <p>
-	 * For example, to add a new item, do as follows:
-	 * 
-	 * <pre>
-     *    getEAC().add(newItem);
-     * </pre>
-	 * <p>
-	 * Objects of the following type(s) are allowed in the list {@link EACType }
-	 */
-	public List<EACType> getEAC() {
-		if (eac == null) {
-			eac = new ArrayList<EACType>();
-		}
-		return this.eac;
 	}
 	
 }

@@ -55,12 +55,15 @@ public class NDRConverter {
 
     private final Date toDate;
 
+    NDRMainDictionary mainDictionary;
+
     public NDRConverter(DBConnection _openmrsConn, Date fromDate, Date toDate) {
         this.openmrsConn = _openmrsConn;
         this.nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.nigeriaObsService = Context.getService(NigeriaObsService.class);
+        mainDictionary = new NDRMainDictionary();
     }
 
     public Container createContainer(Patient pts) throws Exception {
@@ -199,13 +202,14 @@ public class NDRConverter {
     private PMTCTType createPmtctType() {
         NDRMainDictionary mainDictionary = new NDRMainDictionary();
         PMTCTType pmtctType = null;
-        List<Encounter> pmtctEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE);
+        List<Encounter> pmtctEncounters = this.groupedEncounters.get(ConstantsUtil.MATERNAL_COHORT_TYPE);
         List<Encounter> generalAntenatalCareEncounters = this.groupedEncounters.get(ConstantsUtil.GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE);
         List<Encounter> deliverRegisterEncounters = this.groupedEncounters.get(ConstantsUtil.DELIVERY_REGISTER_ENCOUNTER_TYPE);
         List<Encounter> childFollowUpEncounters = this.groupedEncounters.get(ConstantsUtil.CHILD_FOLLOW_UP);
         List<Encounter> childBirthEncounters = this.groupedEncounters.get(ConstantsUtil.CHILD_BIRTH_REGISTRATION_ENCOUNTER);
         List<Encounter> partnerEncounters = this.groupedEncounters.get(ConstantsUtil.PARTNER_REGISTER);
         List<Encounter> pmtctHtsRegisterEncounters = this.groupedEncountersByUUID.get(ConstantsUtil.PMTCT_HTS_REGISTER);
+        List<Encounter> pmtctRegistrationEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_REGISTRATION_ENCOUNTER);
 
         if(pmtctEncounters != null) {
             List<MaternalCohortType> maternalCohortTypes =  mainDictionary.createMaternalCohort(pmtctEncounters);
@@ -271,6 +275,17 @@ public class NDRConverter {
             }
         }
 
+        /*if(pmtctRegistrationEncounters != null){
+            List<PMTCTRegistrationType> pmtctRegistrationTypes =  mainDictionary.createPMTCTRegistration(pmtctRegistrationEncounters);
+            if(pmtctRegistrationTypes != null) {
+                if (pmtctType == null) pmtctType = new PMTCTType();
+                if(pmtctType.getPMTCTRegistration() != null && pmtctType.getPMTCTRegistration().size() > 0){
+                    pmtctRegistrationTypes.addAll(pmtctType.getPMTCTRegistration());
+                }
+                pmtctType.setPMTCTRegistration(pmtctRegistrationTypes);
+            }
+        }*/
+
         if(childBirthEncounters != null){
             List<ChildBirthDetailsType> childBirthDetailsTypes = mainDictionary.createChildBirthDetailsType(
                     childBirthEncounters);
@@ -301,6 +316,7 @@ public class NDRConverter {
         return pmtctType;
     }
 
+
     private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter, Map<Object, List<Obs>> groupedObsByConcept) {
 
         //TODO: pull hivtestReport as a list
@@ -325,9 +341,9 @@ public class NDRConverter {
                 hivTestingReport.setHIVTestResult(hIVTestResultType);
             }
 
-            /*if (indexNotificationServicesType != null) {
+            if (indexNotificationServicesType != null) {
                 hivTestingReport.setIndexNotificationServices(indexNotificationServicesType);
-            }*/
+            }
 
             //create TB screening
             List<ClinicalTBScreeningType> clinicalTBScreeningType = mainDictionary.createClinicalTbScreening(patient,
@@ -604,7 +620,7 @@ public class NDRConverter {
         String messageStatus = (isDeleted) ? "REDACTED" : updatedORInitial;
         header.setMessageStatusCode(messageStatus);
         //header.setMessageStatusCode("INITIAL");
-        header.setMessageSchemaVersion("1.6.3");
+        header.setMessageSchemaVersion("1.6");
         header.setMessageUniqueID(UUID.randomUUID().toString());
         return header;
     }

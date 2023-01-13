@@ -170,7 +170,7 @@ public class ClinicalDictionary {
         map.put(166193, "2y"); // TDF-3TC-DRV/r
 
         map.put(165530, "3a");//"AZT-TDF-3TC-LPV/r" // formerlly 2h
-        map.put(165540, "3b"); // AZT-TDF-FTC-LPV/r       
+        map.put(165540, "3b"); // AZT-TDF-FTC-LPV/r
         map.put(165537, "3c");//"TDF-AZT-3TC-ATV/r" //formerly 2i
         map.put(166194, "3d"); // TDF-3TC-DTG-LPV/r
         map.put(166195, "3e"); // TDF-FTC-AZT-ATV/r
@@ -189,7 +189,7 @@ public class ClinicalDictionary {
         map.put(165536, "3s"); // TDF-AZT-3TC-IDV/r
         map.put(165532, "3t"); // TDF-AZT-3TC-SQV/r
         map.put(166206, "3w"); // TDF-3TC-RAL
-        map.put(166207, "3x"); // AZT-RAL-ATV/r                   
+        map.put(166207, "3x"); // AZT-RAL-ATV/r
         map.put(165695, "3u");//AZT-3TC-RAL //formerlly 4o
         map.put(165696, "3v");//ABC-3TC-RAL // change 5g to 3v
 
@@ -268,6 +268,10 @@ public class ClinicalDictionary {
         map.put(160016, "9");
         map.put(5622, "10");
 
+        //Method of TB Diagnosis
+        map.put(165990, "M1");
+        map.put(165991, "M2");
+
 
     }
 
@@ -317,8 +321,8 @@ public class ClinicalDictionary {
                 Utils.WHO_CLINICAL_STAGE_CONCEPT,Utils.TB_STATUS_CONCEPT, Utils.CURRENT_REGIMEN_LINE_CONCEPT,
                 Utils.OI_DRUGS_GROUPING_CONCEPT_SET,Utils.ARV_DRUG_STRENGTH_CONCEPT,
                 Utils.COTRIMOXAZOLE_ADHERENCE_CONCEPT, Utils.INH_ADHERENCE_CONCEPT,Utils.CD4_COUNT_CONCEPT,Utils.VISIT_TYPE_CONCEPT,
-                Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT,Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT,Utils.REASON_STOPPED_REGIMEN,
-                Utils.ARV_ADHERENCE_CONCEPT,Utils.DATE_STOPPED_REGIMEN);
+                Utils.REASON_FOR_REGIMEN_SUBSTITUTION_OR_SWITCH_CONCEPT,Utils.NUMBER_OF_MISSED_DOSES_PER_MONTH_CONCEPT,
+                Utils.ARV_ADHERENCE_CONCEPT, Utils.DATE_STOPPED_REGIMEN, Utils.REASON_STOPPED_REGIMEN, Utils.METHOD_OF_DIAGNOSIS);
 
         Map<Object, List<Obs>> obsListForOneVisit = Utils.groupedByConceptIdsOnly(obsListForOneVisitList);
 
@@ -348,7 +352,6 @@ public class ClinicalDictionary {
             hivEncounterType.setNextAppointmentDate(utils.getXmlDate(nextAppointmentDate.toDate()));
 
         }
-
 
         hivEncounterType.setStoppedRegimen(retrieveStoppedRegimen(obsListForOneVisit));//Stopped Regimen
         if (retrieveStoppedRegimen(obsListForOneVisit)) {
@@ -435,6 +438,16 @@ public class ClinicalDictionary {
             ndrCode = getMappedValue(valueCoded);
             hivEncounterType.setTBStatus(ndrCode);
         }
+
+        // Method of TB Diagnosis
+        obs = Utils.extractObs(Utils.METHOD_OF_DIAGNOSIS, obsListForOneVisit);
+        if (obs != null && obs.getValueCoded() != null) {
+            valueCoded = obs.getValueCoded().getConceptId();
+            ndrCode = getMappedValue(valueCoded);
+            hivEncounterType.setMethodofTBDiagnosis(ndrCode);
+        }
+
+
         //How do we extract multiple OIs per encounter
         obsL = obsListForOneVisit.get(Utils.OTHER_OI_OTHER_PROBLEMS);
         if (obsL != null && !obsL.isEmpty()) {
