@@ -7,6 +7,8 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -36,9 +38,11 @@ import javax.xml.bind.annotation.XmlType;
 public class IdentifierType {
 	
 	@XmlElement(name = "IDNumber")
+	//	@JsonProperty(value = "iDNumber")
 	protected String idNumber;
 	
 	@XmlElement(name = "IDTypeCode")
+	//	@JsonProperty(value = "iDTypeCode")
 	protected String idTypeCode;
 	
 	/**

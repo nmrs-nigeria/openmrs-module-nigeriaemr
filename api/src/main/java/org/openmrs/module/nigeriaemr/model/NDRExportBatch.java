@@ -66,6 +66,12 @@ public class NDRExportBatch {
 	@Column(name = "automatic")
 	private boolean automatic;
 	
+	@Column(name = "ndr_batch_ids")
+	private String ndrBatchIds;
+	
+	@Column(name = "errorLogsPulled")
+	private String errorLogsPulled;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -210,5 +216,21 @@ public class NDRExportBatch {
 	
 	public void setAutomatic(boolean automatic) {
 		this.automatic = automatic;
+	}
+	
+	public String getNdrBatchIds() {
+		return ndrBatchIds;
+	}
+	
+	public void setNdrBatchIds(String ndrBatchIds) {
+		this.ndrBatchIds = ndrBatchIds;
+	}
+	
+	public String getErrorLogsPulled() {
+		return errorLogsPulled;
+	}
+	
+	public void setErrorLogsPulled(String errorLogsPulled) {
+		this.errorLogsPulled = errorLogsPulled;
 	}
 }

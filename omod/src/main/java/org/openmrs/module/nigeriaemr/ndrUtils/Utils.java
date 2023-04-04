@@ -13,11 +13,13 @@ import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.DatimMap;
-import org.openmrs.module.nigeriaemr.model.ndr.AddressType;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
-import org.openmrs.module.nigeriaemr.ndrfactory.*;
+import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
+import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
+import org.openmrs.module.nigeriaemr.ndrfactory.PMTCTDictionary;
+import org.openmrs.module.nigeriaemr.ndrfactory.PharmacyDictionary;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.module.nigeriaemr.util.FileUtils;
@@ -33,11 +35,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -328,7 +328,8 @@ public class Utils {
 		return Context.getAdministrationService().getGlobalProperty(LoggerUtils.PATIENT_LIMIT_PROPERTY);
 	}
 	
-	public static List<Obs> extractObsfromEncounter(List<Encounter> encs) {
+	public static List<Obs> extractObsfromEncounter(List<Encounter> encs)
+	{
         List<Obs> responseObs = new ArrayList<>();
 
         encs.forEach(a -> {
@@ -478,8 +479,8 @@ public class Utils {
 			return versionModel;
 		}
 		catch (Exception e) {
-			LoggerUtils.write(Utils.class.getName(), "Error locating version file: " + e.getMessage(),
-			    LoggerUtils.LogFormat.FATAL, LogLevel.live);
+			LoggerUtils.write(Utils.class.getName(), "Error locating version file: " + e.getMessage(), LogFormat.FATAL,
+			    LogLevel.live);
 			return null;
 		}
 	}
@@ -1030,6 +1031,11 @@ public class Utils {
 		File dir = new File(folder);
 		Boolean b = dir.mkdir();
 		System.out.println("Creating download folder : " + folder + "was successful : " + b);
+		return folder;
+	}
+	
+	public static String getDownloadFolder(String contextPath) {
+		String folder = Paths.get(new File(contextPath).getParentFile().toString(), "downloads").toString();
 		return folder;
 	}
 	
