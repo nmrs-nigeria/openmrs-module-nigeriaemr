@@ -7,7 +7,6 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
-
 import javax.xml.bind.annotation.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

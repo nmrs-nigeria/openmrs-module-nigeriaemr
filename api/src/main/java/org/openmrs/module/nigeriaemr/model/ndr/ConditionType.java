@@ -37,13 +37,9 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ConditionType", propOrder = { "conditionCode", "programArea", "patientAddress", "commonQuestions",
-<<<<<<< HEAD
-        "conditionSpecificQuestions", "encounters", "laboratoryReport", "regimen", "eac" })
-=======
         "conditionSpecificQuestions", "encounters", "laboratoryReport", "regimen", "childBirthDetails", "childFollowup",
         "infantPCRTesting", "healthFacilityVisits", "partnerDetails", "infantRapidTest" })
 @JsonIgnoreProperties(ignoreUnknown = true)
->>>>>>> 0f584bb587e399626e67f9f6d4da455b46eba98d
 public class ConditionType {
 	
 	@XmlElement(name = "ConditionCode", required = true)

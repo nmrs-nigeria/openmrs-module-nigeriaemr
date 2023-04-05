@@ -150,13 +150,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType(name = "HIVTestingReportType", propOrder = { "clientCode", "visitDate", "visitID", "setting", "firstTimeVisit",
         "sessionType", "referredFrom", "maritalStatus", "noOfOwnChildrenLessThan5Years", "noOfAllWives", "isIndexClient",
         "indexType", "indexClientId", "reTestingForResultVerification", "preTestInformation", "hivTestResult",
-<<<<<<< HEAD
-        "postTestCounselling", "syphilisTestResult", "hbvTestResult", "hcvTestResult", "completedBy", "dateCompleted" })
-=======
         "postTestCounselling", "syphilisTestResult", "hbvTestResult", "hcvTestResult", "indexNotificationServices",
         "completedBy", "dateCompleted" })
 @JsonIgnoreProperties(ignoreUnknown = true)
->>>>>>> 0f584bb587e399626e67f9f6d4da455b46eba98d
 public class HIVTestingReportType {
 	
 	@XmlElement(name = "ClientCode", required = true)
