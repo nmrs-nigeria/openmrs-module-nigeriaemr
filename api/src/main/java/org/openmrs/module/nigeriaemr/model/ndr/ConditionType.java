@@ -66,8 +66,23 @@ public class ConditionType {
 	@XmlElement(name = "Regimen")
 	protected List<RegimenType> regimen;
 	
-	@XmlElement(name = "EAC")
-	protected List<EACType> eac;
+	@XmlElement(name = "ChildBirthDetails")
+	protected List<ChildBirthDetailsType> childBirthDetails;
+	
+	@XmlElement(name = "ChildFollowup")
+	protected List<ChildFollowupType> childFollowup;
+	
+	@XmlElement(name = "InfantPCRTesting")
+	protected List<InfantPCRTestingType> infantPCRTesting;
+	
+	@XmlElement(name = "HealthFacilityVisits")
+	protected List<HealthFacilityVisitsType> healthFacilityVisits;
+	
+	@XmlElement(name = "PartnerDetails")
+	protected List<PartnerDetailsType> partnerDetails;
+	
+	@XmlElement(name = "InfantRapidTest")
+	protected List<InfantRapidTestType> infantRapidTest;
 	
 	/**
 	 * Gets the value of the conditionCode property.
@@ -236,11 +251,121 @@ public class ConditionType {
 	 * <p>
 	 * Objects of the following type(s) are allowed in the list {@link EACType }
 	 */
-	public List<EACType> getEAC() {
-		if (eac == null) {
-			eac = new ArrayList<EACType>();
+	public List<ChildBirthDetailsType> getChildBirthDetails() {
+		if (childBirthDetails == null) {
+			childBirthDetails = new ArrayList<ChildBirthDetailsType>();
 		}
-		return this.eac;
+		return this.childBirthDetails;
+	}
+	
+	/**
+	 * Gets the value of the childFollowup property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+	 * modification you make to the returned list will be present inside the JAXB object. This is
+	 * why there is not a <CODE>set</CODE> method for the childFollowup property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+     *    getChildFollowup().add(newItem);
+     * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link ChildFollowupType }
+	 */
+	public List<ChildFollowupType> getChildFollowup() {
+		if (childFollowup == null) {
+			childFollowup = new ArrayList<ChildFollowupType>();
+		}
+		return this.childFollowup;
+	}
+	
+	/**
+	 * Gets the value of the infantPCRTesting property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+	 * modification you make to the returned list will be present inside the JAXB object. This is
+	 * why there is not a <CODE>set</CODE> method for the infantPCRTesting property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+     *    getInfantPCRTesting().add(newItem);
+     * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link InfantPCRTestingType }
+	 */
+	public List<InfantPCRTestingType> getInfantPCRTesting() {
+		if (infantPCRTesting == null) {
+			infantPCRTesting = new ArrayList<InfantPCRTestingType>();
+		}
+		return this.infantPCRTesting;
+	}
+	
+	/**
+	 * Gets the value of the healthFacilityVisits property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+	 * modification you make to the returned list will be present inside the JAXB object. This is
+	 * why there is not a <CODE>set</CODE> method for the healthFacilityVisits property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+     *    getHealthFacilityVisits().add(newItem);
+     * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link HealthFacilityVisitsType }
+	 */
+	public List<HealthFacilityVisitsType> getHealthFacilityVisits() {
+		if (healthFacilityVisits == null) {
+			healthFacilityVisits = new ArrayList<HealthFacilityVisitsType>();
+		}
+		return this.healthFacilityVisits;
+	}
+	
+	/**
+	 * Gets the value of the partnerDetails property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+	 * modification you make to the returned list will be present inside the JAXB object. This is
+	 * why there is not a <CODE>set</CODE> method for the partnerDetails property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+     *    getPartnerDetails().add(newItem);
+     * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link PartnerDetailsType }
+	 */
+	public List<PartnerDetailsType> getPartnerDetails() {
+		if (partnerDetails == null) {
+			partnerDetails = new ArrayList<PartnerDetailsType>();
+		}
+		return this.partnerDetails;
+	}
+	
+	/**
+	 * Gets the value of the infantRapidTest property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+	 * modification you make to the returned list will be present inside the JAXB object. This is
+	 * why there is not a <CODE>set</CODE> method for the infantRapidTest property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 * getInfantRapidTest().add(newItem);
+	 * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link InfantRapidTestType }
+	 */
+	public List<InfantRapidTestType> getInfantRapidTest() {
+		if (infantRapidTest == null) {
+			infantRapidTest = new ArrayList<InfantRapidTestType>();
+		}
+		return this.infantRapidTest;
 	}
 	
 }
