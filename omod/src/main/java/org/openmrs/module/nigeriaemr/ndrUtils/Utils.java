@@ -439,6 +439,7 @@ public class Utils {
 	public static Date getLastNDRDate() {
 		String lastRunDateString = Context.getAdministrationService().getGlobalProperty("ndr_last_run_date");
 		if (String.valueOf(lastRunDateString).isEmpty()) {
+			System.out.println("Last Date is empty");
 			return null;
 		} else {
 			try {

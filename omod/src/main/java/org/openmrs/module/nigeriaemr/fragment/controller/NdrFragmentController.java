@@ -134,6 +134,8 @@ public class NdrFragmentController {
 		Date lastDate = Utils.getLastNDRDate();
 		List<Integer> patients = ndrExtractionService.getPatientIds(lastDate, currentDate, null, true);
 		String DATIMID = Utils.getFacilityDATIMId();
+		System.out.println("Current Date: " + currentDate);
+		System.out.println("Last Run Date: " + lastDate);
 		return startGenerateFile(request, patients, DATIMID, lastDate, currentDate, true, opt);
 	}
 	
@@ -143,17 +145,24 @@ public class NdrFragmentController {
 		// Check that no export is in progress
 		Map<String, Object> condition = new HashMap<>();
 		condition.put("status", "Processing");
+		System.out.println("Before getExport(): ");
 		List<NDRExport> exports = nigeriaemrService.getExports(condition, 1, false);
+		System.out.println("Export Size: " + exports.size());
+		System.out.println("Export: " + exports);
 		if (exports.size() > 0) return "You already have an export in process, Kindly wait for it to finish";
+		System.out.println("filteredPatients Size: " + filteredPatients.size());
 		if (filteredPatients == null || filteredPatients.size() <= 0) return "no new patient record found";
 		String contextPath = request.getContextPath();
+		System.out.println("contextPath: " + contextPath);
 		String fullContextPath = request.getSession().getServletContext().getRealPath(contextPath);
+		System.out.println("fullContextPath: " + fullContextPath);
 		UserContext userContext = Context.getUserContext();
 
 		Thread thread = new Thread(() ->
 		{
 			try {
 				Consumer.initialize(userContext, opt);
+				
 				ndrExtractionService.saveExport(fullContextPath, contextPath, filteredPatients, DATIMID, lastDate, currentDate, updateNdrLastRun, opt);
 			} catch (Exception e) {
 				LoggerUtils.write(NdrFragmentController.class.getName(), e.getMessage(), LoggerUtils.LogFormat.FATAL,

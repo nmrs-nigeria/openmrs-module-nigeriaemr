@@ -216,6 +216,9 @@ public class HIVTestingReportType {
 	@XmlElement(name = "HCVTestResult")
 	protected String hcvTestResult;
 	
+	@XmlElement(name = "IndexNotificationServices")
+	protected IndexNotificationServicesType indexNotificationServices;
+	
 	@XmlElement(name = "CompletedBy")
 	protected String completedBy;
 	
@@ -580,6 +583,24 @@ public class HIVTestingReportType {
 	 */
 	public void setHCVTestResult(String value) {
 		this.hcvTestResult = value;
+	}
+	
+	/**
+	 * Gets the value of the indexNotificationServices property.
+	 * 
+	 * @return possible object is {@link IndexNotificationServicesType }
+	 */
+	public IndexNotificationServicesType getIndexNotificationServices() {
+		return indexNotificationServices;
+	}
+	
+	/**
+	 * Sets the value of the indexNotificationServices property.
+	 * 
+	 * @param value allowed object is {@link IndexNotificationServicesType }
+	 */
+	public void setIndexNotificationServices(IndexNotificationServicesType value) {
+		this.indexNotificationServices = value;
 	}
 	
 	/**

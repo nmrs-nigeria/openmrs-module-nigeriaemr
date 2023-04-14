@@ -303,6 +303,12 @@
             WHERE encounter_id  NOT IN (SELECT encounter_id FROM encounter);
         </sql>
     </changeSet>
+    
+    <changeSet id="Add_ndrbatchids_and_errorlog_20230413100111" author="Toyeeb" runOnChange="true">
+        <sql>
+            ALTER TABLE `nigeriaemr_ndr_batch_export` ADD `ndr_batch_ids` VARCHAR(255) NULL DEFAULT NULL AFTER `automatic`, ADD `errorLogsPulled` TEXT NULL DEFAULT NULL AFTER `ndr_batch_ids`;
+        </sql>
+    </changeSet>
 
 
 </databaseChangeLog>

@@ -233,4 +233,15 @@ public class NDRExportBatch {
 	public void setErrorLogsPulled(String errorLogsPulled) {
 		this.errorLogsPulled = errorLogsPulled;
 	}
+	
+	@Override
+	public String toString() {
+		return "NDRExportBatch [id=" + id + ", owner=" + owner + ", patientsProcessed=" + patientsProcessed + ", patients="
+		        + patients + ", dateStarted=" + dateStarted + ", dateCreated=" + dateCreated + ", dateEnded=" + dateEnded
+		        + ", dateUpdated=" + dateUpdated + ", status=" + status + ", name=" + name + ", path=" + path
+		        + ", errorPath=" + errorPath + ", errorList=" + errorList + ", lastExportDate=" + lastExportDate
+		        + ", contextPath=" + contextPath + ", reportFolder=" + reportFolder + ", voided=" + voided + ", automatic="
+		        + automatic + ", ndrBatchIds=" + ndrBatchIds + ", errorLogsPulled=" + errorLogsPulled + "]";
+	}
+	
 }

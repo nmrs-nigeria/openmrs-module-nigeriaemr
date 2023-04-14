@@ -110,6 +110,9 @@ public class NdrExtractionService {
 		ndrExportBatch.setContextPath(contextPath);
 		ndrExportBatch.setAutomatic(automatic);
 		
+		ndrExportBatch.setDateStarted(new Date());
+		ndrExportBatch.setDateEnded(new Date());
+		
 		String name = IPReportingState + "_" + IPReportingLgaCode + "_" + DATIMID + formattedDate;
 		name = name.replaceAll("/", "_");
 		
@@ -131,6 +134,8 @@ public class NdrExtractionService {
 			ndrExport.setContextPath(contextPath);
 			ndrExport.setReportFolder(reportFolder);
 			ndrExport.setBatchId(ndrExportBatch.getId());
+			ndrExport.setDateEnded(new Date());
+			ndrExport.setDateUpdated(new Date());
 			try {
 				ndrExport.setPatientsList(new ObjectMapper().writeValueAsString(patients));
 			}

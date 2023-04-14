@@ -214,4 +214,14 @@ public class NDRExport implements Serializable {
 	public void setErrorPatientsList(String errorPatientsList) {
 		this.errorPatientsList = errorPatientsList;
 	}
+	
+	@Override
+	public String toString() {
+		return "NDRExport [id=" + id + ", owner=" + owner + ", name=" + name + ", patientsProcessed=" + patientsProcessed
+		        + ", patients=" + patients + ", dateStarted=" + dateStarted + ", lastDate=" + lastDate + ", dateUpdated="
+		        + dateUpdated + ", dateEnded=" + dateEnded + ", path=" + path + ", status=" + status + ", voided=" + voided
+		        + ", contextPath=" + contextPath + ", reportFolder=" + reportFolder + ", patientsList=" + patientsList
+		        + ", errorPatientsList=" + errorPatientsList + ", batchId=" + batchId + "]";
+	}
+	
 }
