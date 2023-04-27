@@ -467,14 +467,8 @@ public class HTSDictionary {
                 Map<Object, List<Obs>> allMembers = Utils.groupedByConceptIdsOnly(allMembersValue);
                 //extract all the members using the concept
 
-                //partner name
-                Obs obs = extractObs(PARTNER_NAME_CONCEPT, allMembers);
-                if (obs != null && obs.getValueText() != null) {
-                    partnerNotificationType.setPartnername(obs.getValueText());
-                }
-
                 //partner gender
-                obs = extractObs(PARTNER_GENDER_CONCEPT, allMembers);
+                Obs obs = extractObs(PARTNER_GENDER_CONCEPT, allMembers);
                 if (obs != null && obs.getValueCoded() != null) {
                     partnerNotificationType.setPartnerGender(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
@@ -483,18 +477,6 @@ public class HTSDictionary {
                 obs = extractObs(PARTNER_INDEX_TYPE_CONCEPT, allMembers);
                 if (obs != null && obs.getValueCoded() != null) {
                     partnerNotificationType.setIndexRelation(getMappedValue(obs.getValueCoded().getConceptId()));
-                }
-
-                //partner address
-                obs = extractObs(PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT, allMembers);
-                if (obs != null && obs.getValueText() != null) {
-                    partnerNotificationType.setDescriptiveAddress(obs.getValueText());
-                }
-
-                //partner phone
-                obs = extractObs(PARTNER_INDEX_RELATION_PHONE_CONCEPT, allMembers);
-                if (obs != null && obs.getValueText() != null) {
-                    partnerNotificationType.setPhoneNumber(obs.getValueText());
                 }
 
                 partnerNotificationTypes.add(partnerNotificationType);
