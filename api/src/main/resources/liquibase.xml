@@ -304,9 +304,49 @@
         </sql>
     </changeSet>
     
-    <changeSet id="Add_ndrbatchids_and_errorlog_20230413100111" author="Toyeeb" runOnChange="true">
+    <changeSet id="Add_ndrbatchids_20230413100111" author="Toyeeb" runOnChange="true">
+    	<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM information_schema.COLUMNS WHERE TABLE_NAME = 'nigeriaemr_ndr_batch_export' AND COLUMN_NAME = 'ndr_batch_ids';
+            </sqlCheck>
+        </preConditions>
         <sql>
-            ALTER TABLE `nigeriaemr_ndr_batch_export` ADD `ndr_batch_ids` VARCHAR(255) NULL DEFAULT NULL AFTER `automatic`, ADD `errorLogsPulled` TEXT NULL DEFAULT NULL AFTER `ndr_batch_ids`;
+            ALTER TABLE `nigeriaemr_ndr_batch_export` ADD `ndr_batch_ids` VARCHAR(255) NULL DEFAULT NULL AFTER `automatic`;
+        </sql>
+    </changeSet>
+    
+    <changeSet id="Add_errorlog_20230413100111" author="Toyeeb" runOnChange="true">
+    	<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM information_schema.COLUMNS WHERE TABLE_NAME = 'nigeriaemr_ndr_batch_export' AND COLUMN_NAME = 'errorLogsPulled';
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            ALTER TABLE `nigeriaemr_ndr_batch_export` ADD `errorLogsPulled` TEXT NULL DEFAULT NULL AFTER `ndr_batch_ids`;
+        </sql>
+    </changeSet>
+    
+    <changeSet id="create_pbs_biometricverification_table_20230427113900" author="Toyeeb">
+        <sql>
+            CREATE TABLE IF NOT EXISTS `biometricverificationinfo` (
+			  `biometricInfo_Id` int(11) NOT NULL AUTO_INCREMENT,
+			  `patient_Id` int(11) NOT NULL,
+			  `template` text,
+			  `imageWidth` int(11) DEFAULT NULL,
+			  `imageHeight` int(11) DEFAULT NULL,
+			  `imageDPI` int(11) DEFAULT NULL,
+			  `imageQuality` int(11) DEFAULT NULL,
+			  `fingerPosition` varchar(50) DEFAULT NULL,
+			  `serialNumber` varchar(255) DEFAULT NULL,
+			  `model` varchar(255) DEFAULT NULL,
+			  `manufacturer` varchar(255) DEFAULT NULL,
+			  `creator` int(11) DEFAULT NULL,
+			  `date_created` datetime DEFAULT NULL,
+			  `new_template` longblob,
+			  PRIMARY KEY (`biometricInfo_Id`),
+			  FOREIGN KEY(patient_Id) REFERENCES patient(patient_Id),
+			  FOREIGN KEY(creator) REFERENCES patient(creator)
+			) AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8;
         </sql>
     </changeSet>
 
