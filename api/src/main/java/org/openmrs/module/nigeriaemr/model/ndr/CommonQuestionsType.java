@@ -7,6 +7,7 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -53,6 +54,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType(name = "CommonQuestionsType", propOrder = { "hospitalNumber", "diagnosisFacility", "dateOfFirstReport",
         "dateOfLastReport", "diagnosisDate", "patientDieFromThisIllness", "patientPregnancyStatusCode",
         "estimatedDeliveryDate", "patientAge" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CommonQuestionsType {
 	
 	@XmlElement(name = "HospitalNumber")

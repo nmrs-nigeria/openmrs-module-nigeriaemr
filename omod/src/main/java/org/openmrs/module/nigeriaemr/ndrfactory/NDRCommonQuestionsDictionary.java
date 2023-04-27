@@ -504,7 +504,7 @@ public class NDRCommonQuestionsDictionary {
 
             return demo;
         } catch (Exception ex) {
-            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LoggerUtils.LogLevel.live);
             //throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
 
@@ -624,7 +624,7 @@ public class NDRCommonQuestionsDictionary {
                     common.setDiagnosisDate(utils.getXmlDate(valueDateTime));
                 }
             } catch (Exception ex) {
-                LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
                         LoggerUtils.LogLevel.live);
             }
 
@@ -659,7 +659,7 @@ public class NDRCommonQuestionsDictionary {
             }
             return common;
         } catch (Exception ex) {
-            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LoggerUtils.LogLevel.live);
             throw new DatatypeConfigurationException(ex.getMessage());
         }
     }
@@ -979,7 +979,7 @@ HIVQuestionsType
         try {
             return map.get(conceptID);
         } catch (Exception ex) {
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
             return "";
         }
@@ -989,7 +989,7 @@ HIVQuestionsType
         try {
             return hivQuestionDictionary.get(conceptID);
         } catch (Exception ex) {
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
             return "";
         }

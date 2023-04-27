@@ -5,23 +5,20 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
-import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-
-import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
+import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.util.*;
 
 import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
 
@@ -1064,8 +1061,8 @@ public class HTSDictionary {
         try {
             return htsDictionary.get(conceptID);
         } catch (Exception ex) {
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
+                    LogLevel.live);
             return "";
         }
     }

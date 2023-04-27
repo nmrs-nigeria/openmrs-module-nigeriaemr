@@ -5,37 +5,25 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
-import org.openmrs.module.nigeriaemr.model.ndr.AnswerType;
-import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
-import org.openmrs.module.nigeriaemr.model.ndr.CodedType;
-import org.openmrs.module.nigeriaemr.model.ndr.LaboratoryOrderAndResult;
-import org.openmrs.module.nigeriaemr.model.ndr.LaboratoryReportType;
-import org.openmrs.module.nigeriaemr.model.ndr.NumericType;
+import org.openmrs.module.nigeriaemr.model.ndr.*;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
-import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.*;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
+
+import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObsByConceptId;
+import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.getObs;
 
 public class LabDictionary {
 
@@ -183,8 +171,8 @@ public class LabDictionary {
         try {
             return labTestDictionary.get(conceptID);
         } catch (Exception ex) {
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
+                    LogLevel.live);
             throw ex;
         }
     }

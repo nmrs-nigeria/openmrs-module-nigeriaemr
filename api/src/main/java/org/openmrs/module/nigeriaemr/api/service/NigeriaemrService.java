@@ -15,12 +15,11 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.nigeriaemr.NigeriaemrConfig;
 import org.openmrs.module.nigeriaemr.Item;
-import org.openmrs.module.nigeriaemr.model.BiometricInfo;
-import org.openmrs.module.nigeriaemr.model.DatimMap;
-import org.openmrs.module.nigeriaemr.model.NDRExport;
-import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
+import org.openmrs.module.nigeriaemr.model.*;
+import org.openmrs.module.nigeriaemr.util.FileUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.directory.SchemaViolationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +113,31 @@ public interface NigeriaemrService extends OpenmrsService {
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
+	List<ndrMessageLog> getNdrMessageLogs(Integer exportId) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
 	NDRExportBatch updateExportBatch(int id, String status, boolean end) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	void setBatchIdsFromNdr(Integer exportId, String batches) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	void saveNdrApiErrorLog(ndrMessageLog messageLog) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	List<NDRExportBatch> getBatchExports() throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	void updateBatchExport(Integer exportId, String ndrErrorLogStatus) throws APIException;
+	
+	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
+	@Transactional
+	public NDRExportBatch getNDRExportByZipFileName(String path) throws APIException;
 	
 	@Authorized(NigeriaemrConfig.MODULE_PRIVILEGE)
 	@Transactional
