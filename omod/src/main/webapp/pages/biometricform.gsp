@@ -447,7 +447,7 @@
 
     function fp_VerifySave() {
         jQuery('#myModal').modal('show');
-        let saveUrl = url + '/SaveToDatabase';
+        let saveUrl = url + '/ReSaveFingerprintVerificationToDatabase';
         let model = {};
         model.FingerPrintList = capturedPrint;
         model.PatientUUID = patientId;
