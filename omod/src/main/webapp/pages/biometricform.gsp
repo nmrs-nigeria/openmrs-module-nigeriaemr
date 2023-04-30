@@ -185,6 +185,8 @@
     let url = '${ biometricUrl }';
     console.log(url);
 
+    var previouscapturecheck ="";
+
     jQuery(document).ready(function(){
         // jQuery('#myModal').modal('show');
         let PreviousCaptureURL =url+'/CheckForPreviousCapture?PatientUUID=' + patientId;
@@ -194,6 +196,7 @@
                 if (data !== undefined && data !== null && data.length > 0) {
                     let lowQuality = false;
                     let invalid = false;
+                    previouscapturecheck = data;
                     for (let i = 0; i < data.length; i++) {
                         if ("low" === data[i].qualityFlag.toLowerCase()) {
                             let position = apiFingerPosition[data[i].fingerPositions];
@@ -259,7 +262,7 @@
         //     alertt('Select a patient first');
         //     return;
         // }
-
+        console.log("Finger position id: "+position);
 
         let captureURL = url + '/CapturePrint?fingerPosition=' + position;
 
@@ -533,16 +536,27 @@
     }
 
     function fp_verification(){
+
+        console.log("previouscapturecheck: "+previouscapturecheck);
+
         for(i = 1; i < fingerPosition.length; i++){
-            //console.log(fingerPosition[i]);
-            document.getElementById('H_' + fingerPosition[i]).style.display = 'none';
-            document.getElementById('BTN_' + fingerPosition[i]).disabled = false;
-            document.getElementById('BTN_' + fingerPosition[i]).setAttribute("onClick", "captureFP(" + i + ")");
+            console.log(fingerPosition[i]);
+            document.getElementById('BTN_' + fingerPosition[i]).disabled = true;
+        }
+
+        for (let i = 0; i < previouscapturecheck.length; i++) {
+            let position = apiFingerPosition[previouscapturecheck[i].fingerPositions];
+            let inputId = apiFingerPosition[previouscapturecheck[i].fingerPositions];
+
+            document.getElementById('H_' + fingerPosition[position]).style.display = 'none';
+            document.getElementById('BTN_' + fingerPosition[position]).setAttribute("onClick", "captureFP(" + position + ")");
+            document.getElementById('BTN_' + fingerPosition[inputId]).disabled = false;
+
         }
 
         document.getElementById('saveBiometric').setAttribute( "onClick", "fp_VerifySave()");
         document.getElementById('saveBiometric').disabled = false;
-        document.getElementById('H_'+imgId).style.display = 'none';
+        //document.getElementById('H_'+imgId).style.display = 'none';
     }
 
     jQuery(document).on('click', '.chcktblpt', function (e) {
