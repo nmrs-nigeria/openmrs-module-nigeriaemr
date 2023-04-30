@@ -2,6 +2,7 @@ package org.openmrs.module.nigeriaemr.fragment.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+//import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.UserContext;
 import org.openmrs.module.nigeriaemr.Consumer;
@@ -329,6 +330,21 @@ public class NdrFragmentController {
 			}
 			NDRApiUtils ndrApiUtils = new NDRApiUtils();
 			apiRes = ndrApiUtils.auth(email, password);
+			return apiRes;
+		}
+		catch (Exception ex) {
+			System.out.println(ex.getMessage());
+			apiRes.code = -1;
+			apiRes.message = ex.getMessage();
+			return apiRes;
+		}
+	}
+	
+	public NDRApiResponse reAuth(HttpServletRequest request) throws Exception {
+		NDRApiResponse apiRes = new NDRApiResponse();
+		try {
+			NDRApiUtils ndrApiUtils = new NDRApiUtils();
+			apiRes = ndrApiUtils.auth(null, null);
 			return apiRes;
 		}
 		catch (Exception ex) {

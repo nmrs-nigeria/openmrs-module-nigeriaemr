@@ -107,13 +107,14 @@ public class NDRApiUtils {
 		NDRApiResponse apiRes = new NDRApiResponse();
 		NDRAuth auth = new NDRAuth();
 		try {
-			if ((beepUser != null && !beepUser.isEmpty()) && (beepPass != null && !beepPass.isEmpty())) {
-				auth.email = beepUser;
-				auth.password = beepPass;
+			boolean b = (email != null && !email.isEmpty()) && (password != null && !password.isEmpty());
+			if (b) {
+				auth.email = email;
+				auth.password = password;
 			} else {
-				if ((email != null && !email.isEmpty()) && (password != null && !password.isEmpty())) {
-					auth.email = email;
-					auth.password = password;
+				if ((beepUser != null && !beepUser.isEmpty()) && (beepPass != null && !beepPass.isEmpty())) {
+					auth.email = beepUser;
+					auth.password = beepPass;
 				} else {
 					apiRes.code = -1;
 					apiRes.message = "Log in credentials are either empty or incorrect";
@@ -143,8 +144,7 @@ public class NDRApiUtils {
 				Context.getAdministrationService().setGlobalProperty("ndr_beep_date", dateFormat.format(c.getTime()));
 				System.out.println("\nAuthentication with the NDR was successful\n");
 				
-				if (((beepUser == null || beepUser.isEmpty()) && (beepPass == null || beepPass.isEmpty()))
-				        && ((email != null && !email.isEmpty()) && (password != null && !password.isEmpty()))) {
+				if (((beepUser == null || beepUser.isEmpty()) && (beepPass == null || beepPass.isEmpty())) && b) {
 					Context.getAdministrationService().setGlobalProperty("beep_user", email);
 					Context.getAdministrationService().setGlobalProperty("beep_pass", password);
 				}

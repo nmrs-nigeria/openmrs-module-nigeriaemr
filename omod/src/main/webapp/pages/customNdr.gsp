@@ -547,7 +547,7 @@ div#batches span {
         let btnCancel = jq('#btnCancel');
 
         // let waitGif = jq('#waitGif');
-
+        let url = "${ ui.actionLink("nigeriaemr", "ndr", "auth") }";
         if (credentialsProvided === false)
         {
             if(email === null || email.length < 1)
@@ -561,11 +561,14 @@ div#batches span {
                 return;
             }
         }
-
+        else
+        {
+            url = "${ ui.actionLink("nigeriaemr", "ndr", "reAuth") }";
+        }
         authBtn.attr('value', 'Please wait...').css('font-style', 'italic').prop('disabled', true);
         btnCancel.attr('enabled', 'false');
 
-        let url = "${ ui.actionLink("nigeriaemr", "ndr", "auth") }";
+
         jq.ajax({
             url: url,
             dataType: "json",
