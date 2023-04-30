@@ -311,6 +311,63 @@
             });
     }
 
+
+    function verificationCapturePrint(position) {
+        jQuery('#myModalCapture').modal('show');
+        // if(patientId === undefined){
+        //     alertt('Select a patient first');
+        //     return;
+        // }
+        console.log("Finger position id: "+position);
+        console.log("patient Id: "+patientId);
+
+        let captureURL = url + '/verificationCapturePrint?fingerPosition=' + position+"&patientId="+patientId;
+
+        jQuery.getJSON(captureURL)
+            .success(function (data) {
+                jQuery('#myModalCapture').modal('hide');
+                if (data.ErrorMessage === '' || data.ErrorMessage === null) {
+                    let imgId = fingerPosition[position];
+                    document.getElementById('H_'+imgId).style.display = 'none';
+                    document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
+
+                    if(data.ImageQuality >= 75 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'green';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality >= 60 && data.ImageQuality <= 74 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = '#FFA500';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality <= 59){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'red';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+
+                    newPrint = data;
+                    newPrint.Image = '';
+                    pushPrints(newPrint);
+                    if (capturedPrint.length > 5) {
+                        jQuery('input').removeAttr('disabled');
+                    }
+                }else if("-1" === data.ErrorCode){
+                    alertt('Fingerprint is of low quality kindly recapture');
+                }else {
+                    alertt(data.ErrorMessage);
+                }
+            })
+            .error(function (xhr, status, err) {
+                jQuery('#myModalCapture').modal('hide');
+                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
+                    jQuery('#myModalCapture').modal('hide');
+                    alertt(xhr.responseText);
+                }else{
+                    jQuery('#myModalCapture').modal('hide');
+                    alertt('System error. Please check that the Biometric service is running');
+                }
+            });
+    }
+
     function recaptureFP(position) {
         jQuery('#myModalCapture').modal('show');
         let captureURL = url + '/reCapturePrint?fingerPosition=' + position + '&patientId='+ patientId;
@@ -549,7 +606,7 @@
             let inputId = apiFingerPosition[previouscapturecheck[i].fingerPositions];
 
             document.getElementById('H_' + fingerPosition[position]).style.display = 'none';
-            document.getElementById('BTN_' + fingerPosition[position]).setAttribute("onClick", "captureFP(" + position + ")");
+            document.getElementById('BTN_' + fingerPosition[position]).setAttribute("onClick", "verificationCapturePrint(" + position + ")");
             document.getElementById('BTN_' + fingerPosition[inputId]).disabled = false;
 
         }
