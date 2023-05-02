@@ -979,9 +979,7 @@ div#batches span {
     {
         try
         {
-            const ping = await fetch("http://ndrstaging.phis3project.org.ng:8087/v1/utils/ping");
-            // const ping = await fetch("https://localhost:44344/v1/utils/ping");
-            // const ping = await fetch("https://localhost:44344/v1/utils/ping");
+            const ping = await fetch("https://emr-ndrpush.phis3project.org.ng/v1/utils/ping");
             return ping.status >= 200 && ping.status < 300; // either true or false
         }
         catch (err)
