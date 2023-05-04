@@ -12,6 +12,7 @@
 <!--- NDR AUTHENTICATION FOR API  HANDSHAKE --->
 <div id="ndrAuth" class="dialog" style="display: none; padding: 20px; position: absolute; z-index: 999; margin-left: 16.2%; margin-right: 15%;">
     <div style="padding: 20px; position: absolute; z-index: 999; margin-top: -4%; width: 450px; background-color: #e8e8e8; height: 15px; margin-left: -20px;">
+        <span id="msg-hdr-gen" style="font-weight: bold"></span>
         <button type="button" class="close" aria-label="Close" style="background: #e8e8e8 !important; float: right; margin-top: -13px; margin-right: -18px;" title="Close" onclick="cancelAuth()">
             <span aria-hidden="true" style="font-size: 20px; font-weight: bold;">&times;</span>
         </button>
@@ -21,28 +22,27 @@
             <div class="col-md-3 col-xs-3 offset-2" id="waitGif" style="display: none">
                 <img src="../moduleResources/nigeriaemr/images/Sa7X.gif" alt="Loading Gif"  style="width:40px; margin-top: 35px;">
             </div>
-            <h4 id="apiInfo" style="overflow: auto; font-size: 1em !important; font-weight: bold; margin-top: 25px;">Please wait, Checking if NDR API credentials already exists...</h4>
-            <span id="batchesHeader" style="font-weight: bold !important;">The resulting Data Batches are: </span>
+            <h4 id="apiInfo" style="overflow: auto; font-size: 1em !important; font-weight: bold; margin-top: 25px; text-align: left">Please wait, Checking if NDR API credentials already exists...</h4>
+            <div id="batchesHeader" style="font-weight: bold !important;text-align: left;">The resulting Data Batches are: </div>
             <br/>
-            <div id="batchSpan" style="overflow-y: scroll; height: 250px; max-height: 250px; display: none"></div>
+            <div id="batchSpan" style="overflow-y: scroll; height: 100px;max-height: 100px;text-align: left; display: none"></div>
         </div>
         <div style="width: 45%; display: none" id="pushData">
             <input id="btnPushData" style="font-weight: bold; padding-left: 10px; padding-right: 10px;background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px" type="button" value="Push failed Data" onclick="initNDRPush(null)" class="btn btn-primary" />
         </div>
         <br/>
     </div>
-    <div style="display: none" id="login">
-        <div id="authHeader" style="border-bottom: #6c757d 1px solid; margin-bottom: 12px;">
-            <div class="col-md-7 col-xs-7 " style="text-align:left;">
-                <h5>Authenticate with the NDR</h5>
-            </div>
-        </div>
+    <div style="display: none; margin-top: 25px" id="login">
+%{--        <div id="authHeader" style="border-bottom: #6c757d 1px solid; margin-bottom: 12px;">--}%
+%{--            <div class="col-md-7 col-xs-7 " style="text-align:left;">--}%
+%{--                <h5>Authenticate with the NDR</h5>--}%
+%{--            </div>--}%
+%{--        </div>--}%
         <br/>
         <div>
             <label style="color: #000; font-size: 14px">NDR Login Email</label><br/>
             <input autocomplete="off" style="background-color: #E8F0FE; width: 93%; height: 45px; border-radius: 10px; margin-top: 15px; padding-left: 18px; padding-right: 10px" type="email" id="email"><br/>
         </div>
-        <br/>
         <div>
             <label style="color: #000; font-size: 14px">NDR Login Password</label><br/>
             <input autocomplete="off" style="font-weight: bold;padding-left: 10px; padding-right: 10px; background-color: #E8F0FE; width: 95%; height: 45px; border-radius: 10px; margin-top: 15px;" id="password" type="password"  /><br/>
@@ -367,6 +367,24 @@ div#batches span {
     cursor: pointer;
     white-space: nowrap;
 }
+
+.invalid-files {
+    font-weight: normal;
+    color: #e64a19 !important;
+    height: 150px;
+    max-height: 150px;
+    overflow-y: scroll;
+    overflow-wrap: anywhere;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    text-align: left;
+}
+.msg-div{
+    color: #000 !important;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 5px;
+}
 </style>
 
 <script>
@@ -375,6 +393,7 @@ div#batches span {
     let exportTriggered = false;
     let apiPushDone = false;
     let totalJSONFiles = 0;
+    let emptyFiles = '';
     let totalPushed = 0;
     let isOnline = false;
     let processingFile = 0;
@@ -509,7 +528,8 @@ div#batches span {
                     if (res.credentialsProvided !== null && res.credentialsProvided === true)
                     {
                         credentialsProvided = true;
-                        apiInfo.html('Existing Auth token has expired or is empty. Authenticating with the NDR using credentials found in the Global properties...');
+                        jq('#msg-hdr-gen').html('Authenticate with the NDR');
+                        apiInfo.html('<span>Your previous NDR Authentication has expired.</span> <br/><span style=\"font-style: italic\">Please WAIT for fresh Authentication with the NDR...</span>');
                         ndrAuth.show();
                         waitDiv.show();
                         login.hide();
@@ -519,6 +539,7 @@ div#batches span {
                     {
                         alert(res.message);
                         waitDiv.hide();
+                        jq('#msg-hdr-gen').html('Authenticate with the NDR');
                         login.show();
                     }
                 }
@@ -1005,14 +1026,24 @@ div#batches span {
             checkPendingNdrErrorLogs();
             if (res !== undefined && res !== null && res.length > 0)
             {
-                let tt = res.split(',');
+                let tt = res.split(';');
                 batchExport = parseInt(tt[0]);
                 totalJSONFiles = parseInt(tt[1]);
+                emptyFiles = tt[2];
+                let emptyFileString = "None";
+                if(emptyFiles !== undefined && emptyFiles !== null && emptyFiles.length > 0)
+                {
+                    let rpl = emptyFiles.replaceAll(",", "</span><br/><span>");
+                    emptyFileString = "<div class=\"invalid-files\"><span>" + rpl + "</span></div>";
+                }
+
                 if (batchExport > 0 && totalJSONFiles > 0)
                 {
-                    let message = "<br/><span style=\"color: #000 !important;\">Found some files yet to be pushed to the NDR.</span>" +
-                        "<br/><span style=\"color: #000 !important;\">Total Patient (s) To be pushed: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
-                        "<br/><span style=\"color: #000 !important;\">Total Patient(s) pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>";
+                    jq('#msg-hdr-gen').html('NDR Data Push');
+                    let message = //"<div class=\"msg-div\">Found some files yet to be pushed to the NDR.</div>" +
+                        "<div class=\"msg-div\">Total Data yet to be pushed: <span style=\"font-weight: bold;color: #388e3c\">" +  totalJSONFiles + "</span></div>" +
+                        "<div class=\"msg-div\">Invalid Data files: </div>" +  emptyFileString +
+                        "<br/><div class=\"msg-div\">Total Patient Data pushed: <span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></div>";
 
                     jq('#ndrAuth').show();
                     jq('#btnPushData').prop('disabled', false);
@@ -1120,7 +1151,7 @@ div#batches span {
         jq('#waitDiv').show();
         waitGif.show();
         ndrAuth.show();
-
+        jq('#msg-hdr-gen').html('NDR Data Push');
         let url = "${ ui.actionLink("nigeriaemr", "ndr", "getTotalFiles") }";
         jq.ajax({
             url: url,
@@ -1130,12 +1161,26 @@ div#batches span {
             apiPushDone = true;
             if (res !== undefined && res !== null && res.length > 0)
             {
-                let tt = res.split(',');
+                let tt = res.split(';');
                 batchExport = parseInt(tt[0]);
                 totalJSONFiles = parseInt(tt[1]);
+                emptyFiles = tt[2];
+                let emptyFileString = "None";
+                if(emptyFiles !== undefined && emptyFiles !== null && emptyFiles.length > 0)
+                {
+                    let rpl = emptyFiles.replaceAll(",", "</span><br/><span>");
+                    emptyFileString = "<div class=\"invalid-files\"><span>" + rpl + "</span></div>";
+                }
 
-                let message = "<span>Total Extracted Valid Patient Data: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
-                    "<br/><span>Total Patient Data pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>"
+                // let message = "<span>Total Extracted Valid Patient Data: </span><span style=\"font-weight: bold;\">" +  totalJSONFiles + "</span>" +
+                //     "<br/><span style=\"color: #000 !important;\">Invalid Data files: </span>" + emptyFileString +
+                //     "<br/><span>Total Patient Data pushed: </span><span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></span>"
+
+                let message =
+                    "<div class=\"msg-div\">Total Extracted Valid Patient Data: <span style=\"font-weight: bold;color: #388e3c\">" +  totalJSONFiles + "</span></div>" +
+                    "<div class=\"msg-div\">Invalid Data files: </div>" +  emptyFileString +
+                    "<br/><div class=\"msg-div\">Total Patient Data pushed: <span style=\"font-weight: bold;\" id='totalPushed'>" + totalPushed + "</span></div>";
+
                 apiInfo.css('color', '#000 !important').html(message);
                 pushD();
             }
@@ -1324,7 +1369,6 @@ div#batches span {
             batchSpan.append(batchStr);
             batchHeader.show();
             batchSpan.show();
-            jq('#batchesHeader').hide();
             if(batchExport > 0)
             {
                 let batchIds = batches.join(",");

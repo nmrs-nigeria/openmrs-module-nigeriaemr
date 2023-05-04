@@ -231,9 +231,10 @@ public class NDRApiUtils {
 				return summary;
 			}
 			List<File> fileList = new ArrayList<File>();
+			List<String> emptyFiles = new ArrayList<>();
 			File folder = new File(jsonFolder);
 			//Generate list of the JSON files
-			generateJSONFileList(folder, fileList);
+			generateJSONFileList(folder, fileList, emptyFiles);
 			if (fileList == null || fileList.isEmpty())
 			{
 				summary.code = -1;
@@ -559,18 +560,21 @@ public class NDRApiUtils {
 		}
 	}
 	
-	public void generateJSONFileList(File node, List<File> fileList) {
+	public void generateJSONFileList(File node, List<File> fileList, List<String> emptyFiles) {
 		// add json files only
-		if (node.isFile() && node.length() > 0) {
+		if (node.isFile()) {
 			String fileN = node.getName();
 			if (fileN.endsWith("json")) {
-				fileList.add(node);
-				//Filter out files from the error folder
+				if (node.length() > 0) {
+					fileList.add(node);
+				} else {
+					emptyFiles.add(fileN);
+				}
 			}
 		} else if (node.isDirectory() && !node.getName().contains("error")) {
 			String[] subNote = node.list();
 			for (String filename : subNote) {
-				generateJSONFileList(new File(node, filename), fileList);
+				generateJSONFileList(new File(node, filename), fileList, emptyFiles);
 			}
 		}
 	}
@@ -597,9 +601,10 @@ public class NDRApiUtils {
 			Integer totalFiles = 0;
 			Integer batchExportId = 0;
 			List<File> fileList = new ArrayList<File>();
+			List<String> emptyFiles = new ArrayList<>();
 			File folder = new File(jsonFolder);
 			//Generate list of the JSON files
-			generateJSONFileList(folder, fileList);
+			generateJSONFileList(folder, fileList, emptyFiles);
 			if (fileList == null || fileList.isEmpty()) {
 				return totalFiles.toString();
 			}
@@ -614,7 +619,11 @@ public class NDRApiUtils {
 				}
 			}
 			totalFiles = fileList.size();
-			String res = batchExportId.toString() + "," + totalFiles;
+			String errorFiles = "";
+			if(emptyFiles.size() > 0)
+				errorFiles = String.join(",", emptyFiles);
+
+			String res = batchExportId.toString() + ";" + totalFiles + ";" + errorFiles;
 			return res;
 		}
 		catch (APIException e) {
