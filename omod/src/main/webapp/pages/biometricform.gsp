@@ -6,7 +6,7 @@
 %>
 <div>
     <button onclick="deletePrints()" id="deleteBtn" hidden="true" class="btn">Delete FingerPrints</button>
-    <button onclick="fp_verification()" id="fpVerfiyBtn" hidden="true" class="btn">Finger Print Verification</button>
+    <button onclick="fp_verification()" id="fpVerfiyBtn" hidden="true" class="btn">Re-Capture</button>
     <br>
 </div>
 
@@ -327,6 +327,7 @@
             .success(function (data) {
                 jQuery('#myModalCapture').modal('hide');
                 if (data.ErrorMessage === '' || data.ErrorMessage === null) {
+                   // alertt(data.ErrorMessage);
                     let imgId = fingerPosition[position];
                     document.getElementById('H_'+imgId).style.display = 'none';
                     document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
