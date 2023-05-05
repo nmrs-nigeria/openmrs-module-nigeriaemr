@@ -343,10 +343,8 @@
 			  `creator` int(11) DEFAULT NULL,
 			  `date_created` datetime DEFAULT NULL,
 			  `new_template` longblob,
-			  PRIMARY KEY (`biometricInfo_Id`),
-			  FOREIGN KEY(patient_Id) REFERENCES patient(patient_Id),
-			  FOREIGN KEY(creator) REFERENCES patient(creator)
-			) AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8;
+			  PRIMARY KEY (`biometricInfo_Id`)
+			) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
         </sql>
     </changeSet>
 
