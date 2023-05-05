@@ -347,6 +347,12 @@
 			) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
         </sql>
     </changeSet>
+    
+    <changeSet id="add_encoding_print_field_20230505100200" author="Toyeeb">
+        <sql>
+            ALTER TABLE `biometricverificationinfo` ADD `salt` TEXT NULL DEFAULT NULL AFTER `new_template`, ADD `encoded_template` TEXT NULL DEFAULT NULL AFTER `salt`, ADD `hashed` TEXT NULL DEFAULT NULL AFTER `encoded_template`;
+        </sql>
+    </changeSet>
 
 
 </databaseChangeLog>
