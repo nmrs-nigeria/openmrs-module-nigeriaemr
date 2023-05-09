@@ -345,7 +345,7 @@
 			  `new_template` longblob,
               `encoded_template` text DEFAULT NULL,
               `hashed`  TEXT DEFAULT NULL,
-              `recapture_count` INT(11) DEFAULT 0
+              `recapture_count` INT(11) DEFAULT 1,
 			  PRIMARY KEY (`biometricInfo_Id`)
 			) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
         </sql>
