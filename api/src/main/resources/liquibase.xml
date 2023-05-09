@@ -353,6 +353,11 @@
             ALTER TABLE `biometricverificationinfo` ADD `salt` TEXT NULL DEFAULT NULL AFTER `new_template`, ADD `encoded_template` TEXT NULL DEFAULT NULL AFTER `salt`, ADD `hashed` TEXT NULL DEFAULT NULL AFTER `encoded_template`;
         </sql>
     </changeSet>
+    <changeSet id="add_finger_print_counter_field_202305091683619143" author="Tobechi">
+        <sql>
+            ALTER TABLE `biometricverificationinfo` ADD `recapture_count` INT(11) NULL DEFAULT 0 AFTER `hashed`;
+        </sql>
+    </changeSet>
 
 
 </databaseChangeLog>
