@@ -6,6 +6,7 @@
 %>
 <div>
     <button onclick="deletePrints()" id="deleteBtn" hidden="true" class="btn">Delete FingerPrints</button>
+    <button onclick="fp_verification()" id="fpVerfiyBtn" hidden="true" class="btn">Re-Capture</button>
     <br>
 </div>
 
@@ -39,6 +40,8 @@
                  src="../moduleResources/nigeriaemr/images/LEFT_THUMB.png">
             <br>
             <input type="button" value="Scan" id="BTN_LEFT_THUMB" onclick="captureFP(6)">
+            <span id="flag_LEFT_THUMB" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_LEFT_INDEX" style="background-color: red;color: white; display: none"></h6>
@@ -46,24 +49,32 @@
                  src="../moduleResources/nigeriaemr/images/LEFT_INDEX.png">
             <br>
             <input type="button" value="Scan" id="BTN_LEFT_INDEX" onclick="captureFP(7)">
+            <span id="flag_LEFT_INDEX" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_LEFT_MIDDLE" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_MIDDLE" border="1" alt="LEFT MIDDLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_MIDDLE.png"> <br>
             <input type="button" value="Scan" id="BTN_LEFT_MIDDLE" onclick="captureFP(8)">
+            <span id="flag_LEFT_MIDDLE" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_LEFT_RING" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_RING" border="1" alt="LEFT RING" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_RING.png"> <br>
             <input type="button" value="Scan" id="BTN_LEFT_RING" onclick="captureFP(9)">
+            <span id="flag_LEFT_RING" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_LEFT_LITTLE" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_LITTLE" border="1" alt="LEFT LITTLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_LITTLE.png"> <br>
             <input type="button" value="Scan" id="BTN_LEFT_LITTLE" onclick="captureFP(10)">
+            <span id="flag_LEFT_LITTLE" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
     </tr>
     <tr>
@@ -89,30 +100,40 @@
             <img id="RIGHT_THUMB" border="1" alt="RIGHT THUMB" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_THUMB.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_THUMB" onclick="captureFP(1)">
+            <span id="flag_RIGHT_THUMB" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_RIGHT_INDEX" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_INDEX" border="1" alt="RIGHT INDEX" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_INDEX.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_INDEX" onclick="captureFP(2)">
+            <span id="flag_RIGHT_INDEX" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_RIGHT_MIDDLE" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_MIDDLE" border="1" alt="RIGHT MIDDLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_MIDDLE.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_MIDDLE" onclick="captureFP(3)">
+            <span id="flag_RIGHT_MIDDLE" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_RIGHT_RING" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_RING" border="1" alt="RIGHT RING" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_RING.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_RING" onclick="captureFP(4)">
+            <span id="flag_RIGHT_RING" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_RIGHT_LITTLE" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_LITTLE" border="1" alt="RIGHT LITTLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_LITTLE.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_LITTLE" onclick="captureFP(5)">
+            <span id="flag_RIGHT_LITTLE" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
     </tr>
     <tr>
@@ -161,8 +182,10 @@
     }
     let fingerPosition = ["", "RIGHT_THUMB", "RIGHT_INDEX", "RIGHT_MIDDLE", "RIGHT_RING", "RIGHT_LITTLE",
         "LEFT_THUMB", "LEFT_INDEX", "LEFT_MIDDLE", "LEFT_RING", "LEFT_LITTLE"];
-    let url = '${ biometricUrl }'
-    console.log(url)
+    let url = '${ biometricUrl }';
+    console.log(url);
+
+    var previouscapturecheck ="";
 
     jQuery(document).ready(function(){
         // jQuery('#myModal').modal('show');
@@ -173,6 +196,7 @@
                 if (data !== undefined && data !== null && data.length > 0) {
                     let lowQuality = false;
                     let invalid = false;
+                    previouscapturecheck = data;
                     for (let i = 0; i < data.length; i++) {
                         if ("low" === data[i].qualityFlag.toLowerCase()) {
                             let position = apiFingerPosition[data[i].fingerPositions];
@@ -192,7 +216,9 @@
                         }
                     }
                     jQuery('#myModal').modal('hide');
-                    jQuery('#deleteBtn').attr('hidden', false);
+                    // jQuery('#deleteBtn').attr('hidden', false);
+                    jQuery('#fpVerfiyBtn').attr('hidden', false);
+
                     if (lowQuality && invalid) {
                         alertt('Fingerprints of this patient contains invalid and low quality data and will need to be recaptured');
                     } else if (lowQuality) {
@@ -236,7 +262,7 @@
         //     alertt('Select a patient first');
         //     return;
         // }
-
+        console.log("Finger position id: "+position);
 
         let captureURL = url + '/CapturePrint?fingerPosition=' + position;
 
@@ -247,6 +273,78 @@
                     let imgId = fingerPosition[position];
                     document.getElementById('H_'+imgId).style.display = 'none';
                     document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
+
+                    if(data.ImageQuality >= 75 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'green';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality >= 60 && data.ImageQuality <= 74 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = '#FFA500';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality <= 59){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'red';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+
+                    newPrint = data;
+                    newPrint.Image = '';
+                    pushPrints(newPrint);
+                    if (capturedPrint.length > 5) {
+                        jQuery('input').removeAttr('disabled');
+                    }
+                }else if("-1" === data.ErrorCode){
+                    alertt('Fingerprint is of low quality kindly recapture');
+                }else {
+                    alertt(data.ErrorMessage);
+                }
+            })
+            .error(function (xhr, status, err) {
+                jQuery('#myModalCapture').modal('hide');
+                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
+                    jQuery('#myModalCapture').modal('hide');
+                    alertt(xhr.responseText);
+                }else{
+                    jQuery('#myModalCapture').modal('hide');
+                    alertt('System error. Please check that the Biometric service is running');
+                }
+            });
+    }
+
+
+    function verificationCapturePrint(position) {
+        jQuery('#myModalCapture').modal('show');
+        // if(patientId === undefined){
+        //     alertt('Select a patient first');
+        //     return;
+        // }
+        console.log("Finger position id: "+position);
+        console.log("patient Id: "+patientId);
+
+        let captureURL = url + '/verificationCapturePrint?fingerPosition=' + position+"&patientId="+patientId;
+
+        jQuery.getJSON(captureURL)
+            .success(function (data) {
+                jQuery('#myModalCapture').modal('hide');
+                if (data.ErrorMessage === '' || data.ErrorMessage === null) {
+                   // alertt(data.ErrorMessage);
+                    let imgId = fingerPosition[position];
+                    document.getElementById('H_'+imgId).style.display = 'none';
+                    document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
+
+                    if(data.ImageQuality >= 75 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'green';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality >= 60 && data.ImageQuality <= 74 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = '#FFA500';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality <= 59){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'red';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+
                     newPrint = data;
                     newPrint.Image = '';
                     pushPrints(newPrint);
@@ -284,6 +382,20 @@
                     document.getElementById('saveBiometric').setAttribute( "onClick", "reSave()");
                     document.getElementById('saveBiometric').disabled = false;
                     document.getElementById('H_'+imgId).style.display = 'none';
+
+                    if(data.ImageQuality >= 75 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'green';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality >= 60 && data.ImageQuality <= 74 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = '#FFA500';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality <= 59){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'red';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+
                     newPrint = data;
                     newPrint.Image = '';
                     pushPrints(newPrint);
@@ -394,6 +506,38 @@
         });
     }
 
+    function fp_VerifySave() {
+        jQuery('#myModal').modal('show');
+        let saveUrl = url + '/ReSaveFingerprintVerificationToDatabase';
+        let model = {};
+        model.FingerPrintList = capturedPrint;
+        model.PatientUUID = patientId;
+
+        jQuery.ajax({
+            type: "Post",
+            url: saveUrl,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(model),
+            cache: false,
+        }).done(function (response) {
+            if (window.confirm(response.ErrorMessage))
+            {
+                jQuery('#myModal').modal('hide');
+            }else{
+                jQuery('#myModal').modal('hide');
+            }
+            window.location.reload(true);
+        }).error(function (xhr, status, err) {
+            if (window.confirm((xhr.responseJSON.ErrorMessage)))
+            {
+                jQuery('#myModal').modal('hide');
+            }else{
+                jQuery('#myModal').modal('hide');
+            }
+            window.location.reload(true);
+        });
+    }
+
 
     function deletePrints() {
         jQuery('#myModal').modal('show');
@@ -447,6 +591,30 @@
             }).error(function (xhr, status, err) {
             alertt('error ' + err);
         });
+    }
+
+    function fp_verification(){
+
+        console.log("previouscapturecheck: "+previouscapturecheck);
+
+        for(i = 1; i < fingerPosition.length; i++){
+            console.log(fingerPosition[i]);
+            document.getElementById('BTN_' + fingerPosition[i]).disabled = true;
+        }
+
+        for (let i = 0; i < previouscapturecheck.length; i++) {
+            let position = apiFingerPosition[previouscapturecheck[i].fingerPositions];
+            let inputId = apiFingerPosition[previouscapturecheck[i].fingerPositions];
+
+            document.getElementById('H_' + fingerPosition[position]).style.display = 'none';
+            document.getElementById('BTN_' + fingerPosition[position]).setAttribute("onClick", "verificationCapturePrint(" + position + ")");
+            document.getElementById('BTN_' + fingerPosition[inputId]).disabled = false;
+
+        }
+
+        document.getElementById('saveBiometric').setAttribute( "onClick", "fp_VerifySave()");
+        document.getElementById('saveBiometric').disabled = false;
+        //document.getElementById('H_'+imgId).style.display = 'none';
     }
 
     jQuery(document).on('click', '.chcktblpt', function (e) {

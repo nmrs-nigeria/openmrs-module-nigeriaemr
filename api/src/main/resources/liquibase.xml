@@ -343,10 +343,14 @@
 			  `creator` int(11) DEFAULT NULL,
 			  `date_created` datetime DEFAULT NULL,
 			  `new_template` longblob,
-			  PRIMARY KEY (`biometricInfo_Id`),
-			  FOREIGN KEY(patient_Id) REFERENCES patient(patient_Id),
-			  FOREIGN KEY(creator) REFERENCES patient(creator)
-			) AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8;
+			  PRIMARY KEY (`biometricInfo_Id`)
+			) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+        </sql>
+    </changeSet>
+    
+    <changeSet id="add_encoding_print_field_20230505100200" author="Toyeeb">
+        <sql>
+            ALTER TABLE `biometricverificationinfo` ADD `salt` TEXT NULL DEFAULT NULL AFTER `new_template`, ADD `encoded_template` TEXT NULL DEFAULT NULL AFTER `salt`, ADD `hashed` TEXT NULL DEFAULT NULL AFTER `encoded_template`;
         </sql>
     </changeSet>
 
