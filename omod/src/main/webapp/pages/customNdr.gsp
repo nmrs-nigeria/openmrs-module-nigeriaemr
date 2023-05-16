@@ -33,11 +33,6 @@
         <br/>
     </div>
     <div style="display: none; margin-top: 25px" id="login">
-%{--        <div id="authHeader" style="border-bottom: #6c757d 1px solid; margin-bottom: 12px;">--}%
-%{--            <div class="col-md-7 col-xs-7 " style="text-align:left;">--}%
-%{--                <h5>Authenticate with the NDR</h5>--}%
-%{--            </div>--}%
-%{--        </div>--}%
         <br/>
         <div>
             <label style="color: #000; font-size: 14px">NDR Login Email</label><br/>
