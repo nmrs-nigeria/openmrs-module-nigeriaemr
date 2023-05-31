@@ -24,6 +24,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
+
 public class PharmacyDictionary {
     Utils utils = new Utils();
 
@@ -45,12 +47,18 @@ public class PharmacyDictionary {
     public final static int Pick_Up_Reason_Concept_Id = 165774;
     public final static int switch_Indicator_Concept_Id = 165772;
     public final static int substitution_Indicator_Concept_Id = 165665;
+    public final static int Pill_Balance = 166406;
+    public final static int DSD = 166148;
+    public final static int Facility_Dispensing = 166276;
+    public final static int Decentralized_Drug_Delivery = 166363;
+    public final static int MMD = 166278;
 
     public PharmacyDictionary() {
         loadDictionary();
     }
     private Map<Integer, String> regimenMap = new HashMap<>();
     private Map<Integer, String> regimenCodeDescTextMap = new HashMap<>();
+    private Map<Integer, String> pharmacyDictionary = new HashMap<>();
     /*
 		Concept ID for regimen to be gotten from
      */
@@ -273,12 +281,51 @@ public class PharmacyDictionary {
         //OI drug
         regimenCodeDescTextMap.put(71160, "CTX960");//71160 "C00"); //Cotrimoxazole 800mg 105281 No NDR Code
 
+        pharmacyDictionary.put(166276,"DSD1");
+        pharmacyDictionary.put(166363,"DSD2");
+        pharmacyDictionary.put(166153,"FD2");
+        pharmacyDictionary.put(166151,"FD1");
+        pharmacyDictionary.put(166279,"FD3");
+        pharmacyDictionary.put(166134,"DDD04");
+        pharmacyDictionary.put(166135,"DDD03");
+        pharmacyDictionary.put(166280,"DDD06");
+        pharmacyDictionary.put(166364,"DDD02");
+        pharmacyDictionary.put(166365,"DDD05");
+        pharmacyDictionary.put(166366,"DDD01");
+        pharmacyDictionary.put(5622,"DDD07");
+        pharmacyDictionary.put(166281,"MMD1");
+        pharmacyDictionary.put(166282,"MMD2");
+        pharmacyDictionary.put(166283,"MMD3");
+        pharmacyDictionary.put(167107,"FBM2");
+        pharmacyDictionary.put(167108,"FBM3");
+        pharmacyDictionary.put(167109,"FBM4");
+        pharmacyDictionary.put(167110,"FBM5");
+        pharmacyDictionary.put(167111,"FBM6");
+        pharmacyDictionary.put(167112,"FBM7");
+        pharmacyDictionary.put(167115,"CBM6");
+        pharmacyDictionary.put(167114,"CBM4");
+        pharmacyDictionary.put(167113,"CBM3");
     }
 
     public String getRegimenMapValue(int value_coded) {
         //old implementation return regimenMap.get(value_coded);
         if (regimenMap.containsKey(value_coded)) {
             return regimenMap.get(value_coded);
+        }
+        return null;
+    }
+
+    public String getDSDMapValue(int value_coded) {
+        //old implementation return regimenMap.get(value_coded);
+        if (regimenMap.containsKey(value_coded)) {
+            return regimenMap.get(value_coded);
+        }
+        return null;
+    }
+
+    public String getPharmacyMapValue(int value_coded) {
+        if (pharmacyDictionary.containsKey(value_coded)) {
+            return pharmacyDictionary.get(value_coded);
         }
         return null;
     }
@@ -330,7 +377,7 @@ public class PharmacyDictionary {
             regimenType = new RegimenType();
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(utils.getXmlDate(visitDate));
-            
+
             obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, map); //PrescribedRegimenLineCode
             if (obs != null && obs.getValueCoded() != null) {
                 valueCoded = obs.getValueCoded().getConceptId();
@@ -360,7 +407,6 @@ public class PharmacyDictionary {
                     regimenType.setDateRegimenEndedDD(Utils.getDayDD(stopDate));
                     regimenType.setDateRegimenEndedMM(Utils.getMonthMM(stopDate));
                     regimenType.setDateRegimenEndedYYYY(Utils.getYearYYYY(stopDate));
-
                 }
             }
             regimenType.setDateRegimenStarted(utils.getXmlDate(visitDate));
@@ -368,6 +414,31 @@ public class PharmacyDictionary {
             regimenType.setDateRegimenStartedMM(Utils.getMonthMM(visitDate));
             regimenType.setDateRegimenStartedYYYY(Utils.getYearYYYY(visitDate));
 
+            obs = extractObs(Pill_Balance, map);
+            if(obs != null && obs.getValueText() != null){
+                int value_integer = Integer.parseInt((obs.getValueText()));
+                regimenType.setPillBalance(value_integer);
+            }
+            obs = Utils.extractObs(DSD, map); //DSD
+            if (obs != null && obs.getValueCoded() != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                ndrCode = getPharmacyMapValue(valueCoded);
+                regimenType.setDifferentiatedServiceDelivery(ndrCode);
+                Obs valueObs = Utils.extractObs(valueCoded, map); // Dispensing
+                if (valueObs != null) {
+                    valueCoded = valueObs.getValueCoded().getConceptId();
+                    ndrCode = getPharmacyMapValue(valueCoded);
+                    if(ndrCode != null) {
+                        regimenType.setDispensing(ndrCode);
+                    }
+                }
+            }
+            obs = extractObs(MMD, map);
+            if (obs != null && obs.getValueCoded() != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                ndrCode = getPharmacyMapValue(valueCoded);
+                regimenType.setMultiMonthDispensing(ndrCode);
+            }
         }
         return regimenType;
     }
@@ -431,7 +502,7 @@ public class PharmacyDictionary {
                     cst = new CodedSimpleType();
                     cst.setCode(getRegimenMapValue(obs.getValueCoded().getConceptId()));
 //                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
-                     cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
+                    cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
                     regimenType.setPrescribedRegimen(cst);
                 } catch (Exception ex) {
                     LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_Drug_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
@@ -443,7 +514,7 @@ public class PharmacyDictionary {
                     cst = new CodedSimpleType();
                     cst.setCode(getRegimenMapValue(obs.getValueCoded().getConceptId()));
 //                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
-                     cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
+                    cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
                     regimenType.setPrescribedRegimen(cst);
                 } catch (Exception ex) {
                     LoggerUtils.write(PharmacyDictionary.class.getName(), "Error on OI_Drug_Concept_Id: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
