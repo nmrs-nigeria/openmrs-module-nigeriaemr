@@ -595,7 +595,8 @@ public class NDRApiUtils {
 		return "";
 	}
 	
-	public String getTotalFiles(String jsonFolder, String contextPath) {
+	public String getTotalFiles(String jsonFolder, String contextPath)
+	{
 		try {
 			NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
 			Integer totalFiles = 0;
@@ -609,12 +610,14 @@ public class NDRApiUtils {
 				return totalFiles.toString();
 			}
 			String zipFileName = getZippedFile(jsonFolder);
-			if (zipFileName.length() > 0) {
+			if (zipFileName.length() > 0)
+			{
 				String cntxtPth = contextPath.replace("/", "");
 				String path = Paths.get(cntxtPth, "downloads", "NDR", zipFileName).toString();
 				path = "\\" + path;
 				NDRExportBatch batchExport = nigeriaemrService.getNDRExportByZipFileName(path);
-				if (batchExport != null) {
+				if (batchExport != null)
+				{
 					batchExportId = batchExport.getId();
 				}
 			}

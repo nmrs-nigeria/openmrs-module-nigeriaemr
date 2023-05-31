@@ -1,5 +1,6 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.csv.CSVFormat;
@@ -145,8 +146,12 @@ public class NDRExtractor {
 					DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					mapper.setDateFormat(df);
 					
-					// to enable pretty print
+					//To enable pretty print
 					mapper.enable(SerializationFeature.INDENT_OUTPUT);
+					
+					//Ignoring null fields Globally
+					mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+					
 					//mysteriously, mapper.writeValue(file, cnt) was inconsistently truncating the JSON string it writes to the file
 					//FileWriter has to be utilised to avoid such
 					String data = mapper.writeValueAsString(cnt);//.writerWithDefaultPrettyPrinter()
