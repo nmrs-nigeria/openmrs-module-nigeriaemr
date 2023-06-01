@@ -9,8 +9,6 @@ import javax.xml.bind.annotation.*;
 // Generated on: 2023.04.18 at 08:40:45 AM WAT 
 //
 
-package org.openmrs.module.nigeriaemr.model.ndr;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
