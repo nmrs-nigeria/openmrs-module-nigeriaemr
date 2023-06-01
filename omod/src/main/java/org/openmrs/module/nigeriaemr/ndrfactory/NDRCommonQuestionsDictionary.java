@@ -896,7 +896,7 @@ HIVQuestionsType
             }
 
             //Causes of Death
-            /*obs = Utils.extractObsByValues(Utils.CAUSE_OF_DEATH, Utils.ADULT_CASES_OF_DEATH, obsList);
+            obs = Utils.extractObsByValues(Utils.CAUSE_OF_DEATH, Utils.ADULT_CASES_OF_DEATH, obsList);
             if (obs != null) {
                 obs = Utils.extractObs(Utils.ADULT_CASES_OF_DEATH, obsListId);
                 if (obs != null && obs.getValueCoded() != null) {
@@ -912,7 +912,7 @@ HIVQuestionsType
                         hivQuestionsType.setCauseOfDeath(ndrCodedValue);
                     }
                 }
-            }*/
+            }
 
             /*obs = Utils.extractObs(Utils.CAUSE_OF_DEATH,obsListId);
             if (obs != null && obs.getValueCoded() != null) {
