@@ -7,6 +7,7 @@
 <div>
     <button onclick="deletePrints()" id="deleteBtn" hidden="true" class="btn">Delete FingerPrints</button>
     <button onclick="fp_verification()" id="fpVerfiyBtn" hidden="true" class="btn">Re-Capture</button>
+    <span style="font-size: 15px;" id="countFP"></span>
     <br>
 </div>
 
@@ -194,6 +195,7 @@
             .success(function (data) {
                 jQuery('#myModal').modal('hide');
                 if (data !== undefined && data !== null && data.length > 0) {
+                    getRecaptureCount();
                     let lowQuality = false;
                     let invalid = false;
                     previouscapturecheck = data;
@@ -243,6 +245,28 @@
             });
         jQuery('#myModal').modal('hide');
     });
+
+
+    function getRecaptureCount(){
+        // jQuery('#myModal').modal('show');
+        let recapture_count =url+'/recaptureCount';
+        jQuery.getJSON(recapture_count)
+            .success(function (data) {
+
+                if (data !== undefined && data !== null && data.length > 0) {
+                    console.log("Recapture count "+data);
+                    document.getElementById("countFP").innerHTML ="Count: "+data;
+                }
+            })
+            .error(function (xhr, status, err) {
+                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
+
+                    alertt(xhr.responseText);
+                }else{
+                    alertt('System error. Please check that the Biometric service is running');
+                }
+            });
+    }
 
 
     function alertt(message) {
@@ -597,20 +621,21 @@
 
         console.log("previouscapturecheck: "+previouscapturecheck);
 
-        for(i = 1; i < fingerPosition.length; i++){
+        for(let i = 1; i < fingerPosition.length; i++){
             console.log(fingerPosition[i]);
-            document.getElementById('BTN_' + fingerPosition[i]).disabled = true;
+            document.getElementById('BTN_' + fingerPosition[i]).setAttribute("onClick", "verificationCapturePrint(" + position + ")");
+            document.getElementById('BTN_' + fingerPosition[i]).disabled = false;
         }
 
-        for (let i = 0; i < previouscapturecheck.length; i++) {
-            let position = apiFingerPosition[previouscapturecheck[i].fingerPositions];
-            let inputId = apiFingerPosition[previouscapturecheck[i].fingerPositions];
-
-            document.getElementById('H_' + fingerPosition[position]).style.display = 'none';
-            document.getElementById('BTN_' + fingerPosition[position]).setAttribute("onClick", "verificationCapturePrint(" + position + ")");
-            document.getElementById('BTN_' + fingerPosition[inputId]).disabled = false;
-
-        }
+        // for (let i = 0; i < previouscapturecheck.length; i++) {
+        //     let position = apiFingerPosition[previouscapturecheck[i].fingerPositions];
+        //     let inputId = apiFingerPosition[previouscapturecheck[i].fingerPositions];
+        //
+        //     document.getElementById('H_' + fingerPosition[position]).style.display = 'none';
+        //     document.getElementById('BTN_' + fingerPosition[position]).setAttribute("onClick", "verificationCapturePrint(" + position + ")");
+        //     document.getElementById('BTN_' + fingerPosition[inputId]).disabled = false;
+        //
+        // }
 
         document.getElementById('saveBiometric').setAttribute( "onClick", "fp_VerifySave()");
         document.getElementById('saveBiometric').disabled = false;
