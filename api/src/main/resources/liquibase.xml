@@ -326,7 +326,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="create_pbs_biometricverification_table_20230427113900" author="Toyeeb">
+    <changeSet id="create_pbs_biometricverification_table_2023050916836789124" author="Toyeeb">
         <sql>
             CREATE TABLE IF NOT EXISTS `biometricverificationinfo` (
 			  `biometricInfo_Id` int(11) NOT NULL AUTO_INCREMENT,
@@ -343,14 +343,11 @@
 			  `creator` int(11) DEFAULT NULL,
 			  `date_created` datetime DEFAULT NULL,
 			  `new_template` longblob,
+              `encoded_template` text DEFAULT NULL,
+              `hashed`  TEXT DEFAULT NULL,
+              `recapture_count` INT(11) DEFAULT 1,
 			  PRIMARY KEY (`biometricInfo_Id`)
 			) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
-        </sql>
-    </changeSet>
-    
-    <changeSet id="add_encoding_print_field_20230505100200" author="Toyeeb">
-        <sql>
-            ALTER TABLE `biometricverificationinfo` ADD `salt` TEXT NULL DEFAULT NULL AFTER `new_template`, ADD `encoded_template` TEXT NULL DEFAULT NULL AFTER `salt`, ADD `hashed` TEXT NULL DEFAULT NULL AFTER `encoded_template`;
         </sql>
     </changeSet>
 
