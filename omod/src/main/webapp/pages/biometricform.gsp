@@ -6,8 +6,6 @@
 %>
 <div>
     <button onclick="deletePrints()" id="deleteBtn" hidden="true" class="btn">Delete FingerPrints</button>
-    <button onclick="fp_verification()" id="fpVerfiyBtn" hidden="true" class="btn">Re-Capture</button>
-    <span style="font-size: 15px;" id="countFP"></span>
     <br>
 </div>
 
@@ -186,7 +184,6 @@
     let url = '${ biometricUrl }';
     console.log(url);
 
-    var previouscapturecheck ="";
 
     jQuery(document).ready(function(){
         // jQuery('#myModal').modal('show');
@@ -195,10 +192,8 @@
             .success(function (data) {
                 jQuery('#myModal').modal('hide');
                 if (data !== undefined && data !== null && data.length > 0) {
-                    getRecaptureCount();
                     let lowQuality = false;
                     let invalid = false;
-                    previouscapturecheck = data;
                     for (let i = 0; i < data.length; i++) {
                         if ("low" === data[i].qualityFlag.toLowerCase()) {
                             let position = apiFingerPosition[data[i].fingerPositions];
@@ -218,9 +213,7 @@
                         }
                     }
                     jQuery('#myModal').modal('hide');
-                    // jQuery('#deleteBtn').attr('hidden', false);
-                    jQuery('#fpVerfiyBtn').attr('hidden', false);
-
+                    jQuery('#deleteBtn').attr('hidden', false);
                     if (lowQuality && invalid) {
                         alertt('Fingerprints of this patient contains invalid and low quality data and will need to be recaptured');
                     } else if (lowQuality) {
@@ -245,29 +238,6 @@
             });
         jQuery('#myModal').modal('hide');
     });
-
-
-    function getRecaptureCount(){
-        // jQuery('#myModal').modal('show');
-        let recapture_count =url+'/recaptureCount';
-        jQuery.getJSON(recapture_count)
-            .success(function (data) {
-
-                if (data !== undefined && data !== null && data.length > 0) {
-                    console.log("Recapture count "+data);
-                    document.getElementById("countFP").innerHTML ="Count: "+data;
-                }
-            })
-            .error(function (xhr, status, err) {
-                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
-
-                    alertt(xhr.responseText);
-                }else{
-                    alertt('System error. Please check that the Biometric service is running');
-                }
-            });
-    }
-
 
     function alertt(message) {
         if (window.confirm((message)))
@@ -294,64 +264,6 @@
             .success(function (data) {
                 jQuery('#myModalCapture').modal('hide');
                 if (data.ErrorMessage === '' || data.ErrorMessage === null) {
-                    let imgId = fingerPosition[position];
-                    document.getElementById('H_'+imgId).style.display = 'none';
-                    document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
-
-                    if(data.ImageQuality >= 75 ){
-                        document.getElementById('flag_'+imgId).style.backgroundColor = 'green';
-                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
-                    }
-                    if(data.ImageQuality >= 60 && data.ImageQuality <= 74 ){
-                        document.getElementById('flag_'+imgId).style.backgroundColor = '#FFA500';
-                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
-                    }
-                    if(data.ImageQuality <= 59){
-                        document.getElementById('flag_'+imgId).style.backgroundColor = 'red';
-                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
-                    }
-
-                    newPrint = data;
-                    newPrint.Image = '';
-                    pushPrints(newPrint);
-                    if (capturedPrint.length > 5) {
-                        jQuery('input').removeAttr('disabled');
-                    }
-                }else if("-1" === data.ErrorCode){
-                    alertt('Fingerprint is of low quality kindly recapture');
-                }else {
-                    alertt(data.ErrorMessage);
-                }
-            })
-            .error(function (xhr, status, err) {
-                jQuery('#myModalCapture').modal('hide');
-                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
-                    jQuery('#myModalCapture').modal('hide');
-                    alertt(xhr.responseText);
-                }else{
-                    jQuery('#myModalCapture').modal('hide');
-                    alertt('System error. Please check that the Biometric service is running');
-                }
-            });
-    }
-
-
-    function verificationCapturePrint(position) {
-        jQuery('#myModalCapture').modal('show');
-        // if(patientId === undefined){
-        //     alertt('Select a patient first');
-        //     return;
-        // }
-        console.log("Finger position id: "+position);
-        console.log("patient Id: "+patientId);
-
-        let captureURL = url + '/verificationCapturePrint?fingerPosition=' + position+"&patientId="+patientId;
-
-        jQuery.getJSON(captureURL)
-            .success(function (data) {
-                jQuery('#myModalCapture').modal('hide');
-                if (data.ErrorMessage === '' || data.ErrorMessage === null) {
-                   // alertt(data.ErrorMessage);
                     let imgId = fingerPosition[position];
                     document.getElementById('H_'+imgId).style.display = 'none';
                     document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
@@ -530,39 +442,6 @@
         });
     }
 
-    function fp_VerifySave() {
-        jQuery('#myModal').modal('show');
-        let saveUrl = url + '/ReSaveFingerprintVerificationToDatabase';
-        let model = {};
-        model.FingerPrintList = capturedPrint;
-        model.PatientUUID = patientId;
-
-        jQuery.ajax({
-            type: "Post",
-            url: saveUrl,
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(model),
-            cache: false,
-        }).done(function (response) {
-            if (window.confirm(response.ErrorMessage))
-            {
-                jQuery('#myModal').modal('hide');
-            }else{
-                jQuery('#myModal').modal('hide');
-            }
-            window.location.reload(true);
-        }).error(function (xhr, status, err) {
-            if (window.confirm((xhr.responseJSON.ErrorMessage)))
-            {
-                jQuery('#myModal').modal('hide');
-            }else{
-                jQuery('#myModal').modal('hide');
-            }
-            window.location.reload(true);
-        });
-    }
-
-
     function deletePrints() {
         jQuery('#myModal').modal('show');
         if (confirm("Are you sure you want to delete these prints?") === true) {
@@ -615,31 +494,6 @@
             }).error(function (xhr, status, err) {
             alertt('error ' + err);
         });
-    }
-
-    function fp_verification(){
-
-        console.log("previouscapturecheck: "+previouscapturecheck);
-
-        for(let i = 1; i < fingerPosition.length; i++){
-            console.log(fingerPosition[i]);
-            document.getElementById('BTN_' + fingerPosition[i]).setAttribute("onClick", "verificationCapturePrint(" + position + ")");
-            document.getElementById('BTN_' + fingerPosition[i]).disabled = false;
-        }
-
-        // for (let i = 0; i < previouscapturecheck.length; i++) {
-        //     let position = apiFingerPosition[previouscapturecheck[i].fingerPositions];
-        //     let inputId = apiFingerPosition[previouscapturecheck[i].fingerPositions];
-        //
-        //     document.getElementById('H_' + fingerPosition[position]).style.display = 'none';
-        //     document.getElementById('BTN_' + fingerPosition[position]).setAttribute("onClick", "verificationCapturePrint(" + position + ")");
-        //     document.getElementById('BTN_' + fingerPosition[inputId]).disabled = false;
-        //
-        // }
-
-        document.getElementById('saveBiometric').setAttribute( "onClick", "fp_VerifySave()");
-        document.getElementById('saveBiometric').disabled = false;
-        //document.getElementById('H_'+imgId).style.display = 'none';
     }
 
     jQuery(document).on('click', '.chcktblpt', function (e) {
