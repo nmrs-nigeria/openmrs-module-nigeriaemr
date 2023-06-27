@@ -9,7 +9,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>nigeriaemr</artifactId>
-	<version>1.6.4.1-SNAPSHOT</version>
+	<version>1.6.5.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Nigeriaemr</name>
 	<description>this module is for creating custom reporting for Nigeria specific requirement</description>
