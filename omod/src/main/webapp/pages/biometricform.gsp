@@ -623,7 +623,7 @@
 
         for(let i = 1; i < fingerPosition.length; i++){
             console.log(fingerPosition[i]);
-            document.getElementById('BTN_' + fingerPosition[i]).setAttribute("onClick", "verificationCapturePrint(" + position + ")");
+            document.getElementById('BTN_' + fingerPosition[i]).setAttribute("onClick", "verificationCapturePrint(" + i + ")");
             document.getElementById('BTN_' + fingerPosition[i]).disabled = false;
         }
 
@@ -638,7 +638,7 @@
         // }
 
         document.getElementById('saveBiometric').setAttribute( "onClick", "fp_VerifySave()");
-        document.getElementById('saveBiometric').disabled = false;
+        //document.getElementById('saveBiometric').disabled = false;
         //document.getElementById('H_'+imgId).style.display = 'none';
     }
 
