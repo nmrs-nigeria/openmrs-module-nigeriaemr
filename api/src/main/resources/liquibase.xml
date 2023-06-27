@@ -351,5 +351,9 @@
         </sql>
     </changeSet>
 
-
+    <changeSet id="alter_biometricverification_table_2023061512334589098" author="Tobechi" runOnChange="true">
+         <sql>
+            ALTER TABLE `biometricverificationinfo` MODIFY `recapture_count` INT(11) DEFAULT 1;
+        </sql>
+    </changeSet>
 </databaseChangeLog>
