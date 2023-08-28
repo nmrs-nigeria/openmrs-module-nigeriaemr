@@ -4,10 +4,96 @@
     ui.includeJavascript("nigeriaemr", "bootstrap.js")
     ui.includeCss("nigeriaemr", "bootstrap.css")
 %>
+<style>
+
+/* The Modal (background) */
+.modalrecapture {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-recapture-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+
+/* The Close Button */
+.closerecapture {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.closerecapture:hover,
+.closerecapture:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-recapture-header {
+    padding: 2px 16px;
+    background-color: #f50707;
+    color: white;
+}
+
+.modal-recapture-header-2 {
+    padding: 2px 16px;
+    background-color: green;
+    color: white;
+}
+
+.modal-recapture-body {padding: 2px 16px;}
+
+.modal-recapture-footer {
+    padding: 2px 16px;
+    background-color: #f50707;
+    color: white;
+}
+
+.modal-recapture-footer-2 {
+    padding: 2px 16px;
+    background-color: green;
+    color: white;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
+}
+.grid-item {
+    padding: 20px;
+    font-size: 30px;
+    text-align: center;
+}
+</style>
 <div>
     <button onclick="deletePrints()" id="deleteBtn" hidden="true" class="btn">Delete FingerPrints</button>
     <button onclick="fp_verification()" id="fpVerfiyBtn" hidden="true" class="btn">Re-Capture</button>
     <span style="font-size: 15px;" id="countFP"></span>
+    <span id="basereplacementFlag" style="font-size: 15px; display: none; color: #ffffff; margin-left: 20px; padding: 2px; background-color: #007bff; border-radius: 25px;">The base fingerprint was replaced for this patient!</span>
     <br>
 </div>
 
@@ -32,6 +118,69 @@
         </div>
     </div>
 </div>
+
+
+<div id="myModalrecapture" class="modalrecapture">
+
+    <!-- Modal content -->
+    <div class="modal-recapture-content">
+        <div class="modal-recapture-header">
+            <h2 style="color: #ffffff;">Fingerprint did not match</h2>
+        </div>
+        <div class="modal-recapture-body" style="color: #000000;">
+            <p style="font-size: 20px;">Do you want to replace the base fingerprints with the recaptured fingerprints? </p>
+           <div class="grid-container">
+            <div class="grid-item"><button style="cursor:pointer; border:none; border-radius:10px; font-size:20px;" onclick="replaceBasewithRecapture('Yes')" >YES</button></div>
+                <div class="grid-item"><button style="cursor:pointer; border:none; border-radius:10px; font-size:20px;" onclick="replaceBasewithRecapture('No')" >NO</button></div>
+           </div>
+        </div>
+        <div class="modal-recapture-footer">
+
+        </div>
+    </div>
+
+</div>
+
+<div id="myModalrecapture-2" class="modalrecapture">
+
+    <!-- Modal content -->
+    <div class="modal-recapture-content">
+        <div class="modal-recapture-header-2">
+            <h2 style="color: #ffffff;">Fingerprint matched</h2>
+        </div>
+        <div class="modal-recapture-body" style="color: #000000;">
+            <p style="font-size: 20px;" id="recaptureresponsematch">The base fingerprints matched with the recaptured fingerprints. </p>
+            <div class="grid-container">
+                <div class="grid-item"><button style="cursor:pointer; border:none; border-radius:10px; font-size:20px;" onclick="matchcloserecapture()" >OK</button></div>
+            </div>
+        </div>
+        <div class="modal-recapture-footer-2">
+
+        </div>
+    </div>
+
+</div>
+
+<div id="myModalrecapture-3" class="modalrecapture">
+
+    <!-- Modal content -->
+    <div class="modal-recapture-content">
+        <div class="modal-recapture-header">
+            <h2 style="color: #ffffff;">No match feedback</h2>
+        </div>
+        <div class="modal-recapture-body" style="color: #000000;">
+            <p style="font-size: 20px;" id="recaptureresponsenomatch">The base fingerprints did not matched with the recaptured fingerprints. </p>
+            <div class="grid-container">
+                <div class="grid-item"><button style="cursor:pointer; border:none; border-radius:10px; font-size:20px;" onclick="nomatchcloserecapture()" >OK</button></div>
+            </div>
+        </div>
+        <div class="modal-recapture-footer">
+
+        </div>
+    </div>
+
+</div>
+
 <table>
     <tr>
         <td>
@@ -166,6 +315,8 @@
 <script type="text/javascript">
 
     let patientId;
+    let recaptureBaseCheck;
+    let recaptureCount;
     patientId = getUrlVars()["patientId"];
     let newPrint;
     let capturedPrint = [];
@@ -218,8 +369,9 @@
                         }
                     }
                     jQuery('#myModal').modal('hide');
+                    getBaseCheck();
                     // jQuery('#deleteBtn').attr('hidden', false);
-                    jQuery('#fpVerfiyBtn').attr('hidden', false);
+                    //jQuery('#fpVerfiyBtn').attr('hidden', false)
 
                     if (lowQuality && invalid) {
                         alertt('Fingerprints of this patient contains invalid and low quality data and will need to be recaptured');
@@ -255,7 +407,47 @@
 
                 if (data !== undefined && data !== null && data.length > 0) {
                     console.log("Recapture count "+data);
-                    document.getElementById("countFP").innerHTML ="Count: "+data;
+                    let arrCount = data.toString().split(',');
+                    recaptureCount = arrCount[0].toString();
+                    document.getElementById("countFP").innerHTML ="Count: "+arrCount[0].toString();
+                    if(parseInt(arrCount[1]) > 0){
+                        document.getElementById("basereplacementFlag").style.display ="block";
+                    }
+                }
+            })
+            .error(function (xhr, status, err) {
+                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
+
+                    alertt(xhr.responseText);
+                }else{
+                    alertt('System error. Please check that the Biometric service is running');
+                }
+            });
+    }
+
+    function getBaseCheck(){
+        // jQuery('#myModal').modal('show');
+        let recapture_count =url+'/recaptureBaseCheck';
+        jQuery.getJSON(recapture_count)
+            .success(function (data) {
+
+                if (data !== undefined && data !== null && data.length > 0) {
+                    console.log("recaptureBaseCheck1 "+data);
+                    let arr = data.toString().split(',');
+                    recaptureBaseCheck = data;
+                    //check if the base capture was captured today then hide the captured button
+                    if(arr[0].toString() == 'true'){
+                        jQuery('#fpVerfiyBtn').attr('hidden', true);
+                    }
+                    //check if the base capture was captured today then hide the captured button and recapture count is
+                    if (arr[0].toString() == 'false' && arr[1].toString() == 'true' && parseInt(recaptureCount) > 0){
+                        jQuery('#fpVerfiyBtn').attr('hidden', false);
+                    }
+
+                    if (arr[0].toString() == 'false' && arr[1].toString() == 'false' && parseInt(recaptureCount) == 0){
+                        jQuery('#fpVerfiyBtn').attr('hidden', false);
+                    }
+
                 }
             })
             .error(function (xhr, status, err) {
@@ -350,8 +542,11 @@
         jQuery.getJSON(captureURL)
             .success(function (data) {
                 jQuery('#myModalCapture').modal('hide');
-                if (data.ErrorMessage === '' || data.ErrorMessage === null) {
-                   // alertt(data.ErrorMessage);
+              // if (data.ErrorMessage === '' || data.ErrorMessage === null || "-2" === data.ErrorCode) {
+                   if (data.ErrorMessage === '' || data.ErrorMessage === null ) {
+                  // if("-2" === data.ErrorCode) {
+                  //     alertt(data.ErrorMessage);
+                  // }
                     let imgId = fingerPosition[position];
                     document.getElementById('H_'+imgId).style.display = 'none';
                     document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
@@ -544,13 +739,34 @@
             data: JSON.stringify(model),
             cache: false,
         }).done(function (response) {
-            if (window.confirm(response.ErrorMessage))
-            {
+            console.log(response.ErrorMessage);
+            if(response.ErrorMessage.toString() == 'NoMatchReplaceBase'){
                 jQuery('#myModal').modal('hide');
-            }else{
+                var modal = document.getElementById("myModalrecapture");
+                modal.style.display = "block";
+               // window.location.reload(true);
+            }else if(response.ErrorMessage.toString() == 'No Match! Fingerprint Re-capture saved Successfully') {
                 jQuery('#myModal').modal('hide');
+                var recaptureresponsenomatch = document.getElementById("recaptureresponsenomatch");
+                recaptureresponsenomatch.innerHTML = response.ErrorMessage;
+                var modal2 = document.getElementById("myModalrecapture-3");
+                modal2.style.display = "block";
+              //  window.location.reload(true);
+
+            }else if(response.ErrorMessage.toString() == 'Match! Fingerprint Re-capture saved Successfully') {
+                jQuery('#myModal').modal('hide');
+                var recaptureresponsematch = document.getElementById("recaptureresponsematch");
+                recaptureresponsematch.innerHTML = response.ErrorMessage;
+                var modal2 = document.getElementById("myModalrecapture-2");
+                modal2.style.display = "block";
+               // window.location.reload(true);
+
+            }else {
+                jQuery('#myModal').modal('hide');
+                window.location.reload(true);
             }
-            window.location.reload(true);
+
+
         }).error(function (xhr, status, err) {
             if (window.confirm((xhr.responseJSON.ErrorMessage)))
             {
@@ -640,6 +856,62 @@
         document.getElementById('saveBiometric').setAttribute( "onClick", "fp_VerifySave()");
         //document.getElementById('saveBiometric').disabled = false;
         //document.getElementById('H_'+imgId).style.display = 'none';
+    }
+
+    function replaceBasewithRecapture(replacestatus){
+        var rstatus = replacestatus;
+        jQuery('#myModal').modal('show');
+        var modal = document.getElementById("myModalrecapture");
+        modal.style.display = "none";
+
+
+        let saveUrl =url+'/replaceBaseWithRecapture?patientId=' + patientId + "&rstatus="+rstatus;
+        jQuery.getJSON(saveUrl)
+            .done(function (response) {
+            console.log(response.ErrorMessage);
+            if(response.ErrorMessage !== ''){
+                var recaptureresponsenomatch = document.getElementById("recaptureresponsenomatch");
+                recaptureresponsenomatch.innerHTML = response.ErrorMessage;
+                var modal3 = document.getElementById("myModalrecapture-3");
+                modal3.style.display = "block";
+                jQuery('#myModal').modal('hide');
+               // window.location.reload(true);
+            }else {
+                jQuery('#myModal').modal('hide');
+                window.location.reload(true);
+            }
+
+              //  window.location.reload(true);
+        }).error(function (xhr, status, err) {
+            if (window.confirm((xhr.responseJSON.ErrorMessage)))
+            {
+                jQuery('#myModal').modal('hide');
+            }else{
+                jQuery('#myModal').modal('hide');
+            }
+            window.location.reload(true);
+        });
+    }
+
+    function donotreplacebase(){
+        var modal = document.getElementById("myModalrecapture");
+        modal.style.display = "none";
+        jQuery('#myModal').modal('hide');
+        window.location.reload(true);
+    }
+
+    function matchcloserecapture(){
+        var modal = document.getElementById("myModalrecapture-2");
+        modal.style.display = "none";
+        jQuery('#myModal').modal('hide');
+        window.location.reload(true);
+    }
+
+    function nomatchcloserecapture(){
+        var modal = document.getElementById("myModalrecapture-3");
+        modal.style.display = "none";
+        jQuery('#myModal').modal('hide');
+        window.location.reload(true);
     }
 
     jQuery(document).on('click', '.chcktblpt', function (e) {
