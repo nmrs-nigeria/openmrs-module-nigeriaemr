@@ -35,6 +35,8 @@ public class MortalityDictionary {
     }
 
     private Map<Integer, String> mortalityDictionary = new HashMap<>();
+
+    private Map<Integer, String> mortalityDictionary2 = new HashMap<>();
     private Map<Integer, Boolean> yesNoToggle = new HashMap<>();
     private Map<Integer, Boolean> mortalityBooleanDictionary = new HashMap<>();
     private Map<Integer, YNCodeType> mortalityYNCodeTypeDict = new HashMap<>();
@@ -45,6 +47,7 @@ public class MortalityDictionary {
         mortalityDictionary.put(165473,"MissPharmDate");
         mortalityDictionary.put(159492,"TransferredOut");
         mortalityDictionary.put(5622,"Others");
+        mortalityDictionary2.put(5622,"OthersSpecify");
         mortalityDictionary.put(165889,"Death");
         mortalityDictionary.put(165916,"Discontinued");
         mortalityDictionary.put(165791,"MobilePhone");
@@ -208,7 +211,7 @@ public class MortalityDictionary {
         }
         obs = extractObs(165467, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
-            mortality.setReasonforDefaulting(getMappedValue(obs.getValueCoded().getConceptId()));
+            mortality.setReasonforDefaulting(getMappedValue2(obs.getValueCoded().getConceptId()));
         }
         //LTFU
         obs = extractObs(5240, groupedObsByConcept);
@@ -315,6 +318,16 @@ public class MortalityDictionary {
     private String getMappedValue(int conceptID) {
         try {
             return mortalityDictionary.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+
+    private String getMappedValue2(int conceptID) {
+        try {
+            return mortalityDictionary2.get(conceptID);
         } catch (Exception ex) {
             LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
