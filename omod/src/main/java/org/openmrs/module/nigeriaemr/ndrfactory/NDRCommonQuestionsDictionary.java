@@ -20,6 +20,7 @@ import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+import org.openmrs.module.nigeriaemr.page.controller.CommunityTesterPageController;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -36,6 +37,7 @@ import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
 public class NDRCommonQuestionsDictionary {
 
     private static Map<Integer, String> map = new HashMap<>();
+
     private PharmacyDictionary pharmacyDictionary;
     NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
     NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
@@ -337,11 +339,19 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDTypeCode("RECENT");
                 identifiersType.getIdentifier().add(idt);
             }
+
             if (tbId != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(tbId.getIdentifier());
                 idt.setIDTypeCode("TB");
                 identifiersType.getIdentifier().add(idt);
+            }else{
+                if(pepfarid != null){
+                    idt = new IdentifierType();
+                    idt.setIDNumber(pepfarid.getIdentifier());
+                    idt.setIDTypeCode("TB");
+                    identifiersType.getIdentifier().add(idt);
+                }
             }
 
             if(identifiersType.getIdentifier().size() > 0) {

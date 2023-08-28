@@ -122,11 +122,12 @@ public class ClinicalDictionary {
         map.put(160026, "A");
         map.put(162752, "B");
 
+        //ARV Drug Adherence
         map.put(165287, "G");
         map.put(165288, "P");
         map.put(165289, "F");
 
-        //ARV Drug Adherence
+
         map.put(160124, "1a");//"AZT-3TC-EFV"
         map.put(1652, "1b");//"AZT-3TC-NVP"
         map.put(104565, "1c");//"TDF-FTC-EFV"

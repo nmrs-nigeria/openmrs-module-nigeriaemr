@@ -80,6 +80,8 @@ public class RecencyDictionary {
     }
 
     private Map<Integer, String> recencyDictionary = new HashMap<>();
+
+    private Map<Integer, String> recencyDictionary2 = new HashMap<>();
     private Map<Integer, Boolean> recencyBooleanDictionary = new HashMap<>();
     private Map<Integer, YNCodeType> recencyYNCodeTypeDict = new HashMap<>();
 
@@ -87,6 +89,7 @@ public class RecencyDictionary {
         //recency
         //recency interpretation
         recencyDictionary.put(165852, "Recent");
+        recencyDictionary2.put(165851, "Longterm");
         recencyDictionary.put(165851, "LongTerm");
         recencyDictionary.put(664, "Negative");
         recencyDictionary.put(163611, "Invalid");
@@ -237,7 +240,7 @@ public class RecencyDictionary {
         //recency interpretation
         obs = extractObs(RECENCY_INTERPRETATION, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
-            recencyType.setRecencyInterpretation(getMappedValue(obs.getValueCoded().getConceptId()));
+            recencyType.setRecencyInterpretation(getMappedValue2(obs.getValueCoded().getConceptId()));
         }
         obs = extractObs(VIRALLOAD_REQUEST_MADE, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
@@ -579,6 +582,16 @@ public class RecencyDictionary {
     private String getMappedValue(int conceptID) {
         try {
             return recencyDictionary.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+
+    private String getMappedValue2(int conceptID) {
+        try {
+            return recencyDictionary2.get(conceptID);
         } catch (Exception ex) {
             LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
