@@ -13,11 +13,13 @@ import org.openmrs.module.nigeriaemr.api.service.NigeriaEncounterService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaObsService;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.model.DatimMap;
-import org.openmrs.module.nigeriaemr.model.ndr.AddressType;
 import org.openmrs.module.nigeriaemr.model.ndr.FacilityType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
-import org.openmrs.module.nigeriaemr.ndrfactory.*;
+import org.openmrs.module.nigeriaemr.ndrfactory.ClinicalDictionary;
+import org.openmrs.module.nigeriaemr.ndrfactory.LabDictionary;
+import org.openmrs.module.nigeriaemr.ndrfactory.PMTCTDictionary;
+import org.openmrs.module.nigeriaemr.ndrfactory.PharmacyDictionary;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import org.openmrs.module.nigeriaemr.util.FileUtils;
@@ -33,11 +35,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -244,8 +244,6 @@ public class Utils {
 	public final static int INH_ADHERENCE_CONCEPT = 161653;
 	
 	public final static int ESTIMATED_DATE_OF_DELIVERY = 5596;
-
-	public final static int METHOD_OF_DIAGNOSIS = 165995;
 	
 	/* PREGNANCY STATUS CONCEPTS */
 	public final static int CURRENTLY_PREGNANT_CONCEPT = 1434;
@@ -287,6 +285,10 @@ public class Utils {
 	
 	public static final int OPENMRS_IDENTIFIER_INDEX = 3;
 	
+	public static final int TB_IDENTIFIER_INDEX = 15;
+	
+	public static final int COVID_IDENTIFIER_INDEX = 13;
+	
 	/* KEY FORMS */
 	//--These 4 forms was used to construct a HIVEncounterType
 	public final static int ADULT_INITIAL_ENCOUNTER_TYPE = 26;
@@ -319,6 +321,30 @@ public class Utils {
 	
 	public final static int REASON_STOPPED_REGIMEN = 1252;
 	
+	public final static int DISCONTINUED_CARE = 165916;
+	
+	public final static int DATE_OF_DISCONTINUED_CARE = 165469;
+	
+	public final static int METHOD_OF_DIAGNOSIS = 165995;
+	
+	public final static int CAUSE_OF_DEATH = 166349;
+	
+	public final static int ADULT_CASES_OF_DEATH = 166348;
+	
+	public final static int CHILD_CASES_OF_DEATH = 166347;
+	
+	public static final int TB_SCREENING_ENCOUNTER_TYPE = 64;
+	
+	public static final int DRTB_TREATMENT_ENCOUNTER_TYPE = 61;
+	
+	public static final int PRESUMPTIVE_TB_REGISTER_ENCOUNTER_TYPE = 58;
+	
+	public static final int TB_TRACKING_ENCOUNTER_TYPE = 47;
+	
+	public static final int TB_MONITORING_ENCOUNTER_TYPE = 68;
+	
+	public static final int IPT_TYPE = 23;
+	
 	/*
 	       HIVQuestionsType
 	        
@@ -328,7 +354,8 @@ public class Utils {
 		return Context.getAdministrationService().getGlobalProperty(LoggerUtils.PATIENT_LIMIT_PROPERTY);
 	}
 	
-	public static List<Obs> extractObsfromEncounter(List<Encounter> encs) {
+	public static List<Obs> extractObsfromEncounter(List<Encounter> encs)
+	{
         List<Obs> responseObs = new ArrayList<>();
 
         encs.forEach(a -> {
@@ -438,6 +465,7 @@ public class Utils {
 	public static Date getLastNDRDate() {
 		String lastRunDateString = Context.getAdministrationService().getGlobalProperty("ndr_last_run_date");
 		if (String.valueOf(lastRunDateString).isEmpty()) {
+			System.out.println("Last Date is empty");
 			return null;
 		} else {
 			try {
@@ -478,8 +506,8 @@ public class Utils {
 			return versionModel;
 		}
 		catch (Exception e) {
-			LoggerUtils.write(Utils.class.getName(), "Error locating version file: " + e.getMessage(),
-			    LoggerUtils.LogFormat.FATAL, LogLevel.live);
+			LoggerUtils.write(Utils.class.getName(), "Error locating version file: " + e.getMessage(), LogFormat.FATAL,
+			    LogLevel.live);
 			return null;
 		}
 	}
@@ -1033,6 +1061,11 @@ public class Utils {
 		return folder;
 	}
 	
+	public static String getDownloadFolder(String contextPath) {
+		String folder = Paths.get(new File(contextPath).getParentFile().toString(), "downloads").toString();
+		return folder;
+	}
+	
 	public static String ensureReportFolderExist(String contextPath, String reportType) {
 		String downloadFolder = ensureDownloadFolderExist(contextPath);
 		//old implementation
@@ -1119,17 +1152,28 @@ public class Utils {
 	}
 	
 	public static String getPatientPEPFARId(Patient patient) {
+		/*PatientIdentifier patientId = patient.getPatientIdentifier(Patient_PEPFAR_Id);
+		
+		if (patientId != null) {
+			return patientId.getIdentifier();
+		} else {
+			patientId = patient.getPatientIdentifier(5); //hospital number
+			if (patientId != null) {
+				return patientId.getIdentifier();
+			}
+			return "";
+		}*/
 		PatientIdentifier patientId = null;
-
-		if(!patient.isVoided()){
+		
+		if (!patient.isVoided()) {
 			patientId = patient.getPatientIdentifier(Patient_PEPFAR_Id);
 		}else{
-			Set<PatientIdentifier> allPidentifiers = patient.getIdentifiers();
-			try {
+			 Set<PatientIdentifier> allPidentifiers = patient.getIdentifiers();
+			 try {
 				patientId = allPidentifiers.stream().filter(x -> x.isPreferred()).findFirst().get();
-			}catch (Exception e){
+			 }catch (Exception e){
 
-			}
+			 }
 		}
 		
 		if (patientId != null) {
@@ -1138,8 +1182,8 @@ public class Utils {
 			PatientIdentifier clientCode = patient.getPatientIdentifier(8);
 			if (clientCode != null) {
 				return clientCode.getIdentifier();
-			}else {
-				patientId = patient.getPatientIdentifier(5); //hospital number
+			} else {
+				patientId = patient.getPatientIdentifier(3); //EMR ID
 				if (patientId != null) {
 					return patientId.getIdentifier();
 				}
@@ -1398,12 +1442,25 @@ public class Utils {
 			//            props.load(inputStream);
 			//            // throw new FileNotFoundException("property file '" + appDirectory + "' not found in the classpath");
 			//starts here
-			Properties props;
+			/*Properties props;
 			props = OpenmrsUtil.getRuntimeProperties("openmrs");
 			if (props == null) {
 				props = OpenmrsUtil.getRuntimeProperties("openmrs-standalone");
 				
 			}
+			
+			result.setUsername(props.getProperty("connection.username"));
+			result.setPassword(props.getProperty("connection.password"));
+			result.setUrl(props.getProperty("connection.url"));
+			
+			}
+			catch (Exception ex) {
+			LoggerUtils.write(Utils.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+			}
+			
+			return result;*/
+			Properties props = new Properties();
+			props = Context.getRuntimeProperties();
 			
 			result.setUsername(props.getProperty("connection.username"));
 			result.setPassword(props.getProperty("connection.password"));
@@ -1429,12 +1486,23 @@ public class Utils {
 		return isSurge;
 	}
 	
-	public static String getProperty(String propertyName, Object defaultValue) {
+	/*public static String getProperty(String propertyName, Object defaultValue) {
 		Properties props;
 		props = OpenmrsUtil.getRuntimeProperties("openmrs");
 		if (props == null) {
 			props = OpenmrsUtil.getRuntimeProperties("openmrs-standalone");
 		}
+		if (props.get(propertyName) != null) {
+			return (String) props.get(propertyName);
+		} else {
+			return String.valueOf(defaultValue);
+		}
+	}*/
+	
+	public static String getProperty(String propertyName, Object defaultValue) {
+		Properties props = new Properties();
+		props = Context.getRuntimeProperties();
+		
 		if (props.get(propertyName) != null) {
 			return (String) props.get(propertyName);
 		} else {

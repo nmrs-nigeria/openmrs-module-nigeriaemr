@@ -318,9 +318,9 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 			if (id != null)
 				query += " AND person_id = :person_id ";
 			if (fromDate != null)
-				query += " AND obs_datetime >= :fromDate ";
+				query += " AND date_created >= :fromDate ";
 			if (toDate != null)
-				query += " AND obs_datetime <= :toDate ";
+				query += " AND date_created <= :toDate ";
 			
 			query += " UNION ALL ";
 			

@@ -1,5 +1,7 @@
 package org.openmrs.module.nigeriaemr.model.ndr;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -10,6 +12,7 @@ import java.util.List;
 @XmlType(name = "PMTCTType", propOrder = { "immunizationTypes", "deliveryEncounterTypes", "antenatalRegistrationTypes",
         "childBirthDetailsTypes", "childFollowupTypes", "infantPCRTestingTypes", "healthFacilityVisitTypes",
         "partnerDetailsTypes", "InfantRapidTestTypes", "maternalCohortTypes", "pmtctHTSTYPES" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PMTCTType {
 	
 	@XmlElement(name = "Immunization")

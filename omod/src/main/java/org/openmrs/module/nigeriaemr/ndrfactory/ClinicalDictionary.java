@@ -170,7 +170,7 @@ public class ClinicalDictionary {
         map.put(166193, "2y"); // TDF-3TC-DRV/r
 
         map.put(165530, "3a");//"AZT-TDF-3TC-LPV/r" // formerlly 2h
-        map.put(165540, "3b"); // AZT-TDF-FTC-LPV/r       
+        map.put(165540, "3b"); // AZT-TDF-FTC-LPV/r
         map.put(165537, "3c");//"TDF-AZT-3TC-ATV/r" //formerly 2i
         map.put(166194, "3d"); // TDF-3TC-DTG-LPV/r
         map.put(166195, "3e"); // TDF-FTC-AZT-ATV/r
@@ -189,7 +189,7 @@ public class ClinicalDictionary {
         map.put(165536, "3s"); // TDF-AZT-3TC-IDV/r
         map.put(165532, "3t"); // TDF-AZT-3TC-SQV/r
         map.put(166206, "3w"); // TDF-3TC-RAL
-        map.put(166207, "3x"); // AZT-RAL-ATV/r                   
+        map.put(166207, "3x"); // AZT-RAL-ATV/r
         map.put(165695, "3u");//AZT-3TC-RAL //formerlly 4o
         map.put(165696, "3v");//ABC-3TC-RAL // change 5g to 3v
 
