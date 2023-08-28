@@ -356,4 +356,33 @@
             ALTER TABLE `biometricverificationinfo` MODIFY `recapture_count` INT(11) DEFAULT 1;
         </sql>
     </changeSet>
+
+    <!--<changeSet id="create_pbs_biometricverificationinfo_audit_table_202307061688652268" author="Tobechi">-->
+        <!--<sql>-->
+            <!--CREATE TABLE IF NOT EXISTS `biometricverificationinfo_audit` (-->
+            <!--`id` int(11) NOT NULL AUTO_INCREMENT,-->
+            <!--`biometricInfo_Id` int(11),-->
+            <!--`patient_id` int(11) NOT NULL,-->
+            <!--`audit_date` datetime DEFAULT NULL,-->
+            <!--PRIMARY KEY (`id`)-->
+            <!--) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;-->
+        <!--</sql>-->
+    <!--</changeSet>-->
+    <changeSet id="biometricverificationinfo_match_trail_table_20230701" author="Tobechi">
+        <sql>
+            CREATE TABLE IF NOT EXISTS `biometricverificationinfo_match_trail` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `group_id` varchar(255) NOT NULL ,
+            `patient_id` int(11) NOT NULL,
+            `date_created` datetime DEFAULT NULL,
+            `match_status` varchar(20) DEFAULT NULL,
+            `encoded_template` text DEFAULT NULL,
+            `hashed`  TEXT DEFAULT NULL,
+            `finger_position` varchar(100) NOT NULL,
+            `brstatus` int(11) DEFAULT '0',
+            `brstatus_recapturecount` int(11) DEFAULT NULL,
+            PRIMARY KEY (`id`)
+            ) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+        </sql>
+    </changeSet>
 </databaseChangeLog>
