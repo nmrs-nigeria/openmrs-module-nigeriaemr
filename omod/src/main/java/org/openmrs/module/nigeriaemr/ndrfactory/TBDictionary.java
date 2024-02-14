@@ -266,12 +266,14 @@ public class TBDictionary {
 
     private Map<Integer, String> tbDictionary = new HashMap<>();
     private Map<Integer, String> tbDictionary2 = new HashMap<>();
+    private Map<Integer, String> tbDictionary3 = new HashMap<>();
     private Map<Integer, Boolean> tbBooleanDictionary = new HashMap<>();
     private Map<Integer, YNCodeType> tbYNCodeTypeDict = new HashMap<>();
 
     private void loadDictionary() {
         tbDictionary = new HashMap<>();
         tbDictionary2 = new HashMap<>();
+        tbDictionary3 = new HashMap<>();
 
         //TB Referral For Community and Facility
         tbDictionary.put(161356, "TuberculosisDiagnosisClassification");
@@ -386,12 +388,13 @@ public class TBDictionary {
 
 
         //LGAHealthFacilityTBCentralRegisterType
-        tbDictionary.put(159878, "New");
-        tbDictionary.put(159875, "Relapse");
-        tbDictionary.put(159873, "TreatmentAfterDefault");
-        tbDictionary.put(166708, "TreatmentAfterLTFU");
-        tbDictionary.put(166709, "OthersPreviouslyTreated");
-        tbDictionary.put(166710, "UnknownPreviousTB");
+        tbDictionary3.put(159878, "New");
+        tbDictionary3.put(159875, "Relapse");
+        tbDictionary3.put(159873, "TreatmentAfterDefault");
+        tbDictionary3.put(166708, "TreatmentAfterLTFU");
+        tbDictionary3.put(166709, "OthersPreviouslyTreated");
+        tbDictionary3.put(166710, "UnknownPreviousTB");
+        tbDictionary3.put(166711, "TransferredInTB");
         tbDictionary.put(78385, "Kanamycin");
         tbDictionary.put(72794, "Capreomycin");
         tbDictionary.put(656, "Isoniazid");
@@ -1866,7 +1869,7 @@ public class TBDictionary {
 
                 obs = extractObs(TypeofTBPatient, groupedObsByConcept);
                 if (obs != null && obs.getValueCoded() != null) {
-                    healthfacility.setTypeOfPatient(getMappedValue(obs.getValueCoded().getConceptId()));
+                    healthfacility.setTypeOfPatient(getMappedValue3(obs.getValueCoded().getConceptId()));
                 }
 
                 obs = extractObs(LGATBNUmber, groupedObsByConcept);
@@ -2718,6 +2721,16 @@ public class TBDictionary {
     private String getMappedValue2(int conceptID) {
         try {
             return tbDictionary2.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+
+    private String getMappedValue3(int conceptID) {
+        try {
+            return tbDictionary3.get(conceptID);
         } catch (Exception ex) {
             LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);

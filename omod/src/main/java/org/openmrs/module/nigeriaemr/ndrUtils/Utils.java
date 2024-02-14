@@ -884,6 +884,15 @@ public class Utils {
 				ele.getValueCoded().getId() == valueCoded).findFirst().orElse(null);
 	}
 	
+	public static Obs extractObsByValues1(int conceptID, int valueCoded, List<Obs> obsList) {
+
+		if (obsList == null) {
+			return null;
+		}
+		return obsList.stream().filter(ele -> ele.getConcept().getConceptId() == conceptID &&
+				ele.getValueCoded().getId() == valueCoded).findFirst().orElse(null);
+	}
+	
 	public static List<Integer> getCareCardObs(Patient patient, Date endDate) {
  		NigeriaEncounterService nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 		Encounter hivEnrollmentEncounter = nigeriaEncounterService.getLastEncounterByEncounterTypeIds(patient,null, endDate,Arrays.asList(Care_card_Encounter_Type_Id));

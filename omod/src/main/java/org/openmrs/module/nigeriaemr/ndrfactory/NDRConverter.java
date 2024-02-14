@@ -219,7 +219,7 @@ public class NDRConverter {
         try {
             //for each testing to the following
             MortalityType mortality = new MortalityType();
-            mortality = mainDictionary.createMortalityType(patient, encounter, groupedObsByConcept, mortality);
+            mortality = mainDictionary.createMortalityType(patient, encounter, groupedObsByConcept,groupedpatientBaselineObsByEncounterType, mortality);
             mortalityList.add(mortality);
         } catch (Exception ex) {
             LoggerUtils.write(NDRConverter.class.toString(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);

@@ -89,6 +89,7 @@ public class RecencyDictionary {
         //recency
         //recency interpretation
         recencyDictionary.put(165852, "Recent");
+        recencyDictionary2.put(165852, "Recent");
         recencyDictionary2.put(165851, "Longterm");
         recencyDictionary.put(165851, "LongTerm");
         recencyDictionary.put(664, "Negative");

@@ -37,6 +37,8 @@ public class MortalityDictionary {
     private Map<Integer, String> mortalityDictionary = new HashMap<>();
 
     private Map<Integer, String> mortalityDictionary2 = new HashMap<>();
+
+    private Map<Integer, String> mortalityDictionary3 = new HashMap<>();
     private Map<Integer, Boolean> yesNoToggle = new HashMap<>();
     private Map<Integer, Boolean> mortalityBooleanDictionary = new HashMap<>();
     private Map<Integer, YNCodeType> mortalityYNCodeTypeDict = new HashMap<>();
@@ -52,23 +54,33 @@ public class MortalityDictionary {
         mortalityDictionary.put(165916,"Discontinued");
         mortalityDictionary.put(165791,"MobilePhone");
         mortalityDictionary.put(1650,"HomeVisit");
-        mortalityDictionary.put(165031,"Sick");
-        mortalityDictionary.put(1737,"LackofTransport");
-        mortalityDictionary.put(162192,"PatientForgottoAttendApp");
-        mortalityDictionary.put(160586,"FeltBetandStopedMed");
-        mortalityDictionary.put(165896,"NotPermtoLeaveWork");
-        mortalityDictionary.put(165897,"LostAppCard");
-        mortalityDictionary.put(165898,"StillHadDrugs");
-        mortalityDictionary.put(5841,"HerbalTradMeds");
+        mortalityDictionary2.put(165031,"Sick");
+        mortalityDictionary2.put(1737,"LackofTransport");
+        mortalityDictionary2.put(162192,"PatientForgottoAttendApp");
+        mortalityDictionary2.put(160586,"FeltBetandStopedMed");
+        mortalityDictionary2.put(165896,"NotPermtoLeaveWork");
+        mortalityDictionary2.put(165897,"LostAppCard");
+        mortalityDictionary2.put(165898,"StillHadDrugs");
+        mortalityDictionary2.put(5841,"HerbalTradMeds");
 
         mortalityDictionary.put(161642,"TreatmentSupporter");
         mortalityDictionary.put(162571,"Patient");
         mortalityDictionary.put(160639,"Guardian");
 
-        mortalityDictionary.put(165891,"ForcedDiscontinuation");
-        mortalityDictionary.put(165892,"MovedOutofArea");
-        //mortalityDictionary.put(5622,"OtherNoncoded");
-        mortalityDictionary.put(165890,"SelfDiscontinuation");
+        mortalityDictionary3.put(165891,"ForcedDiscontinuation");
+        mortalityDictionary3.put(165892,"MovedOutofArea");
+        mortalityDictionary3.put(5622,"Other");
+        mortalityDictionary3.put(5488,"AdherenceCounseling");
+        mortalityDictionary3.put(165890,"SelfDiscontinuation");
+        mortalityDictionary.put(167230,"DuplicateRecord");
+        mortalityDictionary.put(167231,"CouldNotVerifyClient");
+        mortalityDictionary.put(5240,"LTFU");
+       /* mortalityDictionary.put(0,"SelfTransfer");
+        mortalityDictionary.put(0,"TreatmentStop");*/
+
+        mortalityDictionary.put(1065, "YES");
+        mortalityDictionary.put(1066, "NO");
+
         //Map OpenMRS concepts to corresponding NDR values
         mortalityDictionary.put(166348,"VAAdultCasesofDeath");
         mortalityDictionary.put(166347,"VAChildCasesofDeath");
@@ -78,6 +90,14 @@ public class MortalityDictionary {
         mortalityDictionary.put(165886,"SuspectedARVSideEffect");
         mortalityDictionary.put(165887,"SuspectedOpportunisticInfection");
         mortalityDictionary.put(1067,"Unknown");
+
+        //Client Indication for verification
+        mortalityDictionary.put(167243,"VerificationOngoing");
+        mortalityDictionary.put(167244,"RecordDiscontinued");
+        mortalityDictionary.put(167245,"RecordVerified");
+        /*mortalityDictionary.put(0,"Pending");*/
+        mortalityDictionary.put(167246,"Valid");
+        mortalityDictionary.put(163611,"Invalid");
 
         //Causes of Death
         mortalityDictionary.put(166304,"AIDS");
@@ -129,6 +149,8 @@ public class MortalityDictionary {
         mortalityDictionary.put(166155,"DidNotAttempttoTrackPatient");
         mortalityDictionary.put(166154,"TrackedbutUnabletoLocate");
 
+
+
         yesNoToggle.put(1066, Boolean.FALSE);
         yesNoToggle.put(1065, Boolean.TRUE);
         yesNoToggle.put(0, Boolean.FALSE);
@@ -161,9 +183,13 @@ public class MortalityDictionary {
         }
     }
 
-    public MortalityType createClientIntakeTags(Patient patient, Encounter enc, Map<Object, List<Obs>> groupedObsByConcept, MortalityType mortality) throws DatatypeConfigurationException {
+    public MortalityType createMortalityTags(Patient patient, Encounter enc, Map<Object, List<Obs>> groupedObsByConcept,Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType, MortalityType mortality) throws DatatypeConfigurationException {
+
 
         Obs obs;
+
+        ClientVerificationType clientVerificationType = createClientVerificationType(patient, groupedObsByConcept,groupedpatientBaselineObsByEncounterType);
+        mortality.setClientVerification(clientVerificationType);
 
         //visit date and ID
         if(enc.getVisit() != null) {
@@ -176,7 +202,12 @@ public class MortalityDictionary {
         obs = extractObs(165460, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             mortality.setReasonForTracking(getMappedValue(obs.getValueCoded().getConceptId()));
+            obs = extractObs(166138, groupedObsByConcept);
+            if (obs != null && obs.getValueText() != null) {
+                mortality.setOtherTrackingReason(obs.getValueText());
+            }
         }
+
         obs = extractObs(165461, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
@@ -212,9 +243,20 @@ public class MortalityDictionary {
         obs = extractObs(165467, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             mortality.setReasonforDefaulting(getMappedValue2(obs.getValueCoded().getConceptId()));
+            obs = extractObs(166139, groupedObsByConcept);
+            if (obs != null && obs.getValueText() != null) {
+                mortality.setOtherReasonforDefaulting(obs.getValueText());
+            }
         }
+
+
+        obs = extractObs(165586, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            mortality.setDiscontinued(getMappedValue(obs.getValueCoded().getConceptId()));
+        }
+
         //LTFU
-        obs = extractObs(5240, groupedObsByConcept);
+        /*obs = extractObs(5240, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             int valueCodedLTFU = obs.getValueCoded().getConceptId();
             Boolean ndrCodeLTFU = getYesNoToggleValue(valueCodedLTFU);
@@ -231,7 +273,7 @@ public class MortalityDictionary {
                     LoggerUtils.write(MortalityDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
                 }
             }
-        }
+        }*/
 
         obs = extractObs(165469, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
@@ -244,8 +286,28 @@ public class MortalityDictionary {
         obs = extractObs(165470, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
             mortality.setReasonforTermination(getMappedValue(obs.getValueCoded().getConceptId()));
+
+
+            //LTFU
+            /*obs = extractObs(166157, groupedObsByConcept);
+            if (obs != null) {
+                mortality.setLosttoFollowup(Boolean.TRUE);
+                obs = extractObs(166157, groupedObsByConcept);
+                if (obs != null && obs.getValueCoded() != null) {
+                    mortality.setReasonforLosttoFollowup(getMappedValue(obs.getValueCoded().getConceptId()));
+                }
+                obs = extractObs(166152, groupedObsByConcept);
+                if (obs != null && obs.getValueDate() != null) {
+                    try {
+                        mortality.setDateLosttoFollowup(utils.getXmlDate(obs.getValueDate()));
+                    } catch (Exception ex) {
+                        LoggerUtils.write(MortalityDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+                    }
+                }
+            }*/
+
             //Transferred Out
-            obs = extractObs(159492, groupedObsByConcept);
+            obs = extractObs(159495, groupedObsByConcept);
             if (obs != null && obs.getValueText() != null) {
                 mortality.setTransferredOutTo(obs.getValueText());
             }
@@ -278,13 +340,24 @@ public class MortalityDictionary {
             //Discontinue
             obs = extractObs(165916, groupedObsByConcept);
             if (obs != null && obs.getValueCoded() != null) {
-                mortality.setDiscontinuedCare(getMappedValue(obs.getValueCoded().getConceptId()));
+                mortality.setDiscontinuedCare(getMappedValue3(obs.getValueCoded().getConceptId()));
                 obs = extractObs(165917, groupedObsByConcept);
                 if (obs != null && obs.getValueText() != null) {
                     mortality.setDiscontinueCareOtherSpecify(obs.getValueText());
                 }
             }
         }
+
+        /*obs = extractObs(167222, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            mortality.setIndicationforClientVerification(getMappedValue2(obs.getValueCoded().getConceptId()));
+        }
+
+        obs = extractObs(167236, groupedObsByConcept);
+        if (obs != null && obs.getValueText() != null) {
+            mortality.setClientVerificationOther(obs.getValueText());
+        }*/
+
         obs = extractObs(165775, groupedObsByConcept);
         if (obs != null && obs.getValueDate() != null) {
             try {
@@ -295,7 +368,7 @@ public class MortalityDictionary {
         }
         obs = extractObs(165776, groupedObsByConcept);
         if (obs != null && obs.getValueCoded() != null) {
-            mortality.setReffferedFor(getMappedValue(obs.getValueCoded().getConceptId()));
+            mortality.setReffferedFor(getMappedValue3(obs.getValueCoded().getConceptId()));
         }
         obs = extractObs(165459, groupedObsByConcept);
         if (obs != null && obs.getValueText() != null) {
@@ -313,6 +386,170 @@ public class MortalityDictionary {
         return mortality;
     }
 
+    private ClientVerificationType createClientVerificationType(Patient patient, Map<Object, List<Obs>> groupedObsByConcept,Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType) {
+        ClientVerificationType clientVerificationType = new ClientVerificationType();
+        Integer[] targetEncounterTypes = {Utils.Client_Tracking_And_Termination_Encounter_Type_Id};
+        List<Obs> obsList = Utils.extractObsList(groupedpatientBaselineObsByEncounterType, Arrays.asList(targetEncounterTypes));
+
+        Obs obs = extractObs(167221, groupedObsByConcept);
+        if (obs != null && obs.getValueCoded() != null) {
+            clientVerificationType.setClientVerification(getMappedValue(obs.getValueCoded().getConceptId()));
+            if (obs.getValueCoded().getConceptId() == 1065) {
+                obs = Utils.extractObsByValues(167222,167223,obsList);
+                if (obs != null) {
+                    clientVerificationType.setPickupByProxy("TRUE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167224,obsList);
+                if (obs != null) {
+                    clientVerificationType.setDuplicatedDemographic("TRUE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167225,obsList);
+                if (obs != null) {
+                    clientVerificationType.setNoRecapture("TRUE");
+                }else{
+                    clientVerificationType.setNoRecapture("FALSE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167226,obsList);
+                if (obs != null) {
+                    clientVerificationType.setBatchPickupDates("TRUE");
+                }else{
+                    clientVerificationType.setBatchPickupDates("FALSE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167227,obsList);
+                if (obs != null) {
+                    clientVerificationType.setLastVisitIsOver18M("TRUE");
+                }else{
+                    clientVerificationType.setLastVisitIsOver18M("FALSE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167228,obsList);
+                if (obs != null) {
+                    clientVerificationType.setARTStartPickupDate("TRUE");
+                }else{
+                    clientVerificationType.setARTStartPickupDate("FALSE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167229,obsList);
+                if (obs != null) {
+                    clientVerificationType.setNoInitBiometric("TRUE");
+                }else{
+                    clientVerificationType.setNoInitBiometric("FALSE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167232,obsList);
+                if (obs != null) {
+                    clientVerificationType.setIncompleteVisitData("TRUE");
+                }else{
+                    clientVerificationType.setIncompleteVisitData("FALSE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167233,obsList);
+                if (obs != null) {
+                    clientVerificationType.setRepeatEncounterNoPrint("TRUE");
+                }else{
+                    clientVerificationType.setRepeatEncounterNoPrint("FALSE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167234,obsList);
+                if (obs != null) {
+                    clientVerificationType.setLongIntervalsARVPickup("TRUE");
+                }else{
+                    clientVerificationType.setLongIntervalsARVPickup("FALSE");
+                }
+
+                obs = Utils.extractObsByValues(167222,167235,obsList);
+                if (obs != null) {
+                    clientVerificationType.setSameSexDOBARTStartDate("TRUE");
+                }else{
+                    clientVerificationType.setSameSexDOBARTStartDate("FALSE");
+                }
+
+                obs = extractObs(167236, groupedObsByConcept);
+                if (obs != null && obs.getValueText() != null) {
+                    clientVerificationType.setOtherSpecifyForCV(obs.getValueText());
+                }
+
+                try {
+                    List<Obs> allIndexGroupObs = groupedObsByConcept.get(167242);
+                    if (allIndexGroupObs != null && !allIndexGroupObs.isEmpty()) {
+                        allIndexGroupObs.forEach(gObs -> {
+                            List<Obs> allMembersValue = new ArrayList<>(gObs.getGroupMembers());
+                            Map<Object, List<Obs>> allMembers = Utils.groupedByConceptIdsOnly(allMembersValue);
+
+                            Obs obs1 = extractObs(167241, allMembers);
+                            if (obs1 != null && obs1.getValueDate() != null) {
+                                try {
+                                    clientVerificationType.setCT1STDate(utils.getXmlDate(obs1.getValueDate()));
+                                } catch (Exception ex) {
+                                    LoggerUtils.write(MortalityDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+                                }
+                            }
+
+                            obs1 = extractObs(167239, allMembers);
+                            if (obs1 != null && obs1.getValueCoded() != null) {
+                                clientVerificationType.setFirstStatus(getMappedValue(obs1.getValueCoded().getConceptId()));
+                            }
+
+                            obs1 = extractObs(167238, allMembers);
+                            if (obs1 != null && obs1.getValueCoded() != null) {
+                                clientVerificationType.setFirstOutcome(getMappedValue(obs1.getValueCoded().getConceptId()));
+                            }
+                        });
+                    }
+                } catch (Exception ex) {
+                    LoggerUtils.write(MortalityDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+                }
+
+                try {
+                    List<Obs> allIndexGroupObs = groupedObsByConcept.get(165902);
+                    if (allIndexGroupObs != null && !allIndexGroupObs.isEmpty()) {
+                        // Sort the list of observations by date_created in descending order
+                        allIndexGroupObs.sort(Comparator.comparing(Obs::getDateCreated).reversed());
+
+                        // Get the first observation (latest observation with latest date_created)
+                        Obs latestObs = allIndexGroupObs.get(0);
+
+                        // Now you can use this latest observation as needed
+                        if (latestObs != null) {
+                            List<Obs> allMembersValue = new ArrayList<>(latestObs.getGroupMembers());
+                            Map<Object, List<Obs>> allMembers = Utils.groupedByConceptIdsOnly(allMembersValue);
+
+                            Obs obs1 = extractObs(167241, allMembers);
+                            if (obs1 != null && obs1.getValueDate() != null) {
+                                try {
+                                    clientVerificationType.setCT2NdDate(utils.getXmlDate(obs1.getValueDate()));
+                                } catch (Exception ex) {
+                                    LoggerUtils.write(MortalityDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+                                }
+                            }
+
+                            obs1 = extractObs(167239, allMembers);
+                            if (obs1 != null && obs1.getValueCoded() != null) {
+                                clientVerificationType.setSecondStatus(getMappedValue(obs1.getValueCoded().getConceptId()));
+                            }
+
+                            obs1 = extractObs(167238, allMembers);
+                            if (obs1 != null && obs1.getValueCoded() != null) {
+                                clientVerificationType.setSecondOutcome(getMappedValue(obs1.getValueCoded().getConceptId()));
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                    LoggerUtils.write(MortalityDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+                }
+
+            }
+        }
+        if (clientVerificationType.isEmpty()) {
+            return null;
+        }
+
+        return clientVerificationType;
+    }
 
 
     private String getMappedValue(int conceptID) {
@@ -328,6 +565,16 @@ public class MortalityDictionary {
     private String getMappedValue2(int conceptID) {
         try {
             return mortalityDictionary2.get(conceptID);
+        } catch (Exception ex) {
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                    LoggerUtils.LogLevel.live);
+            return "";
+        }
+    }
+
+    private String getMappedValue3(int conceptID) {
+        try {
+            return mortalityDictionary3.get(conceptID);
         } catch (Exception ex) {
             LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
