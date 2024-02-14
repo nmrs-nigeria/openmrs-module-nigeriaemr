@@ -433,9 +433,9 @@ public class NDRMainDictionary {
         return recencyDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
     }
 
-    public MortalityType createMortalityType(Patient patient, Encounter encounter, Map<Object, List<Obs>> groupedObsByConcept, MortalityType mortality) {
+    public MortalityType createMortalityType(Patient patient, Encounter encounter, Map<Object, List<Obs>> groupedObsByConcept,Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType, MortalityType mortality) {
         try {
-            return mortalityDictionary.createClientIntakeTags(patient, encounter, groupedObsByConcept, mortality);
+            return mortalityDictionary.createMortalityTags(patient, encounter, groupedObsByConcept, groupedpatientBaselineObsByEncounterType,mortality);
         } catch (Exception ex) {
             LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
         }
