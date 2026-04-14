@@ -1,15 +1,14 @@
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
-import org.openmrs.module.nigeriaemr.model.NDRExport;
-import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
 import org.openmrs.module.nigeriaemr.model.ndr.ConditionType;
 import org.openmrs.module.nigeriaemr.model.ndr.Container;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
@@ -18,17 +17,17 @@ import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
 
 public class NDRExtractor {
-	
-	ObjectMapper mapper = new ObjectMapper();
 	
 	/**
 	 * Gets the user context from the thread local. This might be accessed by several threads at the
@@ -39,7 +38,7 @@ public class NDRExtractor {
 	 */
 	
 	public void extract(Integer patientId, String DATIMID, String reportFolder, String formattedDate,
-	        JAXBContext jaxbContext, Date lastDate, Date currentDate, int batchId) throws Exception {
+	        JAXBContext jaxbContext, Date lastDate, Date currentDate, int batchId, String opt) throws Exception {
 		NDRConverter generator = new NDRConverter(Utils.getNmrsConnectionDetails(), lastDate, currentDate);
 		Container cnt;
 		try {
@@ -81,18 +80,21 @@ public class NDRExtractor {
 					File dir = new File(reportFolder);
 					if (!dir.exists())
 						dir.mkdir();
-					String xmlFile = Paths.get(reportFolder, fileName + ".xml").toString();
+					
+					//evaluate opt to determine the format with which to save the file
+					String fileExtension = (opt != null && !opt.isEmpty()) ? "." + opt : ".xml";
+					String xmlFile = Paths.get(reportFolder, fileName + fileExtension).toString();
 					
 					File aXMLFile = new File(xmlFile);
 					if (aXMLFile.exists())
 						aXMLFile.delete();
 					boolean b = aXMLFile.createNewFile();
 					
-					LoggerUtils.write(NDRExtractor.class.getName(), "creating xml file : " + xmlFile + "was successful : "
+					LoggerUtils.write(NDRExtractor.class.getName(), "creating xml file : " + xmlFile + " was successful : "
 					        + b, LoggerUtils.LogFormat.INFO, LoggerUtils.LogLevel.live);
 					if (cnt.getMessageHeader() != null) {
 						cnt.setValidation(generator.getValidation(patientId.toString()));
-						writeFile(patient, reportFolder, cnt, aXMLFile, jaxbContext, batchId);
+						writeFile(patient, reportFolder, cnt, aXMLFile, jaxbContext, batchId, opt);
 					} else {
 						boolean delete = aXMLFile.delete();
 						if (!delete)
@@ -114,7 +116,7 @@ public class NDRExtractor {
 	}
 	
 	public synchronized void writeFile(Patient patient, String reportFolder, Container container, File file,
-	        JAXBContext jaxbContext, int batchId) throws Exception {
+	        JAXBContext jaxbContext, int batchId, String opt) throws Exception {
 		Marshaller jaxbMarshaller = null;
 		try {
 			if (patient.isVoided()) {
@@ -122,12 +124,48 @@ public class NDRExtractor {
 			} else {
 				jaxbMarshaller = NDRUtils.createMarshaller(jaxbContext, false);
 			}
-			jaxbMarshaller.marshal(container, file);
+			
+			if (opt.equalsIgnoreCase("xml")) {
+				jaxbMarshaller.marshal(container, file);
+			} else {
+				if (opt.equalsIgnoreCase("json")) {
+					//First convert the data to xml using StringWriter
+					//to leverage the already pre-defined xml schema validations
+					StringWriter sw = new StringWriter();
+					jaxbMarshaller.marshal(container, sw);
+					
+					//re-convert to the pojo class
+					String xmlString = sw.toString();
+					Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+					StringReader reader = new StringReader(xmlString);
+					Container cnt = (Container) unmarshaller.unmarshal(reader);
+					
+					//Convert object to JSON string and save the output into the JSON file
+					//THIS IS VERY NECESSARY SO THAT MAPPING TO C# CLASS ON THE NDR WILL NOT FAIL
+					ObjectMapper mapper = new ObjectMapper();
+					DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					mapper.setDateFormat(df);
+					
+					//To enable pretty print
+					mapper.enable(SerializationFeature.INDENT_OUTPUT);
+					
+					//Ignoring null fields Globally
+					mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+					
+					//mysteriously, mapper.writeValue(file, cnt) was inconsistently truncating the JSON string it writes to the file
+					//FileWriter has to be utilised to avoid such
+					String data = mapper.writeValueAsString(cnt);//.writerWithDefaultPrettyPrinter()
+					FileWriter writer = new FileWriter(file);
+					writer.write(data);
+					writer.close();
+				}
+			}
+			
 		}
 		catch (Exception ex) {
 			if (ex instanceof JAXBException && ((JAXBException) ex).getLinkedException() != null) {
 				writeErrorCsv(patient, reportFolder, ((JAXBException) ex).getLinkedException().getMessage(), container,
-				    file, jaxbContext, batchId);
+				    file, jaxbContext, batchId, opt);
 			}
 			LoggerUtils.write(NdrFragmentController.class.getName(), "File " + file.getName() + " throw an exception \n"
 			        + ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
@@ -136,7 +174,7 @@ public class NDRExtractor {
 	}
 	
 	private synchronized void writeErrorCsv(Patient patient, String reportFolder,
-											String message, Container container, File file, JAXBContext jaxbContext, int batchId) {
+											String message, Container container, File file, JAXBContext jaxbContext, int batchId, String opt) {
 		boolean deleted = file.delete();
 		if(!deleted) file.deleteOnExit();
 		String newReportFolder = reportFolder + "-error";

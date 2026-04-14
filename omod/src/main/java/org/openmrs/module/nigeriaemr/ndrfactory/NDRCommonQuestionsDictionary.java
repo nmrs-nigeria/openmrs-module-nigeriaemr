@@ -1,4 +1,8 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,11 +20,14 @@ import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+import org.openmrs.module.nigeriaemr.page.controller.CommunityTesterPageController;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
 
 /**
  *
@@ -30,6 +37,7 @@ import java.util.stream.Collectors;
 public class NDRCommonQuestionsDictionary {
 
     private static Map<Integer, String> map = new HashMap<>();
+
     private PharmacyDictionary pharmacyDictionary;
     NigeriaemrService nigeriaemrService = Context.getService(NigeriaemrService.class);
     NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
@@ -61,9 +69,9 @@ public class NDRCommonQuestionsDictionary {
         map.put(160292, "6");
 
         //PATIENT CARE IN FACILITY_TERMINATED
-        map.put(159492, "1");
+        /*map.put(159492, "1");
         map.put(165889, "2");
-        map.put(165916, "3");
+        map.put(165916, "3");*/
 
         /* OCCUPATIONAL CODE */
         map.put(123801, "UNE");
@@ -97,6 +105,12 @@ public class NDRCommonQuestionsDictionary {
         map.put(166042, "3");
         map.put(1661, "5");
         map.put(1662, "4");
+
+        // DISCONTINUED CARE
+        map.put(165891, "1");
+        map.put(165892, "2");
+        map.put(5622, "3");
+        map.put(165890, "4");
 
         //care entry point
         map.put(160539, "3"); //HTS
@@ -137,10 +151,63 @@ public class NDRCommonQuestionsDictionary {
         map.put(730, "3");
         map.put(164427, "4");
 
-        hivQuestionDictionary.put(159492, "1");
-        hivQuestionDictionary.put(165889, "2");
-        hivQuestionDictionary.put(165916, "3");
-       // hivQuestionDictionary.put(5271, "4");
+        //VA Causes of Death
+        map.put(166348,"VAA");
+        map.put(166347,"VAC");
+
+        //Causes of Death
+        map.put(166304,"B24");
+        map.put(166305,"A09");
+        map.put(166306,"B54");
+        map.put(166307,"O95");
+        map.put(166308,"B99");
+        map.put(166309,"J22");
+        map.put(166310,"A16");
+        map.put(166311,"I24");
+        map.put(166312,"C50");
+        map.put(166313,"J44");
+        map.put(166314,"C53");
+        map.put(166315,"K74");
+        map.put(166316,"C18");
+        map.put(166317,"E14");
+        map.put(166318,"C15");
+        map.put(166319,"C96");
+        map.put(166320,"C34");
+        map.put(166321,"I99");
+        map.put(166322,"UU1");
+        map.put(166323,"C61");
+        map.put(166324,"N18");
+        map.put(166325,"C16");
+        map.put(166326,"I64");
+        map.put(166327,"C76");
+        map.put(166331,"X27");
+        map.put(166332,"W74");
+        map.put(166350,"W19");
+        map.put(166333,"X09");
+        map.put(166334,"Y09");
+        map.put(166335,"X58");
+        map.put(122255,"X49");
+        map.put(166336,"V89");
+        map.put(125538,"X84");
+        map.put(166339,"G04");
+        map.put(166340,"A99");
+        map.put(166328,"A41");
+        map.put(166329,"G03");
+        map.put(166330,"B05");
+        map.put(166337,"UU2");
+        map.put(166338,"K92");
+        map.put(118350,"W19");
+        map.put(166341,"P21");
+        map.put(166342,"Q89");
+        map.put(166343,"P36");
+        map.put(166344,"P23");
+        map.put(166345,"P07");
+        map.put(166346,"P95");
+
+        hivQuestionDictionary.put(165891, "1");
+        hivQuestionDictionary.put(165892, "2");
+        hivQuestionDictionary.put(5622, "3");
+        hivQuestionDictionary.put(165890, "4");
 
     }
 
@@ -166,16 +233,16 @@ public class NDRCommonQuestionsDictionary {
   -Extension
   -EmailAddress
   -TelephoneTypeCode
-  
+
          */
         PatientDemographicsType demo = new PatientDemographicsType();
         try {
 
             //Identifier 4 is Pepfar ID
-            PatientIdentifier pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId, pepfarid, openmrsId;
+            PatientIdentifier pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId, pepfarid, openmrsId, tbId;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
-            // pepfarid = new PatientIdentifier();
+            pepfarid = new PatientIdentifier();
             // pepfarid.setIdentifier(String.valueOf(pts.getPatientIdentifier(4)));
 
 //            PatientIdentifierType pepfaridPatientIdentifierType =
@@ -184,16 +251,29 @@ public class NDRCommonQuestionsDictionary {
 //            String pepfarid = nigeriaPatientService.getPatientIdentifier(pts,pepfaridPatientIdentifierType);
 
 
-            pepfarid = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.PEPFAR_IDENTIFIER_INDEX);
-            pidHospital = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.HOSPITAL_IDENTIFIER_INDEX);
+
             pidOthers = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.OTHER_IDENTIFIER_INDEX);
+            pidHospital = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.HOSPITAL_IDENTIFIER_INDEX);
             htsId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.HTS_IDENTIFIER_INDEX);
             ancId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.PMTCT_IDENTIFIER_INDEX);
             exposedInfantId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
             pepId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.PEP_IDENTIFIER_INDEX);
             // pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
             recencyId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.RECENCY_INDENTIFIER_INDEX);
+            tbId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.TB_IDENTIFIER_INDEX );
             openmrsId = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.OPENMRS_IDENTIFIER_INDEX);
+            pepfarid = Utils.getPatientIdentifier(pts.getIdentifiers(), Utils.PEPFAR_IDENTIFIER_INDEX);
+
+            /*
+            pidHospital = pts.getPatientIdentifier(Utils.HOSPITAL_IDENTIFIER_INDEX);
+            pidOthers = pts.getPatientIdentifier(Utils.OTHER_IDENTIFIER_INDEX);
+            htsId = pts.getPatientIdentifier(Utils.HTS_IDENTIFIER_INDEX);
+            ancId = pts.getPatientIdentifier(Utils.PMTCT_IDENTIFIER_INDEX);
+            exposedInfantId = pts.getPatientIdentifier(Utils.EXPOSE_INFANT_IDENTIFIER_INDEX);
+            pepId = pts.getPatientIdentifier(Utils.PEP_IDENTIFIER_INDEX);
+            pepfarid = pts.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
+            recencyId = pts.getPatientIdentifier(Utils.RECENCY_INDENTIFIER_INDEX);
+            */
 
             IdentifierType idt;
             IdentifiersType identifiersType = new IdentifiersType();
@@ -212,30 +292,26 @@ public class NDRCommonQuestionsDictionary {
             if (pidHospital != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(pidHospital.getIdentifier());
-                idt.setIDTypeCode("HN"); //EDITED BY APIN TEAM
+                idt.setIDTypeCode("HN");
                 identifiersType.getIdentifier().add(idt);
-                if(demo.getPatientIdentifier() == null){
-                    demo.setPatientIdentifier(pidHospital.getIdentifier());
-                }
+            }
+            if (pidOthers != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(pidOthers.getIdentifier());
+                idt.setIDTypeCode("EID");
+                identifiersType.getIdentifier().add(idt);
             }
             if (htsId != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(htsId.getIdentifier());
                 idt.setIDTypeCode("HTS");
                 identifiersType.getIdentifier().add(idt);
-                if(demo.getPatientIdentifier() == null){
-                    demo.setPatientIdentifier(htsId.getIdentifier());
-                }
             }
-
             if (ancId != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(ancId.getIdentifier());
                 idt.setIDTypeCode("ANC");
                 identifiersType.getIdentifier().add(idt);
-                if(demo.getPatientIdentifier() == null){
-                    demo.setPatientIdentifier(ancId.getIdentifier());
-                }
             }else{
                 List<String> ancIds = utils.getIds(groupedObsByEncounterTypes.get(ConstantsUtil.GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE),165567);
                 if(ancIds != null && ancIds.size() > 0){
@@ -243,9 +319,6 @@ public class NDRCommonQuestionsDictionary {
                     idt.setIDNumber(ancIds.get(0));
                     idt.setIDTypeCode("ANC");
                     identifiersType.getIdentifier().add(idt);
-                    if(demo.getPatientIdentifier() == null){
-                        demo.setPatientIdentifier(ancIds.get(0));
-                    }
                 }
             }
             if (exposedInfantId != null) {
@@ -253,9 +326,6 @@ public class NDRCommonQuestionsDictionary {
                 idt.setIDNumber(exposedInfantId.getIdentifier());
                 idt.setIDTypeCode("HEI");
                 identifiersType.getIdentifier().add(idt);
-                if(demo.getPatientIdentifier() == null){
-                    demo.setPatientIdentifier(exposedInfantId.getIdentifier());
-                }
             }
             if (pepId != null) {
                 idt = new IdentifierType();
@@ -270,6 +340,78 @@ public class NDRCommonQuestionsDictionary {
                 identifiersType.getIdentifier().add(idt);
             }
 
+            if (tbId != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(tbId.getIdentifier());
+                idt.setIDTypeCode("TB");
+                identifiersType.getIdentifier().add(idt);
+            }else{
+                if(pepfarid != null){
+                    idt = new IdentifierType();
+                    idt.setIDNumber(pepfarid.getIdentifier());
+                    idt.setIDTypeCode("TB");
+                    identifiersType.getIdentifier().add(idt);
+                }
+            }
+
+            if(identifiersType.getIdentifier().size() > 0) {
+                demo.setOtherPatientIdentifiers(identifiersType);
+            }
+
+            /*if (pidHospital != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(pidHospital.getIdentifier());
+                idt.setIDTypeCode("HN"); //EDITED BY APIN TEAM
+                identifiersType.getIdentifier().add(idt);
+                *//*if(demo.getPatientIdentifier() == null){
+                    demo.setPatientIdentifier(pidHospital.getIdentifier());
+                }*//*
+            }
+            if (htsId != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(htsId.getIdentifier());
+                idt.setIDTypeCode("HTS");
+                identifiersType.getIdentifier().add(idt);
+                *//*if(demo.getPatientIdentifier() == null){
+                    demo.setPatientIdentifier(htsId.getIdentifier());
+                }*//*
+            }
+
+            if (ancId != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(ancId.getIdentifier());
+                idt.setIDTypeCode("ANC");
+                identifiersType.getIdentifier().add(idt);
+
+            }else{
+                List<String> ancIds = utils.getIds(groupedObsByEncounterTypes.get(ConstantsUtil.GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE),165567);
+                if(ancIds != null && ancIds.size() > 0){
+                    idt = new IdentifierType();
+                    idt.setIDNumber(ancIds.get(0));
+                    idt.setIDTypeCode("ANC");
+                    identifiersType.getIdentifier().add(idt);
+
+                }
+            }
+            if (exposedInfantId != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(exposedInfantId.getIdentifier());
+                idt.setIDTypeCode("HEI");
+                identifiersType.getIdentifier().add(idt);
+
+            }
+            if (pepId != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(pepId.getIdentifier());
+                idt.setIDTypeCode("PEP");
+                identifiersType.getIdentifier().add(idt);
+            }
+            if (recencyId != null) {
+                idt = new IdentifierType();
+                idt.setIDNumber(recencyId.getIdentifier());
+                idt.setIDTypeCode("RECENT");
+                identifiersType.getIdentifier().add(idt);
+            }
             if (pidOthers != null) {
                 idt = new IdentifierType();
                 idt.setIDNumber(pidOthers.getIdentifier());
@@ -283,7 +425,7 @@ public class NDRCommonQuestionsDictionary {
 
             if(demo.getPatientIdentifier() == null){
                 return null;
-            }
+            }*/
 
             if(pts.isVoided() && pepfarid != null){
                 NigeriaPatientService nigeriaPatientService = Context.getService(NigeriaPatientService.class);
@@ -372,7 +514,7 @@ public class NDRCommonQuestionsDictionary {
 
             return demo;
         } catch (Exception ex) {
-            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LoggerUtils.LogLevel.live);
             //throw new DatatypeConfigurationException(Arrays.toString(ex.getStackTrace()));
         }
 
@@ -492,7 +634,7 @@ public class NDRCommonQuestionsDictionary {
                     common.setDiagnosisDate(utils.getXmlDate(valueDateTime));
                 }
             } catch (Exception ex) {
-                LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+                LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
                         LoggerUtils.LogLevel.live);
             }
 
@@ -527,7 +669,7 @@ public class NDRCommonQuestionsDictionary {
             }
             return common;
         } catch (Exception ex) {
-            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LoggerUtils.LogLevel.live);
             throw new DatatypeConfigurationException(ex.getMessage());
         }
     }
@@ -715,11 +857,20 @@ HIVQuestionsType
                 hivQuestionsType.setCD4AtStartOfART(String.valueOf(valueNumericInt));
             }
 
-            obs = Utils.extractObs(Utils.REASON_FOR_TERMINATION, obsListId);
-            if (obs != null && obs.getValueCoded() != null) {
-                ndrCodedValue = getHIVQuestionMappedValue(obs.getValueCoded().getConceptId());
-                if (ndrCodedValue != null) {
-                    hivQuestionsType.setReasonForStoppedTreatment(ndrCodedValue);
+            //Discontinued Care
+            obs = Utils.extractObsByValues(Utils.REASON_FOR_TERMINATION_CONCEPT, Utils.DISCONTINUED_CARE, obsList);
+            if (obs != null) {
+                hivQuestionsType.setStoppedTreatment(Boolean.TRUE);
+                obs = Utils.extractObs(Utils.DISCONTINUED_CARE, obsListId);
+                if (obs != null) {
+                    valueCoded = obs.getValueCoded().getConceptId();
+                    ndrCode = getMappedValue(valueCoded);
+                    hivQuestionsType.setReasonForStoppedTreatment(ndrCode);
+                }
+                obs = Utils.extractLastObs(Utils.DATE_OF_DISCONTINUED_CARE, obsListId);
+                if (obs != null) {
+                    valueDateTime = obs.getValueDate();
+                    hivQuestionsType.setDateStoppedTreatment(utils.getXmlDate(valueDateTime));
                 }
             }
 
@@ -753,6 +904,45 @@ HIVQuestionsType
                     }
                 }
             }
+
+            //Causes of Death
+            obs = Utils.extractObsByValues(Utils.CAUSE_OF_DEATH, Utils.ADULT_CASES_OF_DEATH, obsList);
+            if (obs != null) {
+                obs = Utils.extractObs(Utils.ADULT_CASES_OF_DEATH, obsListId);
+                if (obs != null && obs.getValueCoded() != null) {
+                    ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
+                    hivQuestionsType.setCauseOfDeath(ndrCodedValue);
+                }
+            }else{
+                obs = Utils.extractObsByValues(Utils.CAUSE_OF_DEATH, Utils.CHILD_CASES_OF_DEATH, obsList);
+                if (obs != null) {
+                    obs = Utils.extractObs(Utils.CHILD_CASES_OF_DEATH, obsListId);
+                    if (obs != null && obs.getValueCoded() != null) {
+                        ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
+                        hivQuestionsType.setCauseOfDeath(ndrCodedValue);
+                    }
+                }
+            }
+
+            /*obs = Utils.extractObs(Utils.CAUSE_OF_DEATH,obsListId);
+            if (obs != null && obs.getValueCoded() != null) {
+                valueCoded = obs.getValueCoded().getConceptId();
+                ndrCode = getMappedValue(valueCoded);
+                hivQuestionsType.setCauseOfDeath(ndrCode);
+                if (ndrCode != null) {
+                    obs = Utils.extractObs(Utils.ADULT_CASES_OF_DEATH, obsListId);
+                    if (obs != null && obs.getValueCoded() != null) {
+                        ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
+                        hivQuestionsType.setCasesOfDeath(ndrCodedValue);
+                    }else{
+                        obs = Utils.extractObs(Utils.CHILD_CASES_OF_DEATH, obsListId);
+                        if (obs != null && obs.getValueCoded() != null) {
+                            ndrCodedValue = getMappedValue(obs.getValueCoded().getConceptId());
+                            hivQuestionsType.setCasesOfDeath(ndrCodedValue);
+                        }
+                    }
+                }
+            }*/
             /*
                 Use date confirmed positve or visit date of the HIVEnrollmentForm
              */
@@ -799,7 +989,7 @@ HIVQuestionsType
         try {
             return map.get(conceptID);
         } catch (Exception ex) {
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
             return "";
         }
@@ -809,7 +999,7 @@ HIVQuestionsType
         try {
             return hivQuestionDictionary.get(conceptID);
         } catch (Exception ex) {
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
                     LoggerUtils.LogLevel.live);
             return "";
         }

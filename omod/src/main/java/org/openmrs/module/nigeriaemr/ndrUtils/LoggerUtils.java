@@ -5,6 +5,9 @@
  */
 package org.openmrs.module.nigeriaemr.ndrUtils;
 
+import org.openmrs.api.context.Context;
+import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -13,11 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -25,9 +24,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
 
 /**
  * @author MORRISON.I

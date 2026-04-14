@@ -5,10 +5,10 @@
  */
 package org.openmrs.module.nigeriaemr.ndrUtils;
 
-import java.util.Date;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
+
+import java.util.Date;
 
 /**
  * @author The Brights

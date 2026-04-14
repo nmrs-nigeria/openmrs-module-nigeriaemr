@@ -7,25 +7,17 @@ package org.openmrs.module.nigeriaemr.ndrUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.ObjectMapper;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.AbstractSet;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.openmrs.Person;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.module.nigeriaemr.omodmodels.Client;
 import org.openmrs.module.nigeriaemr.omodmodels.CommunityTestersPayload;
-import org.openmrs.module.nigeriaemr.omodmodels.PatientContactsModel;
 import org.openmrs.module.nigeriaemr.omodmodels.TesterModel;
-import org.openmrs.module.nigeriaemr.service.CommunityTesters;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author MORRISON.I

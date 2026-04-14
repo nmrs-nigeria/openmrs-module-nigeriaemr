@@ -18,7 +18,7 @@ public class NDRUtils {
 		
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		
-		java.net.URL xsdFilePath = Thread.currentThread().getContextClassLoader().getResource("NDR 1.6.3.xsd");
+		java.net.URL xsdFilePath = Thread.currentThread().getContextClassLoader().getResource("NDR1_6_6_0.xsd");
 		
 		assert xsdFilePath != null;
 		
@@ -32,5 +32,6 @@ public class NDRUtils {
 		//Call Validator class to perform the validation
 		jaxbMarshaller.setEventHandler(new Validator(skipError));
 		return jaxbMarshaller;
+		
 	}
 }

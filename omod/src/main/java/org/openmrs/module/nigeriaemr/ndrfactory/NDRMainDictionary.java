@@ -51,8 +51,11 @@ public class NDRMainDictionary {
 
     private static Map<Integer, String> map = new HashMap<>();
     private ClinicalDictionary clinicalDictionary;
+    private RecencyDictionary recencyDictionary;
     private PMTCTDictionary pmtctDictionary;
+    private TBDictionary tbDictionary;
     private HTSDictionary htsDictionary;
+    private MortalityDictionary mortalityDictionary;
     private LabDictionary labDictionary;
     private PharmacyDictionary pharmDictionary;
     private NDRCommonQuestionsDictionary commonQuestionDictionary;
@@ -61,7 +64,10 @@ public class NDRMainDictionary {
     public NDRMainDictionary() {
         loadDictionary();
         clinicalDictionary = new ClinicalDictionary();
+        mortalityDictionary = new MortalityDictionary();
         pmtctDictionary = new PMTCTDictionary();
+        tbDictionary = new TBDictionary();
+        recencyDictionary = new RecencyDictionary();
         htsDictionary = new HTSDictionary();
         labDictionary = new LabDictionary();
         pharmDictionary = new PharmacyDictionary();
@@ -213,11 +219,10 @@ public class NDRMainDictionary {
         try{
             allRegimenTypeList.addAll(pharmDictionary.createRegimenTypeList(patient, groupedEncounters));
         }catch(Exception ex){
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
+                    LogLevel.live);
         }
         return allRegimenTypeList;
-
     }
 
     public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> labObsList)
@@ -290,9 +295,73 @@ public class NDRMainDictionary {
         return pmtctDictionary.createInfantRapidTestType(pmtctEncounters);
     }
 
+    /*public List<PMTCTRegistrationType> createPMTCTRegistration(List<Encounter> pmtctRegistrationEncounters) {
+        return pmtctDictionary.createPMTCTRegistrationType(pmtctRegistrationEncounters);
+    }*/
+
     public HIVTestResultType createHIVTestResult(Patient patient,  Map<Object, List<Obs>> groupedObsByConcept) {
         return htsDictionary.createHIVTestResult(patient, groupedObsByConcept);
     }
+
+    public List<TBScreeningType> createTbScreeningEncounterType(Patient patient,List<Encounter> tbScreeningEncounters) {
+        return tbDictionary.createTBScreeningType(patient,tbScreeningEncounters);
+    }
+
+    public List<TBScreeningIPTmonitoringType> createiptMonitoringEncounterType(Patient patient, List<Encounter> iptMonitoringEncounters) {
+        return tbDictionary.createTBScreeningIPTmonitoringType(patient,iptMonitoringEncounters);
+    }
+
+    public List<PresumptiveTBRegisterType> createPresumptiveTBRegisterEncounterTypes(Patient patient,List<Encounter> presumptiveTBRegisterEncounters) {
+        return tbDictionary.createPresumptiveTBRegisterType(patient,presumptiveTBRegisterEncounters);
+    }
+
+    public List<TBCommunityAndFacilityReferralType> createTbComFacRefEncounterType(List<Encounter> tbCommunityAndFacilityReferralEncounters) {
+        return tbDictionary.createTBCommunityAndFacilityReferralType(tbCommunityAndFacilityReferralEncounters);
+    }
+
+    public List<TBIndexPatientContactInvestigationType> createTbIndexContactEncounterType(List<Encounter> tbIndexContactEncounters) {
+        return tbDictionary.createTBIndexPatientContactInvestigationType(tbIndexContactEncounters);
+    }
+
+    public List<DRTBTreatmentRegisterType> createDRTBTreatmentRegisterEncounterTypes(Patient patient, List<Encounter> drTreatmentRegisterTypeEncounters) {
+        return tbDictionary.createDRTBTreatmentRegisterType(patient,drTreatmentRegisterTypeEncounters);
+    }
+
+    public List<DRTBInPatientDischargeFormType> createDrTBDischargeEncounterTypes(List<Encounter> drtbInPatientDischargeEncounters) {
+        return tbDictionary.createDRTBInPatientDischargeFormType(drtbInPatientDischargeEncounters);
+    }
+
+    public List<TBInterruptionTrackingType> createTBInterruptionTrackingEncounterTypes(List<Encounter> tBInterruptionTrackingEncounters) {
+        return tbDictionary.createTBInterruptionTrackingType(tBInterruptionTrackingEncounters);
+    }
+
+    public List<TBLaboratoryRegisterType> createTBLaboratoryRegisterTypeEncounterTypes(List<Encounter> tBLaboratoryRegisterEncounters) {
+        return tbDictionary.createTBLaboratoryRegisterType(tBLaboratoryRegisterEncounters);
+    }
+
+    public List<SpecimenExaminationRequestFormType> createspecimenrequestEncounterType(List<Encounter> specimenExaminationRequestEncounters) {
+        return tbDictionary.createSpecimenExaminationRequest(specimenExaminationRequestEncounters);
+    }
+
+    public List<SpecimenExaminationResultFormType> createspecimenresultEncounterType(List<Encounter> specimenExaminationResultEncounters) {
+        return tbDictionary.createSpecimenExaminationResultFormType(specimenExaminationResultEncounters);
+    }
+
+    public List<LGAHealthFacilityTBCentralRegisterType> createLGAHealthFacilityTBCentralRegisterEncounterTypes(List<Encounter> lGAHealthFacilityTypeEncounters) {
+        return tbDictionary.createLGAHealthFacility(lGAHealthFacilityTypeEncounters);
+    }
+
+    public List<TBTreatmentMonitoringType> createTBTreatmentMonitoringEncounterType(List<Encounter> tbTreatmentMonitoringTypeEncounters) {
+        return tbDictionary.createTBTreatmentMonitoringType(tbTreatmentMonitoringTypeEncounters);
+    }
+
+    public List<TBPatientReferralType> createTBPatientReferralEncounterType(List<Encounter> tBPatientReferralEncounters) {
+        return tbDictionary.createTBPatientReferralType(tBPatientReferralEncounters);
+    }
+
+    /*public List<TBPatientTreatmentCardFormType> createTBCardEncounterType(List<Encounter> tbTreatmentCardEncounters) {
+        return tbDictionary.createTBCard(tbTreatmentCardEncounters);
+    }*/
 
     public IndexNotificationServicesType createIndexNotificationServicesTypes(Map<Object, List<Obs>> groupedObsByConcept) {
         IndexNotificationServicesType indexNotificationServicesType = htsDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
@@ -301,12 +370,10 @@ public class NDRMainDictionary {
 
     public List<HIVRiskAssessmentType> createHivRiskAssessment(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         List<HIVRiskAssessmentType> hivRiskAssessmentTypes = new ArrayList<>();
-
         HIVRiskAssessmentType hivRiskAssessmentType = htsDictionary.createHivRiskAssessment(pts, groupedObsByConcept);
         if (hivRiskAssessmentType != null) {
             hivRiskAssessmentTypes.add(hivRiskAssessmentType);
         }
-
         return hivRiskAssessmentTypes;
     }
 
@@ -316,34 +383,28 @@ public class NDRMainDictionary {
         if (knowledgeAssessmentType != null) {
             knowledgeAssessmentTypes.add(knowledgeAssessmentType);
         }
-
         return knowledgeAssessmentTypes;
     }
 
     public List<PostTestCounsellingType> createPostTestCounsellingType(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         List<PostTestCounsellingType> postTestCounsellingTypes = new ArrayList<>();
-
         PostTestCounsellingType postTestCounsellingType = htsDictionary.createPostTestCouncellingType(pts, groupedObsByConcept);
         if (postTestCounsellingType != null) {
             postTestCounsellingTypes.add(postTestCounsellingType);
         }
-
         return postTestCounsellingTypes;
     }
 
     public List<SyndromicSTIScreeningType> createSyndromicsStiType(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         List<SyndromicSTIScreeningType> syndromicSTIScreeningTypes = new ArrayList<>();
-
         SyndromicSTIScreeningType syndromicSTIScreeningType = htsDictionary.createSyndromicsStiType(pts, groupedObsByConcept);
         if (syndromicSTIScreeningType != null) {
             syndromicSTIScreeningTypes.add(syndromicSTIScreeningType);
         }
-
         return syndromicSTIScreeningTypes;
     }
 
     public List<PartnerDetailsType> createPartnerDetails(Patient pts, Map<Integer, List<Encounter>> grouped, Map<Object, List<Obs>> groupedObsByConcept) {
-
         List<PartnerDetailsType> partnerDetailsTypes = new ArrayList<>();
         List<Encounter> partnerRegisterEncounterId = grouped.get(Utils.Partner_register_Encounter_Id);
         try{
@@ -357,5 +418,27 @@ public class NDRMainDictionary {
             LoggerUtils.write(NDRMainDictionary.class.getName(),ex.getMessage(),LogFormat.WARNING,LogLevel.debug);
         }
         return partnerDetailsTypes;
+    }
+
+    public RecencyType createRecency(Patient patient, Encounter enc, Map<Object, List<Obs>> groupedObsByConcept, RecencyType recency) {
+        try {
+            return recencyDictionary.createrecencyTags(patient, enc, groupedObsByConcept, recency);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+        }
+        return recency;
+    }
+
+    public List<PartnerInformationType> createPartnerInformationType(Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
+        return recencyDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
+    }
+
+    public MortalityType createMortalityType(Patient patient, Encounter encounter, Map<Object, List<Obs>> groupedObsByConcept,Map<Object, List<Obs>> groupedpatientBaselineObsByEncounterType, MortalityType mortality) {
+        try {
+            return mortalityDictionary.createMortalityTags(patient, encounter, groupedObsByConcept, groupedpatientBaselineObsByEncounterType,mortality);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+        }
+        return mortality;
     }
 }

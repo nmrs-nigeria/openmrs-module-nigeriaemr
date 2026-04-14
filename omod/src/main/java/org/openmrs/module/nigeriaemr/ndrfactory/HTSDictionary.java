@@ -5,23 +5,20 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.fragment.controller.NdrFragmentController;
 import org.openmrs.module.nigeriaemr.model.ndr.*;
-import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-
-import org.openmrs.PatientIdentifier;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
+import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.util.*;
 
 import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObs;
 
@@ -470,14 +467,8 @@ public class HTSDictionary {
                 Map<Object, List<Obs>> allMembers = Utils.groupedByConceptIdsOnly(allMembersValue);
                 //extract all the members using the concept
 
-                //partner name
-                Obs obs = extractObs(PARTNER_NAME_CONCEPT, allMembers);
-                if (obs != null && obs.getValueText() != null) {
-                    partnerNotificationType.setPartnername(obs.getValueText());
-                }
-
                 //partner gender
-                obs = extractObs(PARTNER_GENDER_CONCEPT, allMembers);
+                Obs obs = extractObs(PARTNER_GENDER_CONCEPT, allMembers);
                 if (obs != null && obs.getValueCoded() != null) {
                     partnerNotificationType.setPartnerGender(getMappedValue(obs.getValueCoded().getConceptId()));
                 }
@@ -486,18 +477,6 @@ public class HTSDictionary {
                 obs = extractObs(PARTNER_INDEX_TYPE_CONCEPT, allMembers);
                 if (obs != null && obs.getValueCoded() != null) {
                     partnerNotificationType.setIndexRelation(getMappedValue(obs.getValueCoded().getConceptId()));
-                }
-
-                //partner address
-                obs = extractObs(PARTNER_INDEX_DESCRIPTIVE_ADDRESS_CONCEPT, allMembers);
-                if (obs != null && obs.getValueText() != null) {
-                    partnerNotificationType.setDescriptiveAddress(obs.getValueText());
-                }
-
-                //partner phone
-                obs = extractObs(PARTNER_INDEX_RELATION_PHONE_CONCEPT, allMembers);
-                if (obs != null && obs.getValueText() != null) {
-                    partnerNotificationType.setPhoneNumber(obs.getValueText());
                 }
 
                 partnerNotificationTypes.add(partnerNotificationType);
@@ -1082,8 +1061,8 @@ public class HTSDictionary {
         try {
             return htsDictionary.get(conceptID);
         } catch (Exception ex) {
-            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
+            LoggerUtils.write(NdrFragmentController.class.getName(), ex.getMessage(), LogFormat.FATAL,
+                    LogLevel.live);
             return "";
         }
     }

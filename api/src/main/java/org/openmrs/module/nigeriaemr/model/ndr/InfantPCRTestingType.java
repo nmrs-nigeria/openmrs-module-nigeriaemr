@@ -7,6 +7,8 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -48,6 +50,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InfantPCRTestingType", propOrder = { "visitID", "visitDate", "ageAtTest", "dateSampleCollected",
         "dateSampleSent", "dateResultReceivedAtFacility", "dateCaregiverGivenResult", "pcrTestResult" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InfantPCRTestingType {
 	
 	@XmlElement(name = "VisitID", required = true)

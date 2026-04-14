@@ -5,15 +5,14 @@
  */
 package org.openmrs.module.nigeriaemr.ndrfactory;
 
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import org.joda.time.DateTime;
 import org.openmrs.Obs;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author MORRISON.I
