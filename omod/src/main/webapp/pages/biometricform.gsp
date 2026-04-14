@@ -93,6 +93,8 @@
     <button onclick="deletePrints()" id="deleteBtn" hidden="true" class="btn">Delete FingerPrints</button>
     <button onclick="fp_verification()" id="fpVerfiyBtn" hidden="true" style="float: left" class="btn">Re-Capture</button>
     <span style="font-size: 15px; float: left;" id="countFP"></span>
+    <span style="font-size: 12px; float: left; margin-left: 20px; padding: 2px; background-color: hsl(63, 100%, 50%); border-radius: 25px;" id="dateBaseCaptured"></span>
+    <span style="font-size: 12px; float: left; margin-left: 20px; display: none;  padding: 2px;  background-color: hsl(63, 100%, 50%); border-radius: 25px;" id="dateRecaptured"></span>
     <span id="basereplacementFlag" style="font-size: 12px; display: none; color: #ffffff; margin-left: 20px; padding: 2px; background-color: #007bff; border-radius: 25px; width:300px;float:right;">The base fingerprint was replaced for this patient!</span>
     <span id="nextrecaptureFlag" style="font-size: 12px; display: none; color: #ffffff; margin-left: 0px; padding: 2px; background-color: #ba8b00; border-radius: 25px; width:660px;float:left;">Biometric recapture is unavailable at this time. Please note that it must be at least two weeks since your last capture.</span>
     <br>
@@ -348,6 +350,7 @@
                 jQuery('#myModal').modal('hide');
                 if (data !== undefined && data !== null && data.length > 0) {
                     getRecaptureCount();
+                    dateBaseAndRecapture();
                     let lowQuality = false;
                     let invalid = false;
                     previouscapturecheck = data;
@@ -414,6 +417,35 @@
                     if(parseInt(arrCount[1]) > 0){
                         document.getElementById("basereplacementFlag").style.display ="block";
                     }
+                }
+            })
+            .error(function (xhr, status, err) {
+                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
+
+                    alertt(xhr.responseText);
+                }else{
+                    alertt('System error. Please check that the Biometric service is running');
+                }
+            });
+    }
+
+    
+
+    function dateBaseAndRecapture(){
+        // jQuery('#myModal').modal('show');
+        let datebaseandrecapture =url+'/dateBaseAndRecapture';
+        jQuery.getJSON(datebaseandrecapture)
+            .success(function (data) {
+
+                if (data !== undefined && data !== null && data.length > 0) {
+                    console.log("Date Base and Recapture "+data);
+                    let arrCount = data.toString().split(',');
+                    document.getElementById("dateBaseCaptured").innerHTML ="Date Base Capture: "+arrCount[0].toString();
+                    if(arrCount[1] !== undefined && arrCount[1] !== null){
+                        document.getElementById("dateRecaptured").innerHTML ="Date Recapture: "+arrCount[1].toString();
+                        document.getElementById("dateRecaptured").style.display ="block";
+                    }
+                    
                 }
             })
             .error(function (xhr, status, err) {

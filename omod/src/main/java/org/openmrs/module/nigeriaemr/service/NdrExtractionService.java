@@ -228,12 +228,18 @@ public class NdrExtractionService {
 					}
 					boolean active = !ndrExportBatch.getStatus().equalsIgnoreCase("Processing");
 					Map<String, Object> fileMap = new HashMap<>();
-					if(ndrExportBatch.getOwner() != null){
-						String owner = ndrExportBatch.getOwner().getName() == null ?  "Admin": ndrExportBatch.getOwner().getName();
-						fileMap.put("owner", owner);
-					}else {
+					// if(ndrExportBatch.getOwner() != null){
+					// 	String owner = ndrExportBatch.getOwner().getName() == null ?  "Admin": ndrExportBatch.getOwner().getName();
+					// 	fileMap.put("owner", owner);
+					// }else {
+					// 	fileMap.put("owner", "unknown");
+					// }
+
+					if (ndrExportBatch.getOwner() != null) {
+						fileMap.put("owner", "Admin");
+						} else {
 						fileMap.put("owner", "unknown");
-					}
+						}
 
 					fileMap.put("name", ndrExportBatch.getName());
 					fileMap.put("dateStarted", sdf.format(ndrExportBatch.getDateStarted()));
