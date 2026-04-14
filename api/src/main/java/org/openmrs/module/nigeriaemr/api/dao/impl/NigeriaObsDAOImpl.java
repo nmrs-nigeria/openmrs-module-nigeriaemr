@@ -255,18 +255,22 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 	public List<Integer> getPatientsByObsDate(Date from, Date to, List<String> patientIds, boolean includeVoided)
 	        throws DAOException {
 		
-		String query = getQueryString(from, to, patientIds, includeVoided, "patient", "patient_id", false) + " UNION ALL "
-		        + getQueryString(from, to, patientIds, includeVoided, "person", "person_id", false) + "  UNION ALL "
-		        + getQueryString(from, to, patientIds, includeVoided, "person_address", "person_id", false) + "  UNION ALL "
-		        + getQueryString(from, to, patientIds, includeVoided, "patient_identifier", "patient_id", false)
+		String query = getQueryStringCustom(from, to, patientIds, includeVoided, "patient", "patient_id", false)
+		        + " UNION ALL " + getQueryStringCustom(from, to, patientIds, includeVoided, "person", "person_id", false)
 		        + "  UNION ALL "
-		        + getQueryString(from, to, patientIds, includeVoided, "patient_program", "patient_id", false)
+		        + getQueryStringCustom(from, to, patientIds, includeVoided, "person_address", "person_id", false)
 		        + "  UNION ALL "
-		        + getQueryString(from, to, patientIds, includeVoided, "person_attribute", "person_id", false)
-		        + "  UNION ALL " + getQueryString(from, to, patientIds, includeVoided, "person_name", "person_id", false)
-		        + "  UNION ALL " + getQueryString(from, to, patientIds, includeVoided, "obs", "person_id", true)
-		        + "  UNION ALL " + getQueryString(from, to, patientIds, includeVoided, "encounter", "patient_id", false)
-		        + "  UNION ALL " + getQueryString(from, to, patientIds, includeVoided, "visit", "patient_id", false);
+		        + getQueryStringCustom(from, to, patientIds, includeVoided, "patient_identifier", "patient_id", false)
+		        + "  UNION ALL "
+		        + getQueryStringCustom(from, to, patientIds, includeVoided, "patient_program", "patient_id", false)
+		        + "  UNION ALL "
+		        + getQueryStringCustom(from, to, patientIds, includeVoided, "person_attribute", "person_id", false)
+		        + "  UNION ALL "
+		        + getQueryStringCustom(from, to, patientIds, includeVoided, "person_name", "person_id", false)
+		        + "  UNION ALL " + getQueryStringCustom(from, to, patientIds, includeVoided, "obs", "person_id", true)
+		        + "  UNION ALL "
+		        + getQueryStringCustom(from, to, patientIds, includeVoided, "encounter", "patient_id", false)
+		        + "  UNION ALL " + getQueryStringCustom(from, to, patientIds, includeVoided, "visit", "patient_id", false);
 		
 		SQLQuery sql = getSession().createSQLQuery(query);
 		if (from != null) {
@@ -307,6 +311,39 @@ public class NigeriaObsDAOImpl extends HibernateObsDAO implements NigeriaObsDAO 
 			query.append(" AND ").append(tableName).append(".voided = FALSE ");
 		if (patientIds != null && patientIds.size() > 0)
 			query.append(" AND ").append(tableName).append(".").append(fieldName).append(" IN (:patientIds)  ");
+		return query.toString();
+	}
+	
+	private String getQueryStringCustom(Date from, Date to, List<String> patientIds, boolean includeVoided,
+	        String tableName, String fieldName, boolean noDateChanged) {
+		StringBuilder query = new StringBuilder();
+		if (noDateChanged) {
+			query.append("  SELECT ").append(tableName).append(".").append(fieldName).append(" AS patient_id FROM ")
+			        .append(tableName).append(" WHERE TRUE");
+			if (from != null)
+				query.append(" AND ").append(tableName).append(".date_created >= :from ");
+			if (to != null)
+				query.append(" AND ").append(tableName).append(".date_created <= :to  ");
+		} else {
+			query.append("  SELECT ").append(tableName).append(".").append(fieldName).append(" AS patient_id FROM ")
+			        .append(tableName).append(" WHERE TRUE");
+			if (from != null)
+				query.append(" AND (").append(tableName).append(".date_created >= :from OR ").append(tableName)
+				        .append(".date_changed >= :from) ");
+			if (to != null)
+				query.append(" AND (").append(tableName).append(".date_created <= :to OR ").append(tableName)
+				        .append(".date_changed <= :to ) ");
+		}
+		if (!includeVoided)
+			query.append(" AND ").append(tableName).append(".voided = FALSE ");
+		if (patientIds != null && patientIds.size() > 0)
+			query.append(" AND ").append(tableName).append(".").append(fieldName).append(" IN (:patientIds)  ");
+		query.append(" AND ")
+		        .append(tableName)
+		        .append(".")
+		        .append(fieldName)
+		        .append(
+		            " NOT IN (SELECT patient_id FROM patient_identifier WHERE identifier_type = (SELECT patient_identifier_type_id FROM patient_identifier_type WHERE UUID = '3f3b8580-2c60-4915-a4ad-724bed1fa33a'))  ");
 		return query.toString();
 	}
 	

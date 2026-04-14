@@ -385,4 +385,62 @@
             ) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
         </sql>
     </changeSet>
+    <changeSet id="add-pims-last-push-20250701" author="Tobechi Nnakwe">
+        <sql>
+            INSERT INTO `global_property` (
+            `property`,
+            `property_value`,
+            `description`,
+            `uuid`,
+            `datatype`,
+            `datatype_config`,
+            `preferred_handler`,
+            `handler_config`,
+            `date_changed`,
+            `changed_by`
+            )
+            VALUES
+            (
+            'pimslastpushdate',
+            '2025-06-23 04:51:09',
+            'PIMS last push date',
+            '714f3b6b-ddc6-4e28-b382-284fbe54c7dc',
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL
+            );
+        </sql>
+    </changeSet>
+    <changeSet id="add-pims-last-pull-20250701" author="Tobechi Nnakwe">
+        <sql>
+            INSERT INTO `global_property` (
+            `property`,
+            `property_value`,
+            `description`,
+            `uuid`,
+            `datatype`,
+            `datatype_config`,
+            `preferred_handler`,
+            `handler_config`,
+            `date_changed`,
+            `changed_by`
+            )
+            VALUES
+            (
+            'pimslastpulldate',
+            '2025-06-23 04:51:09',
+            'PIMS last pull date',
+            '1ab724fd-7a42-4f95-a6fb-f812f208a864',
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL
+            );
+        </sql>
+    </changeSet>
 </databaseChangeLog>

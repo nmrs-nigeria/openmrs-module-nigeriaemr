@@ -134,6 +134,7 @@ public class NdrFragmentController {
 		LoggerUtils.checkPatientLimitGlobalProperty(openmrsConn);
 		Date lastDate = Utils.getLastNDRDate();
 		List<Integer> patients = ndrExtractionService.getPatientIds(lastDate, currentDate, null, true);
+		
 		String DATIMID = Utils.getFacilityDATIMId();
 		System.out.println("Current Date: " + currentDate);
 		System.out.println("Last Run Date: " + lastDate);
