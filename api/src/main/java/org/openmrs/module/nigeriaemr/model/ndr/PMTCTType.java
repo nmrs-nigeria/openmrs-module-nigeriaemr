@@ -1,138 +1,144 @@
 package org.openmrs.module.nigeriaemr.model.ndr;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
 
+/**
+ * <p>
+ * Java class for PMTCTType complex type.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="PMTCTType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="PMTCTRegister" type="{}PMTCTRegisterType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="MotherInfantPairVisit" type="{}MotherInfantPairVisitType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="DeliveryChildrenDetails" type="{}DeliveryChildrenDetailsType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="InfantCohortRegistration" type="{}InfantCohortRegistrationType" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PMTCTType", propOrder = { "immunizationTypes", "deliveryEncounterTypes", "antenatalRegistrationTypes",
-        "childBirthDetailsTypes", "childFollowupTypes", "infantPCRTestingTypes", "healthFacilityVisitTypes",
-        "partnerDetailsTypes", "InfantRapidTestTypes", "maternalCohortTypes", "pmtctHTSTYPES" })
-@JsonIgnoreProperties(ignoreUnknown = true)
+@XmlType(name = "PMTCTType", propOrder = { "pmtctRegister", "motherInfantPairVisit", "deliveryChildrenDetails",
+        "infantCohortRegistration" })
 public class PMTCTType {
 	
-	@XmlElement(name = "Immunization")
-	protected List<ImmunizationType> immunizationTypes;
+	@XmlElement(name = "PMTCTRegister")
+	protected List<PMTCTRegisterType> pmtctRegister;
 	
-	@XmlElement(name = "DeliveryEncounter")
-	protected List<DeliveryEncounterType> deliveryEncounterTypes;
+	@XmlElement(name = "MotherInfantPairVisit")
+	protected List<MotherInfantPairVisitType> motherInfantPairVisit;
 	
-	@XmlElement(name = "AntenatalRegistration")
-	protected List<AntenatalRegistrationType> antenatalRegistrationTypes;
+	@XmlElement(name = "DeliveryChildrenDetails")
+	protected List<DeliveryChildrenDetailsType> deliveryChildrenDetails;
 	
-	@XmlElement(name = "ChildBirthDetails")
-	protected List<ChildBirthDetailsType> childBirthDetailsTypes;
+	@XmlElement(name = "InfantCohortRegistration")
+	protected List<InfantCohortRegistrationType> infantCohortRegistration;
 	
-	@XmlElement(name = "ChildFollowup")
-	protected List<ChildFollowupType> childFollowupTypes;
+	/**
+	 * Gets the value of the pmtctRegister property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+	 * modification you make to the returned list will be present inside the JAXB object. This is
+	 * why there is not a <CODE>set</CODE> method for the pmtctRegister property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 *    getPMTCTRegister().add(newItem);
+	 * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link PMTCTRegisterType }
+	 */
 	
-	@XmlElement(name = "InfantPCRTesting")
-	protected List<InfantPCRTestingType> infantPCRTestingTypes;
-	
-	@XmlElement(name = "HealthFacilityVisits")
-	protected List<HealthFacilityVisitsType> healthFacilityVisitTypes;
-	
-	@XmlElement(name = "PartnerDetails")
-	protected List<PartnerDetailsType> partnerDetailsTypes;
-	
-	@XmlElement(name = "InfantRapidTest")
-	protected List<InfantRapidTestType> InfantRapidTestTypes;
-	
-	@XmlElement(name = "MaternalCohort")
-	protected List<MaternalCohortType> maternalCohortTypes;
-	
-	@XmlElement(name = "PMTCTHTS")
-	protected List<PMTCTHTSType> pmtctHTSTYPES;
-	
-	public List<ImmunizationType> getImmunizationTypes() {
-		return immunizationTypes;
+	public List<PMTCTRegisterType> getPMTCTRegister() {
+		return pmtctRegister;
 	}
 	
-	public void setImmunizationTypes(List<ImmunizationType> immunizationTypes) {
-		this.immunizationTypes = immunizationTypes;
+	public void setPMTCTRegister(List<PMTCTRegisterType> pmtctRegister) {
+		this.pmtctRegister = pmtctRegister;
 	}
 	
-	public List<DeliveryEncounterType> getDeliveryEncounterTypes() {
-		return deliveryEncounterTypes;
+	/**
+	 * Gets the value of the motherInfantPairVisit property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+	 * modification you make to the returned list will be present inside the JAXB object. This is
+	 * why there is not a <CODE>set</CODE> method for the motherInfantPairVisit property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 *    getMotherInfantPairVisit().add(newItem);
+	 * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link MotherInfantPairVisitType }
+	 */
+	
+	public List<MotherInfantPairVisitType> getMotherInfantPairVisit() {
+		return motherInfantPairVisit;
 	}
 	
-	public void setDeliveryEncounterTypes(List<DeliveryEncounterType> deliveryEncounterTypes) {
-		this.deliveryEncounterTypes = deliveryEncounterTypes;
+	public void setMotherInfantPairVisit(List<MotherInfantPairVisitType> motherInfantPairVisit) {
+		this.motherInfantPairVisit = motherInfantPairVisit;
 	}
 	
-	public List<AntenatalRegistrationType> getAntenatalRegistrationTypes() {
-		return antenatalRegistrationTypes;
+	/**
+	 * Gets the value of the deliveryChildrenDetails property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+	 * modification you make to the returned list will be present inside the JAXB object. This is
+	 * why there is not a <CODE>set</CODE> method for the deliveryChildrenDetails property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 *    getDeliveryChildrenDetails().add(newItem);
+	 * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link DeliveryChildrenDetailsType }
+	 */
+	
+	public List<DeliveryChildrenDetailsType> getDeliveryChildrenDetails() {
+		return deliveryChildrenDetails;
 	}
 	
-	public void setAntenatalRegistrationTypes(List<AntenatalRegistrationType> antenatalRegistrationTypes) {
-		this.antenatalRegistrationTypes = antenatalRegistrationTypes;
+	public void setDeliveryChildrenDetails(List<DeliveryChildrenDetailsType> deliveryChildrenDetails) {
+		this.deliveryChildrenDetails = deliveryChildrenDetails;
 	}
 	
-	public List<ChildBirthDetailsType> getChildBirthDetailsTypes() {
-		return childBirthDetailsTypes;
+	/**
+	 * Gets the value of the infantCohortRegistration property.
+	 * <p>
+	 * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+	 * modification you make to the returned list will be present inside the JAXB object. This is
+	 * why there is not a <CODE>set</CODE> method for the infantCohortRegistration property.
+	 * <p>
+	 * For example, to add a new item, do as follows:
+	 * 
+	 * <pre>
+	 *    getInfantCohortRegistration().add(newItem);
+	 * </pre>
+	 * <p>
+	 * Objects of the following type(s) are allowed in the list {@link InfantCohortRegistrationType }
+	 */
+	
+	public List<InfantCohortRegistrationType> getInfantCohortRegistration() {
+		return infantCohortRegistration;
 	}
 	
-	public void setChildBirthDetailsTypes(List<ChildBirthDetailsType> childBirthDetailsTypes) {
-		this.childBirthDetailsTypes = childBirthDetailsTypes;
+	public void setInfantCohortRegistration(List<InfantCohortRegistrationType> infantCohortRegistration) {
+		this.infantCohortRegistration = infantCohortRegistration;
 	}
 	
-	public List<ChildFollowupType> getChildFollowupTypes() {
-		return childFollowupTypes;
-	}
-	
-	public void setChildFollowupTypes(List<ChildFollowupType> childFollowupTypes) {
-		this.childFollowupTypes = childFollowupTypes;
-	}
-	
-	public List<InfantPCRTestingType> getInfantPCRTestingTypes() {
-		return infantPCRTestingTypes;
-	}
-	
-	public void setInfantPCRTestingTypes(List<InfantPCRTestingType> infantPCRTestingTypes) {
-		this.infantPCRTestingTypes = infantPCRTestingTypes;
-	}
-	
-	public List<HealthFacilityVisitsType> getHealthFacilityVisitTypes() {
-		return healthFacilityVisitTypes;
-	}
-	
-	public void setHealthFacilityVisitTypes(List<HealthFacilityVisitsType> healthFacilityVisitTypes) {
-		this.healthFacilityVisitTypes = healthFacilityVisitTypes;
-	}
-	
-	public List<PartnerDetailsType> getPartnerDetailsTypes() {
-		return partnerDetailsTypes;
-	}
-	
-	public void setPartnerDetailsTypes(List<PartnerDetailsType> partnerDetailsTypes) {
-		this.partnerDetailsTypes = partnerDetailsTypes;
-	}
-	
-	public List<InfantRapidTestType> getInfantRapidTestTypes() {
-		return InfantRapidTestTypes;
-	}
-	
-	public void setInfantRapidTestTypes(List<InfantRapidTestType> infantRapidTestTypes) {
-		InfantRapidTestTypes = infantRapidTestTypes;
-	}
-	
-	public List<MaternalCohortType> getMaternalCohortTypes() {
-		return maternalCohortTypes;
-	}
-	
-	public void setMaternalCohortTypes(List<MaternalCohortType> maternalCohortTypes) {
-		this.maternalCohortTypes = maternalCohortTypes;
-	}
-	
-	public List<PMTCTHTSType> getPmtctHTSTYPES() {
-		return pmtctHTSTYPES;
-	}
-	
-	public void setPmtctHTSTYPES(List<PMTCTHTSType> pmtctHTSTYPES) {
-		this.pmtctHTSTYPES = pmtctHTSTYPES;
-	}
 }

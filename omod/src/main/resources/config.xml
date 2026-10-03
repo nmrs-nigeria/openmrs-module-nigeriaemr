@@ -44,6 +44,7 @@
 		<require_module version="${eventVersion}">
 			org.openmrs.event
 		</require_module>
+		<require_module version="1.0.8">org.openmrs.module.customuinmrs</require_module>
 	</require_modules>
 	
 	<!-- Extensions -->

@@ -88,7 +88,7 @@ public class BiometricInfo {
 			Blob blob = getNewTemplate();
 			try {
 				byte[] blobData = blob.getBytes(1, (int) blob.length());
-				setNewTemplate(null);
+				//setNewTemplate(null);
 				return new String(blobData);
 			}
 			catch (Exception ex) {}

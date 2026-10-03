@@ -54,11 +54,13 @@ public class NDRMainDictionary {
     private RecencyDictionary recencyDictionary;
     private PMTCTDictionary pmtctDictionary;
     private TBDictionary tbDictionary;
-    private HTSDictionary htsDictionary;
+    private NewHTSDictionary newHtsDictionary;
     private MortalityDictionary mortalityDictionary;
     private LabDictionary labDictionary;
     private PharmacyDictionary pharmDictionary;
     private NDRCommonQuestionsDictionary commonQuestionDictionary;
+    private EACDictionary eacDictionary;
+    private PrepDictionary prepDictionary;
     private NigeriaEncounterService nigeriaEncounterService;
 
     public NDRMainDictionary() {
@@ -68,10 +70,12 @@ public class NDRMainDictionary {
         pmtctDictionary = new PMTCTDictionary();
         tbDictionary = new TBDictionary();
         recencyDictionary = new RecencyDictionary();
-        htsDictionary = new HTSDictionary();
+        newHtsDictionary = new NewHTSDictionary();
         labDictionary = new LabDictionary();
         pharmDictionary = new PharmacyDictionary();
         commonQuestionDictionary = new NDRCommonQuestionsDictionary();
+        eacDictionary = new EACDictionary();
+        prepDictionary = new PrepDictionary();
         nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
 
     }
@@ -233,7 +237,7 @@ public class NDRMainDictionary {
     public List<ClinicalTBScreeningType> createClinicalTbScreening(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         List<ClinicalTBScreeningType> clinicalTBScreeningTypes = new ArrayList<>();
 
-        ClinicalTBScreeningType clinicalTBScreeningType = htsDictionary.createClinicalTbScreening(pts, groupedObsByConcept);
+        ClinicalTBScreeningType clinicalTBScreeningType = newHtsDictionary.createClinicalTbScreening(pts, groupedObsByConcept);
         if (clinicalTBScreeningType != null) {
             clinicalTBScreeningTypes.add(clinicalTBScreeningType);
         }
@@ -244,63 +248,37 @@ public class NDRMainDictionary {
     public HIVTestingReportType createHIVTestIntake(Patient patient, Encounter enc, Map<Object, List<Obs>> groupedObsByConcept, HIVTestingReportType hivTestingReport) {
 
         try {
-            return htsDictionary.createClientIntakeTags(patient, enc, groupedObsByConcept, hivTestingReport);
+            return newHtsDictionary.createClientIntakeTags(patient, enc, groupedObsByConcept, hivTestingReport);
         } catch (Exception ex) {
             LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
         }
         return hivTestingReport;
     }
 
-    public List<MaternalCohortType> createMaternalCohort(List<Encounter> maternalCohortEncounter){
-        return pmtctDictionary.createMaternalCohort(maternalCohortEncounter);
+    public List<PMTCTRegisterType> createPMTCTRegister(List<Encounter> pmtctRegisterEncounters){
+        return pmtctDictionary.createPMTCTRegister(pmtctRegisterEncounters);
     }
 
-    public  List<PMTCTHTSType> createPMTCTHTS(List<Encounter> pmtctHTSEncounter){
-        return pmtctDictionary.createPMTCTHTS(pmtctHTSEncounter);
+    public List<MotherInfantPairVisitType> createMotherInfant(List<Encounter> motherInfantEncounters) {
+        return pmtctDictionary.createMotherInfant(motherInfantEncounters);
     }
 
-    public List<HealthFacilityVisitsType> createHealthFacilityVisits(List<Encounter> pmtctEncounters) {
-        return pmtctDictionary.createHealthFacilityVisit(pmtctEncounters);
+    public List<DeliveryChildrenDetailsType> createChildrenDelivery(List<Encounter> childrenDeliveryEncounters) {
+        return pmtctDictionary.createChildDelivery(childrenDeliveryEncounters);
     }
 
-    public List<ImmunizationType> createImmunizationType(List<Encounter> pmtctEncounters) {
-        return pmtctDictionary.createImmunizationType(pmtctEncounters);
+    public List<InfantCohortRegistrationType> createChildFollowUp(List<Encounter> childFollowUpEncounters) {
+        return pmtctDictionary.createChildFollowUp(childFollowUpEncounters);
     }
 
-    public List<DeliveryEncounterType> createDeliveryEncounterType(List<Encounter> pmtctEncounters) {
-        return pmtctDictionary.createDeliveryEncounterType(pmtctEncounters);
-    }
 
-    public List<AntenatalRegistrationType> createAntenatalRegistrationType(List<Encounter> pmtctEncounters) {
-        return pmtctDictionary.createAntenatalRegistrationType(pmtctEncounters);
-    }
-
-    public List<ChildBirthDetailsType> createChildBirthDetailsType(List<Encounter> pmtctEncounters) {
-        return pmtctDictionary.createChildBirthDetailsType(pmtctEncounters);
-    }
-
-    public List<ChildFollowupType> createChildFollowupType(List<Encounter> pmtctEncounters) {
-        return pmtctDictionary.createChildFollowupType(pmtctEncounters);
-    }
-
-    public List<InfantPCRTestingType> createInfantPCRTestingType(List<Encounter> pmtctEncounters) {
-        return pmtctDictionary.createInfantPCRTestingType(pmtctEncounters);
-    }
-
-    public List<PartnerDetailsType> createPartnerDetailsType(List<Encounter> pmtctEncounters) {
-        return pmtctDictionary.createPartnerDetailsType(pmtctEncounters);
-    }
-
-    public List<InfantRapidTestType> createInfantRapidTestType(List<Encounter> pmtctEncounters) {
-        return pmtctDictionary.createInfantRapidTestType(pmtctEncounters);
-    }
 
     /*public List<PMTCTRegistrationType> createPMTCTRegistration(List<Encounter> pmtctRegistrationEncounters) {
         return pmtctDictionary.createPMTCTRegistrationType(pmtctRegistrationEncounters);
     }*/
 
     public HIVTestResultType createHIVTestResult(Patient patient,  Map<Object, List<Obs>> groupedObsByConcept) {
-        return htsDictionary.createHIVTestResult(patient, groupedObsByConcept);
+        return newHtsDictionary.createHIVTestResult(patient, groupedObsByConcept);
     }
 
     public List<TBScreeningType> createTbScreeningEncounterType(Patient patient,List<Encounter> tbScreeningEncounters) {
@@ -363,14 +341,18 @@ public class NDRMainDictionary {
         return tbDictionary.createTBCard(tbTreatmentCardEncounters);
     }*/
 
-    public IndexNotificationServicesType createIndexNotificationServicesTypes(Map<Object, List<Obs>> groupedObsByConcept) {
-        IndexNotificationServicesType indexNotificationServicesType = htsDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
-        return indexNotificationServicesType;
+    public IndexContactTestingType createIndexContactTesting(Encounter indexContactTestingEncounter) {
+        try {
+            return newHtsDictionary.createIndexContactTesting(indexContactTestingEncounter);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+        }
+        return null;
     }
 
     public List<HIVRiskAssessmentType> createHivRiskAssessment(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         List<HIVRiskAssessmentType> hivRiskAssessmentTypes = new ArrayList<>();
-        HIVRiskAssessmentType hivRiskAssessmentType = htsDictionary.createHivRiskAssessment(pts, groupedObsByConcept);
+        HIVRiskAssessmentType hivRiskAssessmentType = newHtsDictionary.createHivRiskAssessment(pts, groupedObsByConcept);
         if (hivRiskAssessmentType != null) {
             hivRiskAssessmentTypes.add(hivRiskAssessmentType);
         }
@@ -379,7 +361,7 @@ public class NDRMainDictionary {
 
     public List<KnowledgeAssessmentType> createKnowledgeAssessmentType(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         List<KnowledgeAssessmentType> knowledgeAssessmentTypes = new ArrayList<>();
-        KnowledgeAssessmentType knowledgeAssessmentType = htsDictionary.createKnowledgeAssessmentType(pts, groupedObsByConcept);
+        KnowledgeAssessmentType knowledgeAssessmentType = newHtsDictionary.createKnowledgeAssessmentType(pts, groupedObsByConcept);
         if (knowledgeAssessmentType != null) {
             knowledgeAssessmentTypes.add(knowledgeAssessmentType);
         }
@@ -388,7 +370,7 @@ public class NDRMainDictionary {
 
     public List<PostTestCounsellingType> createPostTestCounsellingType(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         List<PostTestCounsellingType> postTestCounsellingTypes = new ArrayList<>();
-        PostTestCounsellingType postTestCounsellingType = htsDictionary.createPostTestCouncellingType(pts, groupedObsByConcept);
+        PostTestCounsellingType postTestCounsellingType = newHtsDictionary.createPostTestCouncellingType(pts, groupedObsByConcept);
         if (postTestCounsellingType != null) {
             postTestCounsellingTypes.add(postTestCounsellingType);
         }
@@ -397,27 +379,20 @@ public class NDRMainDictionary {
 
     public List<SyndromicSTIScreeningType> createSyndromicsStiType(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
         List<SyndromicSTIScreeningType> syndromicSTIScreeningTypes = new ArrayList<>();
-        SyndromicSTIScreeningType syndromicSTIScreeningType = htsDictionary.createSyndromicsStiType(pts, groupedObsByConcept);
+        SyndromicSTIScreeningType syndromicSTIScreeningType = newHtsDictionary.createSyndromicsStiType(pts, groupedObsByConcept);
         if (syndromicSTIScreeningType != null) {
             syndromicSTIScreeningTypes.add(syndromicSTIScreeningType);
         }
         return syndromicSTIScreeningTypes;
     }
 
-    public List<PartnerDetailsType> createPartnerDetails(Patient pts, Map<Integer, List<Encounter>> grouped, Map<Object, List<Obs>> groupedObsByConcept) {
-        List<PartnerDetailsType> partnerDetailsTypes = new ArrayList<>();
-        List<Encounter> partnerRegisterEncounterId = grouped.get(Utils.Partner_register_Encounter_Id);
-        try{
-            if (partnerRegisterEncounterId != null && partnerRegisterEncounterId.size() > 0) {
-                PartnerDetailsType p_details = htsDictionary.createPartnerDetails(pts, groupedObsByConcept);
-                if (p_details != null) {
-                    partnerDetailsTypes.add(p_details);
-                }
-            }
-        }catch(Exception ex){
-            LoggerUtils.write(NDRMainDictionary.class.getName(),ex.getMessage(),LogFormat.WARNING,LogLevel.debug);
+    public List<SexPartnerRiskAssessmentType> createSexPartnerRiskAssessment(Patient pts, Map<Object, List<Obs>> groupedObsByConcept) throws DatatypeConfigurationException {
+        List<SexPartnerRiskAssessmentType> sexPartnerRiskAssessmentTypes = new ArrayList<>();
+        SexPartnerRiskAssessmentType sexPartnerRiskAssessmentType = newHtsDictionary.createSexPartnerRiskAssessment(pts, groupedObsByConcept);
+        if (sexPartnerRiskAssessmentType != null) {
+            sexPartnerRiskAssessmentTypes.add(sexPartnerRiskAssessmentType);
         }
-        return partnerDetailsTypes;
+        return sexPartnerRiskAssessmentTypes;
     }
 
     public RecencyType createRecency(Patient patient, Encounter enc, Map<Object, List<Obs>> groupedObsByConcept, RecencyType recency) {
@@ -440,5 +415,24 @@ public class NDRMainDictionary {
             LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
         }
         return mortality;
+    }
+
+    public List<EACType> createEACTypeList(Patient patient, Map<Integer, List<Encounter>> groupedEncounters) throws DatatypeConfigurationException {
+        try {
+            return eacDictionary.createEACTypeList(patient, groupedEncounters);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+        }
+        return new ArrayList<>();
+    }
+
+
+    public PrEPType createPrEPType(Patient patient, Map<Integer, List<Encounter>> groupedEncounters) {
+        try {
+            return prepDictionary.createPrEPType(patient, groupedEncounters);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRMainDictionary.class.getName(), ex.getMessage(), LogFormat.FATAL, LogLevel.live);
+        }
+        return null;
     }
 }

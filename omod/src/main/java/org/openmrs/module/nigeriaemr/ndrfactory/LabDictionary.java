@@ -20,6 +20,7 @@ import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.openmrs.module.nigeriaemr.ndrUtils.Utils.extractObsByConceptId;
@@ -60,6 +61,40 @@ public class LabDictionary {
     // final static int Laboratory_Identifier_Concept_Id = 164409;
     final static int Laboratory_Identifier_Concept_Id = 165715;
     final static int SAMPLE_COLLECTION_DATE = 159951;
+
+    //TODO: replace placeholder concept ids (0) with real concepts when available
+    public final static int
+            Specimen_Type_Concept_Id = 162476,
+            Sample_Received_At_Lab_Date_Concept_Id = 165716,
+            Sample_Logged_Remotely_Concept_Id = 167614,
+            Lab_Registration_Number_Concept_Id = 165394,
+            PCR_POC_Lab_Name_Concept_Id = 166233,
+            PCR_POC_Lab_Sample_Number_Concept_Id = 165715,
+            Viral_Load_Indication_Concept_Id = 164980,
+            Viral_Load_Result_Concept_Id = 856,
+            Viral_Load_Result_Date_Concept_Id = 0,
+            EID_Indication_Concept_Id = 167321,
+            EID_Entry_Point_Concept_Id = 0,
+            EID_Result_Concept_Id = 167623,
+            EID_Age_Concept_Id = 167582,
+            CD4_Cell_Count_Concept_Id = 5497,
+            CD4_Percentage_Concept_Id = 730,
+            CD4_LFA_Result_Concept_Id = 167088,
+            Random_Glucose_Concept_Id = 160053,
+            HBsAG_Result_Concept_Id = 159430,
+            HCV_Antibody_Result_Concept_Id = 1325,
+            HBV_Viral_Load_Concept_Id = 167503,
+            HCV_Viral_Load_Concept_Id = 167534,
+            VDRL_Syphilis_Result_Concept_Id = 167450,
+            Serology_For_CrAg_Result_Concept_Id = 167090,
+            CSF_For_CrAg_Result_Concept_Id = 167082,
+            TB_LFLAM_Result_Concept_Id = 166697,
+            HPV_Result_Concept_Id = 167583,
+            Cytology_VIA_PapSmear_Result_Concept_Id = 165927,
+            Urinalysis_Concept_Id = 160987,
+            Lab_ART_Start_Date_Concept_Id = 0,
+            Drug_Regimen_Line_Concept_Id = 167548,
+            ARV_Prophylaxis_Received_Concept_Id = 167322;
 
     private Map<Integer, Integer> labTestDictionary = new HashMap<>();
     private Map<Integer, String> labTestUnits = new HashMap<>();
@@ -108,6 +143,7 @@ public class LabDictionary {
         labTestDictionary.put(166697,85);//Other Test (TB-LAM, LF-LAM,etc)
         labTestDictionary.put(167082,86);//CSF for CrAg
         labTestDictionary.put(167084,87);//CSF for MCS Result
+        labTestDictionary.put(167623,95);//EID
     }
 
     private void loadOtherCodedValues() {
@@ -116,6 +152,70 @@ public class LabDictionary {
         CodedAnswerDictionary.put(160530, "R"); //repeat
         CodedAnswerDictionary.put(164180, "B"); //baseline
 
+        //TODO: replace placeholder keys (0) with real OpenMRS answer concept ids when available
+        //SpecimenTypeCode
+        CodedAnswerDictionary.put(1000, "WholeBlood");
+        CodedAnswerDictionary.put(1002, "Plasma");
+        CodedAnswerDictionary.put(165568, "DBS");
+        CodedAnswerDictionary.put(166615, "PBS");
+
+        //ViralLoadIndicationCode
+        CodedAnswerDictionary.put(167607, "Baseline");
+        CodedAnswerDictionary.put(167608, "Routine");
+        CodedAnswerDictionary.put(167609, "ClinicalFailure");
+        CodedAnswerDictionary.put(0, "ImmunologicFailure");
+        CodedAnswerDictionary.put(167610, "Confirmation");
+        CodedAnswerDictionary.put(167539, "RecentInfection");
+        CodedAnswerDictionary.put(166122, "Gestation3236Weeks");
+        CodedAnswerDictionary.put(167309, "EarlyHIVDetection");
+
+        //EIDIndicationCode check to un-retire
+        CodedAnswerDictionary.put(167314, "EIDAtBirth");
+        CodedAnswerDictionary.put(167313, "EIDAt6To8Weeks");
+        CodedAnswerDictionary.put(167312, "EIDAt2To12Months");
+        CodedAnswerDictionary.put(167611, "RepeatInvalidTest");
+        CodedAnswerDictionary.put(167612, "RepeatAfterBreastfeedingCessation");
+
+        //EIDResultCode / HBsAG / HCVAntibody / SerologyForCrAg / CSFForCrAg / TBLFLAM / HPV
+        CodedAnswerDictionary.put(664, "Negative");
+        CodedAnswerDictionary.put(703, "Positive");
+        CodedAnswerDictionary.put(163611, "Invalid");
+
+        //CD4LFAResultCode
+        CodedAnswerDictionary.put(167086, "LessThan200");
+        CodedAnswerDictionary.put(167087, "GTEqual200");
+
+        //VDRLSyphilisResultCode
+        CodedAnswerDictionary.put(167450, "NonReactive");
+        CodedAnswerDictionary.put(1228, "Reactive");
+
+        //DrugRegimenLineCode
+        CodedAnswerDictionary.put(167547, "FirstLine");
+        CodedAnswerDictionary.put(167546, "SecondLine");
+        CodedAnswerDictionary.put(167545, "ThirdLine");
+
+        //ARVProphylaxisReceivedCode
+        CodedAnswerDictionary.put(165544, "AZT_NVP");
+        CodedAnswerDictionary.put(808, "NVP");
+        CodedAnswerDictionary.put(167605, "AZT_3TC_NVP_RAL");
+        CodedAnswerDictionary.put(5622, "Others");
+        CodedAnswerDictionary.put(1066, "No");
+    }
+
+    private String eidAge (int conceptId){
+        if (conceptId == 163733) {
+            return "LessThanOrEqual72hrs";
+        }
+        if (conceptId == 167098) {
+            return "GreaterThan72hrsLessThan2Months";
+        }
+        if (conceptId == 167312) {
+            return "GreaterThanOrEqual2MonthsTo12Months";
+        }
+        if (conceptId == 167102) {
+            return "GreaterThan12Months";
+        }
+        return null;
     }
 
     private void loadLabTestUnitDictionary() {
@@ -189,6 +289,41 @@ public class LabDictionary {
         return labTestDictionary.keySet().contains(conceptID);
     }
 
+    private String getLaboratoryTestTypeCode(int conceptId) {
+
+        if (conceptId == Viral_Load_CONCEPT_ID) {
+            return "HIV";
+        }
+
+        if (conceptId == Serology_For_CrAg_Result_Concept_Id ||
+                conceptId == CSF_For_CrAg_Result_Concept_Id) {
+            return "HIV";
+        }
+
+        if (conceptId == CD4_Count_Concept_Id ||
+                conceptId == CD4_LFA_Result_Concept_Id ||
+                conceptId == CD4_Percentage_Concept_Id) {
+            return "CD4";
+        }
+
+        if (conceptId == EID_Result_Concept_Id ||
+                conceptId == EID_Indication_Concept_Id) {
+            return "EID";
+        }
+
+        if (conceptId == HBsAG_Result_Concept_Id ||
+                conceptId == HBV_Viral_Load_Concept_Id) {
+            return "HBV";
+        }
+
+        if (conceptId == HCV_Antibody_Result_Concept_Id ||
+                conceptId == HCV_Viral_Load_Concept_Id) {
+            return "CV";
+        }
+
+        return "OtherTest";
+    }
+
     public LaboratoryReportType createLaboratoryOrderAndResult(Patient pts, Encounter enc, List<Obs> obsIdList) {
 
         Map<Object, List<Obs>> labObsList = Utils.groupedByConceptIdsOnly(obsIdList);
@@ -239,7 +374,7 @@ public class LabDictionary {
 
             //if there is no lab order and result, discard
             List<LaboratoryOrderAndResult> laboratoryOrderAndResultList = createLaboratoryOrderAndResult(enc, obsIdList);
-            if (laboratoryOrderAndResultList.size() > 0) {
+            if (!laboratoryOrderAndResultList.isEmpty()) {
                 labReportType.getLaboratoryOrderAndResult().addAll(laboratoryOrderAndResultList);
                 return labReportType;
             }
@@ -290,7 +425,7 @@ public class LabDictionary {
         return labReportType;
     }
 
-    private List<LaboratoryOrderAndResult> createLaboratoryOrderAndResult(Encounter enc,  List<Obs>  obsList)
+    private List<LaboratoryOrderAndResult> createLaboratoryOrderAndResult(Encounter enc, List<Obs> obsList)
             throws DatatypeConfigurationException {
 
         List<LaboratoryOrderAndResult> labResultList = new ArrayList<>();
@@ -324,7 +459,9 @@ public class LabDictionary {
 
                 try {
                     ndrCodedValue = getMappedValue(conceptID);
-                    labOrderAndResult.setLaboratoryTestTypeCode(String.valueOf(ndrCodedValue));
+                    labOrderAndResult.setLaboratoryTestTypeCode(
+                            getLaboratoryTestTypeCode(conceptID)
+                    );
 
                     LoggerUtils.write(LabDictionary.class.getName(), "About to pull Laboratory_Result_TEST", LogFormat.FATAL, LogLevel.debug);
                     cst.setCode(Integer.toString(ndrCodedValue));
@@ -334,15 +471,14 @@ public class LabDictionary {
 
                     if (obs.getValueNumeric() != null) {
                         numeric = new NumericType();
-                        numeric.setValue1(obs.getValueNumeric().intValue());
+                        numeric.setValue1(obs.getValueNumeric().floatValue());
                     }
 
                     if (orderedDate != null) {
                         labOrderAndResult.setOrderedTestDate(utils.getXmlDate(orderedDate));
-                    }else{
+                    } else {
                         labOrderAndResult.setOrderedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
                     }
-//                    labOrderAndResult.setResultedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
 
                     //TODO:revisit this implementation
                     if (labTestUnits.containsKey(conceptID) && numeric != null) {
@@ -358,12 +494,13 @@ public class LabDictionary {
                         numeric.setUnit(ct);
                     }
 
-                    if(numeric != null) {
+                    if (numeric != null) {
                         answer = new AnswerType();
                         answer.setAnswerNumeric(numeric);
                         labOrderAndResult.setLaboratoryResult(answer);
                         labOrderAndResult.setResultedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
                     }
+                    applyNewLabFields(labOrderAndResult, conceptID, obsList, obs);
                     labResultList.add(labOrderAndResult);
 
                 } catch (Exception ex) {
@@ -378,7 +515,15 @@ public class LabDictionary {
                     LoggerUtils.write(LabDictionary.class.getName(), "About to pull Coded_DataType_ConceptId", LogFormat.FATAL, LogLevel.debug);
                     //set the lab test code
                     ndrCodedValue = getMappedValue(conceptID);
-                    labOrderAndResult.setLaboratoryTestTypeCode(String.valueOf(ndrCodedValue));
+
+                    // FIX: previously this next line was immediately overwritten by a second
+                    // setLaboratoryTestTypeCode(String.valueOf(ndrCodedValue)) call, which put
+                    // the raw NDR integer code (e.g. "83") into LaboratoryTestTypeCode instead
+                    // of the schema-valid enum value ("CD4", "OtherTest", etc.). That second
+                    // call has been removed.
+                    labOrderAndResult.setLaboratoryTestTypeCode(
+                            getLaboratoryTestTypeCode(conceptID)
+                    );
                     cst.setCode(Integer.toString(ndrCodedValue));
                     cst.setCodeDescTxt(obs.getConcept().getName().getName());
                     labOrderAndResult.setLaboratoryResultedTest(cst);
@@ -389,10 +534,14 @@ public class LabDictionary {
                         ct = new CodedType();
                         ct.setCode(obs.getValueCoded().getName().getName());
                         ct.setCodeDescTxt(obs.getValueCoded().getName().getName());
+                        // NOTE: CodeSystemCode is still being set to the same text as Code/CodeDescTxt
+                        // here (pre-existing behavior, not part of the two bugs discussed). If you
+                        // have a real coding-system identifier (e.g. "NDR", "CIEL") for this answer,
+                        // set that instead — flagging this line so it's easy to find.
                         ct.setCodeSystemCode(obs.getValueCoded().getName().getName());
                     }
 
-                    if(ct != null) {
+                    if (ct != null) {
                         answer = new AnswerType();
                         answer.setAnswerCode(ct);
                         labOrderAndResult.setLaboratoryResult(answer);
@@ -401,7 +550,14 @@ public class LabDictionary {
 
                     if (orderedDate != null) {
                         labOrderAndResult.setOrderedTestDate(utils.getXmlDate(orderedDate));
+                    } else {
+                        // FIX: coded branch was missing this fallback (numeric branch already had it).
+                        // Without it, OrderedTestDate — a required element (minOccurs="1") — was
+                        // silently left unset whenever no Ordered_Date_Concept_id obs existed,
+                        // producing schema-invalid output for every coded-type result.
+                        labOrderAndResult.setOrderedTestDate(utils.getXmlDate(enc.getEncounterDatetime()));
                     }
+                    applyNewLabFields(labOrderAndResult, conceptID, obsList, obs);
                     labResultList.add(labOrderAndResult);
                 } catch (Exception ex) {
                     LoggerUtils.write(LabDictionary.class.getName(), "Error in Coded_DataType_ConceptId: " + ex.getMessage(), LogFormat.FATAL, LogLevel.live);
@@ -411,4 +567,239 @@ public class LabDictionary {
         }
         return labResultList;
     }
+
+    /**
+     * Populates NDR 1.7.2.0 LaboratoryOrderAndResult fields (specimen info, lab registration,
+     * PCR/POC lab info, viral load, EID, CD4 detail, glucose, hepatitis/serology, syphilis,
+     * CrAg, TB-LAM, HPV, cytology, urinalysis, ART start date, drug regimen line,
+     * ARV prophylaxis received). All lookups use placeholder concept ids until production
+     * ids are wired.
+     */
+    private void applyNewLabFields(LaboratoryOrderAndResult lor, int testConceptId, List<Obs> obsList, Obs currentObs) {
+        Obs obs;
+
+        // ---- Specimen / PCR-POC lab fields: Viral Load and EID orders only.
+        // FIX (per NDR paper form layout): "PCR/POC Lab Sample No.", Sample Type,
+        // Date sample tested, Sample logged remotely, and Date Sample Received at PCR/POC Lab
+        // sit inside the same boxed section as "Indication for Viral Load" / "Indication for
+        // EID" on the source form, separate from the CD4/TB-LAM/serology/HBsAG/etc. panel.
+        // Those are rapid/point-of-care tests that don't go through the PCR/POC pipeline, so
+        // this whole block is now gated to VL/EID orders instead of applying to every result.
+        boolean isVlOrEidTest = testConceptId == Viral_Load_CONCEPT_ID
+                || testConceptId == EID_Result_Concept_Id
+                || testConceptId == EID_Indication_Concept_Id;
+        if (isVlOrEidTest) {
+            obs = extractObsByConceptId(SAMPLE_COLLECTION_DATE, obsList);
+            if (obs != null && obs.getValueDate() != null) {
+                lor.setSpecimenCollectionDate(utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObsByConceptId(Specimen_Type_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setSpecimenTypeCode(code);
+            }
+            obs = extractObsByConceptId(Sample_Received_At_Lab_Date_Concept_Id, obsList);
+            if (obs != null && obs.getValueDate() != null) {
+                lor.setSampleReceivedAtLabDate(utils.getXmlDate(obs.getValueDate()));
+            }
+            obs = extractObsByConceptId(Sample_Logged_Remotely_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                int answer = obs.getValueCoded().getConceptId();
+                if (answer == 1065) lor.setSampleLoggedRemotely(YNCodeType.YES);
+                else if (answer == 1066) lor.setSampleLoggedRemotely(YNCodeType.NO);
+            }
+            obs = extractObsByConceptId(Lab_Registration_Number_Concept_Id, obsList);
+            if (obs != null && obs.getValueText() != null) lor.setLabRegistrationNumber(obs.getValueText());
+
+            obs = extractObsByConceptId(PCR_POC_Lab_Name_Concept_Id, obsList);
+            if (obs != null && obs.getValueText() != null) lor.setPCRPOCLabName(obs.getValueText());
+
+            obs = extractObsByConceptId(PCR_POC_Lab_Sample_Number_Concept_Id, obsList);
+            if (obs != null && obs.getValueText() != null) lor.setPCRPOCLabSampleNumber(obs.getValueText());
+        }
+
+        // ---- Viral Load: only for the HIV viral load test concept.
+        // FIX: previously grouped with HBV_Viral_Load_Concept_Id and HCV_Viral_Load_Concept_Id,
+        // which would have stamped a generic ViralLoadResult/ViralLoadIndicationCode onto HBV
+        // or HCV orders too. The schema already has dedicated HBVViralLoad/HCVViralLoad fields
+        // for those (handled separately below), so this block is HIV-only. ----
+        boolean isViralLoadTest = testConceptId == Viral_Load_CONCEPT_ID;
+        if (isViralLoadTest) {
+            obs = extractObsByConceptId(Viral_Load_Indication_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setViralLoadIndicationCode(code);
+            }
+            obs = extractObsByConceptId(Viral_Load_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                lor.setViralLoadResult(BigDecimal.valueOf(obs.getValueNumeric()));
+            }
+       /* obs = extractObsByConceptId(Viral_Load_Result_Date_Concept_Id, obsList);
+        if (obs != null && obs.getValueDate() != null) {
+            lor.setViralLoadResultDate(utils.getXmlDate(obs.getValueDate()));
+        }*/
+        }
+
+        // ---- EID: only for EID indication/result test concepts ----
+        boolean isEidTest = testConceptId == EID_Result_Concept_Id
+                || testConceptId == EID_Indication_Concept_Id;
+        if (isEidTest) {
+            obs = extractObsByConceptId(EID_Indication_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setEIDIndicationCode(code);
+            }
+            obs = extractObsByConceptId(EID_Entry_Point_Concept_Id, obsList);
+            if (obs != null && obs.getValueText() != null) lor.setEIDEntryPointCode(obs.getValueText());
+
+            obs = extractObsByConceptId(EID_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setEIDResultCode(code);
+            }
+            obs = extractObsByConceptId(EID_Age_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = eidAge(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setEIDAgeCode(code);
+            }
+
+            // FIX (per request): DrugRegimenLineCode and ARVProphylaxisReceivedCode were
+            // previously applied to every order in the encounter. ARVProphylaxisReceivedCode
+            // in particular is an EID/PMTCT concept (infant ARV prophylaxis regimen), so both
+            // are now scoped to EID orders only and no longer appear on Viral Load, CD4, or
+            // other order types.
+            /*obs = extractObsByConceptId(Drug_Regimen_Line_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setDrugRegimenLineCode(code);
+            }*/
+            obs = extractObsByConceptId(ARV_Prophylaxis_Received_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setARVProphylaxisReceivedCode(code);
+            }
+        }
+
+        // ---- CD4: each field gated on its OWN exact concept, not a shared "CD4" category.
+        // FIX: the previous shared isCd4Test grouping caused a CD4 LFA order to also pick up
+        // CD4CellCount from a separate CD4 Count order in the same visit, and vice versa —
+        // visible in your last output (block 2 and block 4 duplicating each other's numbers).
+        // CD4 Count, CD4 Percentage, and CD4 LFA are three distinct tests/orders and should
+        // each only carry their own result. ----
+        if (testConceptId == CD4_Cell_Count_Concept_Id) {
+            obs = extractObsByConceptId(CD4_Cell_Count_Concept_Id, obsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                lor.setCD4CellCount(BigDecimal.valueOf(obs.getValueNumeric()));
+            }
+        }
+        if (testConceptId == CD4_Percentage_Concept_Id) {
+            obs = extractObsByConceptId(CD4_Percentage_Concept_Id, obsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                lor.setCD4Percentage(BigDecimal.valueOf(obs.getValueNumeric()));
+            }
+        }
+        if (testConceptId == CD4_LFA_Result_Concept_Id) {
+            obs = extractObsByConceptId(CD4_LFA_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setCD4LFAResultCode(code);
+            }
+        }
+
+        // ---- Glucose: only for the glucose test concept ----
+        if (testConceptId == Random_Glucose_Concept_Id) {
+            obs = extractObsByConceptId(Random_Glucose_Concept_Id, obsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                lor.setRandomGlucose(BigDecimal.valueOf(obs.getValueNumeric()));
+            }
+        }
+
+        // ---- Hepatitis B: each field gated on its own exact concept.
+        // FIX: previously grouped, which would let an HBsAG antigen order also carry an
+        // HBVViralLoad number (or vice versa) from a separate order in the same visit —
+        // same class of bug as the CD4 fix above. ----
+        if (testConceptId == HBsAG_Result_Concept_Id) {
+            obs = extractObsByConceptId(HBsAG_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setHBsAGResultCode(code);
+            }
+        }
+        if (testConceptId == HBV_Viral_Load_Concept_Id) {
+            obs = extractObsByConceptId(HBV_Viral_Load_Concept_Id, obsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                lor.setHBVViralLoad(BigDecimal.valueOf(obs.getValueNumeric()));
+            }
+        }
+
+        // ---- Hepatitis C: each field gated on its own exact concept (same reasoning as HBV). ----
+        if (testConceptId == HCV_Antibody_Result_Concept_Id) {
+            obs = extractObsByConceptId(HCV_Antibody_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setHCVAntibodyResultCode(code);
+            }
+        }
+        if (testConceptId == HCV_Viral_Load_Concept_Id) {
+            obs = extractObsByConceptId(HCV_Viral_Load_Concept_Id, obsList);
+            if (obs != null && obs.getValueNumeric() != null) {
+                lor.setHCVViralLoad(BigDecimal.valueOf(obs.getValueNumeric()));
+            }
+        }
+
+        // ---- Syphilis: only for the VDRL test concept ----
+        if (testConceptId == VDRL_Syphilis_Result_Concept_Id) {
+            obs = extractObsByConceptId(VDRL_Syphilis_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setVDRLSyphilisResultCode(code);
+            }
+        }
+
+        // ---- Cryptococcal / CNS: only for the matching CrAg test concept ----
+        if (testConceptId == Serology_For_CrAg_Result_Concept_Id) {
+            obs = extractObsByConceptId(Serology_For_CrAg_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setSerologyForCrAgResultCode(code);
+            }
+        }
+        if (testConceptId == CSF_For_CrAg_Result_Concept_Id) {
+            obs = extractObsByConceptId(CSF_For_CrAg_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setCSFForCrAgResultCode(code);
+            }
+        }
+
+        // ---- TB-LAM: only for the TB-LFLAM test concept ----
+        if (testConceptId == TB_LFLAM_Result_Concept_Id) {
+            obs = extractObsByConceptId(TB_LFLAM_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setTBLFLAMResultCode(code);
+            }
+        }
+
+        // ---- HPV: only for the HPV test concept ----
+        if (testConceptId == HPV_Result_Concept_Id) {
+            obs = extractObsByConceptId(HPV_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueCoded() != null) {
+                String code = getMappedAnswerValue(obs.getValueCoded().getConceptId());
+                if (code != null && !code.isEmpty()) lor.setHPVResultCode(code);
+            }
+        }
+
+        // ---- Cytology / Urinalysis: only for their own test concepts (free-form text) ----
+        if (testConceptId == Cytology_VIA_PapSmear_Result_Concept_Id) {
+            obs = extractObsByConceptId(Cytology_VIA_PapSmear_Result_Concept_Id, obsList);
+            if (obs != null && obs.getValueText() != null) lor.setCytologyVIAPapSmearResult(obs.getValueText());
+        }
+        if (testConceptId == Urinalysis_Concept_Id) {
+            obs = extractObsByConceptId(Urinalysis_Concept_Id, obsList);
+            if (obs != null && obs.getValueText() != null) lor.setUrinalysis(obs.getValueText());
+        }
+    }
+
+
 }

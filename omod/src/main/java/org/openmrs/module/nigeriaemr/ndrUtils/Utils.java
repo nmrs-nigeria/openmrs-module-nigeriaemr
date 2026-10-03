@@ -48,6 +48,10 @@ public class Utils {
 	
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	
+	public static int Care_Care_1c_Encounter_Type_Id = 175;
+	
+	public static int Discontinuation_Encounter_Type_Id = 174;
+	
 	DatatypeFactory datatypeFactory;
 	
 	public Utils() {
@@ -667,7 +671,7 @@ public class Utils {
 	public static Map<Object, List<Obs>> groupedByConceptIdsOnly(List<Obs> obsList) {
 		Map<Object, List<Obs>> groupedByConceptIds = new HashMap<>();
 
-		if(obsList != null && obsList.size()>0){
+		if(obsList != null && !obsList.isEmpty()){
 			for (Obs obs:obsList){
 				// group by conceptId
 				if(obs.getConcept() != null && obs.getConcept().getConceptId() != null){

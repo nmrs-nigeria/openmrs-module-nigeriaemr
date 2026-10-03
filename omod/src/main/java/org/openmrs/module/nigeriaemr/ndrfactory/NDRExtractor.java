@@ -25,7 +25,9 @@ import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class NDRExtractor {
 	
@@ -193,15 +195,36 @@ public class NDRExtractor {
 					+ ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
 		}
 
+		//locate every schema violation by visit; fall back to the marshaller's single message if that fails
+		List<NDRUtils.SchemaError> schemaErrors = new ArrayList<>();
+		try {
+			if (container != null) {
+				schemaErrors = NDRUtils.findSchemaErrors(jaxbContext, container);
+			}
+		}catch (Exception ex){
+			LoggerUtils.write(NdrFragmentController.class.getName(), "Could not locate schema errors for " + file.getName()
+					+ " \n" + ex.getMessage(), LoggerUtils.LogFormat.FATAL, LoggerUtils.LogLevel.live);
+		}
+		if (schemaErrors.isEmpty()) {
+			schemaErrors.add(new NDRUtils.SchemaError("", "", "", message));
+		}
+
 		String csvFile = Paths.get(dir2.getParent(), batchId+"_error_list.csv").toString();
+		File csv = new File(csvFile);
+		boolean writeHeader = !csv.exists() || csv.length() == 0;
 
 		BufferedWriter writer = null;
 		try {
 			writer = Files.newBufferedWriter(Paths.get(csvFile), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
 			try (final CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+				if (writeHeader) {
+					printer.printRecord("File Name", "Patient ID", "Treatment Status", "Patient Name", "Visit Date",
+							"Visit ID", "Section", "Error Message");
+				}
+				String stopped = " ";
 				if(container != null && container.getIndividualReport() != null && container.getIndividualReport().getCondition() != null
 				&& container.getIndividualReport().getCondition().size() > 0){
-					String stopped = "ACTIVE_TREATMENT";
+					stopped = "ACTIVE_TREATMENT";
 					for(ConditionType conditionType : container.getIndividualReport().getCondition()){
 						if(conditionType.getConditionSpecificQuestions() != null &&
 								conditionType.getConditionSpecificQuestions().getHIVQuestions() != null){
@@ -213,9 +236,11 @@ public class NDRExtractor {
 							}
 						}
 					}
-					printer.printRecord(file.getName(), patient.getId(),stopped, patient.getPersonName(), message);
-				}else {
-					printer.printRecord(file.getName(), patient.getId()," ", patient.getPersonName(), message);
+				}
+				for (NDRUtils.SchemaError schemaError : schemaErrors) {
+					printer.printRecord(file.getName(), patient.getId(), stopped, patient.getPersonName(),
+							schemaError.getVisitDate(), schemaError.getVisitId(), schemaError.getSection(),
+							schemaError.getMessage());
 				}
 			}
 			writer.close();
