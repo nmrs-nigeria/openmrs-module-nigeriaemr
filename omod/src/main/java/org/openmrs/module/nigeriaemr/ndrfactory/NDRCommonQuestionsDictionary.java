@@ -253,7 +253,7 @@ public class NDRCommonQuestionsDictionary {
         try {
 
             //Identifier 4 is Pepfar ID
-            PatientIdentifier pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId, pepfarid, openmrsId, tbId, transitId;
+            PatientIdentifier pidHospital, pidOthers, htsId, ancId, exposedInfantId, pepId, recencyId, pepfarid, openmrsId, tbId;
 
             //use combination of rdatimcode and hospital for peffar on surge rivers.
             pepfarid = new PatientIdentifier();
