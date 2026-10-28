@@ -13,8 +13,9 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.nigeriaemr.model.ndr.CodedSimpleType;
+import org.openmrs.module.nigeriaemr.model.ndr.RegimenCodedSimpleType;
 import org.openmrs.module.nigeriaemr.model.ndr.RegimenType;
+import org.openmrs.module.nigeriaemr.model.ndr.YNCodeType;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogFormat;
 import org.openmrs.module.nigeriaemr.ndrUtils.LoggerUtils.LogLevel;
@@ -51,13 +52,16 @@ public class PharmacyDictionary {
     public final static int Facility_Dispensing = 166276;
     public final static int Decentralized_Drug_Delivery = 166363;
     public final static int MMD = 166278;
+    public final static int Refil_Concept_Id = 165662;
+    public final static int EAC_Concept_Id = 166097;
 
     public PharmacyDictionary() {
         loadDictionary();
     }
-    private Map<Integer, String> regimenMap = new HashMap<>();
-    private Map<Integer, String> regimenCodeDescTextMap = new HashMap<>();
-    private Map<Integer, String> pharmacyDictionary = new HashMap<>();
+    private final Map<Integer, String> regimenMap = new HashMap<>();
+    private final Map<Integer, String> regimenCodeDescTextMap = new HashMap<>();
+    private final Map<Integer, String> pharmacyDictionary = new HashMap<>();
+    private final Map<Integer, String> ndrcode = new HashMap<>();
     /*
 		Concept ID for regimen to be gotten from
      */
@@ -109,13 +113,7 @@ public class PharmacyDictionary {
         regimenMap.put(162200, "5a");;//"ABC-3TC-LPV/r"
         regimenMap.put(162560, "5c");;//"d4T-3TC-LPV/r"
 
-        //Added because of IHVN
-/*
-        ABC-FTC-EFV400   -  165694
-        ABC-3TC-EFV400   -  165693
-        TDF-FTC-EFV400  -   165687
-        TDF-3TC-EFV400  -   165686
- */
+
         regimenMap.put(165694, "1r"); // ABC-FTC-EFV400
         regimenMap.put(165693, "4c"); // ABC-3TC-EFV400
         regimenMap.put(165687, "1c"); // TDF-FTC-EFV400
@@ -152,7 +150,7 @@ public class PharmacyDictionary {
         regimenMap.put(165702, "30");
         regimenMap.put(164507, "10");
         regimenMap.put(164514, "20");
-        regimenMap.put(164703, "30");
+        regimenMap.put(165703, "30");
         /* Added by Bright Ibezim Reason for substitusion and switch */
         regimenMap.put(102, "1");
         regimenMap.put(165048, "2");
@@ -238,10 +236,62 @@ public class PharmacyDictionary {
         regimenCodeDescTextMap.put(165257, "Cotrimoxazole 480mg"); //Defined Concept name is CTX prophylaxis. Check with Dr. Sunday for clearification
         regimenCodeDescTextMap.put(76488, "FLUCONAZOLE");//Added By Nelson
         regimenCodeDescTextMap.put(1679, "Isoniazid-Pyridoxine ");//Added By Nelson
-        regimenCodeDescTextMap.put(80945, "Cotrimoxazole 960mg");//Added By Nelson
+        //regimenCodeDescTextMap.put(80945, "Cotrimoxazole 960mg");//Added By Nelson
       /*  regimenCodeDescTextMap.put(161364, "TDF/3TC"); //Missing NDR Code lamivudine/fenofovir from APINS Instance
         regimenCodeDescTextMap.put(165631, "Dolutegravir");// Missing NDR Code from IHVN Instance
         */// regimenCodeDescTextMap.put(1674, "RIFAMPICIN/ISONIAZID/PYRAZINAMIDE/ETHAMBUTOL PROPHYLAXIS");// Missing NDR Code from IHVN Instance
+
+
+        regimenCodeDescTextMap.put(165530, "AZT+TDF+3TC+LPV/r");
+        regimenCodeDescTextMap.put(165540, "AZT+TDF+FTC+LPV/r");
+        regimenCodeDescTextMap.put(165537, "TDF+AZT+3TC+ATV/r");
+        regimenCodeDescTextMap.put(166194, "TDF+3TC+DTG+LPV/r");
+        regimenCodeDescTextMap.put(166195, "TDF+FTC+AZT+ATV/r");
+        regimenCodeDescTextMap.put(166196, "TDF+3TC+DTG+DRV+RTV");
+        regimenCodeDescTextMap.put(166197, "ABC+3TC+DTG+ATV/r");
+        regimenCodeDescTextMap.put(166198, "ABC+3TC+DTG+DRV+RTV");
+        regimenCodeDescTextMap.put(166199, "ABC+3TC+AZT+LPV/r");
+        regimenCodeDescTextMap.put(166200, "AZT+3TC+LPV+SQV/r");
+        regimenCodeDescTextMap.put(166201, "AZT+3TC+LPV+ATV/r");
+        regimenCodeDescTextMap.put(166202, "ABC+3TC+AZT+EFV");
+        regimenCodeDescTextMap.put(166203, "ABC+3TC+AZT+ATV/r");
+        regimenCodeDescTextMap.put(166204, "ABC+3TC+LPV+ATV/r");
+        regimenCodeDescTextMap.put(166205, "TDF+FTC+LPV+ATV/r");
+        regimenCodeDescTextMap.put(165535, "TDF+AZT+FTC+IDV/r");
+        regimenCodeDescTextMap.put(165531, "TDF+AZT+FTC+SQV/r");
+        regimenCodeDescTextMap.put(165536, "TDF+AZT+3TC+IDV/r");
+        regimenCodeDescTextMap.put(165532, "TDF+AZT+3TC+SQV/r");
+        regimenCodeDescTextMap.put(165695, "AZT+3TC+RAL");
+        regimenCodeDescTextMap.put(165696, "ABC+3TC+RAL");
+        regimenCodeDescTextMap.put(166206, "TDF+3TC+RAL");
+        regimenCodeDescTextMap.put(166207, "AZT+RAL+ATV/r");
+
+
+        regimenMap.put(165530,	"3a3");
+        regimenMap.put(165540,	"3b3");
+        regimenMap.put(165537,	"3c");
+        regimenMap.put(166194,	"3d");
+        regimenMap.put(166195,	"3e");
+        regimenMap.put(166196,	"3f");
+        regimenMap.put(166197,	"3g");
+        regimenMap.put(166198,	"3h");
+        regimenMap.put(166199,	"3i");
+        regimenMap.put(166200,	"3j");
+        regimenMap.put(166201,	"3k");
+        regimenMap.put(166202,	"3m");
+        regimenMap.put(166203,	"3n");
+        regimenMap.put(166204,	"3o");
+        regimenMap.put(166205,	"3p");
+        regimenMap.put(165535,	"3q");
+        regimenMap.put(165531,	"3r");
+        regimenMap.put(165536,	"3s");
+        regimenMap.put(165532,	"3t");
+        regimenMap.put(165695,	"3u");
+        regimenMap.put(165696,	"3v");
+        regimenMap.put(166206,	"3w");
+        regimenMap.put(166207,	"3x");
+
+
 
         //Added by APIN Team 02-09-2020
         regimenCodeDescTextMap.put(656 , "Isoniazid (INH)");
@@ -254,8 +304,40 @@ public class PharmacyDictionary {
         regimenCodeDescTextMap.put(1677, "Isoniazid-Rifampicin-Ethambutol");
         regimenCodeDescTextMap.put(1131, "Isoniazid-Rifampicin-Pyrazinamide-Ethambutol");
         regimenCodeDescTextMap.put(1674, "Isoniazid-Rifampicin-Pyrazinamide-Ethambutol-Streptomycin");
-        regimenCodeDescTextMap.put(1675,"Rifampicin-Isoniazid-Pyrazinamide-Ethambutol Prophylaxis");
+        regimenCodeDescTextMap.put(1675, "Rifampicin-Isoniazid-Pyrazinamide-Ethambutol Prophylaxis");
         regimenCodeDescTextMap.put(83352,"RIFABUTIN");
+
+
+        regimenCodeDescTextMap.put(76489,"Flucytosine (100mg/Kg in 4 divided doses)");
+        regimenMap.put(76489, "FLU100");
+
+        regimenCodeDescTextMap.put(76488,"Fluconazole");
+        regimenMap.put(76488, "FLUC");
+
+        regimenCodeDescTextMap.put(80945,"Nystatin");
+        regimenMap.put(80945, "NYS");
+
+        regimenCodeDescTextMap.put(167184,"Cotrimoxazole/Isoniazid/Pyridoxine 960/300/25mg");
+        regimenMap.put(167184, "CIP96030025");
+
+        regimenCodeDescTextMap.put(71187,"Liposomal Amphotericin B (3mg/Kg IV dly) 50mg");
+        regimenMap.put(71187, "LAB350");
+
+
+
+
+        regimenCodeDescTextMap.put(166192, "AZT-3TC-DRV/r");
+        //regimenCodeDescTextMap.put(167258, "ABC-3TC-DRV/r");
+        regimenCodeDescTextMap.put(166193, "TDF-3TC-DRV/r");
+        regimenCodeDescTextMap.put(166196, "TDF-3TC-DTG-DRV-RTV");
+        regimenCodeDescTextMap.put(166198, "ABC-3TC-DTG-DRV-RTV");
+
+
+        regimenMap.put(166192, "2x");
+        regimenMap.put(166193, "2y");
+        //regimenMap.put(167258, "2y");
+        regimenMap.put(166196, "3f");
+        regimenMap.put(166198, "3h");
 
         regimenMap.put(656, "H");
         regimenMap.put(767, "R");
@@ -266,13 +348,30 @@ public class PharmacyDictionary {
         regimenMap.put(1194, "HR");
         regimenMap.put(1677, "HRE");
         regimenMap.put(1131, "HRZE");
+        regimenMap.put(1675,"HRZE");
         regimenMap.put(1674, "HRZES");
-        regimenMap.put(1675,"HRZES");
         regimenMap.put(83352,"RF");
         regimenMap.put(165257, "CTX480");//
-        regimenMap.put(76488, "FLUC");
         regimenMap.put(1679, "INHB6");
-        regimenMap.put(80945, "CTX960");
+
+        regimenMap.put(167183, "ISF3HP");
+        regimenCodeDescTextMap.put(167183,"Isoniazid/Rifampentine (3HP)");
+
+
+        regimenMap.put(167254, "RH");
+        regimenMap.put(167253, "RHZE/EH");
+        regimenMap.put(167252, "RHZE/RH");
+        regimenCodeDescTextMap.put(167254,"Rifampicin + Isoniazid");
+        regimenCodeDescTextMap.put(167253,"Rifampicin + Isoniazid + Pyrazinamide + Ethambutol (intensive phase) followed by Ethambutol + Isoniazid (continuation phase)");
+        regimenCodeDescTextMap.put(167252,"Rifampicin + Isoniazid + Pyrazinamide + Ethambutol (intensive phase) followed by Rifampicin + Isoniazid (continuation phase)");
+
+
+
+        regimenMap.put(167517, "1e");//TAF-3TC-DTG
+        regimenCodeDescTextMap.put(167517, "TAF-3TC-DTG");
+
+        regimenMap.put(167518, "1ee"); //TAF-FTC-DTG
+        regimenCodeDescTextMap.put(167518, "TAF-FTC-DTG");
 
 
         //added new regimen
@@ -314,10 +413,9 @@ public class PharmacyDictionary {
         return null;
     }
 
-    public String getDSDMapValue(int value_coded) {
-        //old implementation return regimenMap.get(value_coded);
-        if (regimenMap.containsKey(value_coded)) {
-            return regimenMap.get(value_coded);
+    public String getNDRMapValue(int value_coded) {
+        if (ndrcode.containsKey(value_coded)) {
+            return ndrcode.get(value_coded);
         }
         return null;
     }
@@ -364,9 +462,10 @@ public class PharmacyDictionary {
         PatientIdentifier pepfarIdentifier = patient.getPatientIdentifier(Utils.PEPFAR_IDENTIFIER_INDEX);
         String pepfarID = "";
         String ndrCode = "";
+        String newNdrCode= "";
         Obs obs = null;
         int valueCoded = 0, durationInDays = 0;
-        CodedSimpleType codedSimpleType = null;
+        RegimenCodedSimpleType codedSimpleType = null;
         Map<Object, List<Obs>> map = Utils.groupedByConceptIdsOnly(obsListForAVisit);
         if (!obsListForAVisit.isEmpty() && pepfarIdentifier != null && map.get(Utils.CURRENT_REGIMEN_LINE_CONCEPT) != null) {
             pepfarID = pepfarIdentifier.getIdentifier();
@@ -376,6 +475,8 @@ public class PharmacyDictionary {
             regimenType = new RegimenType();
             regimenType.setVisitID(visitID);
             regimenType.setVisitDate(utils.getXmlDate(visitDate));
+
+            applyRegimenContextFields(regimenType, map);
 
             obs = Utils.extractObs(Utils.CURRENT_REGIMEN_LINE_CONCEPT, map); //PrescribedRegimenLineCode
             if (obs != null && obs.getValueCoded() != null) {
@@ -387,11 +488,13 @@ public class PharmacyDictionary {
                 if (valueObs != null) {
                     valueCoded = valueObs.getValueCoded().getConceptId();
                     ndrCode = getRegimenMapValue(valueCoded);
+                    newNdrCode = getNDRMapValue(valueCoded);
                     if(ndrCode != null) {
-                        codedSimpleType = new CodedSimpleType();
+                        codedSimpleType = new RegimenCodedSimpleType();
                         codedSimpleType.setCode(ndrCode);
 //                    codedSimpleType.setCodeDescTxt(valueObs.getValueCoded().getName().getName());
                         codedSimpleType.setCodeDescTxt(getRegimenCodeDescTextMapValue(valueCoded));
+                        //codedSimpleType.setNDRCode(newNdrCode);
                         regimenType.setPrescribedRegimen(codedSimpleType);
                     }
                 }
@@ -438,6 +541,11 @@ public class PharmacyDictionary {
                 ndrCode = getPharmacyMapValue(valueCoded);
                 regimenType.setMultiMonthDispensing(ndrCode);
             }
+
+            obs = extractObs(Utils.NEXT_APPOINTMENT_DATE_CONCEPT, map);
+            if (obs != null && obs.getValueDatetime() != null) {
+                regimenType.setNextAppointmentDate(utils.getXmlDate(obs.getValueDatetime()));
+            }
         }
         return regimenType;
     }
@@ -459,7 +567,7 @@ public class PharmacyDictionary {
             }catch (Exception ex){
                 System.out.println(ex.getMessage());
             }
-            if(obsGroupSet != null && obsGroupSet.size() > 0) {
+            if(obsGroupSet != null && !obsGroupSet.isEmpty()) {
                 obs = Utils.extractObsByConceptId(Utils.MEDICATION_DURATION_CONCEPT, new ArrayList<>(obsGroupSet));
             }
             if (obs != null) {
@@ -488,7 +596,7 @@ public class PharmacyDictionary {
 
             Map<Object, List<Obs>> OIDrugObsList = Utils.groupedByConceptIdsOnly(OIDrugObs);
 
-            CodedSimpleType cst;
+            RegimenCodedSimpleType cst;
 
             regimenType.setVisitID(Utils.getVisitId(pts, enc));
             regimenType.setVisitDate(utils.getXmlDate(enc.getEncounterDatetime()));
@@ -498,7 +606,7 @@ public class PharmacyDictionary {
 
             if (obs != null && obs.getValueCoded() != null) {
                 try {
-                    cst = new CodedSimpleType();
+                    cst = new RegimenCodedSimpleType();
                     cst.setCode(getRegimenMapValue(obs.getValueCoded().getConceptId()));
 //                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
                     cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
@@ -510,7 +618,7 @@ public class PharmacyDictionary {
                 //set regimen--do this for TB
                 obs = Utils.extractObs(ANTI_DRUG_Concept_ID, OIDrugObsList);
                 try {
-                    cst = new CodedSimpleType();
+                    cst = new RegimenCodedSimpleType();
                     cst.setCode(getRegimenMapValue(obs.getValueCoded().getConceptId()));
 //                    cst.setCodeDescTxt(obs.getValueCoded().getName().getName());
                     cst.setCodeDescTxt(getRegimenCodeDescTextMapValue(obs.getValueCoded().getConceptId()));
@@ -641,6 +749,63 @@ public class PharmacyDictionary {
 
         return response;
 
+    }
+
+    /**
+     * Populates NDR 1.7.2.0 RegimenType context fields (Pregnant, Refil, RegimenSubstitution,
+     * RegimenSwitch, DSDModelFacility, EAC). Each field is set only when its source obs is
+     * present; placeholder concept ids resolve to no-ops until production ids are wired.
+     */
+    private void applyRegimenContextFields(RegimenType regimenType, Map<Object, List<Obs>> map) {
+        Obs obs;
+
+        obs = extractObs(Utils.PREGNANCY_BREASTFEEDING_CONCEPT, map);
+        if (obs != null && obs.getValueCoded() != null) {
+            int answerId = obs.getValueCoded().getConceptId();
+            if (answerId == 1065) regimenType.setPregnant(YNCodeType.YES);
+            else if (answerId == 1066) regimenType.setPregnant(YNCodeType.NO);
+        }
+
+        obs = extractObs(Refil_Concept_Id, map);
+        if (obs != null && obs.getValueCoded() != null) {
+            int answerId = obs.getValueCoded().getConceptId();
+            if (answerId == 1065) regimenType.setRefil(YNCodeType.YES);
+            else if (answerId == 1066) regimenType.setRefil(YNCodeType.NO);
+        }
+
+
+        obs = extractObs(Pick_Up_Reason_Concept_Id, map);
+        if (obs != null && obs.getValueCoded() != null) {
+            int answerId = obs.getValueCoded().getConceptId();
+            if (answerId == substitution_Indicator_Concept_Id) regimenType.setRegimenSubstitution(YNCodeType.YES);
+            else if (answerId == switch_Indicator_Concept_Id) regimenType.setRegimenSwitch(YNCodeType.YES);
+        }
+
+
+        /*obs = extractObs(DSDModelFacility_Concept_Id, map);
+        if (obs != null && obs.getValueCoded() != null) {
+            String code = getPharmacyMapValue(obs.getValueCoded().getConceptId());
+            if (code != null) regimenType.setDSDModelFacility(code);
+        }*/
+
+        obs = extractObs(EAC_Concept_Id, map);
+        if (obs != null && obs.getValueText() != null) {
+            String code = eacMap(obs.getValueCoded().getConceptId());
+            if (code != null) regimenType.setEAC(code);
+        }
+    }
+
+    private String eacMap (int conceptId){
+        if (conceptId == 165643) {
+            return "First";
+        }
+        if (conceptId == 165644) {
+            return "Second";
+        }
+        if (conceptId == 165645) {
+            return "Third";
+        }
+        return null;
     }
 
 }

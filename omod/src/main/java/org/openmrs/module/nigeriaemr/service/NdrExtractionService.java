@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -345,6 +346,11 @@ public class NdrExtractionService {
 	}
 	
 	public boolean restartFile(String fullContextPath,String id, String action) {
+		// the O3 extraction dashboard sends action=error for "rerun failed files"; the legacy page sends
+		// action=failed. Anything else falls through to a full restart, so map the alias explicitly.
+		if ("error".equalsIgnoreCase(action)) {
+			action = "failed";
+		}
 		Context.getAdministrationService().updateGlobalProperty("check_batch","false");
 		try {
 			int idInt = Integer.parseInt(id);
@@ -378,7 +384,10 @@ public class NdrExtractionService {
 					Reader in = new FileReader(errorList);
 					Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
 					for (CSVRecord csvRecord : records) {
-						failedIds.add(Integer.parseInt(csvRecord.get(1)));
+						Integer patientId = parsePatientId(csvRecord);
+						if (patientId != null) {
+							failedIds.add(patientId);
+						}
 					}
 					in.close();
 				}catch (Exception ignored){}
@@ -394,14 +403,21 @@ public class NdrExtractionService {
 					deletePath(fullContextPath, ndrExportBatch.getErrorPath());
 					deletePath(fullContextPath, ndrExportBatch.getErrorList());
 					deleteFolder(ndrExportBatch.getReportFolder() + "-error");
+					// the error CSV is opened in append mode by the extractor, so it must be cleared
+					// before the failed patients are re-run or the error count keeps growing
+					if (csvFile.exists() && !csvFile.delete()) {
+						csvFile.deleteOnExit();
+					}
 					deleted = true;
 				}
 
 				List<Integer> ids = (List<Integer>) mapper.readValue(ndrExport.getPatientsList(), List.class);
 				List<Integer> result;
-				if(failedIds.size() > 0) {
+				if ("failed".equalsIgnoreCase(action) && failedIds.size() > 0) {
+					// failed-only rerun: keep the valid files and re-extract just the patients in the error CSV
 					result = failedIds.stream().distinct().filter(ids::contains).collect(Collectors.toList());
-				}else {
+				} else {
+					// full restart (valid files were deleted above) or resume: re-extract every patient
 					result = ids;
 				}
 
@@ -467,10 +483,14 @@ public class NdrExtractionService {
 							ndrExportBatch.setErrorList(errorList);
 							status = "Completed with " + numError + " Errors";
 						} else {
+							ndrExportBatch.setErrorPath(null);
+							ndrExportBatch.setErrorList(null);
 							status = "Completed";
 						}
 					} else if (!"no new patient record found".equalsIgnoreCase(path)) {
 						ndrExportBatch.setPath(path);
+						ndrExportBatch.setErrorPath(null);
+						ndrExportBatch.setErrorList(null);
 						status = "Completed";
 					} else {
 						status = "Failed";
@@ -547,15 +567,35 @@ public class NdrExtractionService {
 	
 	private int getNumberOfPatientsWithError(String errorList) throws IOException {
 		File csvFile = new File(errorList);
-		int num = 0;
+		Set<Integer> patientIds = new HashSet<>();
 		if (csvFile.exists()) {
-			Reader in = new FileReader(errorList);
-			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
-			for (CSVRecord ignored : records) {
-				num += 1;
+			try (Reader in = new FileReader(errorList)) {
+				Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+				for (CSVRecord csvRecord : records) {
+					Integer patientId = parsePatientId(csvRecord);
+					if (patientId != null) {
+						patientIds.add(patientId);
+					}
+				}
 			}
 		}
-		return num;
+		return patientIds.size();
+	}
+	
+	/**
+	 * Reads the patient id column of an error CSV row. Returns null for the header row or any
+	 * malformed row so callers can skip it.
+	 */
+	private Integer parsePatientId(CSVRecord csvRecord) {
+		if (csvRecord.size() < 2) {
+			return null;
+		}
+		try {
+			return Integer.parseInt(csvRecord.get(1).trim());
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
 	}
 	
 	public List<Integer> getPatientIds(Date from, Date to, List<String> patientIds, boolean includeVoided) {

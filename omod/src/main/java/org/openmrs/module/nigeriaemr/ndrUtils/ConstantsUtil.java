@@ -96,6 +96,8 @@ public class ConstantsUtil {
 	
 	public static final int TB_TREATMENT_CARD_ENCOUNTER_TYPE = 54;
 	
+	public static final int HTS_INDEX_CONTACT_TESTING_ENCOUNTER_TYPE = 172;
+	
 	//Endpoints
 	//public static final String BASE_URL = "https://hts.shieldnigeriaproject.com/api";
 	
@@ -105,4 +107,19 @@ public class ConstantsUtil {
 	
 	public static final String GET_ClIENT = "/GetClientReferal";
 	
+	public static final int EAC_ENCOUNTER_TYPE = 32;
+	
+	public static final int PMTCT_REGISTER_TYPE = 35;
+	
+	public static final int MOTHER_INFANT_PAIR = 1;
+	
+	public static final int PEP_FOLLOWUP_ENCOUNTER_TYPE = 178;
+	
+	public static final int PREP_DISCONTINUATION_ENCOUNTER_TYPE = 180;
+	
+	public static final int PREP_FOLLOWUP_ENCOUNTER_TYPE = 182;
+	
+	public static final int PREP_CARD_ENROLLMENT_ENCOUNTER_TYPE = 177;
+	
+	public static final int PREP_SCREENING_ENCOUNTER_TYPE = 179;
 }
