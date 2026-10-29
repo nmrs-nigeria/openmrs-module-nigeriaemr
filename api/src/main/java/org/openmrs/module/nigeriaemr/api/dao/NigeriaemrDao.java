@@ -17,14 +17,9 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.db.DAOException;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
-import org.openmrs.module.nigeriaemr.api.service.impl.NigeriaEncounterServiceImpl;
-import org.openmrs.module.nigeriaemr.model.BiometricInfo;
-import org.openmrs.module.nigeriaemr.model.DatimMap;
-import org.openmrs.module.nigeriaemr.model.NDRExport;
-import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
+import org.openmrs.module.nigeriaemr.model.*;
 import org.openmrs.module.nigeriaemr.util.LoggerUtils;
 
-import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -186,7 +181,46 @@ public class NigeriaemrDao {
 		sql.executeUpdate();
 	}
 	
-	public List<NDRExport> getNDRExportByBatchIdByStatus(int batchId, String status) {
+	public void setBatchIdsFromNdr(Integer exportId, String batches) {
+		SQLQuery sql = getSession()
+		        .createSQLQuery(
+		            "update nigeriaemr_ndr_batch_export set ndr_batch_ids = :ndrBatchIds, errorLogsPulled = :errorLogsPulled where nigeriaemr_ndr_batch_export_id = :exportId");
+		sql.setString("ndrBatchIds", batches);
+		sql.setInteger("exportId", exportId);
+		sql.setString("errorLogsPulled", "no");
+		sql.executeUpdate();
+	}
+	
+	public void updateBatchExport(Integer exportId, String ndrErrorLogStatus) {
+		SQLQuery sql = getSession()
+		        .createSQLQuery(
+		            "update nigeriaemr_ndr_batch_export set errorLogsPulled = :errorLogsPulled where nigeriaemr_ndr_batch_export_id = :exportId");
+		sql.setInteger("exportId", exportId);
+		sql.setString("errorLogsPulled", ndrErrorLogStatus);
+		sql.executeUpdate();
+	}
+	
+	public List<NDRExportBatch> getBatchExports()
+	{
+		try{
+			Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
+			criteria.add(Restrictions.isNotNull("ndrBatchIds"));
+//			criteria.add(Restrictions.isNotEmpty("ndrBatchIds"));
+//			criteria.add(Restrictions.sizeGt("ndrBatchIds", 0));
+			criteria.add(Restrictions.eq("errorLogsPulled", "no"));
+			criteria.addOrder(Order.desc("dateCreated"));
+			return criteria.list();
+		}
+		catch (Exception e)
+		{
+			LoggerUtils.write(NigeriaemrDao.class.getName(), e.getMessage(), LoggerUtils.LogFormat.INFO,
+					LoggerUtils.LogLevel.live);
+			return new ArrayList<>();
+		}
+	}
+	
+	public List<NDRExport> getNDRExportByBatchIdByStatus(int batchId, String status)
+	{
 		Criteria criteria = getSession().createCriteria(NDRExport.class);
 		criteria.add(Restrictions.eq("batchId", batchId));
 		criteria.add(Restrictions.eq("status", status));
@@ -195,13 +229,67 @@ public class NigeriaemrDao {
 		return new ArrayList<>();
 	}
 	
-	public List<NDRExportBatch> getExportBatchByStartMode(boolean startMode, boolean includeVoided) {
+	public NDRExportBatch getNDRExportByZipFileName(String path) {
+		try {
+			Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
+			criteria.add(Restrictions.eq("path", path));
+			List<NDRExportBatch> ndrBatchExports = criteria.list();
+			if (ndrBatchExports != null && ndrBatchExports.size() > 0)
+				return ndrBatchExports.get(0);
+			return new NDRExportBatch();
+		}
+		catch (APIException e) {
+			LoggerUtils.write(NigeriaemrDao.class.getName(), e.getMessage(), LoggerUtils.LogFormat.INFO,
+			    LoggerUtils.LogLevel.live);
+			return new NDRExportBatch();
+		}
+	}
+	
+	public NDRExportBatch getNDRExportBatch(int exportId) {
 		Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
-		criteria.add(Restrictions.eq("automatic", startMode));
-		if (!includeVoided)
-			criteria.add(Restrictions.eq("voided", false));
-		criteria.addOrder(Order.desc("dateCreated"));
-		return criteria.list();
+		criteria.add(Restrictions.eq("id", exportId));
+		List<NDRExportBatch> ndrExports = criteria.list();
+		if (ndrExports != null && ndrExports.size() > 0)
+			return ndrExports.get(0);
+		return new NDRExportBatch();
+	}
+	
+	public List<ndrMessageLog> getNdrMessageLogs(int exportId)
+	{
+		System.out.println("\ngetNdrMessageLogs exportId: " + exportId);
+
+		Criteria criteria = getSession().createCriteria(ndrMessageLog.class);
+		criteria.add(Restrictions.eq("exportId", exportId));
+		List<ndrMessageLog> ndrMessageLogs = criteria.list();
+		if(ndrMessageLogs != null && ndrMessageLogs.size() > 0)
+		{
+			return ndrMessageLogs;
+		}
+
+		return new ArrayList<>();
+	}
+	
+	public List<NDRExportBatch> getExportBatchByStartMode(boolean startMode, boolean includeVoided)
+	{
+		try
+		{
+			Criteria criteria = getSession().createCriteria(NDRExportBatch.class);
+			criteria.add(Restrictions.eq("automatic", startMode));
+			if (!includeVoided)
+				criteria.add(Restrictions.eq("voided", false));
+			criteria.addOrder(Order.desc("dateCreated"));
+
+			List<NDRExportBatch> lst = criteria.list();
+
+			return lst;
+		}
+		catch (Exception e)
+		{
+			LoggerUtils.write(NigeriaemrDao.class.getName(), e.getMessage(), LoggerUtils.LogFormat.INFO,
+					LoggerUtils.LogLevel.live);
+
+			return new ArrayList<>();
+		}
 	}
 	
 	public String getSqlVersion() {
@@ -255,6 +343,20 @@ public class NigeriaemrDao {
 	public void deleteBiometricInfo(Integer patientId) {
 		SQLQuery sql = getSession().createSQLQuery("delete from biometricinfo where patient_id = :patientId ");
 		sql.setInteger("patientId", patientId);
+		sql.executeUpdate();
+	}
+	
+	public void saveNdrApiErrorLog(ndrMessageLog messageLog) throws APIException {
+		String sqlString = "insert into ndr_message_logs (exportId, message, patientIdentifier, fileName, dateCreated,batchNumber)"
+		        + "Values(:exportId,:message,:patientIdentifier,:fileName,:dateCreated,:batchNumber)";
+		
+		SQLQuery sql = getSession().createSQLQuery(sqlString);
+		sql.setInteger("exportId", messageLog.getExportId());
+		sql.setString("message", messageLog.getMessage());
+		sql.setString("patientIdentifier", messageLog.getPatientIdentifier());
+		sql.setString("fileName", messageLog.getFileName());
+		sql.setDate("dateCreated", messageLog.getDateCreated());
+		sql.setString("batchNumber", messageLog.getBatchNumber());
 		sql.executeUpdate();
 	}
 }

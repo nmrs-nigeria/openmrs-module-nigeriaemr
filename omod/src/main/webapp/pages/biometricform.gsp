@@ -4,8 +4,99 @@
     ui.includeJavascript("nigeriaemr", "bootstrap.js")
     ui.includeCss("nigeriaemr", "bootstrap.css")
 %>
+<style>
+
+/* The Modal (background) */
+.modalrecapture {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-recapture-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+
+/* The Close Button */
+.closerecapture {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.closerecapture:hover,
+.closerecapture:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-recapture-header {
+    padding: 2px 16px;
+    background-color: #f50707;
+    color: white;
+}
+
+.modal-recapture-header-2 {
+    padding: 2px 16px;
+    background-color: green;
+    color: white;
+}
+
+.modal-recapture-body {padding: 2px 16px;}
+
+.modal-recapture-footer {
+    padding: 2px 16px;
+    background-color: #f50707;
+    color: white;
+}
+
+.modal-recapture-footer-2 {
+    padding: 2px 16px;
+    background-color: green;
+    color: white;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 10px;
+}
+.grid-item {
+    padding: 20px;
+    font-size: 30px;
+    text-align: center;
+}
+</style>
 <div>
     <button onclick="deletePrints()" id="deleteBtn" hidden="true" class="btn">Delete FingerPrints</button>
+    <button onclick="fp_verification()" id="fpVerfiyBtn" hidden="true" style="float: left" class="btn">Re-Capture</button>
+    <span style="font-size: 15px; float: left;" id="countFP"></span>
+    <span style="font-size: 12px; float: left; margin-left: 20px; padding: 2px; background-color: hsl(63, 100%, 50%); border-radius: 25px;" id="dateBaseCaptured"></span>
+    <span style="font-size: 12px; float: left; margin-left: 20px; display: none;  padding: 2px;  background-color: hsl(63, 100%, 50%); border-radius: 25px;" id="dateRecaptured"></span>
+    <span id="basereplacementFlag" style="font-size: 12px; display: none; color: #ffffff; margin-left: 20px; padding: 2px; background-color: #007bff; border-radius: 25px; width:300px;float:right;">The base fingerprint was replaced for this patient!</span>
+    <span id="nextrecaptureFlag" style="font-size: 12px; display: none; color: #ffffff; margin-left: 0px; padding: 2px; background-color: #ba8b00; border-radius: 25px; width:660px;float:left;">Biometric recapture is unavailable at this time. Please note that it must be at least two weeks since your last capture.</span>
     <br>
 </div>
 
@@ -30,6 +121,69 @@
         </div>
     </div>
 </div>
+
+
+<div id="myModalrecapture" class="modalrecapture">
+
+    <!-- Modal content -->
+    <div class="modal-recapture-content">
+        <div class="modal-recapture-header">
+            <h2 style="color: #ffffff;">Fingerprint did not match</h2>
+        </div>
+        <div class="modal-recapture-body" style="color: #000000;">
+            <p style="font-size: 20px;">Do you want to replace the base fingerprints with the recaptured fingerprints? </p>
+           <div class="grid-container">
+            <div class="grid-item"><button style="cursor:pointer; border:none; border-radius:10px; font-size:20px;" onclick="replaceBasewithRecapture('Yes')" >YES</button></div>
+                <div class="grid-item"><button style="cursor:pointer; border:none; border-radius:10px; font-size:20px;" onclick="replaceBasewithRecapture('No')" >NO</button></div>
+           </div>
+        </div>
+        <div class="modal-recapture-footer">
+
+        </div>
+    </div>
+
+</div>
+
+<div id="myModalrecapture-2" class="modalrecapture">
+
+    <!-- Modal content -->
+    <div class="modal-recapture-content">
+        <div class="modal-recapture-header-2">
+            <h2 style="color: #ffffff;">Fingerprint matched</h2>
+        </div>
+        <div class="modal-recapture-body" style="color: #000000;">
+            <p style="font-size: 20px;" id="recaptureresponsematch">The base fingerprints matched with the recaptured fingerprints. </p>
+            <div class="grid-container">
+                <div class="grid-item"><button style="cursor:pointer; border:none; border-radius:10px; font-size:20px;" onclick="matchcloserecapture()" >OK</button></div>
+            </div>
+        </div>
+        <div class="modal-recapture-footer-2">
+
+        </div>
+    </div>
+
+</div>
+
+<div id="myModalrecapture-3" class="modalrecapture">
+
+    <!-- Modal content -->
+    <div class="modal-recapture-content">
+        <div class="modal-recapture-header">
+            <h2 style="color: #ffffff;">No match feedback</h2>
+        </div>
+        <div class="modal-recapture-body" style="color: #000000;">
+            <p style="font-size: 20px;" id="recaptureresponsenomatch">The base fingerprints did not matched with the recaptured fingerprints. </p>
+            <div class="grid-container">
+                <div class="grid-item"><button style="cursor:pointer; border:none; border-radius:10px; font-size:20px;" onclick="nomatchcloserecapture()" >OK</button></div>
+            </div>
+        </div>
+        <div class="modal-recapture-footer">
+
+        </div>
+    </div>
+
+</div>
+
 <table>
     <tr>
         <td>
@@ -39,6 +193,8 @@
                  src="../moduleResources/nigeriaemr/images/LEFT_THUMB.png">
             <br>
             <input type="button" value="Scan" id="BTN_LEFT_THUMB" onclick="captureFP(6)">
+            <span id="flag_LEFT_THUMB" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_LEFT_INDEX" style="background-color: red;color: white; display: none"></h6>
@@ -46,24 +202,32 @@
                  src="../moduleResources/nigeriaemr/images/LEFT_INDEX.png">
             <br>
             <input type="button" value="Scan" id="BTN_LEFT_INDEX" onclick="captureFP(7)">
+            <span id="flag_LEFT_INDEX" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_LEFT_MIDDLE" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_MIDDLE" border="1" alt="LEFT MIDDLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_MIDDLE.png"> <br>
             <input type="button" value="Scan" id="BTN_LEFT_MIDDLE" onclick="captureFP(8)">
+            <span id="flag_LEFT_MIDDLE" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_LEFT_RING" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_RING" border="1" alt="LEFT RING" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_RING.png"> <br>
             <input type="button" value="Scan" id="BTN_LEFT_RING" onclick="captureFP(9)">
+            <span id="flag_LEFT_RING" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_LEFT_LITTLE" style="background-color: red;color: white; display: none"></h6>
             <img id="LEFT_LITTLE" border="1" alt="LEFT LITTLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/LEFT_LITTLE.png"> <br>
             <input type="button" value="Scan" id="BTN_LEFT_LITTLE" onclick="captureFP(10)">
+            <span id="flag_LEFT_LITTLE" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
     </tr>
     <tr>
@@ -89,30 +253,40 @@
             <img id="RIGHT_THUMB" border="1" alt="RIGHT THUMB" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_THUMB.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_THUMB" onclick="captureFP(1)">
+            <span id="flag_RIGHT_THUMB" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_RIGHT_INDEX" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_INDEX" border="1" alt="RIGHT INDEX" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_INDEX.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_INDEX" onclick="captureFP(2)">
+            <span id="flag_RIGHT_INDEX" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_RIGHT_MIDDLE" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_MIDDLE" border="1" alt="RIGHT MIDDLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_MIDDLE.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_MIDDLE" onclick="captureFP(3)">
+            <span id="flag_RIGHT_MIDDLE" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_RIGHT_RING" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_RING" border="1" alt="RIGHT RING" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_RING.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_RING" onclick="captureFP(4)">
+            <span id="flag_RIGHT_RING" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
         <td>
             <h6 id="H_RIGHT_LITTLE" style="background-color: red;color: white; display: none"></h6>
             <img id="RIGHT_LITTLE" border="1" alt="RIGHT LITTLE" height=200 width=150
                  src="../moduleResources/nigeriaemr/images/RIGHT_LITTLE.png"> <br>
             <input type="button" value="Scan" id="BTN_RIGHT_LITTLE" onclick="captureFP(5)">
+            <span id="flag_RIGHT_LITTLE" style="float:right; background-color:#ddd; width:50px; height:30px; border-radius: 25px; padding-top:5px; text-align:center; color:#fff;">0%</span>
+
         </td>
     </tr>
     <tr>
@@ -144,6 +318,8 @@
 <script type="text/javascript">
 
     let patientId;
+    let recaptureBaseCheck;
+    let recaptureCount;
     patientId = getUrlVars()["patientId"];
     let newPrint;
     let capturedPrint = [];
@@ -161,8 +337,10 @@
     }
     let fingerPosition = ["", "RIGHT_THUMB", "RIGHT_INDEX", "RIGHT_MIDDLE", "RIGHT_RING", "RIGHT_LITTLE",
         "LEFT_THUMB", "LEFT_INDEX", "LEFT_MIDDLE", "LEFT_RING", "LEFT_LITTLE"];
-    let url = '${ biometricUrl }'
-    console.log(url)
+    let url = '${ biometricUrl }';
+    console.log(url);
+
+    var previouscapturecheck ="";
 
     jQuery(document).ready(function(){
         // jQuery('#myModal').modal('show');
@@ -171,8 +349,11 @@
             .success(function (data) {
                 jQuery('#myModal').modal('hide');
                 if (data !== undefined && data !== null && data.length > 0) {
+                    getRecaptureCount();
+                    dateBaseAndRecapture();
                     let lowQuality = false;
                     let invalid = false;
+                    previouscapturecheck = data;
                     for (let i = 0; i < data.length; i++) {
                         if ("low" === data[i].qualityFlag.toLowerCase()) {
                             let position = apiFingerPosition[data[i].fingerPositions];
@@ -192,7 +373,10 @@
                         }
                     }
                     jQuery('#myModal').modal('hide');
-                    jQuery('#deleteBtn').attr('hidden', false);
+                    getBaseCheck();
+                    // jQuery('#deleteBtn').attr('hidden', false);
+                    //jQuery('#fpVerfiyBtn').attr('hidden', false)
+
                     if (lowQuality && invalid) {
                         alertt('Fingerprints of this patient contains invalid and low quality data and will need to be recaptured');
                     } else if (lowQuality) {
@@ -219,6 +403,106 @@
     });
 
 
+    function getRecaptureCount(){
+        // jQuery('#myModal').modal('show');
+        let recapture_count =url+'/recaptureCount';
+        jQuery.getJSON(recapture_count)
+            .success(function (data) {
+
+                if (data !== undefined && data !== null && data.length > 0) {
+                    console.log("Recapture count "+data);
+                    let arrCount = data.toString().split(',');
+                    recaptureCount = arrCount[0].toString();
+                    document.getElementById("countFP").innerHTML ="Count: "+arrCount[0].toString();
+                    if(parseInt(arrCount[1]) > 0){
+                        document.getElementById("basereplacementFlag").style.display ="block";
+                    }
+                }
+            })
+            .error(function (xhr, status, err) {
+                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
+
+                    alertt(xhr.responseText);
+                }else{
+                    alertt('System error. Please check that the Biometric service is running');
+                }
+            });
+    }
+
+    
+
+    function dateBaseAndRecapture(){
+        // jQuery('#myModal').modal('show');
+        let datebaseandrecapture =url+'/dateBaseAndRecapture';
+        jQuery.getJSON(datebaseandrecapture)
+            .success(function (data) {
+
+                if (data !== undefined && data !== null && data.length > 0) {
+                    console.log("Date Base and Recapture "+data);
+                    let arrCount = data.toString().split(',');
+                    document.getElementById("dateBaseCaptured").innerHTML ="Date Base Capture: "+arrCount[0].toString();
+                    if(arrCount[1] !== undefined && arrCount[1] !== null){
+                        document.getElementById("dateRecaptured").innerHTML ="Date Recapture: "+arrCount[1].toString();
+                        document.getElementById("dateRecaptured").style.display ="block";
+                    }
+                    
+                }
+            })
+            .error(function (xhr, status, err) {
+                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
+
+                    alertt(xhr.responseText);
+                }else{
+                    alertt('System error. Please check that the Biometric service is running');
+                }
+            });
+    }
+
+    function getBaseCheck(){
+        // jQuery('#myModal').modal('show');
+        let recapture_count =url+'/recaptureBaseCheck';
+        jQuery.getJSON(recapture_count)
+            .success(function (data) {
+
+                if (data !== undefined && data !== null && data.length > 0) {
+                    console.log("recaptureBaseCheck1 "+data);
+                    let arr = data.toString().split(',');
+                    recaptureBaseCheck = data;
+                    //check if the base capture was captured today then hide the captured button
+                    if(arr[0].toString() == 'true'){
+                        jQuery('#fpVerfiyBtn').attr('hidden', true);
+                        document.getElementById("nextrecaptureFlag").style.display ="block";
+                    }
+                    //check if the base capture was not captured today then hide the captured button and recapture was more than 14days
+                    if (arr[0].toString() == 'false' && arr[1].toString() == 'true' && parseInt(recaptureCount) > 0){
+                        jQuery('#fpVerfiyBtn').attr('hidden', false);
+                        document.getElementById("nextrecaptureFlag").style.display ="none";
+                    }
+
+                    if (arr[0].toString() == 'false' && arr[1].toString() == 'false' && parseInt(recaptureCount) == 0){
+                        jQuery('#fpVerfiyBtn').attr('hidden', false);
+                        document.getElementById("nextrecaptureFlag").style.display ="none";
+                    }
+
+                    if (arr[1].toString() == 'false' && parseInt(recaptureCount) > 0){
+                        document.getElementById("nextrecaptureFlag").style.display ="block";
+                    }
+
+
+
+                }
+            })
+            .error(function (xhr, status, err) {
+                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
+
+                    alertt(xhr.responseText);
+                }else{
+                    alertt('System error. Please check that the Biometric service is running');
+                }
+            });
+    }
+
+
     function alertt(message) {
         if (window.confirm((message)))
         {
@@ -236,7 +520,7 @@
         //     alertt('Select a patient first');
         //     return;
         // }
-
+        console.log("Finger position id: "+position);
 
         let captureURL = url + '/CapturePrint?fingerPosition=' + position;
 
@@ -247,6 +531,81 @@
                     let imgId = fingerPosition[position];
                     document.getElementById('H_'+imgId).style.display = 'none';
                     document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
+
+                    if(data.ImageQuality >= 75 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'green';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality >= 60 && data.ImageQuality <= 74 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = '#FFA500';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality <= 59){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'red';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+
+                    newPrint = data;
+                    newPrint.Image = '';
+                    pushPrints(newPrint);
+                    if (capturedPrint.length > 5) {
+                        jQuery('input').removeAttr('disabled');
+                    }
+                }else if("-1" === data.ErrorCode){
+                    alertt('Fingerprint is of low quality kindly recapture');
+                }else {
+                    alertt(data.ErrorMessage);
+                }
+            })
+            .error(function (xhr, status, err) {
+                jQuery('#myModalCapture').modal('hide');
+                if(xhr !== undefined && xhr.responseText !== null && xhr.responseText !== ''){
+                    jQuery('#myModalCapture').modal('hide');
+                    alertt(xhr.responseText);
+                }else{
+                    jQuery('#myModalCapture').modal('hide');
+                    alertt('System error. Please check that the Biometric service is running');
+                }
+            });
+    }
+
+
+    function verificationCapturePrint(position) {
+        jQuery('#myModalCapture').modal('show');
+        // if(patientId === undefined){
+        //     alertt('Select a patient first');
+        //     return;
+        // }
+        console.log("Finger position id: "+position);
+        console.log("patient Id: "+patientId);
+
+        let captureURL = url + '/verificationCapturePrint?fingerPosition=' + position+"&patientId="+patientId;
+
+        jQuery.getJSON(captureURL)
+            .success(function (data) {
+                jQuery('#myModalCapture').modal('hide');
+              // if (data.ErrorMessage === '' || data.ErrorMessage === null || "-2" === data.ErrorCode) {
+                   if (data.ErrorMessage === '' || data.ErrorMessage === null ) {
+                  // if("-2" === data.ErrorCode) {
+                  //     alertt(data.ErrorMessage);
+                  // }
+                    let imgId = fingerPosition[position];
+                    document.getElementById('H_'+imgId).style.display = 'none';
+                    document.getElementById(imgId).src = "data:image/bmp;base64," + data.Image;
+
+                    if(data.ImageQuality >= 75 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'green';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality >= 60 && data.ImageQuality <= 74 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = '#FFA500';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality <= 59){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'red';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+
                     newPrint = data;
                     newPrint.Image = '';
                     pushPrints(newPrint);
@@ -284,6 +643,20 @@
                     document.getElementById('saveBiometric').setAttribute( "onClick", "reSave()");
                     document.getElementById('saveBiometric').disabled = false;
                     document.getElementById('H_'+imgId).style.display = 'none';
+
+                    if(data.ImageQuality >= 75 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'green';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality >= 60 && data.ImageQuality <= 74 ){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = '#FFA500';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+                    if(data.ImageQuality <= 59){
+                        document.getElementById('flag_'+imgId).style.backgroundColor = 'red';
+                        document.getElementById('flag_'+imgId).innerHTML =data.ImageQuality+"%" ;
+                    }
+
                     newPrint = data;
                     newPrint.Image = '';
                     pushPrints(newPrint);
@@ -394,6 +767,67 @@
         });
     }
 
+    function fp_VerifySave() {
+        jQuery('#myModal').modal('show');
+        let saveUrl = url + '/ReSaveFingerprintVerificationToDatabase';
+        let model = {};
+        model.FingerPrintList = capturedPrint;
+        model.PatientUUID = patientId;
+
+        jQuery.ajax({
+            type: "Post",
+            url: saveUrl,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(model),
+            cache: false,
+        }).done(function (response) {
+            console.log(response.ErrorMessage);
+            if(response.ErrorMessage.toString() == 'NoMatchReplaceBase'){
+                jQuery('#myModal').modal('hide');
+                var modal = document.getElementById("myModalrecapture");
+                modal.style.display = "block";
+               // window.location.reload(true);
+            }else if(response.ErrorMessage.toString() == 'No Match! Fingerprint Re-capture saved Successfully') {
+                jQuery('#myModal').modal('hide');
+                var recaptureresponsenomatch = document.getElementById("recaptureresponsenomatch");
+                recaptureresponsenomatch.innerHTML = response.ErrorMessage;
+                var modal2 = document.getElementById("myModalrecapture-3");
+                modal2.style.display = "block";
+              //  window.location.reload(true);
+
+            }else if(response.ErrorMessage.toString() == 'Match! Fingerprint Re-capture saved Successfully') {
+                jQuery('#myModal').modal('hide');
+                var recaptureresponsematch = document.getElementById("recaptureresponsematch");
+                recaptureresponsematch.innerHTML = response.ErrorMessage;
+                var modal2 = document.getElementById("myModalrecapture-2");
+                modal2.style.display = "block";
+               // window.location.reload(true);
+
+            }else if(response.ErrorMessage.toString() == ' Fingerprint Re-capture saved Successfully') {
+                jQuery('#myModal').modal('hide');
+                var recaptureresponsematch = document.getElementById("recaptureresponsematch");
+                recaptureresponsematch.innerHTML = response.ErrorMessage;
+                var modal2 = document.getElementById("myModalrecapture-2");
+                modal2.style.display = "block";
+                // window.location.reload(true);
+
+            }else {
+                jQuery('#myModal').modal('hide');
+                window.location.reload(true);
+            }
+
+
+        }).error(function (xhr, status, err) {
+            if (window.confirm((xhr.responseJSON.ErrorMessage)))
+            {
+                jQuery('#myModal').modal('hide');
+            }else{
+                jQuery('#myModal').modal('hide');
+            }
+            window.location.reload(true);
+        });
+    }
+
 
     function deletePrints() {
         jQuery('#myModal').modal('show');
@@ -447,6 +881,87 @@
             }).error(function (xhr, status, err) {
             alertt('error ' + err);
         });
+    }
+
+    function fp_verification(){
+
+        console.log("previouscapturecheck: "+previouscapturecheck);
+
+        for(let i = 1; i < fingerPosition.length; i++){
+            console.log(fingerPosition[i]);
+            document.getElementById('BTN_' + fingerPosition[i]).setAttribute("onClick", "verificationCapturePrint(" + i + ")");
+            document.getElementById('BTN_' + fingerPosition[i]).disabled = false;
+        }
+
+        // for (let i = 0; i < previouscapturecheck.length; i++) {
+        //     let position = apiFingerPosition[previouscapturecheck[i].fingerPositions];
+        //     let inputId = apiFingerPosition[previouscapturecheck[i].fingerPositions];
+        //
+        //     document.getElementById('H_' + fingerPosition[position]).style.display = 'none';
+        //     document.getElementById('BTN_' + fingerPosition[position]).setAttribute("onClick", "verificationCapturePrint(" + position + ")");
+        //     document.getElementById('BTN_' + fingerPosition[inputId]).disabled = false;
+        //
+        // }
+
+        document.getElementById('saveBiometric').setAttribute( "onClick", "fp_VerifySave()");
+        //document.getElementById('saveBiometric').disabled = false;
+        //document.getElementById('H_'+imgId).style.display = 'none';
+    }
+
+    function replaceBasewithRecapture(replacestatus){
+        var rstatus = replacestatus;
+        jQuery('#myModal').modal('show');
+        var modal = document.getElementById("myModalrecapture");
+        modal.style.display = "none";
+
+
+        let saveUrl =url+'/replaceBaseWithRecapture?patientId=' + patientId + "&rstatus="+rstatus;
+        jQuery.getJSON(saveUrl)
+            .done(function (response) {
+            console.log(response.ErrorMessage);
+            if(response.ErrorMessage !== ''){
+                var recaptureresponsenomatch = document.getElementById("recaptureresponsenomatch");
+                recaptureresponsenomatch.innerHTML = response.ErrorMessage;
+                var modal3 = document.getElementById("myModalrecapture-3");
+                modal3.style.display = "block";
+                jQuery('#myModal').modal('hide');
+               // window.location.reload(true);
+            }else {
+                jQuery('#myModal').modal('hide');
+                window.location.reload(true);
+            }
+
+              //  window.location.reload(true);
+        }).error(function (xhr, status, err) {
+            if (window.confirm((xhr.responseJSON.ErrorMessage)))
+            {
+                jQuery('#myModal').modal('hide');
+            }else{
+                jQuery('#myModal').modal('hide');
+            }
+            window.location.reload(true);
+        });
+    }
+
+    function donotreplacebase(){
+        var modal = document.getElementById("myModalrecapture");
+        modal.style.display = "none";
+        jQuery('#myModal').modal('hide');
+        window.location.reload(true);
+    }
+
+    function matchcloserecapture(){
+        var modal = document.getElementById("myModalrecapture-2");
+        modal.style.display = "none";
+        jQuery('#myModal').modal('hide');
+        window.location.reload(true);
+    }
+
+    function nomatchcloserecapture(){
+        var modal = document.getElementById("myModalrecapture-3");
+        modal.style.display = "none";
+        jQuery('#myModal').modal('hide');
+        window.location.reload(true);
     }
 
     jQuery(document).on('click', '.chcktblpt', function (e) {

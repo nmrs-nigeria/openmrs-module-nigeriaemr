@@ -20,8 +20,8 @@ import org.openmrs.module.nigeriaemr.omodmodels.Version;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 
 public class NDRConverter {
 
@@ -55,12 +55,15 @@ public class NDRConverter {
 
     private final Date toDate;
 
+    NDRMainDictionary mainDictionary;
+
     public NDRConverter(DBConnection _openmrsConn, Date fromDate, Date toDate) {
         this.openmrsConn = _openmrsConn;
         this.nigeriaEncounterService = Context.getService(NigeriaEncounterService.class);
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.nigeriaObsService = Context.getService(NigeriaObsService.class);
+        mainDictionary = new NDRMainDictionary();
     }
 
     public Container createContainer(Patient pts) throws Exception {
@@ -68,7 +71,6 @@ public class NDRConverter {
         String DATIMID = Utils.getFacilityDATIMId();
         String FacilityType = "FAC";
         boolean hasUpdate = false;
-
 
         try {
             patient = pts;
@@ -164,6 +166,11 @@ public class NDRConverter {
                 individualReport.setPmtctType(pmtctType);
             }
 
+            TBType tbType = createtbType();
+            if(tbType != null){
+                individualReport.setTB(tbType);
+            }
+
             //retrieve latest encounter for client intake form
             Encounter intakeEncounter = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE));
             Encounter intakeEncounterV2 = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.ADMISSION_ENCOUNTER_TYPE_V2));
@@ -174,15 +181,96 @@ public class NDRConverter {
                 retriveCreateHIVTestingReport(intakeEncounterV2,  individualReport);
             }
 
+            Encounter recencyEncounter = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.RECENCY_ENCOUNTER_TYPE));
+
+            if(recencyEncounter !=null){
+                retriveCreateRecencyType(recencyEncounter, individualReport);
+            }
+            Encounter mortalityEncounter = Utils.getLatestEncounter(this.groupedEncounters.get(ConstantsUtil.MORTALITY_ENCOUNTER_TYPE));
+            if(mortalityEncounter !=null){
+                retriveCreateMortalityType(mortalityEncounter, individualReport);
+            }
+
+            retriveCreatePrEPType(individualReport);
+
             return individualReport;
 
         } catch (Exception ex) {
             LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
+                    LogLevel.live);
             // throw ex;
         }
 
         return individualReport;
+    }
+
+    private void retriveCreatePrEPType(IndividualReportType individualReport){
+        try {
+            PrEPType prepType = mainDictionary.createPrEPType(patient, this.groupedEncounters);
+            if (prepType != null) {
+                individualReport.setPrEPPEP(prepType);
+            }
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+        }
+    }
+
+    private void retriveCreateMortalityType(Encounter mortalityEncounter, IndividualReportType individualReport) {
+        List<Obs> mortalityObs = new ArrayList<>(mortalityEncounter.getAllObs());
+        Map<Object, List<Obs>> groupedmortalityObsByConcept = Utils.groupedByConceptIdsOnly(mortalityObs);
+        try {
+            List<MortalityType> mortalityTypes = createMortalitytypes(mortalityEncounter, groupedmortalityObsByConcept);
+            individualReport.getMortality().addAll(mortalityTypes);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+        }
+    }
+
+    private List<MortalityType> createMortalitytypes(Encounter encounter, Map<Object, List<Obs>> groupedObsByConcept) {
+        NDRMainDictionary mainDictionary = new NDRMainDictionary();
+        List<MortalityType> mortalityList = new ArrayList<>();
+        try {
+            //for each testing to the following
+            MortalityType mortality = new MortalityType();
+            mortality = mainDictionary.createMortalityType(patient, encounter, groupedObsByConcept,groupedpatientBaselineObsByEncounterType, mortality);
+            mortalityList.add(mortality);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRConverter.class.toString(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+        }
+
+        return mortalityList;
+    }
+
+    private void retriveCreateRecencyType(Encounter recencyEncounter, IndividualReportType individualReport){
+        List<Obs> intakeObs = new ArrayList<>(recencyEncounter.getAllObs());
+        Map<Object, List<Obs>> groupedintakeObsByConcept = Utils.groupedByConceptIdsOnly(intakeObs);
+        try {
+            List<RecencyType> recencyTypes = createRecency(recencyEncounter, groupedintakeObsByConcept);
+            individualReport.getRecency().addAll(recencyTypes);
+
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+        }
+
+    }
+
+    private List<RecencyType> createRecency(Encounter encounter, Map<Object, List<Obs>> groupedObsByConcept) {
+        PartnerInformationType partnerInformationType = new PartnerInformationType();
+        List<RecencyType> recencyList = new ArrayList<>();
+        try {
+            //for each testing to the following
+            RecencyType recency = new RecencyType();
+            recency = mainDictionary.createRecency(patient, encounter, groupedObsByConcept, recency);
+            List<PartnerInformationType> partnerInformationTypes = mainDictionary.createPartnerInformationType(groupedObsByConcept);
+            if (partnerInformationTypes != null && !partnerInformationTypes.isEmpty()) {
+                partnerInformationType = partnerInformationTypes.get(0);
+            }
+            recency.setPartnerInformation(partnerInformationTypes);
+            recencyList.add(recency);
+        } catch (Exception ex) {
+            LoggerUtils.write(NDRConverter.class.toString(), ex.getMessage(), LoggerUtils.LogFormat.FATAL, LogLevel.live);
+        }
+        return recencyList;
     }
 
     private void retriveCreateHIVTestingReport(Encounter intakeEncounter, IndividualReportType individualReport){
@@ -199,107 +287,201 @@ public class NDRConverter {
     private PMTCTType createPmtctType() {
         NDRMainDictionary mainDictionary = new NDRMainDictionary();
         PMTCTType pmtctType = null;
-        List<Encounter> pmtctEncounters = this.groupedEncounters.get(ConstantsUtil.PMTCT_ENCOUNTER_TYPE);
-        List<Encounter> generalAntenatalCareEncounters = this.groupedEncounters.get(ConstantsUtil.GENERAL_ANTENATAL_CARE_ENCOUNTER_TYPE);
-        List<Encounter> deliverRegisterEncounters = this.groupedEncounters.get(ConstantsUtil.DELIVERY_REGISTER_ENCOUNTER_TYPE);
-        List<Encounter> childFollowUpEncounters = this.groupedEncounters.get(ConstantsUtil.CHILD_FOLLOW_UP);
-        List<Encounter> childBirthEncounters = this.groupedEncounters.get(ConstantsUtil.CHILD_BIRTH_REGISTRATION_ENCOUNTER);
-        List<Encounter> partnerEncounters = this.groupedEncounters.get(ConstantsUtil.PARTNER_REGISTER);
-        List<Encounter> pmtctHtsRegisterEncounters = this.groupedEncountersByUUID.get(ConstantsUtil.PMTCT_HTS_REGISTER);
+        List<Encounter> pmtctRegister = this.groupedEncounters.get(ConstantsUtil.PMTCT_REGISTER_TYPE);
+        List<Encounter> motherInfant = this.groupedEncounters.get(ConstantsUtil.MOTHER_INFANT_PAIR);
+        List<Encounter> childrenDelivery = this.groupedEncounters.get(ConstantsUtil.DELIVERY_REGISTER_ENCOUNTER_TYPE);
+        List<Encounter> childFollowUp = this.groupedEncounters.get(ConstantsUtil.CHILD_FOLLOW_UP);
 
-        if(pmtctEncounters != null) {
-            List<MaternalCohortType> maternalCohortTypes =  mainDictionary.createMaternalCohort(pmtctEncounters);
-            if(maternalCohortTypes != null){
+        if(pmtctRegister != null) {
+            List<PMTCTRegisterType> pmtctRegisterTypes =  mainDictionary.createPMTCTRegister(pmtctRegister);
+            if(pmtctRegisterTypes != null){
                 pmtctType = new PMTCTType();
-                pmtctType.setMaternalCohortTypes(maternalCohortTypes);
-            }
-            List<HealthFacilityVisitsType> healthFacilityVisitTypes = mainDictionary.createHealthFacilityVisits(
-                    pmtctEncounters);
-            if (healthFacilityVisitTypes != null && healthFacilityVisitTypes.size() > 0) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setHealthFacilityVisitTypes(healthFacilityVisitTypes);
-            }
-        }
-        if(childFollowUpEncounters != null){
-            List<ChildFollowupType> childFollowupTypes = mainDictionary.createChildFollowupType(childFollowUpEncounters);
-            if (childFollowupTypes != null && childFollowupTypes.size() > 0) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setChildFollowupTypes(childFollowupTypes);
-            }
-
-            List<InfantPCRTestingType> infantPCRTestingTypes = mainDictionary.createInfantPCRTestingType(childFollowUpEncounters);
-            if (infantPCRTestingTypes != null && infantPCRTestingTypes.size() > 0) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setInfantPCRTestingTypes(infantPCRTestingTypes);
-            }
-
-            List<InfantRapidTestType> infantRapidTestTypes = mainDictionary.createInfantRapidTestType(childFollowUpEncounters);
-            if (infantRapidTestTypes != null && infantRapidTestTypes.size() > 0) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setInfantRapidTestTypes(infantRapidTestTypes);
-            }
-
-//            List<ImmunizationType> immunizationTypes = mainDictionary.createImmunizationType(pmtctEncounters);
-//            if (immunizationTypes != null && immunizationTypes.size() > 0) {
-//                if (pmtctType == null) pmtctType = new PMTCTType();
-//                pmtctType.setImmunizationTypes(immunizationTypes);
-//            }
-
-        }
-        if(generalAntenatalCareEncounters != null){
-            List<PMTCTHTSType> pmtctTHTSType =  mainDictionary.createPMTCTHTS(generalAntenatalCareEncounters);
-            if(pmtctTHTSType != null) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setPmtctHTSTYPES(pmtctTHTSType);
-            }
-            List<AntenatalRegistrationType> antenatalRegistrationTypes = mainDictionary.createAntenatalRegistrationType(
-                    generalAntenatalCareEncounters);
-            if (antenatalRegistrationTypes != null && antenatalRegistrationTypes.size() > 0) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setAntenatalRegistrationTypes(antenatalRegistrationTypes);
+                pmtctType.setPMTCTRegister(pmtctRegisterTypes);
             }
         }
 
-        if(pmtctHtsRegisterEncounters != null){
-            List<PMTCTHTSType> pmtctTHTSType =  mainDictionary.createPMTCTHTS(pmtctHtsRegisterEncounters);
-            if(pmtctTHTSType != null) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                if(pmtctType.getPmtctHTSTYPES() != null && pmtctType.getPmtctHTSTYPES().size() > 0){
-                    pmtctTHTSType.addAll(pmtctType.getPmtctHTSTYPES());
-                }
-                pmtctType.setPmtctHTSTYPES(pmtctTHTSType);
+        if(motherInfant != null) {
+            List<MotherInfantPairVisitType> motherInfantTypes =  mainDictionary.createMotherInfant(motherInfant);
+            if(motherInfantTypes != null){
+                pmtctType = new PMTCTType();
+                pmtctType.setMotherInfantPairVisit(motherInfantTypes);
             }
         }
 
-        if(childBirthEncounters != null){
-            List<ChildBirthDetailsType> childBirthDetailsTypes = mainDictionary.createChildBirthDetailsType(
-                    childBirthEncounters);
-            if (childBirthDetailsTypes != null && childBirthDetailsTypes.size() > 0) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setChildBirthDetailsTypes(childBirthDetailsTypes);
+        if(childrenDelivery != null) {
+            List<DeliveryChildrenDetailsType> childrenDeliveryTypes =  mainDictionary.createChildrenDelivery(childrenDelivery);
+            if(childrenDeliveryTypes != null){
+                pmtctType = new PMTCTType();
+                pmtctType.setDeliveryChildrenDetails(childrenDeliveryTypes);
             }
         }
 
-        if(deliverRegisterEncounters != null){
-            List<DeliveryEncounterType> deliveryEncounterTypes = mainDictionary.createDeliveryEncounterType(
-                    deliverRegisterEncounters);
-            if (deliveryEncounterTypes != null && deliveryEncounterTypes.size() > 0) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setDeliveryEncounterTypes(deliveryEncounterTypes);
-            }
-        }
-
-        if(partnerEncounters != null){
-            List<PartnerDetailsType> partnerDetailsTypes = mainDictionary.createPartnerDetailsType(
-                    partnerEncounters);
-            if (partnerDetailsTypes != null && partnerDetailsTypes.size() > 0) {
-                if (pmtctType == null) pmtctType = new PMTCTType();
-                pmtctType.setPartnerDetailsTypes(partnerDetailsTypes);
+        if(childFollowUp != null) {
+            List<InfantCohortRegistrationType> childFollowUpTypes =  mainDictionary.createChildFollowUp(childFollowUp);
+            if(childFollowUpTypes != null){
+                pmtctType = new PMTCTType();
+                pmtctType.setInfantCohortRegistration(childFollowUpTypes);
             }
         }
 
         return pmtctType;
     }
+
+    private TBType createtbType() {
+        NDRMainDictionary mainDictionary = new NDRMainDictionary();
+        TBType tbType = null;
+        List<Encounter> tbScreeningEncounters = this.groupedEncounters.get(ConstantsUtil.TB_SCREENING_ENCOUNTER_TYPE);
+        List<Encounter> tbCommunityAndFacilityReferralEncounters = this.groupedEncounters.get(ConstantsUtil.TB_COMM_FAC_ENCOUNTER_TYPE);
+        List<Encounter> tbIndexContactEncounters = this.groupedEncounters.get(ConstantsUtil.TB_INDEX_CONTACT_ENCOUNTER_TYPE);
+        List<Encounter> presumptiveTBRegisterEncounters = this.groupedEncounters.get(ConstantsUtil.PRESUMPTIVE_TB_REGISTER_ENCOUNTER_TYPE);
+        List<Encounter> drTreatmentRegisterTypeEncounters = this.groupedEncounters.get(ConstantsUtil.DRTB_TREATMENT_ENCOUNTER_TYPE);
+        List<Encounter> drtbInPatientDischargeEncounters = this.groupedEncounters.get(ConstantsUtil.DRTB_DISCHARGE_ENCOUNTER_TYPE);
+        List<Encounter> tBInterruptionTrackingEncounters = this.groupedEncounters.get(ConstantsUtil.TB_TRACKING_ENCOUNTER_TYPE);
+        List<Encounter> tBLaboratoryRegisterEncounters = this.groupedEncounters.get(ConstantsUtil.TB_LAB_REGISTER_ENCOUNTER_TYPE);
+        List<Encounter> lGAHealthFacilityTypeEncounters = this.groupedEncounters.get(ConstantsUtil.TB_LGA_HEALTH_REGISTER_ENCOUNTER_TYPE);
+        List<Encounter> specimenExaminationRequestEncounters = this.groupedEncounters.get(ConstantsUtil.SPECIMEN_REQUEST_ENCOUNTER_TYPE);
+        List<Encounter> specimenExaminationResultEncounters = this.groupedEncounters.get(ConstantsUtil.SPECIMEN_RESULT_ENCOUNTER_TYPE);
+        List<Encounter> tbTreatmentMonitoringTypeEncounters = this.groupedEncounters.get(ConstantsUtil.TB_MONITORING_ENCOUNTER_TYPE);
+        List<Encounter> iptMonitoringEncounters = this.groupedEncounters.get(ConstantsUtil.IPT_MONITORING_ENCOUNTER_TYPE);
+        List<Encounter> tBPatientReferralEncounters = this.groupedEncounters.get(ConstantsUtil.TB_REFERRAL_ENCOUNTER_TYPE);
+        List<Encounter> tbTreatmentCardEncounters = this.groupedEncounters.get(ConstantsUtil.TB_TREATMENT_CARD_ENCOUNTER_TYPE);
+
+
+
+        if(tbScreeningEncounters != null){
+            List<TBScreeningType> tbScreeningEncounterTypes = mainDictionary.createTbScreeningEncounterType(
+                    patient,tbScreeningEncounters);
+            if (tbScreeningEncounterTypes != null && tbScreeningEncounterTypes.size() > 0) {
+                tbType = new TBType();
+                System.out.println("TBType Screening Type");
+                tbType.setScreening(tbScreeningEncounterTypes);
+            }
+        }
+        if(tbCommunityAndFacilityReferralEncounters != null){
+            List<TBCommunityAndFacilityReferralType> tbCommunityAndFacilityReferralEncounterTypes = mainDictionary.createTbComFacRefEncounterType(tbCommunityAndFacilityReferralEncounters);
+            if (tbCommunityAndFacilityReferralEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("TBType Screening Type");
+                tbType.setCommunityAndFacilityReferral(tbCommunityAndFacilityReferralEncounterTypes);
+            }
+        }
+        if(tbIndexContactEncounters != null){
+            List<TBIndexPatientContactInvestigationType> tbIndexContactEncounterTypes = mainDictionary.createTbIndexContactEncounterType(tbIndexContactEncounters);
+            if (tbIndexContactEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("TBType Contact Type");
+                tbType.setIndexPatientContactInvestigation(tbIndexContactEncounterTypes);
+            }
+        }
+
+        if(presumptiveTBRegisterEncounters != null){
+            List<PresumptiveTBRegisterType> presumptiveTBRegisterEncounterTypes = mainDictionary.createPresumptiveTBRegisterEncounterTypes(patient,presumptiveTBRegisterEncounters);
+            if (presumptiveTBRegisterEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("presumptiveTBRegisterEncounters started");
+                tbType.setPresumptiveTBRegister(presumptiveTBRegisterEncounterTypes);
+            }
+        }
+
+        if(drTreatmentRegisterTypeEncounters != null){
+            List<DRTBTreatmentRegisterType> drTreatmentRegisterTypeEncounterTypes = mainDictionary.createDRTBTreatmentRegisterEncounterTypes(patient,drTreatmentRegisterTypeEncounters);
+            if (drTreatmentRegisterTypeEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("DR-TB Reg started");
+                tbType.setDRTBTreatmentRegister(drTreatmentRegisterTypeEncounterTypes);
+            }
+        }
+
+        if(drtbInPatientDischargeEncounters != null){
+            List<DRTBInPatientDischargeFormType> drtbInPatientDischargeEncountersTypes = mainDictionary.createDrTBDischargeEncounterTypes(drtbInPatientDischargeEncounters);
+            if (drtbInPatientDischargeEncountersTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                tbType.setDRTBInPatientDischargeForm(drtbInPatientDischargeEncountersTypes);
+            }
+        }
+
+        if(tBInterruptionTrackingEncounters != null){
+            List<TBInterruptionTrackingType> tBInterruptionTrackingEncountersTypes = mainDictionary.createTBInterruptionTrackingEncounterTypes(tBInterruptionTrackingEncounters);
+            if (tBInterruptionTrackingEncountersTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("TB Tracking");
+                tbType.setInterruptionTracking(tBInterruptionTrackingEncountersTypes);
+            }
+        }
+
+        if(tBLaboratoryRegisterEncounters != null){
+            List<TBLaboratoryRegisterType> tBLaboratoryRegisterEncountersTypes = mainDictionary.createTBLaboratoryRegisterTypeEncounterTypes(tBLaboratoryRegisterEncounters);
+            if (tBLaboratoryRegisterEncountersTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("TB Lab");
+                tbType.setLaboratoryRegister(tBLaboratoryRegisterEncountersTypes);
+            }
+        }
+
+        if(lGAHealthFacilityTypeEncounters != null){
+            List<LGAHealthFacilityTBCentralRegisterType> lGAHealthFacilityTypeEncounterTypes = mainDictionary.createLGAHealthFacilityTBCentralRegisterEncounterTypes(lGAHealthFacilityTypeEncounters);
+            if (lGAHealthFacilityTypeEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("TB LGA Health Facility");
+                tbType.setLGAHealthFacilityTBCentralRegister(lGAHealthFacilityTypeEncounterTypes);
+            }
+        }
+
+        if(specimenExaminationRequestEncounters != null){
+            List<SpecimenExaminationRequestFormType> specimenExaminationRequestFormEncounterTypes = mainDictionary.createspecimenrequestEncounterType(specimenExaminationRequestEncounters);
+            if (specimenExaminationRequestFormEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("Specimen request");
+                tbType.setSpecimenExaminationRequestForm(specimenExaminationRequestFormEncounterTypes);
+            }
+        }
+
+        if(specimenExaminationResultEncounters != null){
+            List<SpecimenExaminationResultFormType> specimenExaminationResultFormEncounterTypes = mainDictionary.createspecimenresultEncounterType(specimenExaminationResultEncounters);
+            if (specimenExaminationResultFormEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("Specimen result");
+                tbType.setSpecimenExaminationResultForm(specimenExaminationResultFormEncounterTypes);
+            }
+        }
+
+        if(tbTreatmentMonitoringTypeEncounters != null){
+            List<TBTreatmentMonitoringType> tbTBMonitoringEncounterTypes = mainDictionary.createTBTreatmentMonitoringEncounterType(tbTreatmentMonitoringTypeEncounters);
+            if (tbTBMonitoringEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                System.out.println("TBType Contact Type");
+                tbType.setTreatmentMonitoring(tbTBMonitoringEncounterTypes);
+            }
+        }
+
+        if (iptMonitoringEncounters != null) {
+            List<TBScreeningIPTmonitoringType> iptMonitoringEncounterTypes = mainDictionary.createiptMonitoringEncounterType(
+                    patient, iptMonitoringEncounters);
+            if (iptMonitoringEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                tbType.setTBScreeningIPTmonitoringType(iptMonitoringEncounterTypes);
+            }
+        }
+
+        if (tBPatientReferralEncounters != null) {
+            List<TBPatientReferralType> tBPatientReferralEncounterTypes = mainDictionary.createTBPatientReferralEncounterType(tBPatientReferralEncounters);
+            if (tBPatientReferralEncounterTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                tbType.setPatientReferralType(tBPatientReferralEncounterTypes);
+            }
+        }
+
+        /*if (tbTreatmentCardEncounters != null) {
+            List<TBPatientTreatmentCardFormType> tbTreatmentCardEncountersTypes = mainDictionary.createTBCardEncounterType(tbTreatmentCardEncounters);
+            if (tbTreatmentCardEncountersTypes != null) {
+                if (tbType == null) tbType = new TBType();
+                tbType.setTBPatientTreatmentCardForm(tbTreatmentCardEncountersTypes);
+            }
+        }*/
+
+        return tbType;
+    }
+
 
     private List<HIVTestingReportType> createHIVTestingReport(Encounter encounter, Map<Object, List<Obs>> groupedObsByConcept) {
 
@@ -319,15 +501,20 @@ public class NDRConverter {
 
             HIVTestResultType hIVTestResultType = mainDictionary.createHIVTestResult(patient, groupedObsByConcept);
 
-            IndexNotificationServicesType indexNotificationServicesType = mainDictionary.createIndexNotificationServicesTypes(groupedObsByConcept);
-
             if (hIVTestResultType != null) {
                 hivTestingReport.setHIVTestResult(hIVTestResultType);
             }
 
-            /*if (indexNotificationServicesType != null) {
-                hivTestingReport.setIndexNotificationServices(indexNotificationServicesType);
-            }*/
+            //Index Contact Testing (scoped to its own encounter type)
+            Encounter indexContactTestingEncounter = Utils.getLatestEncounter(
+                    this.groupedEncounters.get(ConstantsUtil.HTS_INDEX_CONTACT_TESTING_ENCOUNTER_TYPE));
+            if (indexContactTestingEncounter != null) {
+                IndexContactTestingType indexContactTestingType = mainDictionary
+                        .createIndexContactTesting(indexContactTestingEncounter);
+                if (indexContactTestingType != null) {
+                    hivTestingReport.setIndexContactTesting(indexContactTestingType);
+                }
+            }
 
             //create TB screening
             List<ClinicalTBScreeningType> clinicalTBScreeningType = mainDictionary.createClinicalTbScreening(patient,
@@ -356,14 +543,21 @@ public class NDRConverter {
             //Syndromic STI
             List<SyndromicSTIScreeningType> syndromicSTIScreeningType = mainDictionary.createSyndromicsStiType(patient,
                     this.groupedObsByConceptIds);
-            if (syndromicSTIScreeningType != null && syndromicSTIScreeningType.size() > 0) {
+            if (syndromicSTIScreeningType != null && !syndromicSTIScreeningType.isEmpty()) {
                 preTestInfo.setSyndromicSTIScreening(syndromicSTIScreeningType.get(0));
+            }
+
+            //Sex Partner Risk Assessment
+            List<SexPartnerRiskAssessmentType> sexPartnerRiskAssessmentType = mainDictionary.createSexPartnerRiskAssessment(patient,
+                    this.groupedObsByConceptIds);
+            if (sexPartnerRiskAssessmentType != null && !sexPartnerRiskAssessmentType.isEmpty()) {
+                preTestInfo.setSexPartnerRiskAssessment(sexPartnerRiskAssessmentType.get(0));
             }
 
             //Post Test Counselling
             List<PostTestCounsellingType> postTestCounsellingType = mainDictionary.createPostTestCounsellingType(patient,
                     this.groupedObsByConceptIds);
-            if (postTestCounsellingType != null && postTestCounsellingType.size() > 0) {
+            if (postTestCounsellingType != null && !postTestCounsellingType.isEmpty()) {
                 postTestType = postTestCounsellingType.get(0);
             }
 
@@ -449,12 +643,17 @@ public class NDRConverter {
                     condition.getRegimen().addAll(arvRegimenTypeList);
                 }
 
+                List<EACType> eacTypeList = mainDictionary.createEACTypeList(patient, this.groupedEncounters);
+                if (eacTypeList != null && !eacTypeList.isEmpty()) {
+                    condition.getEAC().addAll(eacTypeList);
+                }
+
                 return condition;
             }
 
         } catch (Exception ex) {
             LoggerUtils.write(NDRConverter.class.getName(), ex.getMessage(), LoggerUtils.LogFormat.FATAL,
-                    LoggerUtils.LogLevel.live);
+                    LogLevel.live);
             // throw ex;
         }
 
@@ -604,7 +803,7 @@ public class NDRConverter {
         String messageStatus = (isDeleted) ? "REDACTED" : updatedORInitial;
         header.setMessageStatusCode(messageStatus);
         //header.setMessageStatusCode("INITIAL");
-        header.setMessageSchemaVersion("1.6.3");
+        header.setMessageSchemaVersion("1.7");
         header.setMessageUniqueID(UUID.randomUUID().toString());
         return header;
     }

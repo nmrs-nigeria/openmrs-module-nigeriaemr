@@ -7,6 +7,8 @@
 
 package org.openmrs.module.nigeriaemr.model.ndr;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EncountersType", propOrder = { "hivEncounter", "antenatalRegistration", "deliveryEncounter" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EncountersType {
 	
 	@XmlElement(name = "HIVEncounter")

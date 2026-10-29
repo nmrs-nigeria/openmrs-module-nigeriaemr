@@ -10,6 +10,12 @@
     <p>Generate NDR Files</p>
 </a>
 
+<a id="${ id }_button_pims"  class="button app big" style="font-size:12px;min-height: 10px;" href="pimssync.page">
+    <i class="icon-cloud"></i>
+    <br/>
+    <p>PIMS Export/Import</p>
+</a>
+
 <a id="${ id }_button_loc_export"  class="button app big" style="font-size:12px;min-height: 10px;" href="ndrexport.page">
     <i class="icon-lock"></i>
     <br/>
@@ -27,3 +33,4 @@
     <br/>
     <p>Version Info</p>
 </a>
+

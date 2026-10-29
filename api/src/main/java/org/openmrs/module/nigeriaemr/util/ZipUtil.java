@@ -180,8 +180,8 @@ public class ZipUtil {
 	}
 	
 	public void generateFileList(File node) {
-		// add file only
-		if (node.isFile() && node.getName().endsWith("xml")) {
+		// add xml or json files only
+		if (node.isFile() && (node.getName().endsWith("xml") || node.getName().endsWith("json"))) {
 			fileList.add(generateZipEntry(node.toString()));
 		} else if (node.isDirectory()) {
 			String[] subNote = node.list();

@@ -16,11 +16,9 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.nigeriaemr.Item;
 import org.openmrs.module.nigeriaemr.api.service.NigeriaemrService;
 import org.openmrs.module.nigeriaemr.api.dao.NigeriaemrDao;
-import org.openmrs.module.nigeriaemr.model.BiometricInfo;
-import org.openmrs.module.nigeriaemr.model.DatimMap;
-import org.openmrs.module.nigeriaemr.model.NDRExport;
-import org.openmrs.module.nigeriaemr.model.NDRExportBatch;
+import org.openmrs.module.nigeriaemr.model.*;
 
+import javax.naming.directory.SchemaViolationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -150,6 +148,34 @@ public class NigeriaemrServiceImpl extends BaseOpenmrsService implements Nigeria
 	@Override
 	public List<NDRExportBatch> getExportBatchByStartMode(boolean startMode, boolean includeVoided) throws APIException {
 		return dao.getExportBatchByStartMode(startMode, includeVoided);
+	}
+	
+	public void saveNdrApiErrorLog(ndrMessageLog messageLog) throws APIException {
+		dao.saveNdrApiErrorLog(messageLog);
+	}
+	
+	public List<ndrMessageLog> getNdrMessageLogs(Integer exportId) throws APIException {
+		return dao.getNdrMessageLogs(exportId);
+	}
+	
+	public NDRExportBatch getNDRExportBatch(Integer exportId) throws APIException {
+		return dao.getNDRExportBatch(exportId);
+	}
+	
+	public NDRExportBatch getNDRExportByZipFileName(String path) throws APIException {
+		return dao.getNDRExportByZipFileName(path);
+	}
+	
+	public void setBatchIdsFromNdr(Integer exportId, String batches) throws APIException {
+		dao.setBatchIdsFromNdr(exportId, batches);
+	}
+	
+	public List<NDRExportBatch> getBatchExports() throws APIException {
+		return dao.getBatchExports();
+	}
+	
+	public void updateBatchExport(Integer exportId, String ndrErrorLogStatus) throws APIException {
+		dao.updateBatchExport(exportId, ndrErrorLogStatus);
 	}
 	
 	@Override

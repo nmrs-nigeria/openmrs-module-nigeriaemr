@@ -303,6 +303,144 @@
             WHERE encounter_id  NOT IN (SELECT encounter_id FROM encounter);
         </sql>
     </changeSet>
+    
+    <changeSet id="Add_ndrbatchids_20230413100111" author="Toyeeb" runOnChange="true">
+    	<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM information_schema.COLUMNS WHERE TABLE_NAME = 'nigeriaemr_ndr_batch_export' AND COLUMN_NAME = 'ndr_batch_ids';
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            ALTER TABLE `nigeriaemr_ndr_batch_export` ADD `ndr_batch_ids` VARCHAR(255) NULL DEFAULT NULL AFTER `automatic`;
+        </sql>
+    </changeSet>
+    
+    <changeSet id="Add_errorlog_20230413100111" author="Toyeeb" runOnChange="true">
+    	<preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT count(*) FROM information_schema.COLUMNS WHERE TABLE_NAME = 'nigeriaemr_ndr_batch_export' AND COLUMN_NAME = 'errorLogsPulled';
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            ALTER TABLE `nigeriaemr_ndr_batch_export` ADD `errorLogsPulled` TEXT NULL DEFAULT NULL AFTER `ndr_batch_ids`;
+        </sql>
+    </changeSet>
+    
+    <changeSet id="create_pbs_biometricverification_table_2023050916836789124" author="Toyeeb">
+        <sql>
+            CREATE TABLE IF NOT EXISTS `biometricverificationinfo` (
+			  `biometricInfo_Id` int(11) NOT NULL AUTO_INCREMENT,
+			  `patient_Id` int(11) NOT NULL,
+			  `template` text,
+			  `imageWidth` int(11) DEFAULT NULL,
+			  `imageHeight` int(11) DEFAULT NULL,
+			  `imageDPI` int(11) DEFAULT NULL,
+			  `imageQuality` int(11) DEFAULT NULL,
+			  `fingerPosition` varchar(50) DEFAULT NULL,
+			  `serialNumber` varchar(255) DEFAULT NULL,
+			  `model` varchar(255) DEFAULT NULL,
+			  `manufacturer` varchar(255) DEFAULT NULL,
+			  `creator` int(11) DEFAULT NULL,
+			  `date_created` datetime DEFAULT NULL,
+			  `new_template` longblob,
+              `encoded_template` text DEFAULT NULL,
+              `hashed`  TEXT DEFAULT NULL,
+              `recapture_count` INT(11) DEFAULT 1,
+			  PRIMARY KEY (`biometricInfo_Id`)
+			) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+        </sql>
+    </changeSet>
 
+    <changeSet id="alter_biometricverification_table_2023061512334589098" author="Tobechi" runOnChange="true">
+         <sql>
+            ALTER TABLE `biometricverificationinfo` MODIFY `recapture_count` INT(11) DEFAULT 1;
+        </sql>
+    </changeSet>
 
+    <!--<changeSet id="create_pbs_biometricverificationinfo_audit_table_202307061688652268" author="Tobechi">-->
+        <!--<sql>-->
+            <!--CREATE TABLE IF NOT EXISTS `biometricverificationinfo_audit` (-->
+            <!--`id` int(11) NOT NULL AUTO_INCREMENT,-->
+            <!--`biometricInfo_Id` int(11),-->
+            <!--`patient_id` int(11) NOT NULL,-->
+            <!--`audit_date` datetime DEFAULT NULL,-->
+            <!--PRIMARY KEY (`id`)-->
+            <!--) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;-->
+        <!--</sql>-->
+    <!--</changeSet>-->
+    <changeSet id="biometricverificationinfo_match_trail_table_20230701" author="Tobechi">
+        <sql>
+            CREATE TABLE IF NOT EXISTS `biometricverificationinfo_match_trail` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `group_id` varchar(255) NOT NULL ,
+            `patient_id` int(11) NOT NULL,
+            `date_created` datetime DEFAULT NULL,
+            `match_status` varchar(20) DEFAULT NULL,
+            `encoded_template` text DEFAULT NULL,
+            `hashed`  TEXT DEFAULT NULL,
+            `finger_position` varchar(100) NOT NULL,
+            `brstatus` int(11) DEFAULT '0',
+            `brstatus_recapturecount` int(11) DEFAULT NULL,
+            PRIMARY KEY (`id`)
+            ) AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
+        </sql>
+    </changeSet>
+    <changeSet id="add-pims-last-push-20250701" author="Tobechi Nnakwe">
+        <sql>
+            INSERT INTO `global_property` (
+            `property`,
+            `property_value`,
+            `description`,
+            `uuid`,
+            `datatype`,
+            `datatype_config`,
+            `preferred_handler`,
+            `handler_config`,
+            `date_changed`,
+            `changed_by`
+            )
+            VALUES
+            (
+            'pimslastpushdate',
+            '2025-06-23 04:51:09',
+            'PIMS last push date',
+            '714f3b6b-ddc6-4e28-b382-284fbe54c7dc',
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL
+            );
+        </sql>
+    </changeSet>
+    <changeSet id="add-pims-last-pull-20250701" author="Tobechi Nnakwe">
+        <sql>
+            INSERT INTO `global_property` (
+            `property`,
+            `property_value`,
+            `description`,
+            `uuid`,
+            `datatype`,
+            `datatype_config`,
+            `preferred_handler`,
+            `handler_config`,
+            `date_changed`,
+            `changed_by`
+            )
+            VALUES
+            (
+            'pimslastpulldate',
+            '2025-06-23 04:51:09',
+            'PIMS last pull date',
+            '1ab724fd-7a42-4f95-a6fb-f812f208a864',
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL
+            );
+        </sql>
+    </changeSet>
 </databaseChangeLog>

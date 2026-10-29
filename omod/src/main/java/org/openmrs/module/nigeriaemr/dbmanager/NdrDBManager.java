@@ -13,6 +13,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+
+import com.google.gson.Gson;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.nigeriaemr.ndrUtils.ConstantsUtil;
 import org.openmrs.module.nigeriaemr.ndrUtils.Utils;
 import org.openmrs.module.nigeriaemr.omodmodels.DBConnection;
@@ -21,6 +26,7 @@ import org.openmrs.module.nigeriaemr.omodmodels.PatientContactsModel;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientLocation;
 import org.openmrs.module.nigeriaemr.omodmodels.PatientLocationAggregate;
 import org.openmrs.module.nigeriaemr.omodmodels.TesterModel;
+import org.openmrs.module.nigeriaemr.omodmodels.PersonInfo;
 
 /**
  * @author MORRISON.I
@@ -32,6 +38,8 @@ public class NdrDBManager {
 	PreparedStatement pStatement = null;
 	
 	private ResultSet resultSet = null;
+	
+	Gson gson = new Gson();
 	
 	public NdrDBManager() {
 		
@@ -366,4 +374,236 @@ public class NdrDBManager {
         return response;
 
     }
+	
+	public String getTransitPatientUUIDs() throws SQLException {
+		
+//		String sql = "SELECT p.uuid FROM person p JOIN obs o ON p.`person_id` = o.`person_id` WHERE p.person_id IN (SELECT patient_id FROM patient_identifier WHERE identifier_type = (SELECT patient_identifier_type_id FROM patient_identifier_type WHERE UUID= '3f3b8580-2c60-4915-a4ad-724bed1fa33a')) AND o.`obs_datetime`  >= '2025-06-23'  GROUP BY p.`uuid`";
+//		List<String> getUUIs = new ArrayList<String>();
+//		pStatement = conn.prepareStatement(sql);
+//		ResultSet resultSet = pStatement.executeQuery();
+//
+//		while (resultSet.next()) {
+//			getUUIs.add(resultSet.getString("uuid"));
+//		}
+
+		String pimslastpushdate = getPIMSLastPushDate();
+
+        // Prepare query
+        String sql = "SELECT \n" +
+                "  p.uuid,\n" +
+                "  p.birthdate,p.gender,(SELECT property_value FROM `global_property` WHERE property ='facility_datim_code' LIMIT 1) AS secondarydatimcode, \n" +
+                "  (SELECT property_value FROM `global_property` WHERE property ='Facility_Name' LIMIT 1) AS secfacilityname, \n" +
+                "  (SELECT pa.value FROM person_attribute pa \n" +
+                "   WHERE pa.`person_id` = p.`person_id` AND pa.`person_attribute_type_id` IN\n" +
+                "  (SELECT person_attribute_type_id FROM person_attribute_type \n" +
+                "  WHERE UUID ='7f9c2d35-4dbf-4d24-9a56-e171e16729b9')) AS primarydatimcode,\n" +
+                "  (SELECT pa.value FROM person_attribute pa \n" +
+                "   WHERE pa.`person_id` = p.`person_id` AND pa.`person_attribute_type_id` IN\n" +
+                "  (SELECT person_attribute_type_id FROM person_attribute_type \n" +
+                "  WHERE UUID ='2b15f1ce-2695-4e45-825d-777142b22cd9')) AS primaryclientid,\n" +
+                "  (SELECT \n" +
+                "    pid.identifier \n" +
+                "  FROM\n" +
+                "    patient_identifier pid\n" +
+                "  WHERE pid.patient_id = p.`person_id` AND identifier_type = \n" +
+                "    (SELECT \n" +
+                "      patient_identifier_type_id \n" +
+                "    FROM\n" +
+                "      patient_identifier_type \n" +
+                "    WHERE UUID= '3f3b8580-2c60-4915-a4ad-724bed1fa33a')) AS transitid , (SELECT GROUP_CONCAT(CONCAT(en.name,':',DATE(o.obs_datetime)) SEPARATOR \",\") FROM encounter_type en WHERE en.`encounter_type_id` IN (SELECT e.encounter_type FROM encounter e WHERE e.patient_id = o.person_id)) AS encounters\n" +
+                "FROM\n" +
+                "  person p \n" +
+                "  JOIN obs o \n" +
+                "    ON p.`person_id` = o.`person_id` \n" +
+                "WHERE p.person_id IN \n" +
+                "  (SELECT \n" +
+                "    patient_id \n" +
+                "  FROM\n" +
+                "    patient_identifier \n" +
+                "  WHERE identifier_type = \n" +
+                "    (SELECT \n" +
+                "      patient_identifier_type_id \n" +
+                "    FROM\n" +
+                "      patient_identifier_type \n" +
+                "    WHERE UUID= '3f3b8580-2c60-4915-a4ad-724bed1fa33a')) \n" +
+                "  AND o.`obs_datetime` >= '"+pimslastpushdate+"' AND o.voided = 0 \n" +
+                "GROUP BY p.`uuid`";
+        pStatement = conn.prepareStatement(sql);
+        ResultSet result = pStatement.executeQuery();
+        List<PersonInfo> personList = new ArrayList<>();
+        // Print result
+        while (result.next()) {
+
+            personList.add(new PersonInfo(result.getString("uuid"),
+                    result.getString("birthdate"),
+                    result.getString("primarydatimcode"),
+                    result.getString("primaryclientid"),
+                    result.getString("transitid"),
+                    result.getString("gender"),
+                    result.getString("secondarydatimcode"),
+                    result.getString("encounters"),
+                    result.getString("secfacilityname")
+                    ));
+        }
+
+		return gson.toJson(personList);
+		
+	}
+	
+	public String getPIMSToken() throws SQLException {
+		
+		String token = "";
+		String sql = "SELECT property_value FROM global_property WHERE property ='pimstoken' LIMIT 1";
+		
+		pStatement = conn.prepareStatement(sql);
+		ResultSet resultSet = pStatement.executeQuery();
+		while (resultSet.next()) {
+			token = resultSet.getString("property_value");
+			
+		}
+		return token;
+		
+	}
+	
+	public String getPatientUUID(String clientid) throws SQLException {
+		
+		String token = clientid;
+		String sql = "SELECT \n" + "  p.uuid \n" + "FROM\n" + "  person p \n" + "WHERE p.`person_id` IN \n" + "  (SELECT \n"
+		        + "    patient_id \n" + "  FROM\n" + "    patient_identifier \n" + "  WHERE identifier = ? \n"
+		        + "  GROUP BY patient_id)";
+		
+		pStatement = conn.prepareStatement(sql);
+		pStatement.setString(1, token);
+		ResultSet resultSet = pStatement.executeQuery();
+		while (resultSet.next()) {
+			token = resultSet.getString("uuid");
+			
+		}
+		return token;
+		
+	}
+	
+	public String getPIMSLastPushDate() {
+		return Context.getAdministrationService().getGlobalProperty("pimslastpushdate");
+	}
+	
+	public String getPIMSLastPullDate() {
+		return Context.getAdministrationService().getGlobalProperty("pimslastpulldate");
+	}
+	
+	public String updatePIMSLastPushDate(String pimslastpushdate) throws SQLException {
+		String sql = "update global_property"
+		        + " set property_value = ? where uuid = '714f3b6b-ddc6-4e28-b382-284fbe54c7dc' ";
+		pStatement = conn.prepareStatement(sql);
+		pStatement.setString(1, pimslastpushdate);
+		return String.valueOf(pStatement.executeUpdate());
+		
+	}
+	
+	public String updatePIMSLastPullDate(String pimslastpulldate) throws SQLException {
+		String sql = "update global_property"
+		        + " set property_value = ? where uuid = '1ab724fd-7a42-4f95-a6fb-f812f208a864' ";
+		pStatement = conn.prepareStatement(sql);
+		pStatement.setString(1, pimslastpulldate);
+		return String.valueOf(pStatement.executeUpdate());
+		
+	}
+	
+	public String resolveOBSgroupIssueART(String patientUUID, String encounterType, String encounterDatetime)
+	        throws SQLException {
+		OffsetDateTime dateTime = OffsetDateTime.parse(encounterDatetime);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String formattedDate = dateTime.toLocalDate().format(formatter);
+		
+		// TODO Auto-generated method stub
+		String sql = "UPDATE obs AS o1 JOIN ( SELECT o.obs_id FROM obs o JOIN encounter e ON o.encounter_id = e.encounter_id WHERE DATE(e.encounter_datetime) = DATE('"
+		        + formattedDate
+		        + "') AND e.encounter_type = (SELECT et.encounter_type_id FROM encounter_type et WHERE et.uuid = 'a1fa6aa3-59e1-4833-a28c-bb62f2fb07df') AND o.person_id = (SELECT pid.`person_id` FROM person pid WHERE pid.`uuid` = '"
+		        + patientUUID
+		        + "') AND o.concept_id = 162240 LIMIT 1) AS src ON o1.person_id = (SELECT pid.`person_id` FROM person pid WHERE pid.`uuid` = '"
+		        + patientUUID
+		        + "') SET o1.obs_group_id = src.obs_id WHERE o1.concept_id IN (167209, 159368, 1443, 160856, 166120, 165724, 165725, 167218, 165723)  AND o1.obs_group_id IS NULL  AND o1.encounter_id = ( SELECT encounter_id FROM encounter WHERE DATE(encounter_datetime) = DATE('"
+		        + formattedDate
+		        + "') AND patient_id = (SELECT pid.`person_id` FROM person pid WHERE pid.`uuid` = '"
+		        + patientUUID
+		        + "') AND  encounter_type = 13 LIMIT 1) AND DATE(o1.`obs_datetime`) = DATE('"
+		        + formattedDate
+		        + "')";
+		pStatement = conn.prepareStatement(sql);
+		return String.valueOf(pStatement.executeUpdate());
+	}
+	
+	public String resolveOBSgroupIssueART162240(String patientUUID, String encounterType, String encounterDatetime)
+	        throws SQLException {
+		OffsetDateTime dateTime = OffsetDateTime.parse(encounterDatetime);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String formattedDate = dateTime.toLocalDate().format(formatter);
+		
+		// TODO Auto-generated method stub
+		String sql = "UPDATE obs SET value_coded = NULL WHERE concept_id = 162240 AND person_id = (SELECT pid.`person_id` FROM person pid WHERE pid.`uuid` = '"
+		        + patientUUID + "') AND DATE(`obs_datetime`) = DATE('" + formattedDate + "') AND value_coded IS NOT NULL";
+		pStatement = conn.prepareStatement(sql);
+		return String.valueOf(pStatement.executeUpdate());
+	}
+	
+	public String resolveOBSgroupIssueOI(String patientUUID, String encounterType, String encounterDatetime)
+	        throws SQLException {
+		
+		OffsetDateTime dateTime = OffsetDateTime.parse(encounterDatetime);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String formattedDate = dateTime.toLocalDate().format(formatter);
+		// TODO Auto-generated method stub
+		String sql = "UPDATE obs AS o1 JOIN ( SELECT o.obs_id FROM obs o JOIN encounter e ON o.encounter_id = e.encounter_id WHERE DATE(e.encounter_datetime) = DATE('"
+		        + formattedDate
+		        + "') AND e.encounter_type = (SELECT et.encounter_type_id FROM encounter_type et WHERE et.uuid = 'a1fa6aa3-59e1-4833-a28c-bb62f2fb07df') AND o.person_id = (SELECT pid.`person_id` FROM person pid WHERE pid.`uuid` = '"
+		        + patientUUID
+		        + "') AND o.concept_id = 165726 LIMIT 1) AS src ON o1.person_id = (SELECT pid.`person_id` FROM person pid WHERE pid.`uuid` = '"
+		        + patientUUID
+		        + "') SET o1.obs_group_id = src.obs_id WHERE o1.concept_id IN (165727, 65725, 167218, 165723, 159368,160856, 167209, 1443)  AND o1.obs_group_id IS NULL  AND o1.encounter_id = ( SELECT encounter_id FROM encounter WHERE DATE(encounter_datetime) = DATE('"
+		        + formattedDate
+		        + "') AND patient_id = (SELECT pid.`person_id` FROM person pid WHERE pid.`uuid` = '"
+		        + patientUUID
+		        + "') AND  encounter_type = 13 LIMIT 1) AND DATE(o1.`obs_datetime`) = DATE('"
+		        + formattedDate
+		        + "')";
+		pStatement = conn.prepareStatement(sql);
+		return String.valueOf(pStatement.executeUpdate());
+	}
+	
+	public String resolveOBSgroupIssueOI165726(String patientUUID, String encounterType, String encounterDatetime)
+	        throws SQLException {
+		
+		OffsetDateTime dateTime = OffsetDateTime.parse(encounterDatetime);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String formattedDate = dateTime.toLocalDate().format(formatter);
+		// TODO Auto-generated method stub
+		String sql = "UPDATE obs SET value_coded = NULL WHERE concept_id = 165726 AND person_id = (SELECT pid.`person_id` FROM person pid WHERE pid.`uuid` = '"
+		        + patientUUID + "') AND DATE(`obs_datetime`) = DATE('" + formattedDate + "') AND value_coded IS NOT NULL";
+		
+		pStatement = conn.prepareStatement(sql);
+		return String.valueOf(pStatement.executeUpdate());
+	}
+	
+	public String checkDuplicateEncounterAtSyc(String patientUUID, String encounterType, String encounterDatetime)
+	        throws Exception {
+		
+		OffsetDateTime dateTime = OffsetDateTime.parse(encounterDatetime);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String formattedDate = dateTime.toLocalDate().format(formatter);
+		String id = "";
+		String sql = "SELECT encounter_id FROM encounter WHERE DATE(encounter_datetime) = '" + formattedDate
+		        + "' AND patient_id = (SELECT pid.`person_id` FROM person pid WHERE pid.`uuid` = '" + patientUUID
+		        + "') AND encounter_type = (SELECT et.encounter_type_id FROM encounter_type et WHERE et.uuid = '"
+		        + encounterType + "' ) LIMIT 1";
+		
+		pStatement = conn.prepareStatement(sql);
+		ResultSet resultSet = pStatement.executeQuery();
+		while (resultSet.next()) {
+			id = resultSet.getString("encounter_id");
+			
+		}
+		return id;
+		
+	}
+	
 }
